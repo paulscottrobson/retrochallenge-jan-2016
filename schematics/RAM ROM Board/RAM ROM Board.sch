@@ -1,0 +1,582 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:newparts
+LIBS:RAM ROM Board-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L 74LS75 U1
+U 1 1 5641FF44
+P 3550 1650
+F 0 "U1" H 3550 1750 60  0000 C CNN
+F 1 "74LS75" H 3550 1550 60  0000 C CNN
+F 2 "" H 3550 1650 60  0000 C CNN
+F 3 "" H 3550 1650 60  0000 C CNN
+	1    3550 1650
+	1    0    0    -1  
+$EndComp
+Entry Wire Line
+	2750 1200 2850 1300
+Entry Wire Line
+	2750 1300 2850 1400
+Entry Wire Line
+	2750 1400 2850 1500
+Entry Wire Line
+	2750 1500 2850 1600
+Entry Wire Line
+	2750 1800 2850 1900
+Text Label 2500 1900 0    60   ~ 0
+NADS
+$Comp
+L 74LS21 U4
+U 1 1 564200B0
+P 5500 1850
+F 0 "U4" H 5500 1950 60  0000 C CNN
+F 1 "74LS21" H 5500 1750 60  0000 C CNN
+F 2 "" H 5500 1850 60  0000 C CNN
+F 3 "" H 5500 1850 60  0000 C CNN
+	1    5500 1850
+	1    0    0    -1  
+$EndComp
+Text Label 6150 1850 0    60   ~ 0
+ZEROPAGE
+$Comp
+L 74LS21 U4
+U 2 1 564200EA
+P 6200 1450
+F 0 "U4" H 6200 1550 60  0000 C CNN
+F 1 "74LS21" H 6200 1350 60  0000 C CNN
+F 2 "" H 6200 1450 60  0000 C CNN
+F 3 "" H 6200 1450 60  0000 C CNN
+	2    6200 1450
+	1    0    0    -1  
+$EndComp
+Text Label 6900 1500 0    60   ~ 0
+CURRENTPAGE
+$Comp
+L MCM6810 IC5
+U 1 1 564201CB
+P 10350 3100
+F 0 "IC5" H 10350 3250 60  0000 C CNN
+F 1 "MCM6810" H 10350 3100 60  0000 C CNN
+F 2 "" H 10450 3000 60  0000 C CNN
+F 3 "" H 10450 3000 60  0000 C CNN
+	1    10350 3100
+	1    0    0    -1  
+$EndComp
+Entry Wire Line
+	9600 2600 9700 2700
+Entry Wire Line
+	9600 2700 9700 2800
+Entry Wire Line
+	9600 2800 9700 2900
+Entry Wire Line
+	9600 2900 9700 3000
+Entry Wire Line
+	9600 3000 9700 3100
+Entry Wire Line
+	9600 3100 9700 3200
+Entry Wire Line
+	9600 3200 9700 3300
+Entry Wire Line
+	9600 3300 9700 3400
+Entry Wire Line
+	9600 3500 9700 3600
+Entry Wire Line
+	10950 2700 11050 2800
+Entry Wire Line
+	10950 2800 11050 2900
+Entry Wire Line
+	10950 2900 11050 3000
+Entry Wire Line
+	10950 3000 11050 3100
+Entry Wire Line
+	10950 3100 11050 3200
+Entry Wire Line
+	10950 3200 11050 3300
+Entry Wire Line
+	10950 3300 11050 3400
+$Comp
+L MCM6810 IC4
+U 1 1 564203D4
+P 8600 3100
+F 0 "IC4" H 8600 3250 60  0000 C CNN
+F 1 "MCM6810" H 8600 3100 60  0000 C CNN
+F 2 "" H 8700 3000 60  0000 C CNN
+F 3 "" H 8700 3000 60  0000 C CNN
+	1    8600 3100
+	1    0    0    -1  
+$EndComp
+Entry Wire Line
+	7850 2600 7950 2700
+Entry Wire Line
+	7850 2700 7950 2800
+Entry Wire Line
+	7850 2800 7950 2900
+Entry Wire Line
+	7850 2900 7950 3000
+Entry Wire Line
+	7850 3000 7950 3100
+Entry Wire Line
+	7850 3100 7950 3200
+Entry Wire Line
+	7850 3200 7950 3300
+Entry Wire Line
+	7850 3300 7950 3400
+Entry Wire Line
+	7850 3500 7950 3600
+Entry Wire Line
+	9200 2700 9300 2800
+Entry Wire Line
+	9200 2800 9300 2900
+Entry Wire Line
+	9200 2900 9300 3000
+Entry Wire Line
+	9200 3000 9300 3100
+Entry Wire Line
+	9200 3100 9300 3200
+Entry Wire Line
+	9200 3200 9300 3300
+Entry Wire Line
+	9200 3300 9300 3400
+$Comp
+L MCM6810 IC3
+U 1 1 56420455
+P 6850 3100
+F 0 "IC3" H 6850 3250 60  0000 C CNN
+F 1 "MCM6810" H 6850 3100 60  0000 C CNN
+F 2 "" H 6950 3000 60  0000 C CNN
+F 3 "" H 6950 3000 60  0000 C CNN
+	1    6850 3100
+	1    0    0    -1  
+$EndComp
+Entry Wire Line
+	6100 2600 6200 2700
+Entry Wire Line
+	6100 2700 6200 2800
+Entry Wire Line
+	6100 2800 6200 2900
+Entry Wire Line
+	6100 2900 6200 3000
+Entry Wire Line
+	6100 3000 6200 3100
+Entry Wire Line
+	6100 3100 6200 3200
+Entry Wire Line
+	6100 3200 6200 3300
+Entry Wire Line
+	6100 3300 6200 3400
+Entry Wire Line
+	6100 3500 6200 3600
+Entry Wire Line
+	7450 2700 7550 2800
+Entry Wire Line
+	7450 2800 7550 2900
+Entry Wire Line
+	7450 2900 7550 3000
+Entry Wire Line
+	7450 3000 7550 3100
+Entry Wire Line
+	7450 3100 7550 3200
+Entry Wire Line
+	7450 3200 7550 3300
+Entry Wire Line
+	7450 3300 7550 3400
+$Comp
+L MCM6810 IC2
+U 1 1 56420504
+P 5100 3100
+F 0 "IC2" H 5100 3250 60  0000 C CNN
+F 1 "MCM6810" H 5100 3100 60  0000 C CNN
+F 2 "" H 5200 3000 60  0000 C CNN
+F 3 "" H 5200 3000 60  0000 C CNN
+	1    5100 3100
+	1    0    0    -1  
+$EndComp
+Entry Wire Line
+	4350 2600 4450 2700
+Entry Wire Line
+	4350 2700 4450 2800
+Entry Wire Line
+	4350 2800 4450 2900
+Entry Wire Line
+	4350 2900 4450 3000
+Entry Wire Line
+	4350 3000 4450 3100
+Entry Wire Line
+	4350 3100 4450 3200
+Entry Wire Line
+	4350 3200 4450 3300
+Entry Wire Line
+	4350 3300 4450 3400
+Entry Wire Line
+	4350 3500 4450 3600
+Entry Wire Line
+	5700 2700 5800 2800
+Entry Wire Line
+	5700 2800 5800 2900
+Entry Wire Line
+	5700 2900 5800 3000
+Entry Wire Line
+	5700 3000 5800 3100
+Entry Wire Line
+	5700 3100 5800 3200
+Entry Wire Line
+	5700 3200 5800 3300
+Entry Wire Line
+	5700 3300 5800 3400
+$Comp
+L 74LS04 U2
+U 3 1 564205C5
+P 7300 1100
+F 0 "U2" H 7495 1215 60  0000 C CNN
+F 1 "74LS04" H 7490 975 60  0000 C CNN
+F 2 "" H 7300 1100 60  0000 C CNN
+F 3 "" H 7300 1100 60  0000 C CNN
+	3    7300 1100
+	1    0    0    -1  
+$EndComp
+Text Label 7850 1150 0    60   ~ 0
+~CURRENTPAGE
+Text Label 6350 4700 0    60   ~ 0
+~CURRENTPAGE
+Entry Wire Line
+	4350 4250 4450 4350
+Entry Wire Line
+	4350 4400 4450 4500
+Text Label 4500 4400 0    60   ~ 0
+A7
+Text Label 4500 4550 0    60   ~ 0
+A8
+Wire Wire Line
+	2850 1800 2850 1900
+Wire Bus Line
+	2750 1200 2750 2350
+Wire Bus Line
+	900  2350 11050 2350
+Wire Wire Line
+	4900 1700 4200 1700
+Wire Wire Line
+	4900 1800 4200 1800
+Wire Wire Line
+	4900 1900 4200 1900
+Wire Wire Line
+	4900 2000 4200 2000
+Wire Notes Line
+	4250 1400 5600 1400
+Wire Notes Line
+	4250 1500 5600 1500
+Wire Notes Line
+	4250 1600 5600 1600
+Wire Notes Line
+	4650 1900 4550 1900
+Wire Notes Line
+	4550 1900 4550 1500
+Wire Notes Line
+	4450 1800 4450 1400
+Wire Bus Line
+	9600 2350 9600 3500
+Wire Bus Line
+	11050 2350 11050 3400
+Wire Bus Line
+	7850 2350 7850 3500
+Wire Bus Line
+	9300 2350 9300 3400
+Wire Bus Line
+	6100 2350 6100 3500
+Wire Bus Line
+	7550 2350 7550 3400
+Wire Bus Line
+	4350 2350 4350 6450
+Wire Bus Line
+	5800 2350 5800 3400
+Wire Wire Line
+	5700 3950 5700 4100
+Wire Wire Line
+	5700 4100 10950 4100
+Wire Wire Line
+	10950 4100 10950 3950
+Wire Wire Line
+	9200 3950 9200 4100
+Connection ~ 9200 4100
+Wire Wire Line
+	7450 3950 7450 4100
+Connection ~ 7450 4100
+Wire Wire Line
+	6700 1450 6700 1100
+Wire Wire Line
+	6700 1100 6850 1100
+Wire Wire Line
+	5700 3850 5800 3850
+Wire Wire Line
+	5800 3850 5800 4950
+Wire Wire Line
+	5800 4200 11000 4200
+Wire Wire Line
+	11000 4200 11000 3850
+Wire Wire Line
+	11000 3850 10950 3850
+Wire Wire Line
+	9200 3850 9250 3850
+Wire Wire Line
+	9250 3850 9250 4200
+Connection ~ 9250 4200
+Wire Wire Line
+	7450 3850 7500 3850
+Wire Wire Line
+	7500 3850 7500 4200
+Connection ~ 7500 4200
+Wire Wire Line
+	4450 4350 11050 4350
+Wire Wire Line
+	11050 4350 11050 3750
+Wire Wire Line
+	4450 4500 11150 4500
+Wire Wire Line
+	5700 3650 5900 3650
+Wire Wire Line
+	5900 3650 5900 4350
+Connection ~ 5900 4350
+Wire Wire Line
+	5700 3550 6000 3550
+Wire Wire Line
+	6000 3550 6000 4500
+Connection ~ 6000 4500
+Wire Wire Line
+	7450 3750 7600 3750
+Wire Wire Line
+	7600 3750 7600 4350
+Connection ~ 7600 4350
+Wire Wire Line
+	7450 3650 7700 3650
+Wire Wire Line
+	7700 3650 7700 4500
+Connection ~ 7700 4500
+Wire Wire Line
+	9200 3650 9350 3650
+Wire Wire Line
+	9350 3650 9350 4350
+Connection ~ 9350 4350
+Wire Wire Line
+	9200 3750 9450 3750
+Wire Wire Line
+	9450 3750 9450 4500
+Connection ~ 9450 4500
+Wire Wire Line
+	11050 3750 10950 3750
+Wire Wire Line
+	11150 4500 11150 3450
+Wire Wire Line
+	11150 3450 10950 3450
+Text Notes 4950 2550 0    60   ~ 0
+A7:0 A8:0
+Text Notes 6600 2550 0    60   ~ 0
+A7:1 A8:0\n
+Text Notes 8400 2550 0    60   ~ 0
+A7:0 A8:1
+Text Notes 10100 2550 0    60   ~ 0
+A7:1 A8:1
+$Comp
+L 74LS138 U3
+U 1 1 56420F16
+P 5050 5300
+F 0 "U3" H 5150 5800 60  0000 C CNN
+F 1 "74LS138" H 5200 4751 60  0000 C CNN
+F 2 "" H 5050 5300 60  0000 C CNN
+F 3 "" H 5050 5300 60  0000 C CNN
+	1    5050 5300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5800 4950 5650 4950
+Connection ~ 5800 4200
+Entry Wire Line
+	4350 4850 4450 4950
+Entry Wire Line
+	4350 4950 4450 5050
+Entry Wire Line
+	4350 5050 4450 5150
+Wire Wire Line
+	6650 4550 6650 4100
+Connection ~ 6650 4100
+Text Notes 6600 4950 0    60   ~ 0
+Duplicate these 4 RAM Memory chips 8 times, using the 8 outputs from the 74LS138
+Text Label 4200 4900 0    60   ~ 0
+A9
+Text Label 4200 5000 0    60   ~ 0
+A10
+Text Label 4200 5100 0    60   ~ 0
+A11
+Entry Wire Line
+	4350 5900 4450 6000
+Entry Wire Line
+	4350 6100 4450 6200
+$Comp
+L 74LS04 U2
+U 2 1 56421212
+P 5700 6000
+F 0 "U2" H 5895 6115 60  0000 C CNN
+F 1 "74LS04" H 5890 5875 60  0000 C CNN
+F 2 "" H 5700 6000 60  0000 C CNN
+F 3 "" H 5700 6000 60  0000 C CNN
+	2    5700 6000
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74LS04 U2
+U 1 1 56421339
+P 4900 6200
+F 0 "U2" H 5095 6315 60  0000 C CNN
+F 1 "74LS04" H 5090 6075 60  0000 C CNN
+F 2 "" H 4900 6200 60  0000 C CNN
+F 3 "" H 4900 6200 60  0000 C CNN
+	1    4900 6200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4450 6000 5250 6000
+Wire Wire Line
+	5350 6200 6150 6200
+$Comp
+L MCM6830 IC1
+U 1 1 56421463
+P 2350 4250
+F 0 "IC1" H 2350 4300 60  0000 C CNN
+F 1 "MCM6830" H 2350 4200 60  0000 C CNN
+F 2 "" H 2350 4500 60  0000 C CNN
+F 3 "" H 2350 4500 60  0000 C CNN
+	1    2350 4250
+	1    0    0    -1  
+$EndComp
+Text Label 4150 5950 0    60   ~ 0
+A10
+Text Label 4150 6100 0    60   ~ 0
+A11
+Text Label 6150 6000 0    60   ~ 0
+~A10
+Text Label 6150 6200 0    60   ~ 0
+~A11
+Entry Wire Line
+	1600 3600 1700 3700
+Entry Wire Line
+	1600 3700 1700 3800
+Entry Wire Line
+	1600 3800 1700 3900
+Entry Wire Line
+	1600 3900 1700 4000
+Entry Wire Line
+	1600 4000 1700 4100
+Entry Wire Line
+	1600 4100 1700 4200
+Entry Wire Line
+	1600 4200 1700 4300
+Entry Wire Line
+	1600 4300 1700 4400
+Entry Wire Line
+	1600 4400 1700 4500
+Entry Wire Line
+	1600 4500 1700 4600
+Entry Wire Line
+	3000 3700 3100 3800
+Entry Wire Line
+	3000 3800 3100 3900
+Entry Wire Line
+	3000 3900 3100 4000
+Entry Wire Line
+	3000 4000 3100 4100
+Entry Wire Line
+	3000 4100 3100 4200
+Entry Wire Line
+	3000 4200 3100 4300
+Entry Wire Line
+	3000 4300 3100 4400
+Entry Wire Line
+	3000 4400 3100 4500
+Wire Bus Line
+	3100 4500 3100 2350
+Wire Bus Line
+	1600 4500 1600 2350
+Text Notes 3050 4650 0    60   ~ 0
+A10 or ~A10
+Text Notes 3050 4750 0    60   ~ 0
+A11 or ~A11
+Text Label 3050 4950 0    60   ~ 0
+CURRENTPAGE
+Text Notes 1850 5300 0    60   ~ 0
+Duplicate four times with \ndifferent A10/A11 lines.
+Text Notes 7650 7500 0    60   ~ 0
+4k RAM and 4k ROM board
+Text Notes 1700 7300 0    60   ~ 0
+Enable lines should be connected to Vcc or GND appropriately where not shown.
+Wire Wire Line
+	5600 1300 5600 1400
+Entry Wire Line
+	4350 5450 4450 5550
+Text Label 4150 5500 0    60   ~ 0
+A15
+Entry Wire Line
+	4350 6450 4450 6550
+$Comp
+L 74LS04 U2
+U 4 1 56421928
+P 4900 6550
+F 0 "U2" H 5095 6665 60  0000 C CNN
+F 1 "74LS04" H 5090 6425 60  0000 C CNN
+F 2 "" H 4900 6550 60  0000 C CNN
+F 3 "" H 4900 6550 60  0000 C CNN
+	4    4900 6550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5350 6550 6150 6550
+Text Label 4150 6500 0    60   ~ 0
+A15
+Text Label 6200 6550 0    60   ~ 0
+~A15
+Text Label 3050 4850 0    60   ~ 0
+A15
+Text Label 4300 1350 0    60   ~ 0
+A15
+Wire Notes Line
+	4650 1600 4650 2000
+$EndSCHEMATC
