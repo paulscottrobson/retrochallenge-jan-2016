@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 1 - 11/27/2015 21:04:58
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 1 - 11/27/2015 22:38:59
 
 
        1/       0 :                     ; ******************************************************************************************************************
@@ -11,571 +11,702 @@
        8/       0 :                     ; ******************************************************************************************************************
        9/       0 :                     ; ******************************************************************************************************************
       10/       0 :                     
-      11/       0 :                     		cpu	sc/mp
-      12/       0 :                     
-      13/       0 : =0xC00              cursor 		= 0xC00 											; cursor position
-      14/       0 : =0xC01              current 	= 0xC01 											; current address hi,lo
-      15/       0 : =0xC03              parPosn		= 0xC03 											; current param offset in buffer (low addr)
-      16/       0 :                     
-      17/       0 : =0xC04              kbdBuffer 	= 0xC04 											; 12 character keyboard buffer
-      18/       0 : =0xC                kbdBufferLn = 12 										
+      11/       0 :                     ; TODO: GetParameter, UpdateParameter, GetCurrentAddress
+      12/       0 :                     ;		Check A works 
+      13/       0 :                     ;		Make G work.
+      14/       0 :                     ; 		Do everything except Tape I/O and reassess memory space.
+      15/       0 :                     ; 		Assembler (remember Jump adjustment)
+      16/       0 :                     ;		Tape in
+      17/       0 :                     ;		Tape out.
+      18/       0 :                     ;		Labels.
       19/       0 :                     
-      20/       0 : =0xC10              codeStart 	= kbdBuffer+kbdBufferLn								; code starts here.
+      20/       0 :                     		cpu	sc/mp
       21/       0 :                     
-      22/       0 :                     		org 	0x0000
-      23/       0 : 08                  		nop
-      24/       1 :                     
-      25/       1 :                     ; ******************************************************************************************************************
-      26/       1 :                     ;
-      27/       1 :                     ;												Clear the screen
-      28/       1 :                     ;
-      29/       1 :                     ; ******************************************************************************************************************
-      30/       1 :                     ClearScreen:
-      31/       1 : 31                  		xpal 	p1												; clear screen
-      32/       2 : C4 20               		ldi 	' '
-      33/       4 : CD 01               		st 		@1(p1)
-      34/       6 : 31                  		xpal 	p1
-      35/       7 : 94 F8               		jp 		ClearScreen
-      36/       9 :                     
-      37/       9 :                     ; ******************************************************************************************************************
-      38/       9 :                     ;
-      39/       9 :                     ;									Find Top of Memory to initialise the stack.
-      40/       9 :                     ;
-      41/       9 :                     ; ******************************************************************************************************************
-      42/       9 : C4 80               		ldi 	0x80 											; point P2 to theoretical top of RAM + 64
-      43/       B : 36                  		xpah 	p2 												; e.g. $803F
-      44/       C : C4 3F               		ldi 	0x3F
-      45/       E : 32                  		xpal 	p2
-      46/       F :                     FindTopMemory:
-      47/       F : C4 A5               		ldi 	0xA5 											; try to write this to memory
-      48/      11 : CE C0               		st 		@-64(p2) 										; predecrementing by 64.
-      49/      13 : E2 00               		xor 	(p2) 											; did it write correctly.
-      50/      15 : 9C F8               		jnz 	FindTopMemory 									; now P2 points to top of memory.
-      51/      17 :                     
-      52/      17 :                     ; ******************************************************************************************************************
-      53/      17 :                     ;
-      54/      17 :                     ;									Reset cursor position and current address.
-      55/      17 :                     ;
-      56/      17 :                     ; ******************************************************************************************************************
-      57/      17 : C4 0C               		ldi 	Cursor/256 										; reset the cursor position to TOS
-      58/      19 : 35                  		xpah 	p1
-      59/      1A : C4 00               		ldi 	Cursor&255
-      60/      1C : 31                  		xpal 	p1 
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 2 - 11/27/2015 21:04:58
+      22/       0 : =0xC00              cursor 		= 0xC00 											; cursor position
+      23/       0 : =0xC01              current 	= 0xC01 											; current address hi,lo
+      24/       0 : =0xC03              parPosn		= 0xC03 											; current param offset in buffer (low addr)
+      25/       0 : =0xC04              modifier  	= 0xC04 											; instruction modifier (@,Pn)
+      26/       0 : =0xC05              kbdBuffer 	= 0xC05 											; 12 character keyboard buffer
+      27/       0 : =0xC                kbdBufferLn = 12 										
+      28/       0 :                     
+      29/       0 : =0xC11              codeStart 	= kbdBuffer+kbdBufferLn								; code starts here.
+      30/       0 :                     
+      31/       0 :                     		org 	0x0000
+      32/       0 : 08                  		nop
+      33/       1 :                     
+      34/       1 :                     ; ******************************************************************************************************************
+      35/       1 :                     ;
+      36/       1 :                     ;												Clear the screen
+      37/       1 :                     ;
+      38/       1 :                     ; ******************************************************************************************************************
+      39/       1 :                     ClearScreen:
+      40/       1 : 31                  		xpal 	p1												; clear screen
+      41/       2 : C4 20               		ldi 	' '
+      42/       4 : CD 01               		st 		@1(p1)
+      43/       6 : 31                  		xpal 	p1
+      44/       7 : 94 F8               		jp 		ClearScreen
+      45/       9 :                     
+      46/       9 :                     ; ******************************************************************************************************************
+      47/       9 :                     ;
+      48/       9 :                     ;									Find Top of Memory to initialise the stack.
+      49/       9 :                     ;
+      50/       9 :                     ; ******************************************************************************************************************
+      51/       9 : C4 80               		ldi 	0x80 											; point P2 to theoretical top of RAM + 64
+      52/       B : 36                  		xpah 	p2 												; e.g. $803F
+      53/       C : C4 3F               		ldi 	0x3F
+      54/       E : 32                  		xpal 	p2
+      55/       F :                     FindTopMemory:
+      56/       F : C4 A5               		ldi 	0xA5 											; try to write this to memory
+      57/      11 : CE C0               		st 		@-64(p2) 										; predecrementing by 64.
+      58/      13 : E2 00               		xor 	(p2) 											; did it write correctly.
+      59/      15 : 9C F8               		jnz 	FindTopMemory 									; now P2 points to top of memory.
+      60/      17 :                     
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 2 - 11/27/2015 22:38:59
 
 
-      61/      1D : C4 00               		ldi 	0
-      62/      1F : CD 01               		st 		@1(p1)											
-      63/      21 : C4 0C               		ldi 	codeStart/256 									; reset current address to code start
-      64/      23 : CD 01               		st 		@1(p1)
-      65/      25 : C4 10               		ldi 	codeStart&255
-      66/      27 : CD 01               		st 		@1(p1)
-      67/      29 :                     
-      68/      29 :                     ; ****************************************************************************************************************
-      69/      29 :                     ;
-      70/      29 :                     ;													Main Loop
-      71/      29 :                     ;
-      72/      29 :                     ; ****************************************************************************************************************
-      73/      29 :                     
-      74/      29 :                     CommandMainLoop:
-      75/      29 : C4 01               		ldi 	(PrintAddressData-1)/256						; print Address and Data there
-      76/      2B : 37                  		xpah 	p3
-      77/      2C : C4 57               		ldi 	(PrintAddressData-1)&255
-      78/      2E : 33                  		xpal 	p3
-      79/      2F : C4 01               		ldi 	1
-      80/      31 : 3F                  		xppc 	p3
-      81/      32 :                     
-      82/      32 : C4 00               		ldi 	(PrintCharacter-1)/256 							; set P3 = print character.
-      83/      34 : 37                  		xpah 	p3
-      84/      35 : C4 EA               		ldi 	(PrintCharacter-1)&255
-      85/      37 : 33                  		xpal 	p3
-      86/      38 : C4 2E               		ldi 	'.'
-      87/      3A : 3F                  		xppc 	p3
-      88/      3B :                     
-      89/      3B :                     ; ****************************************************************************************************************
-      90/      3B :                     ;
-      91/      3B :                     ;											Keyboard Line Input
-      92/      3B :                     ;
-      93/      3B :                     ; ****************************************************************************************************************
-      94/      3B :                     
-      95/      3B : C4 00               		ldi 	0 												; set E = character position.
-      96/      3D : 01                  		xae 
-      97/      3E :                     KeyboardLoop:
-      98/      3E : C4 08               		ldi 	0x8 											; set P1 to point to keyboard latch
-      99/      40 : 35                  		xpah 	p1
-     100/      41 :                     _KBDWaitRelease:
-     101/      41 : C1 00               		ld 		0(p1) 											; wait for strobe to clear
-     102/      43 : 94 02               		jp 		_KBDWaitKey
-     103/      45 : 90 FA               		jmp 	_KBDWaitRelease
-     104/      47 :                     _KBDWaitKey:
-     105/      47 : C1 00               		ld 		0(p1) 											; wait for strobe, i.e. new key
-     106/      49 : 94 FC               		jp 		_KBDWaitKey
-     107/      4B : D4 7F               		ani 	0x7F 											; throw away bit 7
-     108/      4D : CA FF               		st 		-1(p2) 											; save key.
-     109/      4F :                     
-     110/      4F : C4 0C               		ldi 	kbdBuffer/256 									; set P1 = keyboard buffer
-     111/      51 : 35                  		xpah 	p1
-     112/      52 : C4 04               		ldi 	kbdBuffer&255
-     113/      54 : 31                  		xpal 	p1		
-     114/      55 :                     
-     115/      55 : C2 FF               		ld 		-1(p2) 											; read key
-     116/      57 : E4 08               		xri 	8 												; is it backspace
-     117/      59 : 98 1E               		jz 		__KBDBackSpace
-     118/      5B : E4 05               		xri 	8!13 											; is it CR, then exit
-     119/      5D : 98 26               		jz 		__KBDExit
-     120/      5F :                     
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 3 - 11/27/2015 21:04:58
+      61/      17 :                     ; ******************************************************************************************************************
+      62/      17 :                     ;
+      63/      17 :                     ;									Reset cursor position and current address.
+      64/      17 :                     ;
+      65/      17 :                     ; ******************************************************************************************************************
+      66/      17 :                     
+      67/      17 : C4 0C               		ldi 	Cursor/256 										; reset the cursor position to TOS
+      68/      19 : 35                  		xpah 	p1
+      69/      1A : C4 00               		ldi 	Cursor&255
+      70/      1C : 31                  		xpal 	p1 
+      71/      1D : C4 00               		ldi 	0
+      72/      1F : CD 01               		st 		@1(p1)											
+      73/      21 : C4 0C               		ldi 	codeStart/256 									; reset current address to code start
+      74/      23 : CD 01               		st 		@1(p1)
+      75/      25 : C4 11               		ldi 	codeStart&255
+      76/      27 : CD 01               		st 		@1(p1)
+      77/      29 :                     
+      78/      29 :                     ; ****************************************************************************************************************
+      79/      29 :                     ;
+      80/      29 :                     ;													Main Loop
+      81/      29 :                     ;
+      82/      29 :                     ; ****************************************************************************************************************
+      83/      29 :                     
+      84/      29 :                     CommandMainLoop:
+      85/      29 : C4 01               		ldi 	(PrintAddressData-1)/256						; print Address and Data there
+      86/      2B : 37                  		xpah 	p3
+      87/      2C : C4 AD               		ldi 	(PrintAddressData-1)&255
+      88/      2E : 33                  		xpal 	p3
+      89/      2F : C4 01               		ldi 	1
+      90/      31 : 3F                  		xppc 	p3
+      91/      32 :                     
+      92/      32 : C4 01               		ldi 	(PrintCharacter-1)/256 							; set P3 = print character.
+      93/      34 : 37                  		xpah 	p3
+      94/      35 : C4 40               		ldi 	(PrintCharacter-1)&255
+      95/      37 : 33                  		xpal 	p3
+      96/      38 : C4 2E               		ldi 	'.'
+      97/      3A : 3F                  		xppc 	p3
+      98/      3B :                     
+      99/      3B :                     ; ****************************************************************************************************************
+     100/      3B :                     ;
+     101/      3B :                     ;											Keyboard Line Input
+     102/      3B :                     ;
+     103/      3B :                     ; ****************************************************************************************************************
+     104/      3B :                     
+     105/      3B : C4 00               		ldi 	0 												; set E = character position.
+     106/      3D : 01                  		xae 
+     107/      3E :                     KeyboardLoop:
+     108/      3E : C4 08               		ldi 	0x8 											; set P1 to point to keyboard latch
+     109/      40 : 35                  		xpah 	p1
+     110/      41 :                     _KBDWaitRelease:
+     111/      41 : C1 00               		ld 		0(p1) 											; wait for strobe to clear
+     112/      43 : 94 02               		jp 		_KBDWaitKey
+     113/      45 : 90 FA               		jmp 	_KBDWaitRelease
+     114/      47 :                     _KBDWaitKey:
+     115/      47 : C1 00               		ld 		0(p1) 											; wait for strobe, i.e. new key
+     116/      49 : 94 FC               		jp 		_KBDWaitKey
+     117/      4B : D4 7F               		ani 	0x7F 											; throw away bit 7
+     118/      4D : CA FF               		st 		-1(p2) 											; save key.
+     119/      4F :                     
+     120/      4F : C4 0C               		ldi 	kbdBuffer/256 									; set P1 = keyboard buffer
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 3 - 11/27/2015 22:38:59
 
 
-     121/      5F : 40                  		lde 													; have we a full buffer.
-     122/      60 : E4 0C               		xri 	kbdBufferLn 									; if so, ignore the key.
-     123/      62 : 98 DA               		jz 		KeyboardLoop
-     124/      64 :                     
-     125/      64 : C2 FF               		ld 		-1(p2) 											; restore the key.
-     126/      66 : 02                  		ccl
-     127/      67 : F4 20               		adi 	0x20											; will make lower case -ve
-     128/      69 : 94 02               		jp 		__KBDNotLower
-     129/      6B : FC 20               		cai 	0x20 											; capitalise
-     130/      6D :                     __KBDNotLower:
-     131/      6D : F4 E0               		adi 	0xE0 											; fix up.
-     132/      6F : C9 80               		st 		-0x80(p1) 										; save in the buffer using E as index.
-     133/      71 : 3F                  		xppc 	p3 												; print the character
-     134/      72 : 01                  		xae 													; increment E
-     135/      73 : 02                  		ccl
-     136/      74 : F4 01               		adi 	1
-     137/      76 : 01                  		xae
-     138/      77 : 90 C5               		jmp 	KeyboardLoop 									; and get the next key.
-     139/      79 :                     
-     140/      79 :                     __KBDBackSpace:
-     141/      79 : 40                  		lde 													; get position
-     142/      7A : 98 C2               		jz 		KeyboardLoop 									; can't go back if at beginning
-     143/      7C : 03                  		scl 													; go back 1 from E
-     144/      7D : FC 01               		cai 	1
-     145/      7F : 01                  		xae 
-     146/      80 : C4 08               		ldi 	8 												; print a backspace
-     147/      82 : 3F                  		xppc 	p3
-     148/      83 : 90 B9               		jmp 	KeyboardLoop 									; and go round again.
-     149/      85 :                     
-     150/      85 :                     __KBDExit:
-     151/      85 : C9 80               		st 		-0x80(p1) 										; add the ASCIIZ terminator.
-     152/      87 : C4 0D               		ldi 	13												; print a new line.
-     153/      89 : 3F                  		xppc 	p3
-     154/      8A :                     
-     155/      8A :                     ; ****************************************************************************************************************
-     156/      8A :                     ;
-     157/      8A :                     ;						Extract the 5 bit 3 letter (max command value). P1 points to buffer
-     158/      8A :                     ;
-     159/      8A :                     ; ****************************************************************************************************************
-     160/      8A :                     
-     161/      8A : C4 00               		ldi 	0
-     162/      8C : 01                  		xae 													; E contains the LSB of the 5 bit shift
-     163/      8D : 40                  		lde 	
-     164/      8E : CA FF               		st 		-1(p2) 											; -1(P2) contains the MSB
-     165/      90 :                     Extract5Bit:
-     166/      90 : C1 00               		ld 		(p1) 											; look at character
-     167/      92 : 02                  		ccl 													; add 128-65, will be +ve if < 64
-     168/      93 : F4 3F               		adi 	128-65
-     169/      95 : 94 1A               		jp 		__ExtractEnd
-     170/      97 : C4 05               		ldi 	5 												; shift current value left 5 times using -2(p2)
-     171/      99 : CA FE               		st 		-2(p2)
-     172/      9B :                     __Ex5Shift:
-     173/      9B : 40                  		lde 													; shift E left into CY/L
-     174/      9C : 02                  		ccl
-     175/      9D : 70                  		ade 
-     176/      9E : 01                  		xae
-     177/      9F : C2 FF               		ld 		-1(p2) 											; shift CY/L into -1(p2) and carry/link
-     178/      A1 : F2 FF               		add 	-1(p2)
-     179/      A3 : CA FF               		st 		-1(p2)
-     180/      A5 : BA FE               		dld 	-2(p2) 											; done it 5 times ?
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 4 - 11/27/2015 21:04:58
+     121/      51 : 35                  		xpah 	p1
+     122/      52 : C4 05               		ldi 	kbdBuffer&255
+     123/      54 : 31                  		xpal 	p1		
+     124/      55 :                     
+     125/      55 : C2 FF               		ld 		-1(p2) 											; read key
+     126/      57 : E4 08               		xri 	8 												; is it backspace
+     127/      59 : 98 1E               		jz 		__KBDBackSpace
+     128/      5B : E4 05               		xri 	8!13 											; is it CR, then exit
+     129/      5D : 98 28               		jz 		__KBDExit
+     130/      5F :                     
+     131/      5F : 40                  		lde 													; have we a full buffer.
+     132/      60 : E4 0C               		xri 	kbdBufferLn 									; if so, ignore the key.
+     133/      62 : 98 DA               		jz 		KeyboardLoop
+     134/      64 :                     
+     135/      64 : C2 FF               		ld 		-1(p2) 											; restore the key.
+     136/      66 : 02                  		ccl
+     137/      67 : F4 20               		adi 	0x20											; will make lower case -ve
+     138/      69 : 94 02               		jp 		__KBDNotLower
+     139/      6B : FC 20               		cai 	0x20 											; capitalise
+     140/      6D :                     __KBDNotLower:
+     141/      6D : F4 E0               		adi 	0xE0 											; fix up.
+     142/      6F : C9 80               		st 		-0x80(p1) 										; save in the buffer using E as index.
+     143/      71 : 3F                  		xppc 	p3 												; print the character
+     144/      72 : 01                  		xae 													; increment E
+     145/      73 : 02                  		ccl
+     146/      74 : F4 01               		adi 	1
+     147/      76 : 01                  		xae
+     148/      77 : 90 C5               		jmp 	KeyboardLoop 									; and get the next key.
+     149/      79 :                     
+     150/      79 :                     __KBDBackSpace:
+     151/      79 : 40                  		lde 													; get position
+     152/      7A : 98 C2               		jz 		KeyboardLoop 									; can't go back if at beginning
+     153/      7C : 03                  		scl 													; go back 1 from E
+     154/      7D : FC 01               		cai 	1
+     155/      7F : 01                  		xae 
+     156/      80 : C4 08               		ldi 	8 												; print a backspace
+     157/      82 : 3F                  		xppc 	p3
+     158/      83 : 90 B9               		jmp 	KeyboardLoop 									; and go round again.
+     159/      85 :                     
+     160/      85 :                     __CmdMainLoop1:
+     161/      85 : 90 A2               		jmp 	CommandMainLoop
+     162/      87 :                     
+     163/      87 :                     __KBDExit:
+     164/      87 : C9 80               		st 		-0x80(p1) 										; add the ASCIIZ terminator.
+     165/      89 : C4 0D               		ldi 	13												; print a new line.
+     166/      8B : 3F                  		xppc 	p3
+     167/      8C :                     
+     168/      8C :                     ; ****************************************************************************************************************
+     169/      8C :                     ;
+     170/      8C :                     ;						Extract the 5 bit 3 letter (max command value). P1 points to buffer
+     171/      8C :                     ;
+     172/      8C :                     ; ****************************************************************************************************************
+     173/      8C :                     
+     174/      8C : C4 00               		ldi 	0
+     175/      8E : 01                  		xae 													; E contains the LSB of the 5 bit shift
+     176/      8F : 40                  		lde 	
+     177/      90 : CA FF               		st 		-1(p2) 											; -1(P2) contains the MSB
+     178/      92 : C9 FF               		st 		modifier-kbdBuffer(p1)							; clear the modifier.
+     179/      94 :                     Extract5Bit:
+     180/      94 : C1 00               		ld 		(p1) 											; look at character
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 4 - 11/27/2015 22:38:59
 
 
-     181/      A7 : 9C F2               		jnz 	__Ex5Shift
-     182/      A9 : C5 01               		ld 		@1(p1) 											; re-read character.
-     183/      AB : D4 1F               		ani 	0x1F 											; lower 5 bits only.
-     184/      AD : 58                  		ore 													; OR into E
-     185/      AE : 01                  		xae
-     186/      AF : 90 DF               		jmp 	Extract5Bit 									; go and get the next one.
-     187/      B1 :                     
-     188/      B1 :                     __ExtractEnd:
-     189/      B1 : C4 03               		ldi 	parPosn & 255 									; P1.L = Parameter Position, A = first non cmd char
-     190/      B3 : 31                  		xpal	p1
-     191/      B4 : C9 00               		st 		(p1) 											; write to parameter position.
-     192/      B6 :                     
-     193/      B6 :                     
-     194/      B6 : 90 FE               wait:	jmp 	wait
-     195/      B8 :                     
-     196/      B8 :                     		;jmp 	CommandMainLoop
-     197/      B8 :                     
-     198/      B8 :                     ; ****************************************************************************************************************
-     199/      B8 :                     ; ****************************************************************************************************************
-     200/      B8 :                     ;
-     201/      B8 :                     ;						Print A as a hexadecimal 2 digit value. If CY/L set precede with space
-     202/      B8 :                     ;
-     203/      B8 :                     ; ****************************************************************************************************************
-     204/      B8 :                     ; ****************************************************************************************************************
-     205/      B8 :                     
-     206/      B8 :                     PrintHexByte:
-     207/      B8 : CE FF               		st 		@-1(p2) 										; push A and P3, set P3 up to print character
-     208/      BA : C4 00               		ldi 	(PrintCharacter-1)/256
-     209/      BC : 37                  		xpah 	p3
-     210/      BD : CE FF               		st 		@-1(p2)
-     211/      BF : C4 EA               		ldi 	(PrintCharacter-1)&255
-     212/      C1 : 33                  		xpal 	p3
-     213/      C2 : CE FF               		st 		@-1(p2)
-     214/      C4 : 06                  		csa 													; check carry
-     215/      C5 : 94 03               		jp 		__PHBNoSpace									; if clear, no space.
-     216/      C7 : C4 20               		ldi 	' '												; print leading space
-     217/      C9 : 3F                  		xppc 	p3 
-     218/      CA :                     __PHBNoSpace:
-     219/      CA : C2 02               		ld 		2(p2) 											; read digit
-     220/      CC : 1C                  		sr 														; convert MSB
-     221/      CD : 1C                  		sr
-     222/      CE : 1C                  		sr
-     223/      CF : 1C                  		sr
-     224/      D0 : 02                  		ccl
-     225/      D1 : EC 90               		dai 	0x90
-     226/      D3 : EC 40               		dai 	0x40
-     227/      D5 : 3F                  		xppc 	p3 												; print
-     228/      D6 : C2 02               		ld 		2(p2) 											; read digit
-     229/      D8 : D4 0F               		ani 	0x0F 											; convert LSB
-     230/      DA : 02                  		ccl
-     231/      DB : EC 90               		dai 	0x90
-     232/      DD : EC 40               		dai 	0x40
-     233/      DF : 3F                  		xppc 	p3 												; print
-     234/      E0 :                     
-     235/      E0 : C6 01               		ld 		@1(p2) 											; restore P3 & A and Return
-     236/      E2 : 33                  		xpal 	p3
-     237/      E3 : C6 01               		ld 		@1(p2)
-     238/      E5 : 37                  		xpah 	p3
-     239/      E6 : C6 01               		ld 		@1(p2)
-     240/      E8 : 3F                  		xppc 	p3
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 5 - 11/27/2015 21:04:58
+     181/      96 : 02                  		ccl 													; add 128-65, will be +ve if < 64
+     182/      97 : F4 3F               		adi 	128-65
+     183/      99 : 94 1A               		jp 		__ExtractEnd
+     184/      9B : C4 05               		ldi 	5 												; shift current value left 5 times using -2(p2)
+     185/      9D : CA FE               		st 		-2(p2)
+     186/      9F :                     __Ex5Shift:
+     187/      9F : 40                  		lde 													; shift E left into CY/L
+     188/      A0 : 02                  		ccl
+     189/      A1 : 70                  		ade 
+     190/      A2 : 01                  		xae
+     191/      A3 : C2 FF               		ld 		-1(p2) 											; shift CY/L into -1(p2) and carry/link
+     192/      A5 : F2 FF               		add 	-1(p2)
+     193/      A7 : CA FF               		st 		-1(p2)
+     194/      A9 : BA FE               		dld 	-2(p2) 											; done it 5 times ?
+     195/      AB : 9C F2               		jnz 	__Ex5Shift
+     196/      AD : C5 01               		ld 		@1(p1) 											; re-read character.
+     197/      AF : D4 1F               		ani 	0x1F 											; lower 5 bits only.
+     198/      B1 : 58                  		ore 													; OR into E
+     199/      B2 : 01                  		xae
+     200/      B3 : 90 DF               		jmp 	Extract5Bit 									; go and get the next one.
+     201/      B5 :                     
+     202/      B5 :                     __ExtractEnd:
+     203/      B5 : C4 03               		ldi 	parPosn & 255 									; P1.L = Parameter Position, A = first non cmd char
+     204/      B7 : 31                  		xpal	p1
+     205/      B8 : C9 00               		st 		(p1) 											; write to parameter position.
+     206/      BA :                     
+     207/      BA :                     ; ****************************************************************************************************************
+     208/      BA :                     ;
+     209/      BA :                     ;						Find command in -1 (P2) (High) E (Low) in Command table
+     210/      BA :                     ;	
+     211/      BA :                     ; ****************************************************************************************************************
+     212/      BA :                     
+     213/      BA : C4 E4               		ldi 	__commandList & 255 							; point P1 to the command list
+     214/      BC : 31                  		xpal 	p1
+     215/      BD : C4 01               		ldi 	__commandList / 256 		
+     216/      BF : 35                  		xpah 	p1	
+     217/      C0 :                     __FindCommandLoop:
+     218/      C0 : C1 00               		ld 		0(p1) 											; reached the end of the table ?
+     219/      C2 : D9 01               		or 		1(p1)											; which is marked by word 0000
+     220/      C4 : 98 31               		jz 		__CommandError
+     221/      C6 : C5 03               		ld 		@3(p1) 											; read low byte, and point to next
+     222/      C8 : 60                  		xre
+     223/      C9 : 9C F5               		jnz 	__FindCommandLoop 								; if different to LSB loop back.
+     224/      CB : C1 FE               		ld 		-2(p1) 											; read the high byte
+     225/      CD : E2 FF               		xor 	-1(p2) 											; if different to the MSB loop back.
+     226/      CF : 9C EF               		jnz 	__FindCommandLoop
+     227/      D1 :                     
+     228/      D1 :                     ; ****************************************************************************************************************
+     229/      D1 :                     ;
+     230/      D1 :                     ;				Found command, figure out if ASM or Command, if Command go to that routine
+     231/      D1 :                     ;
+     232/      D1 :                     ; ****************************************************************************************************************
+     233/      D1 :                     
+     234/      D1 : C4 E0               		ldi 	(GetParameter-1) & 255 							; point P3 to the get parameter code.
+     235/      D3 : 33                  		xpal 	p3
+     236/      D4 : C4 01               		ldi 	(GetParameter-1) / 256
+     237/      D6 : 37                  		xpah 	p3
+     238/      D7 :                     
+     239/      D7 : C1 FF               		ld 		-1(p1) 											; read the operation code.
+     240/      D9 : D4 F0               		ani 	0xF0 											; look at the m-s-nibble - commands are 0x20.
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 5 - 11/27/2015 22:38:59
 
 
-     241/      E9 : 90 CD               		jmp 	PrintHexByte
-     242/      EB :                     
-     243/      EB :                     ; ****************************************************************************************************************
-     244/      EB :                     ; ****************************************************************************************************************
-     245/      EB :                     ;
-     246/      EB :                     ;		Print Character in A, preserves all registers, re-entrant. Handles 13 (New Line), 8 (Backspace)
-     247/      EB :                     ;		Characters 32 - 95 only.
-     248/      EB :                     ;	
-     249/      EB :                     ;		Rolls to screen top rather than scrolling.
-     250/      EB :                     ;
-     251/      EB :                     ; ****************************************************************************************************************
-     252/      EB :                     ; ****************************************************************************************************************
-     253/      EB :                     
-     254/      EB :                     PrintCharacter:
-     255/      EB : CE FF               		st 		@-1(p2) 										; save A
-     256/      ED : C4 0C               		ldi 	Cursor/256 										; save P1, setting up P1 -> Cursor at same time.
-     257/      EF : 35                  		xpah 	p1
-     258/      F0 : CE FF               		st 		@-1(p2)
-     259/      F2 : C4 00               		ldi 	Cursor&255
-     260/      F4 : 31                  		xpal 	p1
-     261/      F5 : CE FF               		st 		@-1(p2)
-     262/      F7 : C4 00               		ldi 	0 												; save P3, setting up P3 -> Page 0 (Video RAM Write)
-     263/      F9 : 37                  		xpah 	p3
-     264/      FA : CE FF               		st 		@-1(p2)
-     265/      FC : 33                  		xpal 	p3
-     266/      FD : CE FF               		st 		@-1(p2)
-     267/      FF :                     
-     268/      FF : C1 00               		ld 		(p1) 											; read cursor position
-     269/     101 : 33                  		xpal 	p3 												; put in P3.Low
-     270/     102 :                     
-     271/     102 : C4 20               		ldi 	' ' 											; erase the cursor.
-     272/     104 : CB 00               		st 		0(p3)
-     273/     106 :                     
-     274/     106 : C2 04               		ld 		4(p2) 											; read character to print.
-     275/     108 : E4 0D               		xri 	13 												; is it CR ?
-     276/     10A : 98 40               		jz 		__PCNewLine 									; if so, go to new line.
-     277/     10C : E4 05               		xri 	13!8 											; is it Backspace ?
-     278/     10E : 98 30               		jz 		__PCBackSpace
-     279/     110 :                     
-     280/     110 : C2 04               		ld 		4(p2) 											; get character to print
-     281/     112 : D4 3F               		ani 	0x3F 											; make 6 bit ASCII
-     282/     114 : CF 01               		st 		@1(p3) 											; write into P3, e.g. the screen and bump it.
-     283/     116 : A9 00               		ild 	(p1) 											; increment cursor position and load
-     284/     118 : D4 0F               		ani 	15 												; are we at line start ?
-     285/     11A : 9C 0C               		jnz 	__PCExit 										; if so, erase the current line.
-     286/     11C :                     
-     287/     11C :                     __PCBlankNewLine:
-     288/     11C : C4 10               		ldi 	16 												; count to 16, the number of spaces to write out.
-     289/     11E : CA FF               		st 		-1(p2) 
-     290/     120 :                     __PCBlankNewLineLoop:
-     291/     120 : C4 20               		ldi 	' '
-     292/     122 : CF 01               		st 		@1(p3)
-     293/     124 : BA FF               		dld 	-1(p2)
-     294/     126 : 9C F8               		jnz 	__PCBlankNewLineLoop
-     295/     128 :                     
-     296/     128 :                     __PCExit:
-     297/     128 : C1 00               		ld 		(p1) 											; read cursor
-     298/     12A : 33                  		xpal 	p3 												; put in P3.L
-     299/     12B : C4 9B               		ldi 	0x9B 											; shaded block cursor on screen
-     300/     12D : CB 00               		st 		(p3)
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 6 - 11/27/2015 21:04:58
+     241/      DB : E4 20               		xri 	0x20
+     242/      DD : 9C 18               		jnz 	__CommandError 									; here, should go to assembler.
+     243/      DF :                     
+     244/      DF : C1 FF               		ld 		-1(p1) 											; re-read it
+     245/      E1 : 02                  		ccl
+     246/      E2 : F1 FF               		add 	-1(p1) 											; double it
+     247/      E4 : D4 1F               		ani 	0x1F 											; lower 5 bits only.
+     248/      E6 : F4 F6               		adi 	__CommandTable & 255 							; make P1 point to the command table entry
+     249/      E8 : 31                  		xpal 	p1
+     250/      E9 : C4 07               		ldi 	__CommandTable / 256 					
+     251/      EB : 35                  		xpah 	p1
+     252/      EC : C1 00               		ld 		0(p1) 											; read low address
+     253/      EE : 01                  		xae
+     254/      EF : C1 01               		ld 		1(p1) 											; read high address
+     255/      F1 : 35                  		xpah 	p1 												; put in P1.H
+     256/      F2 : 40                  		lde 													; get low address
+     257/      F3 : 31                  		xpal 	p1 												; put in P1.L
+     258/      F4 : C5 FF               		ld 		@-1(p1) 										; fix up for the pre-increment
+     259/      F6 : 3D                  		xppc 	p1 												; and go there.
+     260/      F7 :                     
+     261/      F7 :                     __CommandError:
+     262/      F7 : C4 03               		ldi 	3 												; set the beeper on
+     263/      F9 : 07                  		cas
+     264/      FA : 8F FF               		dly 	0xFF 											; short delay
+     265/      FC : C4 00               		ldi 	0 												; set the beeper off
+     266/      FE : 07                  		cas
+     267/      FF :                     __CmdMainLoop2:													; and go back to the start.
+     268/      FF : 90 84               		jmp 	__CmdMainLoop1
+     269/     101 :                     
+     270/     101 :                     ; ****************************************************************************************************************
+     271/     101 :                     ; ****************************************************************************************************************
+     272/     101 :                     ;
+     273/     101 :                     ;												Commands Section
+     274/     101 :                     ;
+     275/     101 :                     ; ****************************************************************************************************************
+     276/     101 :                     ; ****************************************************************************************************************
+     277/     101 :                     
+     278/     101 : 08                  		nop
+     279/     102 :                     Dump_Command:
+     280/     102 : 90 FB               		jmp 	__CmdMainLoop2
+     281/     104 :                     
+     282/     104 :                     Address_Command:
+     283/     104 : 3F                  		xppc 	p3 												; get parameter if exists
+     284/     105 : 3F                  		xppc 	p3 												; update current if exists.
+     285/     106 : 90 F7               		jmp 	__CmdMainLoop2
+     286/     108 :                     
+     287/     108 :                     Go_Command:
+     288/     108 : 90 F5               		jmp 	__CmdMainLoop2
+     289/     10A :                     PutTape_Command:
+     290/     10A : 90 F3               		jmp 	__CmdMainLoop2
+     291/     10C :                     LoadTape_Command:
+     292/     10C : 90 F1               		jmp 	__CmdMainLoop2
+     293/     10E :                     
+     294/     10E :                     ; ****************************************************************************************************************
+     295/     10E :                     ; ****************************************************************************************************************
+     296/     10E :                     ;
+     297/     10E :                     ;						Print A as a hexadecimal 2 digit value. If CY/L set precede with space
+     298/     10E :                     ;
+     299/     10E :                     ; ****************************************************************************************************************
+     300/     10E :                     ; ****************************************************************************************************************
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 6 - 11/27/2015 22:38:59
 
 
-     301/     12F : C6 01               		ld 		@1(p2)											; restore P3
-     302/     131 : 33                  		xpal 	p3
-     303/     132 : C6 01               		ld 		@1(p2)
-     304/     134 : 37                  		xpah 	p3
-     305/     135 : C6 01               		ld 		@1(p2)											; restore P1
-     306/     137 : 31                  		xpal 	p1
-     307/     138 : C6 01               		ld 		@1(p2)
-     308/     13A : 35                  		xpah 	p1
-     309/     13B : C6 01               		ld 		@1(p2) 											; restore A and Return.	
-     310/     13D : 3F                  		xppc 	p3
-     311/     13E : 90 AB               		jmp 	PrintCharacter 									; and it is re-entrant.
-     312/     140 :                     
-     313/     140 :                     __PCBackSpace:
-     314/     140 : 33                  		xpal 	p3 												; get current cursor position
-     315/     141 : 98 E5               		jz 		__PCExit 										; if top of screen then exit.
-     316/     143 : B9 00               		dld 	(p1) 											; backspace and load cursor
-     317/     145 : 33                  		xpal 	p3 												; put in P3
-     318/     146 : C4 20               		ldi 	' '												; erase character there
-     319/     148 : CB 00               		st 		(p3)
-     320/     14A : 90 DC               		jmp 	__PCExit 										; and exit.
-     321/     14C :                     
-     322/     14C :                     __PCNewLine:
-     323/     14C : C1 00               		ld 		(p1) 											; read cursor position
-     324/     14E : D4 70               		ani 	0x70 											; line
-     325/     150 : 02                  		ccl 													; next line
-     326/     151 : F4 10               		adi 	0x10
-     327/     153 : C9 00               		st 		(p1) 											; write back
-     328/     155 : 33                  		xpal 	p3 												; put in P3.L
-     329/     156 : 90 C4               		jmp 	__PCBlankNewLine
-     330/     158 :                     
-     331/     158 :                     ; ****************************************************************************************************************
-     332/     158 :                     ; ****************************************************************************************************************
-     333/     158 :                     ;
-     334/     158 :                     ;					Print current address followed by A data bytes. Doesn't update current address
-     335/     158 :                     ;
-     336/     158 :                     ; ****************************************************************************************************************
-     337/     158 :                     ; ****************************************************************************************************************
-     338/     158 :                     
-     339/     158 :                     PrintAddressData:
-     340/     158 : CE FF               		st 		@-1(p2) 										; save count, we don't restore this.
-     341/     15A : C4 00               		ldi 	(PrintHexByte-1)/256 							; save and set up P3
-     342/     15C : 37                  		xpah 	p3
-     343/     15D : CE FF               		st 		@-1(p2)
-     344/     15F : C4 B7               		ldi 	(PrintHexByte-1)&255
-     345/     161 : 33                  		xpal 	p3
-     346/     162 : CE FF               		st 		@-1(p2)
-     347/     164 : C4 0C               		ldi 	current / 256 									; point P1 to current address
-     348/     166 : 35                  		xpah 	p1
-     349/     167 : C4 01               		ldi 	current & 255
-     350/     169 : 31                  		xpal 	p1
-     351/     16A : C1 00               		ld 		0(p1) 											; read high byte of address
-     352/     16C : 02                  		ccl
-     353/     16D : 3F                  		xppc 	p3												; print w/o leading space
-     354/     16E : C1 01               		ld 		1(p1)											; read low byte of address
-     355/     170 : 02                  		ccl 	
-     356/     171 : 3F                  		xppc 	p3 												; print w/o leading space.
-     357/     172 : 01                  		xae 													; put in E
-     358/     173 : C1 00               		ld 		0(p1) 											; high byte to P1.H
-     359/     175 : 35                  		xpah 	p1
-     360/     176 : 40                  		lde 													; low byte to P1.H
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 7 - 11/27/2015 21:04:58
+     301/     10E :                     
+     302/     10E :                     PrintHexByte:
+     303/     10E : CE FF               		st 		@-1(p2) 										; push A and P3, set P3 up to print character
+     304/     110 : C4 01               		ldi 	(PrintCharacter-1)/256
+     305/     112 : 37                  		xpah 	p3
+     306/     113 : CE FF               		st 		@-1(p2)
+     307/     115 : C4 40               		ldi 	(PrintCharacter-1)&255
+     308/     117 : 33                  		xpal 	p3
+     309/     118 : CE FF               		st 		@-1(p2)
+     310/     11A : 06                  		csa 													; check carry
+     311/     11B : 94 03               		jp 		__PHBNoSpace									; if clear, no space.
+     312/     11D : C4 20               		ldi 	' '												; print leading space
+     313/     11F : 3F                  		xppc 	p3 
+     314/     120 :                     __PHBNoSpace:
+     315/     120 : C2 02               		ld 		2(p2) 											; read digit
+     316/     122 : 1C                  		sr 														; convert MSB
+     317/     123 : 1C                  		sr
+     318/     124 : 1C                  		sr
+     319/     125 : 1C                  		sr
+     320/     126 : 02                  		ccl
+     321/     127 : EC 90               		dai 	0x90
+     322/     129 : EC 40               		dai 	0x40
+     323/     12B : 3F                  		xppc 	p3 												; print
+     324/     12C : C2 02               		ld 		2(p2) 											; read digit
+     325/     12E : D4 0F               		ani 	0x0F 											; convert LSB
+     326/     130 : 02                  		ccl
+     327/     131 : EC 90               		dai 	0x90
+     328/     133 : EC 40               		dai 	0x40
+     329/     135 : 3F                  		xppc 	p3 												; print
+     330/     136 :                     
+     331/     136 : C6 01               		ld 		@1(p2) 											; restore P3 & A and Return
+     332/     138 : 33                  		xpal 	p3
+     333/     139 : C6 01               		ld 		@1(p2)
+     334/     13B : 37                  		xpah 	p3
+     335/     13C : C6 01               		ld 		@1(p2)
+     336/     13E : 3F                  		xppc 	p3
+     337/     13F : 90 CD               		jmp 	PrintHexByte
+     338/     141 :                     
+     339/     141 :                     ; ****************************************************************************************************************
+     340/     141 :                     ; ****************************************************************************************************************
+     341/     141 :                     ;
+     342/     141 :                     ;		Print Character in A, preserves all registers, re-entrant. Handles 13 (New Line), 8 (Backspace)
+     343/     141 :                     ;		Characters 32 - 95 only.
+     344/     141 :                     ;	
+     345/     141 :                     ;		Rolls to screen top rather than scrolling.
+     346/     141 :                     ;
+     347/     141 :                     ; ****************************************************************************************************************
+     348/     141 :                     ; ****************************************************************************************************************
+     349/     141 :                     
+     350/     141 :                     PrintCharacter:
+     351/     141 : CE FF               		st 		@-1(p2) 										; save A
+     352/     143 : C4 0C               		ldi 	Cursor/256 										; save P1, setting up P1 -> Cursor at same time.
+     353/     145 : 35                  		xpah 	p1
+     354/     146 : CE FF               		st 		@-1(p2)
+     355/     148 : C4 00               		ldi 	Cursor&255
+     356/     14A : 31                  		xpal 	p1
+     357/     14B : CE FF               		st 		@-1(p2)
+     358/     14D : C4 00               		ldi 	0 												; save P3, setting up P3 -> Page 0 (Video RAM Write)
+     359/     14F : 37                  		xpah 	p3
+     360/     150 : CE FF               		st 		@-1(p2)
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 7 - 11/27/2015 22:38:59
 
 
-     361/     177 : 31                  		xpal 	p1
-     362/     178 :                     _PADLoop:
-     363/     178 : BA 02               		dld 	2(p2) 											; decrement counter
-     364/     17A : 94 09               		jp 		_PADPrint 										; if +ve print another byte
-     365/     17C :                     
-     366/     17C : C6 01               		ld 		@1(p2) 											; restore P3, skipping A hence @2
-     367/     17E : 33                  		xpal 	p3
-     368/     17F : C6 02               		ld 		@2(p2)
-     369/     181 : 37                  		xpah 	p3
-     370/     182 : 3F                  		xppc 	p3
-     371/     183 : 90 D3               		jmp 	PrintAddressData
-     372/     185 :                     
-     373/     185 :                     _PADPrint:
-     374/     185 : C5 01               		ld 		@1(p1) 											; read byte advance pointer
-     375/     187 : 03                  		scl
-     376/     188 : 3F                  		xppc 	p3 												; print with space.
-     377/     189 : 90 ED               		jmp 	_PADLoop
-     378/     18B :                     
-     379/     18B :                     ; ****************************************************************************************************************
-     380/     18B :                     ;
-     381/     18B :                     ;											List of commands and Jump Table
-     382/     18B :                     ;
-     383/     18B :                     ; ****************************************************************************************************************
-     384/     18B :                     
-     385/     18B :                     		include commands.inc
-(1)    1/     18B :                     ;
-(1)    2/     18B :                     ; 	This file is generated automatically by gencommands.py
-(1)    3/     18B :                     ;
-(1)    4/     18B :                     __CommandList:
-(1)    5/     18B : 94 21                       dw    0x2194 ; HLT
-(1)    6/     18D : 00                          db    0x00
-(1)    7/     18E : 25 60                       dw    0x6025 ; XAE
-(1)    8/     190 : 01                          db    0x01
-(1)    9/     191 : 6C 0C                       dw    0x0c6c ; CCL
-(1)   10/     193 : 02                          db    0x02
-(1)   11/     194 : 6C 4C                       dw    0x4c6c ; SCL
-(1)   12/     196 : 03                          db    0x03
-(1)   13/     197 : 2E 11                       dw    0x112e ; DIN
-(1)   14/     199 : 04                          db    0x04
-(1)   15/     19A : AE 24                       dw    0x24ae ; IEN
-(1)   16/     19C : 05                          db    0x05
-(1)   17/     19D : 61 0E                       dw    0x0e61 ; CSA
-(1)   18/     19F : 06                          db    0x06
-(1)   19/     1A0 : 33 0C                       dw    0x0c33 ; CAS
-(1)   20/     1A2 : 07                          db    0x07
-(1)   21/     1A3 : F0 39                       dw    0x39f0 ; NOP
-(1)   22/     1A5 : 08                          db    0x08
-(1)   23/     1A6 : 2F 4D                       dw    0x4d2f ; SIO
-(1)   24/     1A8 : 19                          db    0x19
-(1)   25/     1A9 : 72 02                       dw    0x0272 ; SR
-(1)   26/     1AB : 1C                          db    0x1c
-(1)   27/     1AC : 4C 4E                       dw    0x4e4c ; SRL
-(1)   28/     1AE : 1D                          db    0x1d
-(1)   29/     1AF : 52 02                       dw    0x0252 ; RR
-(1)   30/     1B1 : 1E                          db    0x1e
-(1)   31/     1B2 : 4C 4A                       dw    0x4a4c ; RRL
-(1)   32/     1B4 : 1F                          db    0x1f
-(1)   33/     1B5 : 04 00                       dw    0x0004 ; D
-(1)   34/     1B7 : 20                          db    0x20
-(1)   35/     1B8 : 01 00                       dw    0x0001 ; A
- AS V1.42 Beta [Bld 102] - source file monitor.asm(commands.inc) - page 8 - 11/27/2015 21:04:58
+     361/     152 : 33                  		xpal 	p3
+     362/     153 : CE FF               		st 		@-1(p2)
+     363/     155 :                     
+     364/     155 : C1 00               		ld 		(p1) 											; read cursor position
+     365/     157 : 33                  		xpal 	p3 												; put in P3.Low
+     366/     158 :                     
+     367/     158 : C4 20               		ldi 	' ' 											; erase the cursor.
+     368/     15A : CB 00               		st 		0(p3)
+     369/     15C :                     
+     370/     15C : C2 04               		ld 		4(p2) 											; read character to print.
+     371/     15E : E4 0D               		xri 	13 												; is it CR ?
+     372/     160 : 98 40               		jz 		__PCNewLine 									; if so, go to new line.
+     373/     162 : E4 05               		xri 	13!8 											; is it Backspace ?
+     374/     164 : 98 30               		jz 		__PCBackSpace
+     375/     166 :                     
+     376/     166 : C2 04               		ld 		4(p2) 											; get character to print
+     377/     168 : D4 3F               		ani 	0x3F 											; make 6 bit ASCII
+     378/     16A : CF 01               		st 		@1(p3) 											; write into P3, e.g. the screen and bump it.
+     379/     16C : A9 00               		ild 	(p1) 											; increment cursor position and load
+     380/     16E : D4 0F               		ani 	15 												; are we at line start ?
+     381/     170 : 9C 0C               		jnz 	__PCExit 										; if so, erase the current line.
+     382/     172 :                     
+     383/     172 :                     __PCBlankNewLine:
+     384/     172 : C4 10               		ldi 	16 												; count to 16, the number of spaces to write out.
+     385/     174 : CA FF               		st 		-1(p2) 
+     386/     176 :                     __PCBlankNewLineLoop:
+     387/     176 : C4 20               		ldi 	' '
+     388/     178 : CF 01               		st 		@1(p3)
+     389/     17A : BA FF               		dld 	-1(p2)
+     390/     17C : 9C F8               		jnz 	__PCBlankNewLineLoop
+     391/     17E :                     
+     392/     17E :                     __PCExit:
+     393/     17E : C1 00               		ld 		(p1) 											; read cursor
+     394/     180 : 33                  		xpal 	p3 												; put in P3.L
+     395/     181 : C4 9B               		ldi 	0x9B 											; shaded block cursor on screen
+     396/     183 : CB 00               		st 		(p3)
+     397/     185 : C6 01               		ld 		@1(p2)											; restore P3
+     398/     187 : 33                  		xpal 	p3
+     399/     188 : C6 01               		ld 		@1(p2)
+     400/     18A : 37                  		xpah 	p3
+     401/     18B : C6 01               		ld 		@1(p2)											; restore P1
+     402/     18D : 31                  		xpal 	p1
+     403/     18E : C6 01               		ld 		@1(p2)
+     404/     190 : 35                  		xpah 	p1
+     405/     191 : C6 01               		ld 		@1(p2) 											; restore A and Return.	
+     406/     193 : 3F                  		xppc 	p3
+     407/     194 : 90 AB               		jmp 	PrintCharacter 									; and it is re-entrant.
+     408/     196 :                     
+     409/     196 :                     __PCBackSpace:
+     410/     196 : 33                  		xpal 	p3 												; get current cursor position
+     411/     197 : 98 E5               		jz 		__PCExit 										; if top of screen then exit.
+     412/     199 : B9 00               		dld 	(p1) 											; backspace and load cursor
+     413/     19B : 33                  		xpal 	p3 												; put in P3
+     414/     19C : C4 20               		ldi 	' '												; erase character there
+     415/     19E : CB 00               		st 		(p3)
+     416/     1A0 : 90 DC               		jmp 	__PCExit 										; and exit.
+     417/     1A2 :                     
+     418/     1A2 :                     __PCNewLine:
+     419/     1A2 : C1 00               		ld 		(p1) 											; read cursor position
+     420/     1A4 : D4 70               		ani 	0x70 											; line
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 8 - 11/27/2015 22:38:59
 
 
-(1)   36/     1BA : 21                          db    0x21
-(1)   37/     1BB : 07 00                       dw    0x0007 ; G
-(1)   38/     1BD : 22                          db    0x22
-(1)   39/     1BE : B4 42                       dw    0x42b4 ; PUT
-(1)   40/     1C0 : 23                          db    0x23
-(1)   41/     1C1 : B4 1C                       dw    0x1cb4 ; GET
-(1)   42/     1C3 : 24                          db    0x24
-(1)   43/     1C4 : 0C 62                       dw    0x620c ; XPL
-(1)   44/     1C6 : 30                          db    0x30
-(1)   45/     1C7 : 08 62                       dw    0x6208 ; XPH
-(1)   46/     1C9 : 34                          db    0x34
-(1)   47/     1CA : 03 62                       dw    0x6203 ; XPC
-(1)   48/     1CC : 3C                          db    0x3c
-(1)   49/     1CD : 85 30                       dw    0x3085 ; LDE
-(1)   50/     1CF : 40                          db    0x40
-(1)   51/     1D0 : C5 05                       dw    0x05c5 ; ANE
-(1)   52/     1D2 : 50                          db    0x50
-(1)   53/     1D3 : 45 3E                       dw    0x3e45 ; ORE
-(1)   54/     1D5 : 58                          db    0x58
-(1)   55/     1D6 : 45 62                       dw    0x6245 ; XRE
-(1)   56/     1D8 : 60                          db    0x60
-(1)   57/     1D9 : 25 10                       dw    0x1025 ; DAE
-(1)   58/     1DB : 68                          db    0x68
-(1)   59/     1DC : 85 04                       dw    0x0485 ; ADE
-(1)   60/     1DE : 70                          db    0x70
-(1)   61/     1DF : 25 0C                       dw    0x0c25 ; CAE
-(1)   62/     1E1 : 78                          db    0x78
-(1)   63/     1E2 : 99 11                       dw    0x1199 ; DLY
-(1)   64/     1E4 : 8F                          db    0x8f
-(1)   65/     1E5 : B0 29                       dw    0x29b0 ; JMP
-(1)   66/     1E7 : 90                          db    0x90
-(1)   67/     1E8 : 50 01                       dw    0x0150 ; JP
-(1)   68/     1EA : 94                          db    0x94
-(1)   69/     1EB : 5A 01                       dw    0x015a ; JZ
-(1)   70/     1ED : 98                          db    0x98
-(1)   71/     1EE : DA 29                       dw    0x29da ; JNZ
-(1)   72/     1F0 : 9C                          db    0x9c
-(1)   73/     1F1 : 84 25                       dw    0x2584 ; ILD
-(1)   74/     1F3 : A8                          db    0xa8
-(1)   75/     1F4 : 84 11                       dw    0x1184 ; DLD
-(1)   76/     1F6 : B8                          db    0xb8
-(1)   77/     1F7 : 84 01                       dw    0x0184 ; LD
-(1)   78/     1F9 : C0                          db    0xc0
-(1)   79/     1FA : 89 30                       dw    0x3089 ; LDI
-(1)   80/     1FC : C4                          db    0xc4
-(1)   81/     1FD : 74 02                       dw    0x0274 ; ST
-(1)   82/     1FF : C8                          db    0xc8
-(1)   83/     200 : C4 05                       dw    0x05c4 ; AND
-(1)   84/     202 : D0                          db    0xd0
-(1)   85/     203 : C9 05                       dw    0x05c9 ; ANI
-(1)   86/     205 : D4                          db    0xd4
-(1)   87/     206 : F2 01                       dw    0x01f2 ; OR
-(1)   88/     208 : D8                          db    0xd8
-(1)   89/     209 : 49 3E                       dw    0x3e49 ; ORI
-(1)   90/     20B : DC                          db    0xdc
-(1)   91/     20C : F2 61                       dw    0x61f2 ; XOR
-(1)   92/     20E : E0                          db    0xe0
-(1)   93/     20F : 49 62                       dw    0x6249 ; XRI
-(1)   94/     211 : E4                          db    0xe4
-(1)   95/     212 : 24 10                       dw    0x1024 ; DAD
- AS V1.42 Beta [Bld 102] - source file monitor.asm(commands.inc) - page 9 - 11/27/2015 21:04:58
+     421/     1A6 : 02                  		ccl 													; next line
+     422/     1A7 : F4 10               		adi 	0x10
+     423/     1A9 : C9 00               		st 		(p1) 											; write back
+     424/     1AB : 33                  		xpal 	p3 												; put in P3.L
+     425/     1AC : 90 C4               		jmp 	__PCBlankNewLine
+     426/     1AE :                     
+     427/     1AE :                     ; ****************************************************************************************************************
+     428/     1AE :                     ; ****************************************************************************************************************
+     429/     1AE :                     ;
+     430/     1AE :                     ;					Print current address followed by A data bytes. Doesn't update current address
+     431/     1AE :                     ;
+     432/     1AE :                     ; ****************************************************************************************************************
+     433/     1AE :                     ; ****************************************************************************************************************
+     434/     1AE :                     
+     435/     1AE :                     PrintAddressData:
+     436/     1AE : CE FF               		st 		@-1(p2) 										; save count, we don't restore this.
+     437/     1B0 : C4 01               		ldi 	(PrintHexByte-1)/256 							; save and set up P3
+     438/     1B2 : 37                  		xpah 	p3
+     439/     1B3 : CE FF               		st 		@-1(p2)
+     440/     1B5 : C4 0D               		ldi 	(PrintHexByte-1)&255
+     441/     1B7 : 33                  		xpal 	p3
+     442/     1B8 : CE FF               		st 		@-1(p2)
+     443/     1BA : C4 0C               		ldi 	current / 256 									; point P1 to current address
+     444/     1BC : 35                  		xpah 	p1
+     445/     1BD : C4 01               		ldi 	current & 255
+     446/     1BF : 31                  		xpal 	p1
+     447/     1C0 : C1 00               		ld 		0(p1) 											; read high byte of address
+     448/     1C2 : 02                  		ccl
+     449/     1C3 : 3F                  		xppc 	p3												; print w/o leading space
+     450/     1C4 : C1 01               		ld 		1(p1)											; read low byte of address
+     451/     1C6 : 02                  		ccl 	
+     452/     1C7 : 3F                  		xppc 	p3 												; print w/o leading space.
+     453/     1C8 : 01                  		xae 													; put in E
+     454/     1C9 : C1 00               		ld 		0(p1) 											; high byte to P1.H
+     455/     1CB : 35                  		xpah 	p1
+     456/     1CC : 40                  		lde 													; low byte to P1.H
+     457/     1CD : 31                  		xpal 	p1
+     458/     1CE :                     _PADLoop:
+     459/     1CE : BA 02               		dld 	2(p2) 											; decrement counter
+     460/     1D0 : 94 09               		jp 		_PADPrint 										; if +ve print another byte
+     461/     1D2 :                     
+     462/     1D2 : C6 01               		ld 		@1(p2) 											; restore P3, skipping A hence @2
+     463/     1D4 : 33                  		xpal 	p3
+     464/     1D5 : C6 02               		ld 		@2(p2)
+     465/     1D7 : 37                  		xpah 	p3
+     466/     1D8 : 3F                  		xppc 	p3
+     467/     1D9 : 90 D3               		jmp 	PrintAddressData
+     468/     1DB :                     
+     469/     1DB :                     _PADPrint:
+     470/     1DB : C5 01               		ld 		@1(p1) 											; read byte advance pointer
+     471/     1DD : 03                  		scl
+     472/     1DE : 3F                  		xppc 	p3 												; print with space.
+     473/     1DF : 90 ED               		jmp 	_PADLoop
+     474/     1E1 :                     
+     475/     1E1 :                     ; ****************************************************************************************************************
+     476/     1E1 :                     ;
+     477/     1E1 :                     ;		Look at the parameter string for a parameter, processing @ and Pn as you go, CS if parameter found
+     478/     1E1 :                     ; 		CC otherwise. Return parameter value in P1. Falls through
+     479/     1E1 :                     ;
+     480/     1E1 :                     ; ****************************************************************************************************************
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 9 - 11/27/2015 22:38:59
 
 
-(1)   96/     214 : E8                          db    0xe8
-(1)   97/     215 : 29 10                       dw    0x1029 ; DAI
-(1)   98/     217 : EC                          db    0xec
-(1)   99/     218 : 84 04                       dw    0x0484 ; ADD
-(1)  100/     21A : F0                          db    0xf0
-(1)  101/     21B : 89 04                       dw    0x0489 ; ADI
-(1)  102/     21D : F4                          db    0xf4
-(1)  103/     21E : 24 0C                       dw    0x0c24 ; CAD
-(1)  104/     220 : F8                          db    0xf8
-(1)  105/     221 : 29 0C                       dw    0x0c29 ; CAI
-(1)  106/     223 : FC                          db    0xfc
-(1)  107/     224 : 00 00                       dw    0x0000 ; End Marker	
-(1)  108/     226 :                     
-(1)  109/     226 :                     __CommandTable:
-(1)  110/     226 : 30 02                       dw    Dump_Command
-(1)  111/     228 : 30 02                       dw    Address_Command
-(1)  112/     22A : 30 02                       dw    Go_Command
-(1)  113/     22C : 30 02                       dw    PutTape_Command
-(1)  114/     22E : 30 02                       dw    LoadTape_Command
-(1)  115/     230 :                     
-     386/     230 :                     
-     387/     230 :                     Dump_Command:
-     388/     230 :                     Address_Command:
-     389/     230 :                     Go_Command:
-     390/     230 :                     PutTape_Command:
-     391/     230 :                     LoadTape_Command:
-     392/     230 :                     
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 10 - 11/27/2015 21:04:58
+     481/     1E1 :                     
+     482/     1E1 :                     GetParameter:
+     483/     1E1 : 3F                  		xppc 	p3
+     484/     1E2 :                     
+     485/     1E2 :                     ; ****************************************************************************************************************
+     486/     1E2 :                     ;
+     487/     1E2 :                     ;		Store parameter value in P1 in the current address, if CS. Falls through.
+     488/     1E2 :                     ;
+     489/     1E2 :                     ; ****************************************************************************************************************
+     490/     1E2 :                     
+     491/     1E2 :                     UpdateCurrentAddress:
+     492/     1E2 : 3F                  		xppc 	p3
+     493/     1E3 :                     
+     494/     1E3 :                     ; ****************************************************************************************************************
+     495/     1E3 :                     ;
+     496/     1E3 :                     ;		Get current address into P1.
+     497/     1E3 :                     ;
+     498/     1E3 :                     ; ****************************************************************************************************************
+     499/     1E3 :                     
+     500/     1E3 :                     GetCurrentAddress:
+     501/     1E3 : 3F                  		xppc 	p3
+     502/     1E4 :                     
+     503/     1E4 :                     ; ****************************************************************************************************************
+     504/     1E4 :                     ;
+     505/     1E4 :                     ;											List of commands and Jump Table
+     506/     1E4 :                     ;
+     507/     1E4 :                     ; ****************************************************************************************************************
+     508/     1E4 :                     
+     509/     1E4 :                     		include commands.inc 									; must be at the end, so the command table is in
+(1)    1/     1E4 :                     ;
+(1)    2/     1E4 :                     ; 	This file is generated automatically by gencommands.py
+(1)    3/     1E4 :                     ;
+(1)    4/     1E4 :                     __CommandList:
+(1)    5/     1E4 : 94 21                       dw    0x2194 ; HLT
+(1)    6/     1E6 : 00                          db    0x00
+(1)    7/     1E7 : 25 60                       dw    0x6025 ; XAE
+(1)    8/     1E9 : 01                          db    0x01
+(1)    9/     1EA : 6C 0C                       dw    0x0c6c ; CCL
+(1)   10/     1EC : 02                          db    0x02
+(1)   11/     1ED : 6C 4C                       dw    0x4c6c ; SCL
+(1)   12/     1EF : 03                          db    0x03
+(1)   13/     1F0 : 2E 11                       dw    0x112e ; DIN
+(1)   14/     1F2 : 04                          db    0x04
+(1)   15/     1F3 : AE 24                       dw    0x24ae ; IEN
+(1)   16/     1F5 : 05                          db    0x05
+(1)   17/     1F6 : 61 0E                       dw    0x0e61 ; CSA
+(1)   18/     1F8 : 06                          db    0x06
+(1)   19/     1F9 : 33 0C                       dw    0x0c33 ; CAS
+(1)   20/     1FB : 07                          db    0x07
+(1)   21/     1FC : F0 39                       dw    0x39f0 ; NOP
+(1)   22/     1FE : 08                          db    0x08
+(1)   23/     1FF : 2F 4D                       dw    0x4d2f ; SIO
+(1)   24/     201 : 19                          db    0x19
+(1)   25/     202 : 72 02                       dw    0x0272 ; SR
+(1)   26/     204 : 1C                          db    0x1c
+(1)   27/     205 : 4C 4E                       dw    0x4e4c ; SRL
+(1)   28/     207 : 1D                          db    0x1d
+(1)   29/     208 : 52 02                       dw    0x0252 ; RR
+(1)   30/     20A : 1E                          db    0x1e
+(1)   31/     20B : 4C 4A                       dw    0x4a4c ; RRL
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(commands.inc) - page 10 - 11/27/2015 22:38:59
+
+
+(1)   32/     20D : 1F                          db    0x1f
+(1)   33/     20E : 04 00                       dw    0x0004 ; D
+(1)   34/     210 : 20                          db    0x20
+(1)   35/     211 : 01 00                       dw    0x0001 ; A
+(1)   36/     213 : 21                          db    0x21
+(1)   37/     214 : 07 00                       dw    0x0007 ; G
+(1)   38/     216 : 22                          db    0x22
+(1)   39/     217 : B4 42                       dw    0x42b4 ; PUT
+(1)   40/     219 : 23                          db    0x23
+(1)   41/     21A : B4 1C                       dw    0x1cb4 ; GET
+(1)   42/     21C : 24                          db    0x24
+(1)   43/     21D : 0C 62                       dw    0x620c ; XPL
+(1)   44/     21F : 30                          db    0x30
+(1)   45/     220 : 08 62                       dw    0x6208 ; XPH
+(1)   46/     222 : 34                          db    0x34
+(1)   47/     223 : 03 62                       dw    0x6203 ; XPC
+(1)   48/     225 : 3C                          db    0x3c
+(1)   49/     226 : 85 30                       dw    0x3085 ; LDE
+(1)   50/     228 : 40                          db    0x40
+(1)   51/     229 : C5 05                       dw    0x05c5 ; ANE
+(1)   52/     22B : 50                          db    0x50
+(1)   53/     22C : 45 3E                       dw    0x3e45 ; ORE
+(1)   54/     22E : 58                          db    0x58
+(1)   55/     22F : 45 62                       dw    0x6245 ; XRE
+(1)   56/     231 : 60                          db    0x60
+(1)   57/     232 : 25 10                       dw    0x1025 ; DAE
+(1)   58/     234 : 68                          db    0x68
+(1)   59/     235 : 85 04                       dw    0x0485 ; ADE
+(1)   60/     237 : 70                          db    0x70
+(1)   61/     238 : 25 0C                       dw    0x0c25 ; CAE
+(1)   62/     23A : 78                          db    0x78
+(1)   63/     23B : 99 11                       dw    0x1199 ; DLY
+(1)   64/     23D : 8F                          db    0x8f
+(1)   65/     23E : B0 29                       dw    0x29b0 ; JMP
+(1)   66/     240 : 90                          db    0x90
+(1)   67/     241 : 50 01                       dw    0x0150 ; JP
+(1)   68/     243 : 94                          db    0x94
+(1)   69/     244 : 5A 01                       dw    0x015a ; JZ
+(1)   70/     246 : 98                          db    0x98
+(1)   71/     247 : DA 29                       dw    0x29da ; JNZ
+(1)   72/     249 : 9C                          db    0x9c
+(1)   73/     24A : 84 25                       dw    0x2584 ; ILD
+(1)   74/     24C : A8                          db    0xa8
+(1)   75/     24D : 84 11                       dw    0x1184 ; DLD
+(1)   76/     24F : B8                          db    0xb8
+(1)   77/     250 : 84 01                       dw    0x0184 ; LD
+(1)   78/     252 : C0                          db    0xc0
+(1)   79/     253 : 89 30                       dw    0x3089 ; LDI
+(1)   80/     255 : C4                          db    0xc4
+(1)   81/     256 : 74 02                       dw    0x0274 ; ST
+(1)   82/     258 : C8                          db    0xc8
+(1)   83/     259 : C4 05                       dw    0x05c4 ; AND
+(1)   84/     25B : D0                          db    0xd0
+(1)   85/     25C : C9 05                       dw    0x05c9 ; ANI
+(1)   86/     25E : D4                          db    0xd4
+(1)   87/     25F : F2 01                       dw    0x01f2 ; OR
+(1)   88/     261 : D8                          db    0xd8
+(1)   89/     262 : 49 3E                       dw    0x3e49 ; ORI
+(1)   90/     264 : DC                          db    0xdc
+(1)   91/     265 : F2 61                       dw    0x61f2 ; XOR
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(commands.inc) - page 11 - 11/27/2015 22:38:59
+
+
+(1)   92/     267 : E0                          db    0xe0
+(1)   93/     268 : 49 62                       dw    0x6249 ; XRI
+(1)   94/     26A : E4                          db    0xe4
+(1)   95/     26B : 24 10                       dw    0x1024 ; DAD
+(1)   96/     26D : E8                          db    0xe8
+(1)   97/     26E : 29 10                       dw    0x1029 ; DAI
+(1)   98/     270 : EC                          db    0xec
+(1)   99/     271 : 84 04                       dw    0x0484 ; ADD
+(1)  100/     273 : F0                          db    0xf0
+(1)  101/     274 : 89 04                       dw    0x0489 ; ADI
+(1)  102/     276 : F4                          db    0xf4
+(1)  103/     277 : 24 0C                       dw    0x0c24 ; CAD
+(1)  104/     279 : F8                          db    0xf8
+(1)  105/     27A : 29 0C                       dw    0x0c29 ; CAI
+(1)  106/     27C : FC                          db    0xfc
+(1)  107/     27D : 00 00                       dw    0x0000 ; End Marker	
+(1)  108/     27F :                     
+(1)  109/     7F6 :                             org 0x07f6
+(1)  110/     7F6 :                     __CommandTable:
+(1)  111/     7F6 : 02 01                       dw    Dump_Command
+(1)  112/     7F8 : 04 01                       dw    Address_Command
+(1)  113/     7FA : 08 01                       dw    Go_Command
+(1)  114/     7FC : 0A 01                       dw    PutTape_Command
+(1)  115/     7FE : 0C 01                       dw    LoadTape_Command
+(1)  116/     800 :                     
+     510/     800 :                     																; the same page.
+     511/     800 :                     
+     512/     800 :                     
+     513/     800 :                     
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 12 - 11/27/2015 22:38:59
 
 
   symbol table (* = unused):
   ------------------------
 
- ADDRESS_COMMAND :              230 C | *ARCHITECTURE :  i386-unknown-win32 - |
+ ADDRESS_COMMAND :              104 C | *ARCHITECTURE :  i386-unknown-win32 - |
 *BIGENDIAN :                      0 - | *BRANCHEXT :                      0 - |
 *CASESENSITIVE :                  0 - |  CLEARSCREEN :                    1 C |
- CODESTART :                    C10 - | *COMMANDMAINLOOP :               29 C |
+ CODESTART :                    C11 - |  COMMANDMAINLOOP :               29 C |
 *CONSTPI :        3.141592653589793 - |  CURRENT :                      C01 - |
  CURSOR :                       C00 - | *DATE :                  11/27/2015 - |
- DUMP_COMMAND :                 230 C |  EXTRACT5BIT :                   90 C |
+ DUMP_COMMAND :                 102 C |  EXTRACT5BIT :                   94 C |
 *FALSE :                          0 - |  FINDTOPMEMORY :                  F C |
-*FULLPMMU :                       1 - |  GO_COMMAND :                   230 C |
+*FULLPMMU :                       1 - | *GETCURRENTADDRESS :            1E3 C |
+ GETPARAMETER :                 1E1 C |  GO_COMMAND :                   108 C |
 *HAS64 :                          1 - | *HASDSP :                         0 - |
 *HASFPU :                         0 - | *HASPMMU :                        0 - |
 *INEXTMODE :                      0 - | *INLWORDMODE :                    0 - |
 *INMAXMODE :                      0 - | *INSRCMODE :                      0 - |
-*INSUPMODE :                      0 - |  KBDBUFFER :                    C04 - |
+*INSUPMODE :                      0 - |  KBDBUFFER :                    C05 - |
  KBDBUFFERLN :                    C - |  KEYBOARDLOOP :                  3E C |
-*LISTON :                         1 - |  LOADTAPE_COMMAND :             230 C |
-*MACEXP :                         1 - | *MOMCPU :                         C - |
-*MOMCPUNAME :                 SC/MP - | *NESTMAX :                      100 - |
-*PACKING :                        0 - | *PADDING :                        1 - |
- PARPOSN :                      C03 - |  PRINTADDRESSDATA :             158 C |
- PRINTCHARACTER :                EB C |  PRINTHEXBYTE :                  B8 C |
- PUTTAPE_COMMAND :              230 C | *RELAXED :                        0 - |
-*TIME :                    21:04:58 - | *TRUE :                           1 - |
-*VERSION :                     142F - |  WAIT :                          B6 C |
- _KBDWAITKEY :                   47 C |  _KBDWAITRELEASE :               41 C |
- _PADLOOP :                     178 C |  _PADPRINT :                    185 C |
-*__COMMANDLIST :                18B C | *__COMMANDTABLE :               226 C |
- __EX5SHIFT :                    9B C |  __EXTRACTEND :                  B1 C |
- __KBDBACKSPACE :                79 C |  __KBDEXIT :                     85 C |
- __KBDNOTLOWER :                 6D C |  __PCBACKSPACE :                140 C |
- __PCBLANKNEWLINE :             11C C |  __PCBLANKNEWLINELOOP :         120 C |
- __PCEXIT :                     128 C |  __PCNEWLINE :                  14C C |
- __PHBNOSPACE :                  CA C |
+*LISTON :                         1 - |  LOADTAPE_COMMAND :             10C C |
+*MACEXP :                         1 - |  MODIFIER :                     C04 - |
+*MOMCPU :                         C - | *MOMCPUNAME :                 SC/MP - |
+*NESTMAX :                      100 - | *PACKING :                        0 - |
+*PADDING :                        1 - |  PARPOSN :                      C03 - |
+ PRINTADDRESSDATA :             1AE C |  PRINTCHARACTER :               141 C |
+ PRINTHEXBYTE :                 10E C |  PUTTAPE_COMMAND :              10A C |
+*RELAXED :                        0 - | *TIME :                    22:38:59 - |
+*TRUE :                           1 - | *UPDATECURRENTADDRESS :         1E2 C |
+*VERSION :                     142F - |  _KBDWAITKEY :                   47 C |
+ _KBDWAITRELEASE :               41 C |  _PADLOOP :                     1CE C |
+ _PADPRINT :                    1DB C |  __CMDMAINLOOP1 :                85 C |
+ __CMDMAINLOOP2 :                FF C |  __COMMANDERROR :                F7 C |
+ __COMMANDLIST :                1E4 C |  __COMMANDTABLE :               7F6 C |
+ __EX5SHIFT :                    9F C |  __EXTRACTEND :                  B5 C |
+ __FINDCOMMANDLOOP :             C0 C |  __KBDBACKSPACE :                79 C |
+ __KBDEXIT :                     87 C |  __KBDNOTLOWER :                 6D C |
+ __PCBACKSPACE :                196 C |  __PCBLANKNEWLINE :             172 C |
+ __PCBLANKNEWLINELOOP :         176 C |  __PCEXIT :                     17E C |
+ __PCNEWLINE :                  1A2 C |  __PHBNOSPACE :                 120 C |
 
-     65 symbols
-     31 unused symbols
+     72 symbols
+     30 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 11 - 11/27/2015 21:04:58
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 13 - 11/27/2015 22:38:59
 
 
   codepages:
@@ -586,7 +717,7 @@ STANDARD (0 changed characters)
 
 0.01 seconds assembly time
 
-    507 lines source file
+    629 lines source file
       2 passes
       0 errors
       0 warnings

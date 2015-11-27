@@ -106,6 +106,7 @@ __CommandList:
         db    0xfc
         dw    0x0000 ; End Marker	
 
+        org 0x07f6
 __CommandTable:
         dw    Dump_Command
         dw    Address_Command

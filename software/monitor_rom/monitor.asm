@@ -8,13 +8,22 @@
 ; ******************************************************************************************************************
 ; ******************************************************************************************************************
 
+; TODO: GetParameter, UpdateParameter, GetCurrentAddress
+;		Check A works 
+;		Make G work.
+; 		Do everything except Tape I/O and reassess memory space.
+; 		Assembler (remember Jump adjustment)
+;		Tape in
+;		Tape out.
+;		Labels.
+
 		cpu	sc/mp
 
 cursor 		= 0xC00 											; cursor position
 current 	= 0xC01 											; current address hi,lo
 parPosn		= 0xC03 											; current param offset in buffer (low addr)
-
-kbdBuffer 	= 0xC04 											; 12 character keyboard buffer
+modifier  	= 0xC04 											; instruction modifier (@,Pn)
+kbdBuffer 	= 0xC05 											; 12 character keyboard buffer
 kbdBufferLn = 12 										
 
 codeStart 	= kbdBuffer+kbdBufferLn								; code starts here.
@@ -148,6 +157,9 @@ __KBDBackSpace:
 		xppc 	p3
 		jmp 	KeyboardLoop 									; and go round again.
 
+__CmdMainLoop1:
+		jmp 	CommandMainLoop
+
 __KBDExit:
 		st 		-0x80(p1) 										; add the ASCIIZ terminator.
 		ldi 	13												; print a new line.
@@ -163,6 +175,7 @@ __KBDExit:
 		xae 													; E contains the LSB of the 5 bit shift
 		lde 	
 		st 		-1(p2) 											; -1(P2) contains the MSB
+		st 		modifier-kbdBuffer(p1)							; clear the modifier.
 Extract5Bit:
 		ld 		(p1) 											; look at character
 		ccl 													; add 128-65, will be +ve if < 64
@@ -191,13 +204,92 @@ __ExtractEnd:
 		xpal	p1
 		st 		(p1) 											; write to parameter position.
 
+; ****************************************************************************************************************
 ;
-;		Look it up in table
+;						Find command in -1 (P2) (High) E (Low) in Command table
+;	
+; ****************************************************************************************************************
+
+		ldi 	__commandList & 255 							; point P1 to the command list
+		xpal 	p1
+		ldi 	__commandList / 256 		
+		xpah 	p1	
+__FindCommandLoop:
+		ld 		0(p1) 											; reached the end of the table ?
+		or 		1(p1)											; which is marked by word 0000
+		jz 		__CommandError
+		ld 		@3(p1) 											; read low byte, and point to next
+		xre
+		jnz 	__FindCommandLoop 								; if different to LSB loop back.
+		ld 		-2(p1) 											; read the high byte
+		xor 	-1(p2) 											; if different to the MSB loop back.
+		jnz 	__FindCommandLoop
+
+; ****************************************************************************************************************
 ;
-;		If command, set up xppc p3 to read hex out, then following xppc p3 to copy to current address if CS.
-;		Then do the command.
+;				Found command, figure out if ASM or Command, if Command go to that routine
 ;
-wait:	jmp 	wait
+; ****************************************************************************************************************
+
+		ldi 	(GetParameter-1) & 255 							; point P3 to the get parameter code.
+		xpal 	p3
+		ldi 	(GetParameter-1) / 256
+		xpah 	p3
+
+		ld 		-1(p1) 											; read the operation code.
+		ani 	0xF0 											; look at the m-s-nibble - commands are 0x20.
+		xri 	0x20
+		jnz 	__CommandError 									; here, should go to assembler.
+
+		ld 		-1(p1) 											; re-read it
+		ccl
+		add 	-1(p1) 											; double it
+		ani 	0x1F 											; lower 5 bits only.
+		adi 	__CommandTable & 255 							; make P1 point to the command table entry
+		xpal 	p1
+		ldi 	__CommandTable / 256 					
+		xpah 	p1
+		ld 		0(p1) 											; read low address
+		xae
+		ld 		1(p1) 											; read high address
+		xpah 	p1 												; put in P1.H
+		lde 													; get low address
+		xpal 	p1 												; put in P1.L
+		ld 		@-1(p1) 										; fix up for the pre-increment
+		xppc 	p1 												; and go there.
+
+__CommandError:
+		ldi 	3 												; set the beeper on
+		cas
+		dly 	0xFF 											; short delay
+		ldi 	0 												; set the beeper off
+		cas
+__CmdMainLoop2:													; and go back to the start.
+		jmp 	__CmdMainLoop1
+
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+;
+;												Commands Section
+;
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+
+		nop
+Dump_Command:
+		jmp 	__CmdMainLoop2
+
+Address_Command:
+		xppc 	p3 												; get parameter if exists
+		xppc 	p3 												; update current if exists.
+		jmp 	__CmdMainLoop2
+
+Go_Command:
+		jmp 	__CmdMainLoop2
+PutTape_Command:
+		jmp 	__CmdMainLoop2
+LoadTape_Command:
+		jmp 	__CmdMainLoop2
 
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
@@ -382,14 +474,39 @@ _PADPrint:
 
 ; ****************************************************************************************************************
 ;
+;		Look at the parameter string for a parameter, processing @ and Pn as you go, CS if parameter found
+; 		CC otherwise. Return parameter value in P1. Falls through
+;
+; ****************************************************************************************************************
+
+GetParameter:
+		xppc 	p3
+
+; ****************************************************************************************************************
+;
+;		Store parameter value in P1 in the current address, if CS. Falls through.
+;
+; ****************************************************************************************************************
+
+UpdateCurrentAddress:
+		xppc 	p3
+
+; ****************************************************************************************************************
+;
+;		Get current address into P1.
+;
+; ****************************************************************************************************************
+
+GetCurrentAddress:
+		xppc 	p3
+
+; ****************************************************************************************************************
+;
 ;											List of commands and Jump Table
 ;
 ; ****************************************************************************************************************
 
-		include commands.inc
+		include commands.inc 									; must be at the end, so the command table is in
+																; the same page.
 
-Dump_Command:
-Address_Command:
-Go_Command:
-PutTape_Command:
-LoadTape_Command:
+
