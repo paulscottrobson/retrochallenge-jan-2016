@@ -111,11 +111,11 @@ static void inline _Write(void) {
 // *******************************************************************************************************************************
 
 BYTE8 _GetStatusReg(void) {
-	SR = SR & 0xC0;
-	if (SENSEA()) SR |= 0x10;
+	SR = SR & 0x0F;																	// Keep IE/F2/F1/F0
+	if (SENSEA()) SR |= 0x10;														// Get other values.
 	if (SENSEB()) SR |= 0x20;
 	if (overflowFlag) SR |= 0x40;
-	if (carryFlag) SR |= 0x80;
+	if (carryFlag != 0) SR |= 0x80;
 	return SR;
 }
 
