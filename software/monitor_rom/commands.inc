@@ -40,6 +40,10 @@ __CommandList:
         db    0x23
         dw    0x1cb4 ; GET
         db    0x24
+        dw    0x0003 ; C
+        db    0x25
+        dw    0x0002 ; B
+        db    0x26
         dw    0x620c ; XPL
         db    0x30
         dw    0x6208 ; XPH
@@ -106,10 +110,12 @@ __CommandList:
         db    0xfc
         dw    0x0000 ; End Marker	
 
-        org 0x07f6
+        org 0x07f2
 __CommandTable:
         dw    Dump_Command
         dw    Address_Command
         dw    Go_Command
         dw    PutTape_Command
         dw    LoadTape_Command
+        dw    ClearScreen_Command
+        dw    EnterBytes_Command

@@ -8,19 +8,18 @@
 ; ******************************************************************************************************************
 ; ******************************************************************************************************************
 
-; TODO: GetParameter, UpdateParameter, GetCurrentAddress
-;		Check A works 
-;		Make G work.
+; TODO: 
 ; 		Do everything except Tape I/O and reassess memory space.
 ; 		Assembler (remember Jump adjustment)
 ;		Tape in
 ;		Tape out.
 ;		Labels.
+; 		Disassembler (if space available)
 
 		cpu	sc/mp
 
 cursor 		= 0xC00 											; cursor position
-current 	= 0xC01 											; current address hi,lo
+current 	= 0xC01 											; current address (lo,hi)
 parPosn		= 0xC03 											; current param offset in buffer (low addr)
 modifier  	= 0xC04 											; instruction modifier (@,Pn)
 kbdBuffer 	= 0xC05 											; 12 character keyboard buffer
@@ -30,18 +29,6 @@ codeStart 	= kbdBuffer+kbdBufferLn								; code starts here.
 
 		org 	0x0000
 		nop
-
-; ******************************************************************************************************************
-;
-;												Clear the screen
-;
-; ******************************************************************************************************************
-ClearScreen:
-		xpal 	p1												; clear screen
-		ldi 	' '
-		st 		@1(p1)
-		xpal 	p1
-		jp 		ClearScreen
 
 ; ******************************************************************************************************************
 ;
@@ -70,10 +57,28 @@ FindTopMemory:
 		xpal 	p1 
 		ldi 	0
 		st 		@1(p1)											
-		ldi 	codeStart/256 									; reset current address to code start
+		ldi 	codeStart & 255 								; reset current address to code start
 		st 		@1(p1)
-		ldi 	codeStart&255
+		ldi 	codeStart / 256
+		st 		@(p1)
+
+; ******************************************************************************************************************
+;
+;												Clear the screen
+;
+; ******************************************************************************************************************
+
+ClearScreen_Command:
+		ldi 	0
+		xpah 	p1
+		ldi 	0
+ClearScreenLoop:
+		xpal 	p1												; clear screen
+		ldi 	' '
 		st 		@1(p1)
+		xpal 	p1
+		jp 		ClearScreenLoop
+
 
 ; ****************************************************************************************************************
 ;
@@ -86,7 +91,7 @@ CommandMainLoop:
 		xpah 	p3
 		ldi 	(PrintAddressData-1)&255
 		xpal 	p3
-		ldi 	1
+		ldi 	0
 		xppc 	p3
 
 		ldi 	(PrintCharacter-1)/256 							; set P3 = print character.
@@ -239,7 +244,7 @@ __FindCommandLoop:
 		ld 		-1(p1) 											; read the operation code.
 		ani 	0xF0 											; look at the m-s-nibble - commands are 0x20.
 		xri 	0x20
-		jnz 	__CommandError 									; here, should go to assembler.
+		jnz 	__Assembler
 
 		ld 		-1(p1) 											; re-read it
 		ccl
@@ -267,6 +272,11 @@ __CommandError:
 __CmdMainLoop2:													; and go back to the start.
 		jmp 	__CmdMainLoop1
 
+		; TODO: Assembler here, at present it just stops.
+
+__Assembler:
+		jmp 	__Assembler
+
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 ;
@@ -275,17 +285,71 @@ __CmdMainLoop2:													; and go back to the start.
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-		nop
+; ****************************************************************************************************************
+;											D :	Dump Memory
+; ****************************************************************************************************************
+
 Dump_Command:
+		xppc 	p3 												; get parameter if exists
+		xppc 	p3 												; update current if exists.
+		ldi 	7 												; print seven rows
+		st 		@-1(p2)
+__DCLoop:
+		ldi 	(PrintAddressData-1)/256						; print one row of address and data.
+		xpah 	p3
+		ldi 	(PrintAddressData-1)&255
+		xpal 	p3
+		ldi 	4
+		xppc 	p3
+		ldi 	Current/256 									; point P1 to current
+		xpah 	p1
+		ldi 	Current&255 
+		xpal 	p1
+		ld 		0(p1) 											; add 4 to current address
+		ccl
+		adi 	4
+		st 		0(p1)
+		ld 		1(p1)
+		adi 	0
+		st 		1(p1)
+		dld 	(p2) 											; do it 7 times
+		jnz 	__DCLoop
+		ld 		@1(p2) 											; fix up stack.
+
 		jmp 	__CmdMainLoop2
+
+; ****************************************************************************************************************
+;											A : Set Current address
+; ****************************************************************************************************************
 
 Address_Command:
 		xppc 	p3 												; get parameter if exists
 		xppc 	p3 												; update current if exists.
 		jmp 	__CmdMainLoop2
 
+; ****************************************************************************************************************
+;										G : Go (Address must be specified.)
+; ****************************************************************************************************************
+
 Go_Command:
+		xppc 	p3 												; get parameter, which should exist.
+		csa 													; look at CY/L which is set if it was.
+		jz 		__CommandError 									; if it is clear, beep an error.
+		xpal 	p1 												; copy P1 to P3
+		xpal 	p3
+		xpah 	p1
+		xpah 	p3
+		ld 		@-1(p3) 										; fix up for pre increment
+		xppc 	p3 												; call the routine.		
+		jmp 	__CmdMainLoop2 									; re-enter monitor.
+
+; ****************************************************************************************************************
+;											 B: Enter Bytes (no address)
+; ****************************************************************************************************************
+
+EnterBytes_Command:
 		jmp 	__CmdMainLoop2
+
 PutTape_Command:
 		jmp 	__CmdMainLoop2
 LoadTape_Command:
@@ -444,14 +508,14 @@ PrintAddressData:
 		xpah 	p1
 		ldi 	current & 255
 		xpal 	p1
-		ld 		0(p1) 											; read high byte of address
+		ld 		1(p1) 											; read high byte of address
 		ccl
 		xppc 	p3												; print w/o leading space
-		ld 		1(p1)											; read low byte of address
+		ld 		0(p1)											; read low byte of address
 		ccl 	
 		xppc 	p3 												; print w/o leading space.
 		xae 													; put in E
-		ld 		0(p1) 											; high byte to P1.H
+		ld 		1(p1) 											; high byte to P1.H
 		xpah 	p1
 		lde 													; low byte to P1.H
 		xpal 	p1
@@ -480,6 +544,78 @@ _PADPrint:
 ; ****************************************************************************************************************
 
 GetParameter:
+		ldi 	parPosn/256 									; current position into P1
+		xpah 	p1
+		ldi 	parPosn&255 					
+		xpal 	p1
+		ldi 	0 												; -1(p2) is the low byte result
+		st 		-1(p2) 											; -2(p2) is the high byte result
+		st 		-2(p2)
+		ld 		(p1) 											; read the current position,P1 points to character
+		xpal 	p1 												; when we put it in P1.L
+
+__GPASkip:														; skip over spaces to first alphanumeric.
+		ld 		(p1) 											; read character
+		jz 		__GPAExitFail 									; if zero, then end of the input string.
+		ld 		@1(p1) 											; read it, advancing.
+		xri 	32 												; is it space ?
+		jz 		__GPASkip 
+
+		; TODO: when doing assembler, at this point check for @ and P[0-3] and adjust modifier accordingly.
+
+__GPANextCharacter:
+
+		ld 		-1(p1) 											; get value back after post increment.
+		ccl
+		adi 	128-48 											; this will be +ve if A < '0'
+		jp 		__GPAExitFail
+		cai 	9 												; will be +ve if A < '9', CY/L was clear.	
+		jp 		__GPAFoundHex
+		cai 	7 												; will be +ve if A < 'A', CY/L was set
+		jp 		__GPAExitFail
+		adi 	0xFF-0x85-1 									; will be +ve if A > 'F', CY/L was set.
+		jp 		__GPAExitFail 					
+		adi 	(0x70-0xFA) & 0xFF 								; make the range as below, CY/L was clear
+__GPAFoundHex: 													; enter here 0-9 = $76..$7F, A-F = $70..$75
+		ccl  													; convert that to a hex nibble.
+		adi 	10
+		ani 	0xF
+		xae 													; save in E, temporarily
+		ldi 	4 												; now shift the result 4 bits to the left.
+		st 		-3(p2) 											; -3(p2) is the counter
+__GPAShift:
+		ccl
+		ld 		-1(p2) 											; shift 16 bit result 1 bit to the left.
+		add 	-1(p2)
+		st 		-1(p2)
+		ld 		-2(p2)
+		add 	-2(p2)
+		st 		-2(p2)
+		dld 	-3(p2) 											; do it four times
+		jnz 	__GPAShift 	
+		ld 		-1(p2) 											; Or E into the LSB
+		ore
+		st 		-1(p2)
+
+		ld 		@1(p1) 											; look at next character, post incrementing.
+		scl
+		cai 	33 												; if it is after space
+		jp 		__GPANextCharacter 								; go back and put it in place.
+		ld 		@-1(p1) 										; undo the increment, incase we've just read zero.
+
+		ldi 	parPosn & 255 									; put the parPosn address in P1.L, new posn into A
+		xpal 	p1
+		st 		(p1) 											; and write it back
+		ld 		-1(p2) 											; put the result into P1
+		xpal 	p1
+		ld 		-2(p2)
+		xpah 	p1
+		scl 													; set CY/L to indicate okay
+		jmp 	__GPAExit
+
+__GPAExitFail:
+		ccl 													; carry clear, e.g. nothing read in / error.
+__GPAExit:
 		xppc 	p3
 
 ; ****************************************************************************************************************
@@ -489,6 +625,18 @@ GetParameter:
 ; ****************************************************************************************************************
 
 UpdateCurrentAddress:
+		csa 													; get status reg
+		jp 		_UCAExit 										; if carry flag clear then exit.
+
+		ldi 	current & 255 									; current address to P1.L, acquired address to E
+		xpal 	p1
+		xae
+		ldi 	current / 256 									; current address to P1.H, acquired to A
+		xpah 	p1
+		st 		1(p1) 											; store address back
+		lde
+		st 		0(p1)
+_UCAExit:
 		xppc 	p3
 
 ; ****************************************************************************************************************
@@ -498,6 +646,16 @@ UpdateCurrentAddress:
 ; ****************************************************************************************************************
 
 GetCurrentAddress:
+		ldi 	current/256 									; current address ptr in P1
+		xpah 	p1
+		ldi 	current&255
+		xpal 	p1
+		ld 		0(p1) 											; low byte to E
+		xae
+		ld 		1(p1) 											; high byte to A
+		xpah 	p1 												; then to P1.H
+		lde 													; low byte to P1.L
+		xpal 	p1 
 		xppc 	p3
 
 ; ****************************************************************************************************************
