@@ -10,8 +10,9 @@
 
 ; TODO: 
 ; 		Assembler (remember Jump adjustment ?)
-;		Labels.
+;		Labels code.
 ; 		Disassembler (if space available)
+; 		16 bit maths (if space available)
 
 		cpu	sc/mp
 
@@ -19,8 +20,8 @@ cursor 		= 0xC00 											; cursor position
 current 	= 0xC01 											; current address (lo,hi)
 parPosn		= 0xC03 											; current param offset in buffer (low addr)
 modifier  	= 0xC04 											; instruction modifier (@,Pn)
-kbdBuffer 	= 0xC05 											; 12 character keyboard buffer
-kbdBufferLn = 12 										
+kbdBuffer 	= 0xC05 											; 16 character keyboard buffer
+kbdBufferLn = 16 										
 
 codeStart 	= kbdBuffer+kbdBufferLn								; code starts here.
 
@@ -35,6 +36,7 @@ tapeDelay 	= 4 												; DLY parameter for 1 tape bit width.
 ;									Find Top of Memory to initialise the stack.
 ;
 ; ******************************************************************************************************************
+
 		ldi 	0x0F 											; point P2 to theoretical top of RAM on basic m/c
 		xpah 	p2 												; e.g. 0xFFF
 		ldi 	0xFF 											; ideally you'd make this 0x003F and remove the ld
@@ -83,7 +85,6 @@ ClearScreenLoop:
 		xpal 	p1 
 		ldi 	0
 		st 		0(p1)											
-
 
 ; ****************************************************************************************************************
 ;
@@ -268,19 +269,34 @@ __FindCommandLoop:
 		ld 		@-1(p1) 										; fix up for the pre-increment
 		xppc 	p1 												; and go there.
 
-__CommandError:
+__CommandError: 												; unknown command.
 		ldi 	3 												; set the beeper on
 		cas
 		dly 	0xFF 											; short delay
 		ldi 	0 												; set the beeper off
 		cas
-__CmdMainLoop2:													; and go back to the start.
 		jmp 	__CmdMainLoop1
 
-		; TODO: Assembler here, at present it just stops.
+; ****************************************************************************************************************
+;												In line Assembler
+; ****************************************************************************************************************
+
 
 __Assembler:
-		jmp 	__Assembler
+		ld 		-1(p1) 											; this is the operation code to use.
+		xae 													; save in E.
+
+		; TODO: Assembler here, at present it just stops. Modifier already coded. 
+		; Point P1 to current variables
+		; Modify opcode by modifier.
+		; Load Current address into P1
+		; Write out and bump P1
+		; if a parameter (negative), fetch that, adjust if $90,$94,$98,$9C
+		; Write out and bump P1
+		; save P1 back to current address
+		; go back and get next command.
+
+wait:	jmp wait
 
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
@@ -299,6 +315,19 @@ Address_Command:
 		xppc 	p3 												; update current if exists.
 		jmp 	__CmdMainLoop2
 
+__CmdParameterFail:
+		ldi 	2 												; set the beeper on
+		cas
+		dly 	0xFF 											; short delay
+		ldi 	0 												; set the beeper off
+		cas
+__CmdMainLoop2:													; and go back to the start.
+		ldi 	(CommandMainLoop-1) & 255
+		xpal 	p3
+		ldi 	(CommandMainLoop-1) / 256
+		xpah 	p3
+		xppc 	p3
+
 ; ****************************************************************************************************************
 ;										G : Go (Address must be specified.)
 ; ****************************************************************************************************************
@@ -306,7 +335,7 @@ Address_Command:
 Go_Command:
 		xppc 	p3 												; get parameter, which should exist.
 		csa 													; look at CY/L which is set if it was.
-		jz 		__CommandError 									; if it is clear, beep an error.
+		jp 		__CmdParameterFail 								; if it is clear, beep an error.
 		xpal 	p1 												; copy P1 to P3
 		xpal 	p3
 		xpah 	p1
@@ -317,13 +346,13 @@ __CmdMainLoop3:
 		jmp 	__CmdMainLoop2 									; re-enter monitor.
 
 ; ****************************************************************************************************************
-;			Write to tape : data mandatory, it is the byte count from the current address.
+;			PUT Write to tape : data mandatory, it is the byte count from the current address.
 ; ****************************************************************************************************************
 
 PutTape_Command:
 		xppc 	p3 												; get the bytes to write.
 		csa 													; if CC, no value was provided
-		jp 		__CommandError 									; which is an error.
+		jp 		__CmdParameterFail 								; which is an error.
 		xpal 	p1 												; store low byte count in -1(P2)
 		st 		-1(p2)
 		xpah 	p1 												; store high byte count in -2(P2)
@@ -334,7 +363,7 @@ PutTape_Command:
 		ldi 	0 												; set the output tape bit low
 		xae
 		sio
-		ldi 	16 												; tape leader
+		ldi 	32 												; tape leader
 		st 		-3(p2)
 _PutTapeLeader:
 		dly 	0xFF
@@ -387,7 +416,7 @@ LoadTape_Command:
 __GetTapeWait:
 		ld 		0(p3) 											; check keyboard break
 		ani 	0x80
-		jnz 	__CommandError
+		jnz 	__CmdParameterFail
 		sio 													; wait for the start bit, examine tape in.
 		lde 
 		ani 	1
@@ -443,7 +472,7 @@ __DCLoop:
 		jmp 	__CmdMainLoop4
 
 ; ****************************************************************************************************************
-;											 B: Enter Bytes (no address)
+;								B: Enter Bytes (no address, sequence of byte data)
 ; ****************************************************************************************************************
 
 EnterBytes_Command:
@@ -667,6 +696,7 @@ GetParameter:
 		ldi 	0 												; -1(p2) is the low byte result
 		st 		-1(p2) 											; -2(p2) is the high byte result
 		st 		-2(p2)
+
 		ld 		(p1) 											; read the current position,P1 points to character
 		xpal 	p1 												; when we put it in P1.L
 
@@ -676,11 +706,12 @@ __GPASkip:														; skip over spaces to first alphanumeric.
 		ld 		@1(p1) 											; read it, advancing.
 		xri 	32 												; is it space ?
 		jz 		__GPASkip 
-
-		; TODO: when doing assembler, at this point check for @ and P[0-3] and adjust modifier accordingly.
+		xri 	32!'@'											; is it @ ?
+		jz 		__GPAAtModifier 
+		xri 	'@'!'P' 										; is it P ?
+		jz 		__GPAPointerModifier
 
 __GPANextCharacter:
-
 		ld 		-1(p1) 											; get value back after post increment.
 		ccl
 		adi 	128-48 											; this will be +ve if A < '0'
@@ -729,6 +760,29 @@ __GPAShift:
 		scl 													; set CY/L to indicate okay
 		jmp 	__GPAExit
 
+__GPAPointerModifier:
+		ld 		(p1) 											; read P<something> ?
+		ani 	0xFC 											; is it '0' .. '3'?
+		xri 	'0'
+		jnz 	__GPAExitFail 									; it didn't work, not 0..3
+		ld 		@1(p1) 											; re-read it and advance
+		ani 	3												; lower 2 bits only
+		jmp 	__GPAAdjustModifier
+__GPAAtModifier:
+		ldi 	4 												; set modifier adjustment to +4
+__GPAAdjustModifier:
+		st 		-3(p2) 
+		ldi 	modifier & 255 									; point P1 to modifier, save current address in E
+		xpal 	p1
+		xae 
+		ld 		(p1) 											; read modifier
+		ccl
+		add 	-3(p2) 											; add the modifying value to it.
+		st 		(p1) 											; write modifier.
+		lde 													; restore current address to P1.L
+		xpal 	p1
+		jmp 	__GPASkip 										; go back to skip over.
+
 __GPAExitFail:
 		ccl 													; carry clear, e.g. nothing read in / error.
 __GPAExit:
@@ -742,7 +796,7 @@ __GPAExit:
 
 UpdateCurrentAddress:
 		csa 													; get status reg
-		jp 		_UCAExit 										; if carry flag clear then exit.
+		jp 		__UCAExit 										; if carry flag clear then exit.
 
 		ldi 	current & 255 									; current address to P1.L, acquired address to E
 		xpal 	p1
@@ -752,7 +806,7 @@ UpdateCurrentAddress:
 		st 		1(p1) 											; store address back
 		lde
 		st 		0(p1)
-_UCAExit:
+__UCAExit:
 		xppc 	p3
 
 ; ****************************************************************************************************************
