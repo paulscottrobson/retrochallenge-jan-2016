@@ -1,3 +1,4 @@
+        org 0x0751
 ;
 ; 	This file is generated automatically by gencommands.py
 ;
@@ -110,7 +111,6 @@ __CommandList:
         db    0xfc
         dw    0x0000 ; End Marker	
 
-        org 0x07f2
 __CommandTable:
         dw    Dump_Command
         dw    Address_Command

@@ -9,10 +9,7 @@
 ; ******************************************************************************************************************
 
 ; TODO: 
-; 		Do everything except Tape I/O and reassess memory space.
-; 		Assembler (remember Jump adjustment)
-;		Tape in
-;		Tape out.
+; 		Assembler (remember Jump adjustment ?)
 ;		Labels.
 ; 		Disassembler (if space available)
 
@@ -27,6 +24,9 @@ kbdBufferLn = 12
 
 codeStart 	= kbdBuffer+kbdBufferLn								; code starts here.
 
+tapeDelay 	= 4 												; DLY parameter for 1 tape bit width.
+																; (smaller = faster tape I/O)
+
 		org 	0x0000
 		nop
 
@@ -35,10 +35,11 @@ codeStart 	= kbdBuffer+kbdBufferLn								; code starts here.
 ;									Find Top of Memory to initialise the stack.
 ;
 ; ******************************************************************************************************************
-		ldi 	0x80 											; point P2 to theoretical top of RAM + 64
-		xpah 	p2 												; e.g. $803F
-		ldi 	0x3F
-		xpal 	p2
+		ldi 	0x0F 											; point P2 to theoretical top of RAM on basic m/c
+		xpah 	p2 												; e.g. 0xFFF
+		ldi 	0xFF 											; ideally you'd make this 0x003F and remove the ld
+		xpal 	p2 												; but the emulators don't do 4+12 math. Only matters here.
+		ld 		@64(p2) 										; fix the predecrement (wrap around not emulated)
 FindTopMemory:
 		ldi 	0xA5 											; try to write this to memory
 		st 		@-64(p2) 										; predecrementing by 64.
@@ -51,12 +52,10 @@ FindTopMemory:
 ;
 ; ******************************************************************************************************************
 
-		ldi 	Cursor/256 										; reset the cursor position to TOS
+		ldi 	Current/256 									; set P1 to current address
 		xpah 	p1
-		ldi 	Cursor&255
-		xpal 	p1 
-		ldi 	0
-		st 		@1(p1)											
+		ldi 	Current&255
+		xpal 	p1
 		ldi 	codeStart & 255 								; reset current address to code start
 		st 		@1(p1)
 		ldi 	codeStart / 256
@@ -78,6 +77,12 @@ ClearScreenLoop:
 		st 		@1(p1)
 		xpal 	p1
 		jp 		ClearScreenLoop
+		ldi 	Cursor/256 										; reset the cursor position to TOS
+		xpah 	p1
+		ldi 	Cursor&255
+		xpal 	p1 
+		ldi 	0
+		st 		0(p1)											
 
 
 ; ****************************************************************************************************************
@@ -98,7 +103,7 @@ CommandMainLoop:
 		xpah 	p3
 		ldi 	(PrintCharacter-1)&255
 		xpal 	p3
-		ldi 	'.'
+		ldi 	']'												; print the prompt.
 		xppc 	p3
 
 ; ****************************************************************************************************************
@@ -286,6 +291,125 @@ __Assembler:
 ; ****************************************************************************************************************
 
 ; ****************************************************************************************************************
+;											A : Set Current address
+; ****************************************************************************************************************
+
+Address_Command:
+		xppc 	p3 												; get parameter if exists
+		xppc 	p3 												; update current if exists.
+		jmp 	__CmdMainLoop2
+
+; ****************************************************************************************************************
+;										G : Go (Address must be specified.)
+; ****************************************************************************************************************
+
+Go_Command:
+		xppc 	p3 												; get parameter, which should exist.
+		csa 													; look at CY/L which is set if it was.
+		jz 		__CommandError 									; if it is clear, beep an error.
+		xpal 	p1 												; copy P1 to P3
+		xpal 	p3
+		xpah 	p1
+		xpah 	p3
+		ld 		@-1(p3) 										; fix up for pre increment
+		xppc 	p3 												; call the routine.		
+__CmdMainLoop3:
+		jmp 	__CmdMainLoop2 									; re-enter monitor.
+
+; ****************************************************************************************************************
+;			Write to tape : data mandatory, it is the byte count from the current address.
+; ****************************************************************************************************************
+
+PutTape_Command:
+		xppc 	p3 												; get the bytes to write.
+		csa 													; if CC, no value was provided
+		jp 		__CommandError 									; which is an error.
+		xpal 	p1 												; store low byte count in -1(P2)
+		st 		-1(p2)
+		xpah 	p1 												; store high byte count in -2(P2)
+		st 		-2(p2)
+		ccl 													; skip over the update current address
+		xppc 	p3 												; this won't update current address as CY/L = 0
+		xppc 	p3 												; and load the current address into P1.
+		ldi 	0 												; set the output tape bit low
+		xae
+		sio
+		ldi 	16 												; tape leader
+		st 		-3(p2)
+_PutTapeLeader:
+		dly 	0xFF
+		dld 	-3(p2)
+		jnz 	_PutTapeLeader
+_PutTapeByte:													; output byte at P1
+		ldi 	0 												; set output bit to 0
+		xae 	
+		sio
+		dly 	tapeDelay * 4 									; 0 continuation bit + gap between tapes with no signal 
+		ldi 	0x80 											; set bit high
+		xae
+		sio 
+		ldi 	0
+		dly 	tapeDelay 										; output the start bit.
+		ld 		@1(p1) 											; read the byte and put it in E.
+		xae
+		ldi 	8 												; output 8 bits
+		st 		-3(p2)
+_PutTapeBit:
+		sio 													; output MSB and shift
+		ldi 	0
+		dly 	tapeDelay 								
+		dld 	-3(p2) 											; do all 8 bits.
+		dld 	-1(p2) 											; decrement counter
+		jnz 	_PutTapeByte
+		dld 	-2(p2) 											; note MSB goes 0 to -1 when finished.
+		jp 		_PutTapeByte
+		ldi 	0x80 											; add the termination bit.
+		xae
+		sio
+		ldi 	0 												; put that out.
+		dly 	TapeDelay
+		ldi 	0 												; and set the leve back to 0
+		xae 
+		sio
+__CmdMainLoop4:
+		jmp 	__CmdMainLoop3
+
+; ****************************************************************************************************************
+;						GET [addr] load tape to current position or given address.
+; ****************************************************************************************************************
+
+LoadTape_Command:
+		xppc	p3 												; get parameter
+		xppc 	p3												; update current address
+		xppc 	p3 												; current address to P1.
+		ldi 	0x8 											; point P3 to the keyboard.
+		xpah 	p3
+__GetTapeWait:
+		ld 		0(p3) 											; check keyboard break
+		ani 	0x80
+		jnz 	__CommandError
+		sio 													; wait for the start bit, examine tape in.
+		lde 
+		ani 	1
+		jz 		__GetTapeWait
+		dly 	tapeDelay * 3 / 2 								; half way into the first bit.
+		ldi 	8 												; read in 8 bits.
+		st 		-1(p2)
+__GetTapeBits:
+		sio 													; read in one bit
+		ldi 	0
+		dly 	tapeDelay 										; delay to next bit
+		dld 	-1(p2) 											; read 8 bits.
+		jnz 	__GetTapeBits 
+		lde 													; store byte at current address
+		st 		@1(p1)
+		sio 													; read in the byte, which is zero if continuing.
+		lde  													; examine bit 0
+		ani 	1
+		jz 		__GetTapeWait 									; go and wait for the next start bit.
+		jmp 	__CmdMainLoop4
+
+; ****************************************************************************************************************
 ;											D :	Dump Memory
 ; ****************************************************************************************************************
 
@@ -316,44 +440,36 @@ __DCLoop:
 		jnz 	__DCLoop
 		ld 		@1(p2) 											; fix up stack.
 
-		jmp 	__CmdMainLoop2
-
-; ****************************************************************************************************************
-;											A : Set Current address
-; ****************************************************************************************************************
-
-Address_Command:
-		xppc 	p3 												; get parameter if exists
-		xppc 	p3 												; update current if exists.
-		jmp 	__CmdMainLoop2
-
-; ****************************************************************************************************************
-;										G : Go (Address must be specified.)
-; ****************************************************************************************************************
-
-Go_Command:
-		xppc 	p3 												; get parameter, which should exist.
-		csa 													; look at CY/L which is set if it was.
-		jz 		__CommandError 									; if it is clear, beep an error.
-		xpal 	p1 												; copy P1 to P3
-		xpal 	p3
-		xpah 	p1
-		xpah 	p3
-		ld 		@-1(p3) 										; fix up for pre increment
-		xppc 	p3 												; call the routine.		
-		jmp 	__CmdMainLoop2 									; re-enter monitor.
+		jmp 	__CmdMainLoop4
 
 ; ****************************************************************************************************************
 ;											 B: Enter Bytes (no address)
 ; ****************************************************************************************************************
 
 EnterBytes_Command:
-		jmp 	__CmdMainLoop2
+		ldi 	(GetParameter-1) & 255 							; P3 = Get Parameter routine
+		xpal 	p3
+		ldi 	(GetParameter-1) / 256 	
+		xpah 	p3
+		xppc 	p3 												; get the parameter.
+		csa 													; look at carry
+		jp 		__CmdMainLoop4 									; carry clear, no value.
+		ldi 	Current/256 									; make P1 point to current
+		xpah 	p1
+		ldi 	Current&255 										
+		xpal 	p1 												; this pulls the byte value into A
+		xae 													; save it in E
+		ld 		0(p1) 											; copy address to save to into P3
+		xpal 	p3
+		ld 		1(p1) 
+		xpah 	p3 
+		lde 													; get byte back
+		st 		(p3) 											; save it in that location
+		ild 	0(p1) 											; bump current address and go back and try again.
+		jnz 	EnterBytes_Command
+		ild 	1(p1)
+		jmp 	EnterBytes_Command
 
-PutTape_Command:
-		jmp 	__CmdMainLoop2
-LoadTape_Command:
-		jmp 	__CmdMainLoop2
 
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
@@ -667,4 +783,21 @@ GetCurrentAddress:
 		include commands.inc 									; must be at the end, so the command table is in
 																; the same page.
 
-
+; ****************************************************************************************************************
+;
+;													Tape Format. 
+;
+; ****************************************************************************************************************
+;
+;		1 x start bit 		'1' value is held for period of time.
+;		8 x data bits  		'0 or 1' value is held for a period of time.
+;		1 x continuation	'0' if another bit follows, '1' if end.
+;		at least 2 bit times between bytes.
+;
+;		Use DLY 4 with A = 0 (DLY 6 to skip half-start)
+; 		= 13 + 2 * 0 + 514 * 4 microcycles
+;		= 2,069 microcycles
+;	
+;		which is about 240 bits per second.
+;
+; ****************************************************************************************************************

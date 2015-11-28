@@ -38,6 +38,8 @@ for cmd in commands.split(","):
 keys = entries.keys()
 keys.sort(key = lambda x:entries[x])
 
+print("        org 0x{0:04x}".format(0x800-(cmdID-0x20)*2-len(keys)*3-2))
+
 print(";\n; 	This file is generated automatically by gencommands.py\n;")
 print("__CommandList:")
 for k in keys:
@@ -45,7 +47,6 @@ for k in keys:
 	print("        db    0x{0:02x}".format(entries[k]))
 print("        dw    0x0000 ; End Marker	\n")
 
-print("        org 0x{0:04x}".format(0x800-(cmdID-0x20)*2))
 print("__CommandTable:")
 
 for i in range(0x20,cmdID):
