@@ -9,8 +9,11 @@
 ; ******************************************************************************************************************
 
 ; TODO: 
-; 		Disassembler (if space available)
-; 		16 bit maths (if space available)
+; 		Fix bug, does not assemble CAS etc.
+; 		Disassembler - expand @Pn
+; 		16 bit maths routines.
+; 		Decode addresses on disassembler.
+; 		Print message on first clear screen.
 
 		cpu	sc/mp
 
@@ -96,7 +99,7 @@ ClearScreenLoop:
 ; ****************************************************************************************************************
 
 CommandMainLoop:
-		ldi 	(PrintAddressData-1)/256						; print Address and Data there
+		ldi 	(PrintAddressData-1)/256						; print Address only
 		xpah 	p3
 		ldi 	(PrintAddressData-1)&255
 		xpal 	p3
@@ -572,6 +575,7 @@ __DCLoop:
 		dld 	(p2) 											; do it 7 times
 		jnz 	__DCLoop
 		ld 		@1(p2) 											; fix up stack.
+__CmdMainLoop6:
 		jmp 	__CmdMainLoop5
 
 
@@ -610,9 +614,136 @@ EnterBytes_Command:
 Disassemble_Command:	
 		xppc 	p3 												; evaluate
 		xppc 	p3 												; update current if new value
-		xppc 	p3												; p1 contains disassembly address now.
+		ldi 	6 												; instructions to disassemble counter
+		st 		@-4(p2)											; p2 + 0 = counter p2 + 1 = opcode p2 + 2 = operand
+__DAssLoop:														; p2 + 3 = opcode - base opcode.
+		ldi 	(PrintAddressData-1)/256						; print Address only
+		xpah 	p3
+		ldi 	(PrintAddressData-1)&255
+		xpal 	p3
+		ldi 	0
+		xppc 	p3
+		ldi 	Current / 256 									; point P1 to current address
+		xpah 	p1
+		ldi 	Current & 255
+		xpal 	p1
+		ld 		0(p1) 											; load current address into P3
+		xpal 	p3
+		ld 		1(p1)
+		xpah 	p3
+		ld 		@1(p3) 											; read opcode
+		st 		1(p2) 											; save it
+		jp 		__DAssNoOperand 								; if +ve no operand
+		ld 		@1(p3) 											; read operand
+		st 		2(p2) 											; save it
+__DAssNoOperand:
+		ldi 	(__CommandListEnd-3) & 255
+		xpal 	p3 												; update current position, setting P3 to last entry
+		st 		0(p1)											; in command table.
+		ldi 	(__CommandListEnd-3) / 256
+		xpah 	p3
+		st 		1(p1)
 
-wait:	jmp 	wait
+__DAssFindOpcode: 												; the table is : text (word) opcode (byte)
+		ld 		1(p2) 											; get opcode
+		scl
+		cad 	2(p3) 											; subtract the base opcode.
+		st 		3(p2) 											; save a the offset (possible)
+		ani 	0xE0 											; it needs to be 0x20 or less
+		jz 		__DAssFoundOpcode 								; if >= 0 then found the correct opcode.
+__DAssNextOpcode:
+		ld 		@-3(p3) 										; go to previous entry in table
+		jmp 	__DAssFindOpcode
+
+__DAssLoop2:
+		jmp 	__DAssLoop
+__CmdMainLoop7:
+		jmp 	__CmdMainLoop6
+
+__DAssFoundOpcode:
+		ld 		2(p3) 											; look at opcode that matched.
+		ani 	0x87 											; match with 1xxx x100
+		xri 	0x84 											; which is all the immediate instructions.		
+		jnz 	__DAssNotImmediate
+		ld 		3(p2) 											; only do immediate if base offset is zero
+		jnz 	__DAssNextOpcode 								; fixes C0-C7 being LD, but C4 being LDI.
+__DAssNotImmediate:
+		ld 		0(p3) 											; save LSB of text on stack
+		st 		@-1(p2)
+		ld 		1(p3) 											; and the MSB of text on stack
+		st 		@-1(p2)
+
+		ldi 	(PrintCharacter-1) / 256 						; set P3 up to print characters
+		xpah 	p3
+		ldi 	(PrintCharacter-1) & 255 
+		xpal 	p3
+		ldi 	' '												; print a space.
+		xppc 	p3
+
+		ldi 	3 												; print 3 characters
+		st 		@-1(p2) 										; so +0 is count, +1 = text MSB, +2 = text LSB
+__DAssPrintMnemonic:
+		ld 		1(p2) 											; get text MSB which is in bits .xxxxx..
+		sr 														; shift right twice.
+		sr
+		ani 	0x1F 											; lower 5 bits only
+		jnz 	__DAssNotSpace 									; if zero it is a space.
+		ldi 	-32 											; will map 0 onto 32 when 64 is added.
+__DAssNotSpace:
+		ccl 													; make it 7 bit ASCII code.
+		adi 	64 							
+		xppc 	p3 												; display the character
+		ldi 	5 												; now shift the encoded data left 5 times
+		st 		-1(p2)
+__DAssShiftEncode:
+		ccl
+		ld 		2(p2)
+		add 	2(p2)
+		st 		2(p2)
+		ld 		1(p2)
+		add 	1(p2)
+		st 		1(p2)
+		dld 	-1(p2)
+		jnz 	__DAssShiftEncode
+		dld 	0(p2) 											; done all three characters
+		jnz 	__DAssPrintMnemonic 							; if not keep going.
+
+		ld 		@3(p2) 											; remove mnemonic stuff off the stack.
+
+		ld 		3(p2) 											; print instruction modifier if required.
+		jnz 	__DAssPrintModifier
+
+__DAssPrintOperand:
+		ld 		1(p2) 											; get original opcode
+		jp 		__DAssNext 										; if no operand go to next line of disassembly.
+		ldi 	(PrintHexByte-1) / 256 							; set P3 to point to the hex printer
+		xpah 	p3
+		ldi 	(PrintHexByte-1) & 255
+		xpal 	p3
+		ld 		2(p2) 											; get operand
+		scl 
+		xppc 	p3 												; print it out with a leading space.
+
+__DAssNext:
+		ldi 	(PrintCharacter-1) / 256 						; set P3 up to print characters
+		xpah 	p3
+		ldi 	(PrintCharacter-1) & 255 
+		xpal 	p3
+		ldi 	13												; print a newline.
+		xppc 	p3
+
+		dld 	0(p2) 											; done all 6 lines
+		jnz 	__DAssLoop2 									; no, go round again.
+		ld 		@4(p2) 											; fix up the stack.
+		jmp 	__CmdMainLoop7 									; and time to exit.
+
+
+__DAssPrintModifier:
+
+		; TODO display the modifier (@Pn) if appropriate and a trailing space.
+
+		jmp 	__DAssPrintOperand
+
 
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
