@@ -9,7 +9,6 @@
 ; ******************************************************************************************************************
 
 ; TODO: 
-; 		Fix bug, does not assemble CAS etc.
 ; 		Disassembler - expand @Pn
 ; 		16 bit maths routines.
 ; 		Decode addresses on disassembler.
@@ -645,6 +644,10 @@ __DAssNoOperand:
 		st 		1(p1)
 
 __DAssFindOpcode: 												; the table is : text (word) opcode (byte)
+		ld 		1(p2) 											; get opcode
+		xor 	2(p3) 											; check in the same 8 byte page.
+		ani 	0xF0
+		jnz 	__DAssNextOpcode
 		ld 		1(p2) 											; get opcode
 		scl
 		cad 	2(p3) 											; subtract the base opcode.
