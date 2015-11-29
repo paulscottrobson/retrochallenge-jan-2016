@@ -48,7 +48,7 @@ case 0x08: /***** nop *****/
      break;
      
 case 0x19: /***** sio *****/
-     EX = EX >> 1;
+     EX = EX << 1;
      CYCLES(5);
      break;
      
