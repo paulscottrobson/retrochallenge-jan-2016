@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file test.asm - page 1 - 11/27/2015 19:17:10
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 1 - 11/29/2015 9:31:15
 
 
        1/       0 :                     ; ******************************************************************************************************************
@@ -61,7 +61,7 @@
       58/      19 : 35                  		xpah 	p1
       59/      1A : C4 00               		ldi 	Cursor&255
       60/      1C : 31                  		xpal 	p1 
- AS V1.42 Beta [Bld 102] - source file test.asm - page 2 - 11/27/2015 19:17:10
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 2 - 11/29/2015 9:31:15
 
 
       61/      1D : C4 00               		ldi 	0
@@ -124,7 +124,7 @@
      118/      5B : E4 05               		xri 	8!13 											; is it CR, then exit
      119/      5D : 98 26               		jz 		__KBDExit
      120/      5F :                     
- AS V1.42 Beta [Bld 102] - source file test.asm - page 3 - 11/27/2015 19:17:10
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 3 - 11/29/2015 9:31:15
 
 
      121/      5F : 40                  		lde 													; have we a full buffer.
@@ -187,7 +187,7 @@
      178/      A1 : F2 FF               		add 	-1(p2)
      179/      A3 : CA FF               		st 		-1(p2)
      180/      A5 : BA FE               		dld 	-2(p2) 											; done it 5 times ?
- AS V1.42 Beta [Bld 102] - source file test.asm - page 4 - 11/27/2015 19:17:10
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 4 - 11/29/2015 9:31:15
 
 
      181/      A7 : 9C F2               		jnz 	__Ex5Shift
@@ -250,7 +250,7 @@
      238/      E5 : 37                  		xpah 	p3
      239/      E6 : C6 01               		ld 		@1(p2)
      240/      E8 : 3F                  		xppc 	p3
- AS V1.42 Beta [Bld 102] - source file test.asm - page 5 - 11/27/2015 19:17:10
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 5 - 11/29/2015 9:31:15
 
 
      241/      E9 : 90 CD               		jmp 	PrintHexByte
@@ -313,7 +313,7 @@
      298/     12A : 33                  		xpal 	p3 												; put in P3.L
      299/     12B : C4 9B               		ldi 	0x9B 											; shaded block cursor on screen
      300/     12D : CB 00               		st 		(p3)
- AS V1.42 Beta [Bld 102] - source file test.asm - page 6 - 11/27/2015 19:17:10
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 6 - 11/29/2015 9:31:15
 
 
      301/     12F : C6 01               		ld 		@1(p2)											; restore P3
@@ -376,7 +376,7 @@
      358/     173 : C1 00               		ld 		0(p1) 											; high byte to P1.H
      359/     175 : 35                  		xpah 	p1
      360/     176 : 40                  		lde 													; low byte to P1.H
- AS V1.42 Beta [Bld 102] - source file test.asm - page 7 - 11/27/2015 19:17:10
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 7 - 11/29/2015 9:31:15
 
 
      361/     177 : 31                  		xpal 	p1
@@ -396,7 +396,7 @@
      375/     187 : 03                  		scl
      376/     188 : 3F                  		xppc 	p3 												; print with space.
      377/     189 : 90 ED               		jmp 	_PADLoop
- AS V1.42 Beta [Bld 102] - source file test.asm - page 8 - 11/27/2015 19:17:10
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 8 - 11/29/2015 9:31:15
 
 
   symbol table (* = unused):
@@ -407,7 +407,7 @@
  CLEARSCREEN :                    1 C |  CODESTART :                    C10 - |
 *COMMANDMAINLOOP :               29 C | *CONSTPI :        3.141592653589793 - |
  CURRENT :                      C01 - |  CURSOR :                       C00 - |
-*DATE :                  11/27/2015 - |  EXTRACT5BIT :                   90 C |
+*DATE :                  11/29/2015 - |  EXTRACT5BIT :                   90 C |
 *FALSE :                          0 - |  FINDTOPMEMORY :                  F C |
 *FULLPMMU :                       1 - | *HAS64 :                          1 - |
 *HASDSP :                         0 - | *HASFPU :                         0 - |
@@ -421,7 +421,7 @@
 *PACKING :                        0 - | *PADDING :                        1 - |
  PARPOSN :                      C03 - |  PRINTADDRESSDATA :             158 C |
  PRINTCHARACTER :                EB C |  PRINTHEXBYTE :                  B8 C |
-*RELAXED :                        0 - | *TIME :                    19:17:10 - |
+*RELAXED :                        0 - | *TIME :                     9:31:15 - |
 *TRUE :                           1 - | *VERSION :                     142F - |
  WAIT :                          B6 C |  _KBDWAITKEY :                   47 C |
  _KBDWAITRELEASE :               41 C |  _PADLOOP :                     178 C |
@@ -435,7 +435,7 @@
      58 symbols
      29 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file test.asm - page 9 - 11/27/2015 19:17:10
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 9 - 11/29/2015 9:31:15
 
 
   codepages:
@@ -444,7 +444,7 @@
 STANDARD (0 changed characters)
 
 
-0.00 seconds assembly time
+0.03 seconds assembly time
 
     377 lines source file
       2 passes

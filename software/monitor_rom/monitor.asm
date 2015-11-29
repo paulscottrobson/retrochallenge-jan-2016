@@ -9,17 +9,22 @@
 ; ******************************************************************************************************************
 
 ; TODO: 
-;		Labels code.
+;		Make parameter evaluator use labels.
 ; 		Disassembler (if space available)
 ; 		16 bit maths (if space available)
 
 		cpu	sc/mp
 
-cursor 		= 0xC00 											; cursor position
-current 	= 0xC01 											; current address (lo,hi)
-parPosn		= 0xC03 											; current param offset in buffer (low addr)
-modifier  	= 0xC04 											; instruction modifier (@,Pn)
-kbdBuffer 	= 0xC05 											; 16 character keyboard buffer
+labels 		= 0xC00												; labels, 1 byte each
+labelCount 	= 16 												; number of labels.
+
+varBase 	= labels+labelCount 								; variables after labels start here.
+
+cursor 		= varBase 											; cursor position
+current 	= varBase+1 										; current address (lo,hi)
+parPosn		= varBase+3 										; current param offset in buffer (low addr)
+modifier  	= varBase+4 										; instruction modifier (@,Pn)
+kbdBuffer 	= varBase+5 										; 16 character keyboard buffer
 kbdBufferLn = 16 										
 
 codeStart 	= kbdBuffer+kbdBufferLn								; code starts here.
@@ -280,7 +285,6 @@ __CommandError: 												; unknown command.
 ;												In line Assembler
 ; ****************************************************************************************************************
 
-
 __Assembler:
 		ld 		-1(p1) 											; this is the operation code to use.
 		st 		@-1(p2) 										; push on the stack.
@@ -452,6 +456,9 @@ _PutTapeBit:
 __CmdMainLoop4:
 		jmp 	__CmdMainLoop3
 
+__CmdParameterFail1:
+		jmp 	__CmdParameterFail
+
 ; ****************************************************************************************************************
 ;						GET [addr] load tape to current position or given address.
 ; ****************************************************************************************************************
@@ -465,7 +472,7 @@ LoadTape_Command:
 __GetTapeWait:
 		ld 		0(p3) 											; check keyboard break
 		ani 	0x80
-		jnz 	__CmdParameterFail
+		jnz 	__CmdParameterFail1
 		sio 													; wait for the start bit, examine tape in.
 		lde 
 		ani 	1
@@ -485,16 +492,45 @@ __GetTapeBits:
 		lde  													; examine bit 0
 		ani 	1
 		jz 		__GetTapeWait 									; go and wait for the next start bit.
+__CmdMainLoop5:
 		jmp 	__CmdMainLoop4
 
 ; ****************************************************************************************************************
-;											D :	Dump Memory
+;										L : nn Set Label to current address
 ; ****************************************************************************************************************
 
-Dump_Command:
+Label_Command:
+		xppc 	p3 												; get parameter
+		csa 													; check it exists, CY/L must be set
+		jp 		__CmdParameterFail1
+		xpal 	p1 												; get into A
+		xae 													; put into E
+		lde 													; get back
+		scl
+		cai 	labelCount 										; check is < number of labels
+		jp 		__CmdParameterFail1
+
+		ldi 	Current/256 									; point P1 to current address
+		xpah 	p1
+		ldi 	Current&255
+		xpal 	p1
+		ld 		(p1) 											; read current address
+		xpal 	p1 												; save in P1.Low
+		ldi 	Labels&255 										; get labels low byte in same page as current address
+		ccl
+		ade 													; add label # to it
+		xpal 	p1 												; put in P1.L and restore current address low
+		st 		(p1) 											; store current address low in label space.
+		jmp 	__CmdMainLoop5 									; and exit.
+
+; ****************************************************************************************************************
+;											M :	Dump Memory
+; ****************************************************************************************************************
+
+MemoryDump_Command:
 		xppc 	p3 												; get parameter if exists
 		xppc 	p3 												; update current if exists.
-		ldi 	7 												; print seven rows
+		ldi 	6 												; print six rows
 		st 		@-1(p2)
 __DCLoop:
 		ldi 	(PrintAddressData-1)/256						; print one row of address and data.
@@ -517,8 +553,8 @@ __DCLoop:
 		dld 	(p2) 											; do it 7 times
 		jnz 	__DCLoop
 		ld 		@1(p2) 											; fix up stack.
+		jmp 	__CmdMainLoop5
 
-		jmp 	__CmdMainLoop4
 
 ; ****************************************************************************************************************
 ;								B: Enter Bytes (no address, sequence of byte data)
@@ -531,7 +567,7 @@ EnterBytes_Command:
 		xpah 	p3
 		xppc 	p3 												; get the parameter.
 		csa 													; look at carry
-		jp 		__CmdMainLoop4 									; carry clear, no value.
+		jp 		__CmdMainLoop5 									; carry clear, no value.
 		ldi 	Current/256 									; make P1 point to current
 		xpah 	p1
 		ldi 	Current&255 										

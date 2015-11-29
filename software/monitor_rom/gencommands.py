@@ -26,7 +26,7 @@ for instr in scmp.split(","):
 	assert len(instr) <= 6
 	entries[instr.split(":")[0]] = int(instr.split(":")[1],16)
 
-commands = "D:Dump,A:Address,G:Go,PUT:PutTape,GET:LoadTape,C:ClearScreen,B:EnterBytes"
+commands = "M:MemoryDump,A:Address,G:Go,PUT:PutTape,GET:LoadTape,C:ClearScreen,B:EnterBytes,L:Label"
 
 cmdID = 0x20
 
