@@ -9,14 +9,13 @@
 ; ******************************************************************************************************************
 
 ; TODO: 
-;		Make parameter evaluator use labels.
 ; 		Disassembler (if space available)
 ; 		16 bit maths (if space available)
 
 		cpu	sc/mp
 
 labels 		= 0xC00												; labels, 1 byte each
-labelCount 	= 16 												; number of labels.
+labelCount 	= 32 												; number of labels (perhaps a bit generous ?)
 
 varBase 	= labels+labelCount 								; variables after labels start here.
 
@@ -293,9 +292,29 @@ __Assembler:
 		csa 													; check carry flag set
 		jp 		__ASMNoParameter  								; if clear, no parameter was provided.
 
+		ldi 	parPosn & 255
 		xpal 	p1 												; get the parameter LSB
-		st 		@-1(p2) 										; push that on the stack.
-		jmp 	__ASMContinue
+		st 		@-1(p2) 										; push that on the stack, set P1 to parPosn
+		ldi 	parPosn / 256
+		xpah 	p1
+		ld 		(p1) 											; read current position
+		xpal 	p1 												; P1 now points to character.
+		ld 		(p1) 											; read character
+		xri 	'!'												; is it the label pling ?
+		jnz 	__ASMContinue 									; we don't need to change this pointer , we should technically.
+		ld 		(p2) 											; read the value, which is the label number
+		scl
+		cai 	labelCount 										; is it a valid label number
+		jp 		__CommandError 									; no, beep.
+		ld 		(p2) 											; re-read the label number
+		xae 													; put in E
+		ldi 	Labels/256 										; point p1 to labels
+		xpah 	p1
+		ldi 	Labels&255 
+		xpal 	p1
+		ld 		-0x80(p1) 										; read label indexed using E.
+		st 		(p2) 											; save as the operand
+		jmp 	__ASMContinue 									; and continue
 
 __ASMNoParameter:
 		ld 		(p2) 											; read the pushed operation code
@@ -939,5 +958,36 @@ GetCurrentAddress:
 ;		= 2,069 microcycles
 ;	
 ;		which is about 240 bits per second.
+;
+; ****************************************************************************************************************
+;
+;		Commands
+;		========
+;
+;		A [aaaa] 			Set current address to aaaa
+;		B [cc] [dd] [ee]..	Fill memory from current address
+; 		C 					Clear screen
+;		D [aaaa] 			Disassemble from aaaa (not complete yet)
+;		G aaaa 				Run from address - address must be given - return with XPPC P3
+; 		L n 				Set label n to the current address (up to 32 labels 00-1F)
+; 		M [aaaa] 			Memory dump from current address/aaaa (6 lines, 4 bytes per line)
+; 		GET [aaaa] 			Load tape to current address/aaa
+;		PUT [nnnn]			Write nnnn bytes from current address onwards to tape.
+;
+;		Assembler
+;
+;		Standard SC/MP mnemonics, except for XPAH, XPAL, XPPC, HALT and DINT which are XPH XPL XPC HLT DIN
+;		respectively (4 character mnemonics not supported)
+;
+;		Address modes are written as such:
+;
+;		Direct:			LD 	address 					(offset auto calculated, also for jump)
+;		Indexed:		LD  P1 7 						(normally ld 7(p1))
+;		Immediate:		DLY 42 					
+;		AutoIndexed:	LD @P1 4 						(normally ld @4(p1))
+;
+;		Labels are accessed via the pling, so to jump to label 4 rather than address 4 you write
+;
+;		JMP 4!
 ;
 ; ****************************************************************************************************************
