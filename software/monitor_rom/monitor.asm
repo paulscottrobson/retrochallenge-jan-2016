@@ -9,7 +9,6 @@
 ; ******************************************************************************************************************
 
 ; TODO: 
-; 		Assembler (remember Jump adjustment ?)
 ;		Labels code.
 ; 		Disassembler (if space available)
 ; 		16 bit maths (if space available)
@@ -284,19 +283,69 @@ __CommandError: 												; unknown command.
 
 __Assembler:
 		ld 		-1(p1) 											; this is the operation code to use.
-		xae 													; save in E.
+		st 		@-1(p2) 										; push on the stack.
 
-		; TODO: Assembler here, at present it just stops. Modifier already coded. 
-		; Point P1 to current variables
-		; Modify opcode by modifier.
-		; Load Current address into P1
-		; Write out and bump P1
-		; if a parameter (negative), fetch that, adjust if $90,$94,$98,$9C
-		; Write out and bump P1
-		; save P1 back to current address
-		; go back and get next command.
+		xppc 	p3 												; evaluate (any) parameter if present
+		csa 													; check carry flag set
+		jp 		__ASMNoParameter  								; if clear, no parameter was provided.
 
-wait:	jmp wait
+		xpal 	p1 												; get the parameter LSB
+		st 		@-1(p2) 										; push that on the stack.
+		jmp 	__ASMContinue
+
+__ASMNoParameter:
+		ld 		(p2) 											; read the pushed operation code
+		ani 	0x80 											; is bit 7 set ?
+		jnz 	__CommandError 									; if it is, we need a parameter
+		st 		@-1(p2) 										; push zero on the stack as a dummy parameter.
+
+__ASMContinue:
+		ldi 	Current/256 									; p3 = &Current Address
+		xpah 	p3
+		ldi 	Current&255
+		xpal 	p3
+
+		ld 		modifier-Current(p3) 							; get the modifier (e.g. @,Pn etc.)
+		ccl
+		add 	1(p2) 											; add to the opcode and write it back
+		st 		1(p2)
+
+		ld 		(p3) 											; read current address into P1
+		xpal 	p1
+		ld 		1(p3)
+		xpah 	p1
+
+		ld 		1(p2) 											; read opcode.
+		st 		@1(p1) 											; write out to current address and bump it.
+		jp 		__ASMExit 										; if +ve then no operand byte, exit.
+
+		ld 		(p2) 											; read the operand byte
+		st 		@1(p1) 											; write that out as well.
+
+		ld 		modifier-Current(p3) 							; look at the modifier 
+		jnz 	__ASMExit 										; if non zero we don't need to do anything P0 = 00
+		ld 		1(p2) 											; DLY is a special case
+		xri 	0x8F 											; where the modifier is zero but not PC relative.
+		jz 		__ASMExit 												
+
+		ld 		-1(p1) 											; read operand
+		ccl 													; one fewer because we want the current addr+1 low
+		cad 	(p3) 											; subtract the current address low.
+		st 		-1(p1) 											; write it back
+
+		ld 		1(p2) 											; read opcode again
+		ani 	0xF0 											; is it 9x (a JMP command)
+		xri 	0x90
+		jnz 	__ASMExit 										; if not, we are done
+		dld 	-1(p1) 											; one fewer because of the pre-increment
+__ASMExit:
+		xpal 	p1 												; write current address back out
+		st 		(p3)
+		xpah 	p1
+		st 		1(p3)
+		ld 		@2(p2) 											; drop stack values.
+
+		jmp 	__CmdMainLoop2 									; back to command loop
 
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
