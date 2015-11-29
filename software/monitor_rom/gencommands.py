@@ -26,7 +26,7 @@ for instr in scmp.split(","):
 	assert len(instr) <= 6
 	entries[instr.split(":")[0]] = int(instr.split(":")[1],16)
 
-commands = "M:MemoryDump,A:Address,G:Go,PUT:PutTape,GET:LoadTape,C:ClearScreen,B:EnterBytes,L:Label"
+commands = "M:MemoryDump,A:Address,G:Go,PUT:PutTape,GET:LoadTape,C:ClearScreen,B:EnterBytes,L:Label,D:Disassemble"
 
 cmdID = 0x20
 
@@ -45,6 +45,7 @@ print("__CommandList:")
 for k in keys:
 	print("        dw    0x{0:04x} ; {1}".format(convert(k),k))
 	print("        db    0x{0:02x}".format(entries[k]))
+print("__CommandListEnd:")
 print("        dw    0x0000 ; End Marker	\n")
 
 print("__CommandTable:")
