@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 1 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 1 - 11/29/2015 14:39:47
 
 
        1/       0 :                     ; ******************************************************************************************************************
@@ -12,7 +12,7 @@
        9/       0 :                     ; ******************************************************************************************************************
       10/       0 :                     
       11/       0 :                     ; TODO: 
-      12/       0 :                     ;		Make assembler use labels.
+      12/       0 :                     ;		Make parameter evaluator use labels.
       13/       0 :                     ; 		Disassembler (if space available)
       14/       0 :                     ; 		16 bit maths (if space available)
       15/       0 :                     
@@ -61,7 +61,7 @@
       58/      11 :                     ;
       59/      11 :                     ; ******************************************************************************************************************
       60/      11 :                     
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 2 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 2 - 11/29/2015 14:39:47
 
 
       61/      11 : C4 0C               		ldi 	Current/256 									; set P1 to current address
@@ -124,7 +124,7 @@
      118/      48 :                     ; ****************************************************************************************************************
      119/      48 :                     
      120/      48 : C4 00               		ldi 	0 												; set E = character position.
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 3 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 3 - 11/29/2015 14:39:47
 
 
      121/      4A : 01                  		xae 
@@ -187,7 +187,7 @@
      178/      94 :                     __KBDExit:
      179/      94 : C9 80               		st 		-0x80(p1) 										; add the ASCIIZ terminator.
      180/      96 : C4 0D               		ldi 	13												; print a new line.
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 4 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 4 - 11/29/2015 14:39:47
 
 
      181/      98 : 3F                  		xppc 	p3
@@ -250,7 +250,7 @@
      238/      D6 : 9C F5               		jnz 	__FindCommandLoop 								; if different to LSB loop back.
      239/      D8 : C1 FE               		ld 		-2(p1) 											; read the high byte
      240/      DA : E2 FF               		xor 	-1(p2) 											; if different to the MSB loop back.
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 5 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 5 - 11/29/2015 14:39:47
 
 
      241/      DC : 9C EF               		jnz 	__FindCommandLoop
@@ -313,7 +313,7 @@
      298/     119 : 90 08               		jmp 	__ASMContinue
      299/     11B :                     
      300/     11B :                     __ASMNoParameter:
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 6 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 6 - 11/29/2015 14:39:47
 
 
      301/     11B : C2 00               		ld 		(p2) 											; read the pushed operation code
@@ -376,7 +376,7 @@
      358/     165 :                     ;
      359/     165 :                     ; ****************************************************************************************************************
      360/     165 :                     ; ****************************************************************************************************************
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 7 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 7 - 11/29/2015 14:39:47
 
 
      361/     165 :                     
@@ -439,7 +439,7 @@
      418/     195 : 19                  		sio
      419/     196 : C4 20               		ldi 	32 												; tape leader
      420/     198 : CA FD               		st 		-3(p2)
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 8 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 8 - 11/29/2015 14:39:47
 
 
      421/     19A :                     _PutTapeLeader:
@@ -502,7 +502,7 @@
      478/     1E2 : D4 01               		ani 	1
      479/     1E4 : 98 F4               		jz 		__GetTapeWait
      480/     1E6 : 8F 06               		dly 	tapeDelay * 3 / 2 								; half way into the first bit.
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 9 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 9 - 11/29/2015 14:39:47
 
 
      481/     1E8 : C4 08               		ldi 	8 												; read in 8 bits.
@@ -565,7 +565,7 @@
      538/     227 : C4 09               		ldi 	(PrintAddressData-1)&255
      539/     229 : 33                  		xpal 	p3
      540/     22A : C4 04               		ldi 	4
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 10 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 10 - 11/29/2015 14:39:47
 
 
      541/     22C : 3F                  		xppc 	p3
@@ -628,7 +628,7 @@
      598/     26C : C4 02               		ldi 	(PrintCharacter-1)/256
      599/     26E : 37                  		xpah 	p3
      600/     26F : CE FF               		st 		@-1(p2)
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 11 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 11 - 11/29/2015 14:39:47
 
 
      601/     271 : C4 9C               		ldi 	(PrintCharacter-1)&255
@@ -691,7 +691,7 @@
      658/     2B1 : C1 00               		ld 		(p1) 											; read cursor position
      659/     2B3 : 33                  		xpal 	p3 												; put in P3.Low
      660/     2B4 :                     
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 12 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 12 - 11/29/2015 14:39:47
 
 
      661/     2B4 : C4 20               		ldi 	' ' 											; erase the cursor.
@@ -754,7 +754,7 @@
      718/     307 : 33                  		xpal 	p3 												; put in P3.L
      719/     308 : 90 C4               		jmp 	__PCBlankNewLine
      720/     30A :                     
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 13 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 13 - 11/29/2015 14:39:47
 
 
      721/     30A :                     ; ****************************************************************************************************************
@@ -817,13 +817,13 @@
      778/     33F : 35                  		xpah 	p1
      779/     340 : C4 13               		ldi 	parPosn&255 					
      780/     342 : 31                  		xpal 	p1
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 14 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 14 - 11/29/2015 14:39:47
 
 
      781/     343 : C4 00               		ldi 	0 												; -1(p2) is the low byte result
      782/     345 : CA FF               		st 		-1(p2) 											; -2(p2) is the high byte result
      783/     347 : CA FE               		st 		-2(p2)
-     784/     349 :                     		
+     784/     349 :                     
      785/     349 : C1 00               		ld 		(p1) 											; read the current position,P1 points to character
      786/     34B : 31                  		xpal 	p1 												; when we put it in P1.L
      787/     34C :                     
@@ -873,101 +873,102 @@
      831/     393 :                     
      832/     393 : C5 01               		ld 		@1(p1) 											; look at next character, post incrementing.
      833/     395 : 03                  		scl
-     834/     396 : FC 21               		cai 	33 												; if it is after space
+     834/     396 : FC 22               		cai 	34 												; if it is after space and ! (label marker)
      835/     398 : 94 C4               		jp 		__GPANextCharacter 								; go back and put it in place.
-     836/     39A : C5 FF               		ld 		@-1(p1) 										; undo the increment, incase we've just read zero.
-     837/     39C :                     
-     838/     39C : C4 13               		ldi 	parPosn & 255 									; put the parPosn address in P1.L, new posn into A
-     839/     39E : 31                  		xpal 	p1
-     840/     39F : C9 00               		st 		(p1) 											; and write it back
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 15 - 11/29/2015 14:26:17
+     836/     39A :                     
+     837/     39A : C5 FF               		ld 		@-1(p1) 										; undo the increment, incase we've just read zero.
+     838/     39C :                     
+     839/     39C : C4 13               		ldi 	parPosn & 255 									; put the parPosn address in P1.L, new posn into A
+     840/     39E : 31                  		xpal 	p1
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 15 - 11/29/2015 14:39:47
 
 
-     841/     3A1 : C2 FF               		ld 		-1(p2) 											; put the result into P1
-     842/     3A3 : 31                  		xpal 	p1
-     843/     3A4 : C2 FE               		ld 		-2(p2)
-     844/     3A6 : 35                  		xpah 	p1
-     845/     3A7 : 03                  		scl 													; set CY/L to indicate okay
-     846/     3A8 : 90 22               		jmp 	__GPAExit
-     847/     3AA :                     
-     848/     3AA :                     __GPAPointerModifier:
-     849/     3AA : C1 00               		ld 		(p1) 											; read P<something> ?
-     850/     3AC : D4 FC               		ani 	0xFC 											; is it '0' .. '3'?
-     851/     3AE : E4 30               		xri 	'0'
-     852/     3B0 : 9C 19               		jnz 	__GPAExitFail 									; it didn't work, not 0..3
-     853/     3B2 : C5 01               		ld 		@1(p1) 											; re-read it and advance
-     854/     3B4 : D4 03               		ani 	3												; lower 2 bits only
-     855/     3B6 : 90 02               		jmp 	__GPAAdjustModifier
-     856/     3B8 :                     __GPAAtModifier:
-     857/     3B8 : C4 04               		ldi 	4 												; set modifier adjustment to +4
-     858/     3BA :                     __GPAAdjustModifier:
-     859/     3BA : CA FD               		st 		-3(p2) 
-     860/     3BC : C4 14               		ldi 	modifier & 255 									; point P1 to modifier, save current address in E
-     861/     3BE : 31                  		xpal 	p1
-     862/     3BF : 01                  		xae 
-     863/     3C0 : C1 00               		ld 		(p1) 											; read modifier
-     864/     3C2 : 02                  		ccl
-     865/     3C3 : F2 FD               		add 	-3(p2) 											; add the modifying value to it.
-     866/     3C5 : C9 00               		st 		(p1) 											; write modifier.
-     867/     3C7 : 40                  		lde 													; restore current address to P1.L
-     868/     3C8 : 31                  		xpal 	p1
-     869/     3C9 : 90 81               		jmp 	__GPASkip 										; go back to skip over.
-     870/     3CB :                     
-     871/     3CB :                     __GPAExitFail:
-     872/     3CB : 02                  		ccl 													; carry clear, e.g. nothing read in / error.
-     873/     3CC :                     __GPAExit:
-     874/     3CC : 3F                  		xppc 	p3
-     875/     3CD :                     
-     876/     3CD :                     ; ****************************************************************************************************************
-     877/     3CD :                     ;
-     878/     3CD :                     ;		Store parameter value in P1 in the current address, if CS. Falls through.
-     879/     3CD :                     ;
-     880/     3CD :                     ; ****************************************************************************************************************
-     881/     3CD :                     
-     882/     3CD :                     UpdateCurrentAddress:
-     883/     3CD : 06                  		csa 													; get status reg
-     884/     3CE : 94 0C               		jp 		__UCAExit 										; if carry flag clear then exit.
-     885/     3D0 :                     
-     886/     3D0 : C4 11               		ldi 	current & 255 									; current address to P1.L, acquired address to E
-     887/     3D2 : 31                  		xpal 	p1
-     888/     3D3 : 01                  		xae
-     889/     3D4 : C4 0C               		ldi 	current / 256 									; current address to P1.H, acquired to A
-     890/     3D6 : 35                  		xpah 	p1
-     891/     3D7 : C9 01               		st 		1(p1) 											; store address back
-     892/     3D9 : 40                  		lde
-     893/     3DA : C9 00               		st 		0(p1)
-     894/     3DC :                     __UCAExit:
-     895/     3DC : 3F                  		xppc 	p3
-     896/     3DD :                     
-     897/     3DD :                     ; ****************************************************************************************************************
-     898/     3DD :                     ;
-     899/     3DD :                     ;		Get current address into P1.
-     900/     3DD :                     ;
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 16 - 11/29/2015 14:26:17
+     841/     39F : C9 00               		st 		(p1) 											; and write it back
+     842/     3A1 : C2 FF               		ld 		-1(p2) 											; put the result into P1
+     843/     3A3 : 31                  		xpal 	p1
+     844/     3A4 : C2 FE               		ld 		-2(p2)
+     845/     3A6 : 35                  		xpah 	p1
+     846/     3A7 : 03                  		scl 													; set CY/L to indicate okay
+     847/     3A8 : 90 22               		jmp 	__GPAExit
+     848/     3AA :                     
+     849/     3AA :                     __GPAPointerModifier:
+     850/     3AA : C1 00               		ld 		(p1) 											; read P<something> ?
+     851/     3AC : D4 FC               		ani 	0xFC 											; is it '0' .. '3'?
+     852/     3AE : E4 30               		xri 	'0'
+     853/     3B0 : 9C 19               		jnz 	__GPAExitFail 									; it didn't work, not 0..3
+     854/     3B2 : C5 01               		ld 		@1(p1) 											; re-read it and advance
+     855/     3B4 : D4 03               		ani 	3												; lower 2 bits only
+     856/     3B6 : 90 02               		jmp 	__GPAAdjustModifier
+     857/     3B8 :                     __GPAAtModifier:
+     858/     3B8 : C4 04               		ldi 	4 												; set modifier adjustment to +4
+     859/     3BA :                     __GPAAdjustModifier:
+     860/     3BA : CA FD               		st 		-3(p2) 
+     861/     3BC : C4 14               		ldi 	modifier & 255 									; point P1 to modifier, save current address in E
+     862/     3BE : 31                  		xpal 	p1
+     863/     3BF : 01                  		xae 
+     864/     3C0 : C1 00               		ld 		(p1) 											; read modifier
+     865/     3C2 : 02                  		ccl
+     866/     3C3 : F2 FD               		add 	-3(p2) 											; add the modifying value to it.
+     867/     3C5 : C9 00               		st 		(p1) 											; write modifier.
+     868/     3C7 : 40                  		lde 													; restore current address to P1.L
+     869/     3C8 : 31                  		xpal 	p1
+     870/     3C9 : 90 81               		jmp 	__GPASkip 										; go back to skip over.
+     871/     3CB :                     
+     872/     3CB :                     __GPAExitFail:
+     873/     3CB : 02                  		ccl 													; carry clear, e.g. nothing read in / error.
+     874/     3CC :                     __GPAExit:
+     875/     3CC : 3F                  		xppc 	p3
+     876/     3CD :                     
+     877/     3CD :                     ; ****************************************************************************************************************
+     878/     3CD :                     ;
+     879/     3CD :                     ;		Store parameter value in P1 in the current address, if CS. Falls through.
+     880/     3CD :                     ;
+     881/     3CD :                     ; ****************************************************************************************************************
+     882/     3CD :                     
+     883/     3CD :                     UpdateCurrentAddress:
+     884/     3CD : 06                  		csa 													; get status reg
+     885/     3CE : 94 0C               		jp 		__UCAExit 										; if carry flag clear then exit.
+     886/     3D0 :                     
+     887/     3D0 : C4 11               		ldi 	current & 255 									; current address to P1.L, acquired address to E
+     888/     3D2 : 31                  		xpal 	p1
+     889/     3D3 : 01                  		xae
+     890/     3D4 : C4 0C               		ldi 	current / 256 									; current address to P1.H, acquired to A
+     891/     3D6 : 35                  		xpah 	p1
+     892/     3D7 : C9 01               		st 		1(p1) 											; store address back
+     893/     3D9 : 40                  		lde
+     894/     3DA : C9 00               		st 		0(p1)
+     895/     3DC :                     __UCAExit:
+     896/     3DC : 3F                  		xppc 	p3
+     897/     3DD :                     
+     898/     3DD :                     ; ****************************************************************************************************************
+     899/     3DD :                     ;
+     900/     3DD :                     ;		Get current address into P1.
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 16 - 11/29/2015 14:39:47
 
 
-     901/     3DD :                     ; ****************************************************************************************************************
-     902/     3DD :                     
-     903/     3DD :                     GetCurrentAddress:
-     904/     3DD : C4 0C               		ldi 	current/256 									; current address ptr in P1
-     905/     3DF : 35                  		xpah 	p1
-     906/     3E0 : C4 11               		ldi 	current&255
-     907/     3E2 : 31                  		xpal 	p1
-     908/     3E3 : C1 00               		ld 		0(p1) 											; low byte to E
-     909/     3E5 : 01                  		xae
-     910/     3E6 : C1 01               		ld 		1(p1) 											; high byte to A
-     911/     3E8 : 35                  		xpah 	p1 												; then to P1.H
-     912/     3E9 : 40                  		lde 													; low byte to P1.L
-     913/     3EA : 31                  		xpal 	p1 
-     914/     3EB : 3F                  		xppc 	p3
-     915/     3EC :                     
-     916/     3EC :                     ; ****************************************************************************************************************
-     917/     3EC :                     ;
-     918/     3EC :                     ;											List of commands and Jump Table
-     919/     3EC :                     ;
-     920/     3EC :                     ; ****************************************************************************************************************
-     921/     3EC :                     
-     922/     3EC :                     		include commands.inc 									; must be at the end, so the command table is in
+     901/     3DD :                     ;
+     902/     3DD :                     ; ****************************************************************************************************************
+     903/     3DD :                     
+     904/     3DD :                     GetCurrentAddress:
+     905/     3DD : C4 0C               		ldi 	current/256 									; current address ptr in P1
+     906/     3DF : 35                  		xpah 	p1
+     907/     3E0 : C4 11               		ldi 	current&255
+     908/     3E2 : 31                  		xpal 	p1
+     909/     3E3 : C1 00               		ld 		0(p1) 											; low byte to E
+     910/     3E5 : 01                  		xae
+     911/     3E6 : C1 01               		ld 		1(p1) 											; high byte to A
+     912/     3E8 : 35                  		xpah 	p1 												; then to P1.H
+     913/     3E9 : 40                  		lde 													; low byte to P1.L
+     914/     3EA : 31                  		xpal 	p1 
+     915/     3EB : 3F                  		xppc 	p3
+     916/     3EC :                     
+     917/     3EC :                     ; ****************************************************************************************************************
+     918/     3EC :                     ;
+     919/     3EC :                     ;											List of commands and Jump Table
+     920/     3EC :                     ;
+     921/     3EC :                     ; ****************************************************************************************************************
+     922/     3EC :                     
+     923/     3EC :                     		include commands.inc 									; must be at the end, so the command table is in
 (1)    1/     74C :                             org 0x074c
 (1)    2/     74C :                     ;
 (1)    3/     74C :                     ; 	This file is generated automatically by gencommands.py
@@ -1005,10 +1006,10 @@
 (1)   35/     778 : 20                          db    0x20
 (1)   36/     779 : 01 00                       dw    0x0001 ; A
 (1)   37/     77B : 21                          db    0x21
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(commands.inc) - page 17 - 11/29/2015 14:39:47
+
+
 (1)   38/     77C : 07 00                       dw    0x0007 ; G
- AS V1.42 Beta [Bld 102] - source file monitor.asm(commands.inc) - page 17 - 11/29/2015 14:26:17
-
-
 (1)   39/     77E : 22                          db    0x22
 (1)   40/     77F : B4 42                       dw    0x42b4 ; PUT
 (1)   41/     781 : 23                          db    0x23
@@ -1068,10 +1069,10 @@
 (1)   95/     7D2 : D8                          db    0xd8
 (1)   96/     7D3 : 49 3E                       dw    0x3e49 ; ORI
 (1)   97/     7D5 : DC                          db    0xdc
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(commands.inc) - page 18 - 11/29/2015 14:39:47
+
+
 (1)   98/     7D6 : F2 61                       dw    0x61f2 ; XOR
- AS V1.42 Beta [Bld 102] - source file monitor.asm(commands.inc) - page 18 - 11/29/2015 14:26:17
-
-
 (1)   99/     7D8 : E0                          db    0xe0
 (1)  100/     7D9 : 49 62                       dw    0x6249 ; XRI
 (1)  101/     7DB : E4                          db    0xe4
@@ -1099,28 +1100,28 @@
 (1)  123/     7FC : 48 02                       dw    EnterBytes_Command
 (1)  124/     7FE : 00 02                       dw    Label_Command
 (1)  125/     800 :                     
-     923/     800 :                     																; the same page.
-     924/     800 :                     
-     925/     800 :                     ; ****************************************************************************************************************
-     926/     800 :                     ;
-     927/     800 :                     ;													Tape Format. 
-     928/     800 :                     ;
-     929/     800 :                     ; ****************************************************************************************************************
-     930/     800 :                     ;
-     931/     800 :                     ;		1 x start bit 		'1' value is held for period of time.
-     932/     800 :                     ;		8 x data bits  		'0 or 1' value is held for a period of time.
-     933/     800 :                     ;		1 x continuation	'0' if another bit follows, '1' if end.
-     934/     800 :                     ;		at least 2 bit times between bytes.
-     935/     800 :                     ;
-     936/     800 :                     ;		Use DLY 4 with A = 0 (DLY 6 to skip half-start)
-     937/     800 :                     ; 		= 13 + 2 * 0 + 514 * 4 microcycles
-     938/     800 :                     ;		= 2,069 microcycles
-     939/     800 :                     ;	
-     940/     800 :                     ;		which is about 240 bits per second.
-     941/     800 :                     ;
-     942/     800 :                     ; ****************************************************************************************************************
-     943/     800 :                     
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 19 - 11/29/2015 14:26:17
+     924/     800 :                     																; the same page.
+     925/     800 :                     
+     926/     800 :                     ; ****************************************************************************************************************
+     927/     800 :                     ;
+     928/     800 :                     ;													Tape Format. 
+     929/     800 :                     ;
+     930/     800 :                     ; ****************************************************************************************************************
+     931/     800 :                     ;
+     932/     800 :                     ;		1 x start bit 		'1' value is held for period of time.
+     933/     800 :                     ;		8 x data bits  		'0 or 1' value is held for a period of time.
+     934/     800 :                     ;		1 x continuation	'0' if another bit follows, '1' if end.
+     935/     800 :                     ;		at least 2 bit times between bytes.
+     936/     800 :                     ;
+     937/     800 :                     ;		Use DLY 4 with A = 0 (DLY 6 to skip half-start)
+     938/     800 :                     ; 		= 13 + 2 * 0 + 514 * 4 microcycles
+     939/     800 :                     ;		= 2,069 microcycles
+     940/     800 :                     ;	
+     941/     800 :                     ;		which is about 240 bits per second.
+     942/     800 :                     ;
+     943/     800 :                     ; ****************************************************************************************************************
+     944/     800 :                     
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 19 - 11/29/2015 14:39:47
 
 
   symbol table (* = unused):
@@ -1152,7 +1153,7 @@
  PARPOSN :                      C13 - |  PRINTADDRESSDATA :             30A C |
  PRINTCHARACTER :               29D C |  PRINTHEXBYTE :                 26A C |
  PUTTAPE_COMMAND :              185 C | *RELAXED :                        0 - |
- TAPEDELAY :                      4 - | *TIME :                    14:26:17 - |
+ TAPEDELAY :                      4 - | *TIME :                    14:39:47 - |
 *TRUE :                           1 - | *UPDATECURRENTADDRESS :         3CD C |
  VARBASE :                      C10 - | *VERSION :                     142F - |
  _KBDWAITKEY :                   54 C |  _KBDWAITRELEASE :               4E C |
@@ -1182,7 +1183,7 @@
     104 symbols
      31 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 20 - 11/29/2015 14:26:17
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 20 - 11/29/2015 14:39:47
 
 
   codepages:
@@ -1193,7 +1194,7 @@ STANDARD (0 changed characters)
 
 0.01 seconds assembly time
 
-   1068 lines source file
+   1069 lines source file
       2 passes
       0 errors
       0 warnings

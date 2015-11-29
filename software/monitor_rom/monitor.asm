@@ -831,8 +831,9 @@ __GPAShift:
 
 		ld 		@1(p1) 											; look at next character, post incrementing.
 		scl
-		cai 	33 												; if it is after space
+		cai 	34 												; if it is after space and ! (label marker)
 		jp 		__GPANextCharacter 								; go back and put it in place.
+
 		ld 		@-1(p1) 										; undo the increment, incase we've just read zero.
 
 		ldi 	parPosn & 255 									; put the parPosn address in P1.L, new posn into A
