@@ -9,10 +9,10 @@
 ; ******************************************************************************************************************
 
 ; TODO: 
-; 		Disassembler - expand @Pn
+; 		Fix SIO.
 ; 		16 bit maths routines.
-; 		Decode addresses on disassembler.
-; 		Print message on first clear screen.
+; 		Decode addresses on disassembler (?)
+; 		Print message on first clear screen (?)
 
 		cpu	sc/mp
 
@@ -31,7 +31,7 @@ kbdBufferLn = 16
 codeStart 	= kbdBuffer+kbdBufferLn								; code starts here.
 
 tapeDelay 	= 4 												; DLY parameter for 1 tape bit width.
-																; (smaller = faster tape I/O)
+																; (smaller = faster tape I/O - see file end.)
 
 		org 	0x0000
 		nop
@@ -551,7 +551,7 @@ Label_Command:
 MemoryDump_Command:
 		xppc 	p3 												; get parameter if exists
 		xppc 	p3 												; update current if exists.
-		ldi 	6 												; print six rows
+		ldi 	7 												; print seven rows
 		st 		@-1(p2)
 __DCLoop:
 		ldi 	(PrintAddressData-1)/256						; print one row of address and data.
@@ -613,7 +613,7 @@ EnterBytes_Command:
 Disassemble_Command:	
 		xppc 	p3 												; evaluate
 		xppc 	p3 												; update current if new value
-		ldi 	6 												; instructions to disassemble counter
+		ldi 	7												; instructions to disassemble counter
 		st 		@-4(p2)											; p2 + 0 = counter p2 + 1 = opcode p2 + 2 = operand
 __DAssLoop:														; p2 + 3 = opcode - base opcode.
 		ldi 	(PrintAddressData-1)/256						; print Address only
@@ -690,12 +690,11 @@ __DAssPrintMnemonic:
 		sr 														; shift right twice.
 		sr
 		ani 	0x1F 											; lower 5 bits only
-		jnz 	__DAssNotSpace 									; if zero it is a space.
-		ldi 	-32 											; will map 0 onto 32 when 64 is added.
-__DAssNotSpace:
+		jz 		__DAssSkipSpace 								; don't print spaces (00000)
 		ccl 													; make it 7 bit ASCII code.
 		adi 	64 							
 		xppc 	p3 												; display the character
+__DAssSkipSpace:
 		ldi 	5 												; now shift the encoded data left 5 times
 		st 		-1(p2)
 __DAssShiftEncode:
@@ -742,10 +741,21 @@ __DAssNext:
 
 
 __DAssPrintModifier:
-
-		; TODO display the modifier (@Pn) if appropriate and a trailing space.
-
-		jmp 	__DAssPrintOperand
+		ldi 	' '												; print leading space
+		xppc 	p3
+		ld 		3(p2) 											; read modifier
+		ani 	0x04 											; is @ bit set
+		jz 		__DAssNotAutoIndexed
+		ldi 	'@'												; print '@'
+		xppc 	p3
+__DAssNotAutoIndexed:
+		ldi 	'P'												; print 'P'
+		xppc 	p3
+		ld 		3(p2) 											; print pointer register
+		ani 	3
+		ori 	'0'
+		xppc 	p3
+		jmp 	__DAssPrintOperand 								; and print operand.
 
 
 ; ****************************************************************************************************************
@@ -1119,7 +1129,7 @@ GetCurrentAddress:
 ; 		GET [aaaa] 			Load tape to current address/aaa
 ;		PUT [nnnn]			Write nnnn bytes from current address onwards to tape.
 ;
-;		Assembler
+;		Command Line Assembler
 ;
 ;		Standard SC/MP mnemonics, except for XPAH, XPAL, XPPC, HALT and DINT which are XPH XPL XPC HLT DIN
 ;		respectively (4 character mnemonics not supported)
