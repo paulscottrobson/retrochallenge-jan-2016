@@ -9,7 +9,8 @@
 ; ******************************************************************************************************************
 
 ; TODO: 
-; 		16 bit maths routines.
+; 		complete and further test 16 bit divide routine.
+;		Check any other (random # ?)
 ; 		Decode addresses on disassembler (?)
 ; 		Print message on first clear screen (?)
 
@@ -1123,7 +1124,7 @@ GetCurrentAddress:
 ;		A [aaaa] 			Set current address to aaaa
 ;		B [cc] [dd] [ee]..	Fill memory from current address
 ; 		C 					Clear screen
-;		D [aaaa] 			Disassemble from aaaa (not complete yet)
+;		D [aaaa] 			Disassemble from aaaa
 ;		G aaaa 				Run from address - address must be given - return with XPPC P3
 ; 		L n 				Set label n to the current address (up to 32 labels 00-1F)
 ; 		M [aaaa] 			Memory dump from current address/aaaa (6 lines, 4 bytes per line)

@@ -34,28 +34,28 @@ GoBoot:
 ;
 ; ******************************************************************************************************************
 
-n1 = 512
-n2 = 16
+n1 = 31085
+n2 = 1638
 
 Maths:															; maths support routine.
 	ldi 	0xC
 	xpah 	p2
-	ldi 	0x2F
+	ldi 	0x30
 	xpal 	p2
-
-	ldi 	n2 / 256
-	st 		@-1(p2)
-	ldi 	n2 & 255
-	st 		@-1(p2)
 
 	ldi 	n1 / 256
 	st 		@-1(p2)
 	ldi 	n1 & 255
 	st 		@-1(p2)
-	
-	ldi 	'*'
 
-	xri 	'+'
+	ldi 	n2 / 256
+	st 		@-1(p2)
+	ldi 	n2 & 255
+	st 		@-1(p2)
+	
+	ldi 	'/'
+
+	xri 	'+' 												; dispatch function in A to the executing code.
 	jz 		MATH_Add
 	xri 	'+'!'-'
 	jz 		MATH_Subtract
@@ -87,13 +87,38 @@ MATH_Add:
 
 MATH_Subtract:
 	scl 										
-	ld 		@1(p2) 												; read LSB of TOS and unstack
+	ld 		2(p2) 												; read LSB of TOS 
+	cad 	0(p2)
+	st 		2(p2)
+	ld 		3(p2) 												; read MSB of TOS
 	cad 	1(p2)
-	st 		1(p2)
-	ld 		@1(p2) 												; read MSB of TOS and unstack
-	cad 	1(p2)
-	st 		1(p2)
+	st 		3(p2)
+	ld 		@2(p2)
 	jmp 	MATH_Exit
+
+; ******************************************************************************************************************
+;											16 Bit shift left/right macros
+; ******************************************************************************************************************
+
+shiftLeft macro val
+	ccl 													
+	ld 		val(p2)
+	add 	val(p2)
+	st 		val(p2)
+	ld 		val+1(p2)
+	add 	val+1(p2)
+	st 		val+1(p2)		
+	endm
+
+shiftRight macro val
+	ccl
+	ld 		val+1(p2)
+	rrl 
+	st 		val+1(p2)
+	ld 		val(p2)
+	rrl 
+	st 		val(p2)
+	endm
 
 ; ******************************************************************************************************************
 ;												16 bit signed multiply
@@ -128,21 +153,8 @@ __MultiplyLoop:
 	add 	aHi(p2)
 	st 		resultHi(p2)
 __MultiplyNoAdd:
-	ccl 														; shift a left one.
-	ld 		aLo(p2)
-	add 	aLo(p2)
-	st 		aLo(p2)
-	ld 		aHi(p2)
-	add 	aHi(p2)
-	st 		aHi(p2)		
-
-	ccl 														; shift b right one.
-	ld 		bHi(p2)
-	rrl 
-	st 		bHi(p2)
-	ld 		bLo(p2)
-	rrl 
-	st 		bLo(p2)
+	shiftleft aLo 												; shift A left once.
+	shiftright bLo 												; shift b right one.
 	jmp 	__MultiplyLoop
 
 __MultiplyExit:
@@ -165,6 +177,75 @@ MATH_Divide:
 
 	section 	SCMPDivide
 
+denominatorHi = 1 												; input values to division
+denominatorLo = 0 												; (see arithmetic.py)
+numeratorHi = 3
+numeratorLo = 2
+bitHi = -1 														; bit shifted for division test.
+bitLo = -2
+quotientHi = -3 												; quotient
+quotientLo = -4
+remainderHi = -5 												; remainder
+remainderLo = -6
+tempLo = -7 													; temp (temp Hi is kept in A)
 
-	jmp 	MATH_Exit
+	ldi 	0 													; clear quotient and remainder
+	st 		quotientHi(p2)
+	st 		quotientLo(p2)
+	st 		remainderHi(p2)
+	st 		remainderLo(p2)
+	st 		bitLo(p2) 											; set bit to 0x8000
+	ldi 	0x80 
+	st 		bitHi(p2)
+
+	; TODO: unsign numerator and denominator.
+
+__DivideLoop:
+	ld 		bitLo(p2) 											; keep going until all bits done.
+	or 		bitHi(p2)
+	jz 		__DivideExit
+
+	shiftleft remainderLo 										; shift remainder left.
+
+	ld 		numeratorHi(p2)										; if numerator MSB is set
+	jp 		__DivideNoIncRemainder
+
+	ild 	remainderLo(p2) 									; then increment remainder
+	jnz 	__DivideNoIncRemainder
+	ild 	remainderHi(p2)
+__DivideNoIncRemainder:
+
+	scl 														; calculate remainder-denominator (temp)
+	ld 		remainderLo(p2)
+	cad 	denominatorLo(p2)
+	st 		tempLo(p2) 											; save in temp.low
+	ld 		remainderHi(p2)
+	cad 	denominatorHi(p2) 									; temp.high is now in A
+	jp 		__DivideRemainderGreater 							; if >= 0 then remainder >= denominator
+
+__DivideContinue:
+	shiftright 	bitLo 											; shift bit right
+	shiftleft   numeratorLo 									; shift numerator left
+	jmp 		__DivideLoop
+
+__DivideRemainderGreater: 										; this is the "if temp >= 0 bit"
+	st 		remainderHi(p2) 									; save temp.high value into remainder.high
+	ld 		tempLo(p2) 											; copy temp.low to remainder.low
+	st 		remainderLo(p2) 
+
+	ld 		quotientLo(p2) 										; or bit into quotient
+	or 		bitLo(p2)
+	st 		quotientLo(p2)
+	ld 		quotientHi(p2)
+	or 		bitHi(p2)
+	st 		quotientHi(p2)
+	jmp 	__DivideContinue
+
+__DivideExit:
+	; TODO: Copy quotient/remainder to better positions.
+	; TODO: resign quotient
+
+	jmp 	MATH_Exit1
+
+
 	endsection	SCMPDivide
