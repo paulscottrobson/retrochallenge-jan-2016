@@ -9,7 +9,7 @@
 ;
 ;	Priority order : * / + - anything else VTL-2 might use ASCII -> int int -> ASCII
 ;
-;	jmp	 	GoBoot 												; this will be at location 1.
+	jmp	 	GoBoot 												; this will be at location 1.
 	jmp 	Maths 												; maths routine, at location 3.
 	; any other routines you care to call.
 
@@ -32,28 +32,31 @@ GoBoot:
 ;		on entry, A is the function (+,-,*,/ etc.). P2 should be left in the 'correct' state afterwards,
 ;		so if you add two numbers then p2 will be 2 higher than when the routine was entered.
 ;
+;		Returns CS on error (division by zero) - in this case the parameters are not touched.
+;
+;		Note that division uses a fair chunk of the stack :)
+;
 ; ******************************************************************************************************************
 
-n1 = 31085
-n2 = 1638
-
 Maths:															; maths support routine.
-	ldi 	0xC
-	xpah 	p2
-	ldi 	0x30
-	xpal 	p2
 
-	ldi 	n1 / 256
-	st 		@-1(p2)
-	ldi 	n1 & 255
-	st 		@-1(p2)
-
-	ldi 	n2 / 256
-	st 		@-1(p2)
-	ldi 	n2 & 255
-	st 		@-1(p2)
-	
-	ldi 	'/'
+;n1 = ((-524 + 0x10000) & 0xFFFF)
+;n2 = ((7 + 0x10000) & 0xFFFF)
+;op = '/'
+;
+;	ldi 	0xC 												; bodge a stack
+;	xpah 	p2
+;	ldi 	0x30
+;	xpal 	p2
+;	ldi 	n1 / 256 											; push n1
+;	st 		@-1(p2)
+;	ldi 	n1 & 255
+;	st 		@-1(p2)
+;	ldi 	n2 / 256 											; push n2
+;	st 		@-1(p2)
+;	ldi 	n2 & 255
+;	st 		@-1(p2)
+;	ldi 	op
 
 	xri 	'+' 												; dispatch function in A to the executing code.
 	jz 		MATH_Add
@@ -63,7 +66,7 @@ Maths:															; maths support routine.
 	jz 		MATH_Multiply
 	xri 	'*'!'/'
 	jz 		MATH_Divide
-
+	scl 														; error, unknown command.
 MATH_Exit:
 	jmp  	MATH_Exit
 
@@ -79,6 +82,7 @@ MATH_Add:
 	ld 		@1(p2) 												; read MSB of TOS and unstack
 	add 	1(p2)
 	st 		1(p2)
+	ccl
 	jmp 	MATH_Exit
 
 ; ******************************************************************************************************************
@@ -94,6 +98,7 @@ MATH_Subtract:
 	cad 	1(p2)
 	st 		3(p2)
 	ld 		@2(p2)
+	ccl
 	jmp 	MATH_Exit
 
 ; ******************************************************************************************************************
@@ -165,6 +170,7 @@ __MultiplyExit:
 	ld 		@2(p2) 												; fix up the number stack.
 	endsection SCMPMultiply
 
+	ccl
 MATH_Exit1:
 	jmp 	MATH_Exit
 
@@ -187,18 +193,51 @@ quotientHi = -3 												; quotient
 quotientLo = -4
 remainderHi = -5 												; remainder
 remainderLo = -6
-tempLo = -7 													; temp (temp Hi is kept in A)
+signCount = -7 													; sign of result (bit 0)
+eTemp = -8 														; temporary value of sign.
+
+	ld 		denominatorLo(p2) 									; check denominator 
+	or 		denominatorHi(p2) 
+	scl 														; if zero return CY/L Set
+	jz 		MATH_Exit1
 
 	ldi 	0 													; clear quotient and remainder
 	st 		quotientHi(p2)
 	st 		quotientLo(p2)
 	st 		remainderHi(p2)
 	st 		remainderLo(p2)
+	st 		signCount(p2)
 	st 		bitLo(p2) 											; set bit to 0x8000
 	ldi 	0x80 
 	st 		bitHi(p2)
 
-	; TODO: unsign numerator and denominator.
+	lde 														; save E
+	st 		eTemp(p2)
+
+	ldi 	3
+__DivideUnsignLoop:
+	xae 														; store in E
+	ld 		-0x80(p2) 											; read high byte
+	jp 		__DivideNotSigned 									; if +ve then skip
+	ild 	signCount(p2) 										; bump sign count
+	ld 		@-1(p2) 											; dec P2 to access the LSB
+	ldi 	0
+	scl 
+	cad 	-0x80(p2)
+	st 		-0x80(p2)
+	ld 		@1(p2) 												; inc P2 to access the MSB
+	ldi 	0
+	cad 	-0x80(p2)
+	st 		-0x80(p2)
+__DivideNotSigned:
+	xae 														; retrieve E
+	scl 														; subtract 2
+	cai 	2
+	jp 		__DivideUnsignLoop 									; not finished yet.
+	jmp 	__DivideLoop
+
+__MATH_Exit2
+	jmp 	MATH_Exit1
 
 __DivideLoop:
 	ld 		bitLo(p2) 											; keep going until all bits done.
@@ -218,7 +257,7 @@ __DivideNoIncRemainder:
 	scl 														; calculate remainder-denominator (temp)
 	ld 		remainderLo(p2)
 	cad 	denominatorLo(p2)
-	st 		tempLo(p2) 											; save in temp.low
+	xae 														; save in E.
 	ld 		remainderHi(p2)
 	cad 	denominatorHi(p2) 									; temp.high is now in A
 	jp 		__DivideRemainderGreater 							; if >= 0 then remainder >= denominator
@@ -228,9 +267,37 @@ __DivideContinue:
 	shiftleft   numeratorLo 									; shift numerator left
 	jmp 		__DivideLoop
 
+__DivideExit:
+	ld 		signCount(p2) 										; is the result signed
+	ani 	0x01
+	jz 		__DivideComplete
+	scl 														; if so, reapply the sign.
+	ldi 	0
+	cad 	quotientLo(p2)
+	st 		quotientLo(p2)
+	ldi 	0
+	cad 	quotientHi(p2)
+	st 		quotientHi(p2)
+
+__DivideComplete:
+	ld 		quotientHi(p2) 										; copy quotient to what will be TOS
+	st 		3(p2)
+	ld 		quotientLo(p2)
+	st 		2(p2)
+	ld 		remainderHi(p2) 									; put remainder immediately after it if we want it
+	st 		1(p2)
+	ld 		remainderLo(p2) 
+	st 		0(p2)
+
+	ld 		eTemp(p2) 											; restore E
+	xae 
+	ld 		@2(p2) 												; fix stack back up leaving quotient and hidden remainder
+	ccl 														; return no error.
+	jmp 	__MATH_Exit2
+
 __DivideRemainderGreater: 										; this is the "if temp >= 0 bit"
 	st 		remainderHi(p2) 									; save temp.high value into remainder.high
-	ld 		tempLo(p2) 											; copy temp.low to remainder.low
+	lde 														; copy temp.low to remainder.low
 	st 		remainderLo(p2) 
 
 	ld 		quotientLo(p2) 										; or bit into quotient
@@ -240,12 +307,6 @@ __DivideRemainderGreater: 										; this is the "if temp >= 0 bit"
 	or 		bitHi(p2)
 	st 		quotientHi(p2)
 	jmp 	__DivideContinue
-
-__DivideExit:
-	; TODO: Copy quotient/remainder to better positions.
-	; TODO: resign quotient
-
-	jmp 	MATH_Exit1
 
 
 	endsection	SCMPDivide

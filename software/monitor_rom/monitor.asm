@@ -9,10 +9,9 @@
 ; ******************************************************************************************************************
 
 ; TODO: 
-; 		complete and further test 16 bit divide routine.
 ;		Check any other (random # ?)
+;		More testing of numbers (seperate program ???)
 ; 		Decode addresses on disassembler (?)
-; 		Print message on first clear screen (?)
 
 		cpu	sc/mp
 
@@ -23,9 +22,10 @@ varBase 	= labels+labelCount 								; variables after labels start here.
 
 cursor 		= varBase 											; cursor position
 current 	= varBase+1 										; current address (lo,hi)
-parPosn		= varBase+3 										; current param offset in buffer (low addr)
-modifier  	= varBase+4 										; instruction modifier (@,Pn)
-kbdBuffer 	= varBase+5 										; 16 character keyboard buffer
+isInit      = varBase+3 										; if already initialise, this is $A7.
+parPosn		= varBase+4 										; current param offset in buffer (low addr)
+modifier  	= varBase+5 										; instruction modifier (@,Pn)
+kbdBuffer 	= varBase+6 										; 16 character keyboard buffer
 kbdBufferLn = 16 										
 
 codeStart 	= kbdBuffer+kbdBufferLn								; code starts here.
@@ -58,21 +58,6 @@ FindTopMemory:
 
 ; ******************************************************************************************************************
 ;
-;									Reset cursor position and current address.
-;
-; ******************************************************************************************************************
-
-		ldi 	Current/256 									; set P1 to current address
-		xpah 	p1
-		ldi 	Current&255
-		xpal 	p1
-		ldi 	codeStart & 255 								; reset current address to code start
-		st 		@1(p1)
-		ldi 	codeStart / 256
-		st 		@(p1)
-
-; ******************************************************************************************************************
-;
 ;												Clear the screen
 ;
 ; ******************************************************************************************************************
@@ -93,6 +78,39 @@ ClearScreenLoop:
 		xpal 	p1 
 		ldi 	0
 		st 		0(p1)											
+
+; ****************************************************************************************************************
+;
+;												Check if initialised.
+;
+; ****************************************************************************************************************
+
+		ld 		isInit-Cursor(p1) 								; have we initialised ?
+		xri 	0xA7 											; if so this byte should be $A7
+		jz 		CommandMainLoop
+		ldi 	0xA7 											; set the initialised byte
+		st 		isInit-Cursor(p1)
+		ldi 	codeStart/256 									; set the initial address
+		st 		Current-Cursor+1(p1)
+		ldi 	codeStart&255
+		st 		Current-Cursor(p1)
+
+		ldi 	(PrintCharacter-1)/256 							; set P3 = print character.
+		xpah 	p3
+		ldi 	(PrintCharacter-1)&255
+		xpal 	p3
+		ldi 	Message / 256 									; set P1 = boot message
+		xpah 	p1
+		ldi 	Message & 255
+		xpal 	p1
+MessageLoop:
+		ld 		@1(p1) 											; read character
+		jz 		CommandMainLoop 								; end of message
+		xppc 	p3 												; print it
+		jmp 	MessageLoop
+
+Message:
+		db 		"** SC/MP OS **",13,0
 
 ; ****************************************************************************************************************
 ;
