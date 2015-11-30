@@ -17,7 +17,7 @@ def from2(a):
 	return a
 
 #
-#	multiply - 16 bit multiply (HL) = (HL) * BC, breaks ABCDE.
+#	multiply - 16 bit multiply
 #
 def multiply(a,b):
 	aOrg = a 
@@ -34,15 +34,7 @@ def multiply(a,b):
 	assert res == aOrg * bOrg
 
 #
-#	16 bit unsigned division. (HL) = (HL) / BC, breaks ABCDE, returns remainder in BC.
-#
-#	have to be done in a buffer space. HL points to buffer, BC is the remainder, DE is the temp work space.
-#
-#	+0 	HL Save
-#	+2 	Denominator
-#	+4 	Quotient
-#	+6 	Bit
-#	+8 	Numerator.
+#	16 bit unsigned division. 
 #
 def divide(numerator,denominator):
 
