@@ -9,7 +9,6 @@
 ; ******************************************************************************************************************
 
 ; TODO: 
-; 		Fix SIO.
 ; 		16 bit maths routines.
 ; 		Decode addresses on disassembler (?)
 ; 		Print message on first clear screen (?)
@@ -36,12 +35,15 @@ tapeDelay 	= 4 												; DLY parameter for 1 tape bit width.
 		org 	0x0000
 		nop
 
+		include maths.asm 										; import the maths routines.
+
 ; ******************************************************************************************************************
 ;
 ;									Find Top of Memory to initialise the stack.
 ;
 ; ******************************************************************************************************************
 
+BootMonitor:
 		ldi 	0x0F 											; point P2 to theoretical top of RAM on basic m/c
 		xpah 	p2 												; e.g. 0xFFF
 		ldi 	0xFF 											; ideally you'd make this 0x003F and remove the ld
@@ -448,7 +450,7 @@ _PutTapeByte:													; output byte at P1
 		xae 	
 		sio
 		dly 	tapeDelay * 4 									; 0 continuation bit + gap between tapes with no signal 
-		ldi 	0x80 											; set bit high
+		ldi 	0x1 											; set bit high
 		xae
 		sio 
 		ldi 	0
@@ -462,11 +464,12 @@ _PutTapeBit:
 		ldi 	0
 		dly 	tapeDelay 								
 		dld 	-3(p2) 											; do all 8 bits.
+		jnz 	_PutTapeBit
 		dld 	-1(p2) 											; decrement counter
 		jnz 	_PutTapeByte
 		dld 	-2(p2) 											; note MSB goes 0 to -1 when finished.
 		jp 		_PutTapeByte
-		ldi 	0x80 											; add the termination bit.
+		ldi 	0x01 											; add the termination bit.
 		xae
 		sio
 		ldi 	0 												; put that out.
@@ -496,8 +499,7 @@ __GetTapeWait:
 		jnz 	__CmdParameterFail1
 		sio 													; wait for the start bit, examine tape in.
 		lde 
-		ani 	1
-		jz 		__GetTapeWait
+		jp 		__GetTapeWait
 		dly 	tapeDelay * 3 / 2 								; half way into the first bit.
 		ldi 	8 												; read in 8 bits.
 		st 		-1(p2)
@@ -510,9 +512,8 @@ __GetTapeBits:
 		lde 													; store byte at current address
 		st 		@1(p1)
 		sio 													; read in the byte, which is zero if continuing.
-		lde  													; examine bit 0
-		ani 	1
-		jz 		__GetTapeWait 									; go and wait for the next start bit.
+		lde  													; examine bit 7 shifted in.
+		jp 		__GetTapeWait 									; if zero, wait for the next start bit.
 __CmdMainLoop5:
 		jmp 	__CmdMainLoop4
 
