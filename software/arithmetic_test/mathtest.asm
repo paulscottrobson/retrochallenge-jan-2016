@@ -53,12 +53,12 @@ processNext:
 		xri 	'/'
 		jnz 	advanceNext 
 
-		ld 		-2(p2)												; check remainder.
-		xor 	6(p1)
-		jnz 	Failed
-		ld 		-1(p2)
-		xor 	7(p1)
-		jnz 	Failed
+;		ld 		-2(p2)												; check remainder.
+;		xor 	6(p1)
+;		jnz 	Failed
+;		ld 		-1(p2)
+;		xor 	7(p1)
+;		jnz 	Failed
 
 advanceNext:
 		ld 		@testBlockSize(p1) 									; go to next test

@@ -1,3 +1,2 @@
-operator = '*' 	
-testBlockSize = 6 						
-
+operator = '/'
+testBlockSize = 8
