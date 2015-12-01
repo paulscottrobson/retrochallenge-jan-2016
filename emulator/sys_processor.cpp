@@ -278,8 +278,13 @@ CPUSTATUS *CPUGetStatus(void) {
 // *******************************************************************************************************************************
 
 void CPULoadBinary(const char *file) {
-	FILE *f = fopen(file,"rb");
-	fread(romMemory,2048,1,f);
+	BYTE8* target = romMemory;														// Default target ROM
+	if (*file == '@') {																// @xxxxx loads into RAM
+		file++; 																	// Skip the @
+		target = ramMemory;															// New target
+	}
+	FILE *f = fopen(file,"rb");														// And load 2k max in.
+	fread(target,2048,1,f);
 	fclose(f);	
 }
 

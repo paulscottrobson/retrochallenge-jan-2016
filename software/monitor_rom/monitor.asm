@@ -9,32 +9,31 @@
 ; ******************************************************************************************************************
 
 ; TODO: 
-;		Check any other (random # ?)
-;		More testing of numbers (seperate program ???)
-; 		Decode addresses on disassembler (?)
+;		Random#, ASCII to Integer
+; 		Testing of Arithmetic routines.
 
 		cpu	sc/mp
 
 labels 		= 0xC00												; labels, 1 byte each
-labelCount 	= 32 												; number of labels (perhaps a bit generous ?)
+labelCount 	= 24 												; number of labels.
 
 varBase 	= labels+labelCount 								; variables after labels start here.
 
-cursor 		= varBase 											; cursor position
+cursor 		= varBase 											; cursor position ($00-$7F)
 current 	= varBase+1 										; current address (lo,hi)
-isInit      = varBase+3 										; if already initialise, this is $A7.
+isInit      = varBase+3 										; if already initialised, this is $A7.
 parPosn		= varBase+4 										; current param offset in buffer (low addr)
-modifier  	= varBase+5 										; instruction modifier (@,Pn)
+modifier  	= varBase+5 										; instruction modifier (@,Pn) when assembling.
 kbdBuffer 	= varBase+6 										; 16 character keyboard buffer
 kbdBufferLn = 16 										
 
-codeStart 	= kbdBuffer+kbdBufferLn								; code starts here.
+codeStart 	= kbdBuffer+kbdBufferLn								; code starts here after the keyboard buffer.
 
 tapeDelay 	= 4 												; DLY parameter for 1 tape bit width.
 																; (smaller = faster tape I/O - see file end.)
 
 		org 	0x0000
-		nop
+		nop 													; mandatory pre-increment NOP
 
 		include maths.asm 										; import the maths routines.
 
@@ -45,6 +44,14 @@ tapeDelay 	= 4 												; DLY parameter for 1 tape bit width.
 ; ******************************************************************************************************************
 
 BootMonitor:
+		ldi 	0x90 											; point P1 to $9000 which is the first ROM.
+		xpah 	p1
+		ld 		0(p1) 											; if that byte is $68, go straight there.
+		xri 	0x68
+		jnz 	__BootMonitor
+		xppc 	p1 												; e.g. JMP $9001
+__BootMonitor:
+
 		ldi 	0x0F 											; point P2 to theoretical top of RAM on basic m/c
 		xpah 	p2 												; e.g. 0xFFF
 		ldi 	0xFF 											; ideally you'd make this 0x003F and remove the ld
@@ -63,7 +70,7 @@ FindTopMemory:
 ; ******************************************************************************************************************
 
 ClearScreen_Command:
-		ldi 	0
+		ldi 	0 												; set P1 to zero to access VRAM via write.
 		xpah 	p1
 		ldi 	0
 ClearScreenLoop:
@@ -76,7 +83,7 @@ ClearScreenLoop:
 		xpah 	p1
 		ldi 	Cursor&255
 		xpal 	p1 
-		ldi 	0
+		ldi 	0 												; Note: could save 2 bytes here, P1.H is 0.
 		st 		0(p1)											
 
 ; ****************************************************************************************************************
@@ -90,13 +97,15 @@ ClearScreenLoop:
 		jz 		CommandMainLoop
 		ldi 	0xA7 											; set the initialised byte
 		st 		isInit-Cursor(p1)
-		ldi 	codeStart/256 									; set the initial address
+
+		ldi 	codeStart/256 									; set the initial work address
 		st 		Current-Cursor+1(p1)
 		ldi 	codeStart&255
 		st 		Current-Cursor(p1)
 
+																; print boot message - can lose this if required.
 		ldi 	(PrintCharacter-1)/256 							; set P3 = print character.
-		xpah 	p3
+		xpah 	p3 
 		ldi 	(PrintCharacter-1)&255
 		xpal 	p3
 		ldi 	Message / 256 									; set P1 = boot message
@@ -123,7 +132,7 @@ CommandMainLoop:
 		xpah 	p3
 		ldi 	(PrintAddressData-1)&255
 		xpal 	p3
-		ldi 	0
+		ldi 	0 												; no data elements
 		xppc 	p3
 
 		ldi 	(PrintCharacter-1)/256 							; set P3 = print character.
@@ -1164,5 +1173,7 @@ GetCurrentAddress:
 ;		Labels are accessed via the pling, so to jump to label 4 rather than address 4 you write
 ;
 ;		JMP 4!
+;
+;		Documentation of the Mathematics functions are in the included file maths.asm
 ;
 ; ****************************************************************************************************************
