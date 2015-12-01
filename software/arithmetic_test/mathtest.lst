@@ -1,0 +1,111 @@
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm - page 1 - 12/1/2015 15:27:47
+
+
+       1/       0 :                     
+       2/       0 :                     		cpu 	sc/mp
+       3/     C40 :                     		org 	0xC40
+       4/     C40 :                     
+       5/     C40 : =0x2A               operator = '*' 														; what we are testing.
+       6/     C40 : =0x6                testBlockSize = 6 													; how many bytes in each test block.
+       7/     C40 :                     
+       8/     C40 :                     testStart:
+       9/     C40 : C4 0C               		ldi 	testTable/256 										; make P1 point to test table.
+      10/     C42 : 35                  		xpah 	p1
+      11/     C43 : C4 83               		ldi 	testTable&255
+      12/     C45 : 31                  		xpal 	p1
+      13/     C46 :                     
+      14/     C46 :                     processNext:
+      15/     C46 : C1 00               		ld 		0(p1) 												; stop if all input values are 0.
+      16/     C48 : D9 01               		or 		1(p1)
+      17/     C4A : D9 02               		or 		2(p1)
+      18/     C4C : D9 03               		or 		3(p1)		
+      19/     C4E : 98 31               		jz 		Halt
+      20/     C50 :                     
+      21/     C50 : C4 0F               		ldi 	0x0F 												; make P2 point to the stack
+      22/     C52 : 36                  		xpah 	p2
+      23/     C53 : C4 FF               		ldi 	0xFF
+      24/     C55 : 32                  		xpal 	p2
+      25/     C56 :                     
+      26/     C56 : C1 01               		ld 		1(p1) 												; push first two values on the stack.
+      27/     C58 : CE FF               		st 		@-1(p2)
+      28/     C5A : C1 00               		ld 		0(p1)
+      29/     C5C : CE FF               		st 		@-1(p2)
+      30/     C5E : C1 03               		ld 		3(p1)
+      31/     C60 : CE FF               		st 		@-1(p2)
+      32/     C62 : C1 02               		ld 		2(p1)
+      33/     C64 : CE FF               		st 		@-1(p2)
+      34/     C66 : C4 00               		ldi 	0 													; set P3 to point to Maths routine
+      35/     C68 : 37                  		xpah 	p3
+      36/     C69 : C4 02               		ldi 	2
+      37/     C6B : 33                  		xpal 	p3
+      38/     C6C : C4 2A               		ldi 	operator 											; pick operator
+      39/     C6E : 3F                  		xppc 	p3
+      40/     C6F :                     
+      41/     C6F : C2 00               		ld 		0(p2)
+      42/     C71 : E1 04               		xor 	4(p1)
+      43/     C73 : 9C 0A               		jnz 	Failed
+      44/     C75 : C2 01               		ld 		1(p2)
+      45/     C77 : E1 05               		xor 	5(p1)
+      46/     C79 : 9C 04               		jnz 	Failed
+      47/     C7B :                     
+      48/     C7B : C5 06               		ld 		@testBlockSize(p1) 									; go to next test
+      49/     C7D : 90 C7               		jmp 	processNext
+      50/     C7F :                     
+      51/     C7F :                     
+      52/     C7F : C4 FF               Failed:	ldi 	0xFF
+      53/     C81 : 90 FE               Halt:	jmp 	Halt
+      54/     C83 :                     
+      55/     C83 :                     testTable:
+      56/     C83 : F8 FF               		dw 		-8
+      57/     C85 : 02 00               		dw 		2
+      58/     C87 : F0 FF               		dw 		-16
+      59/     C89 :                     
+      60/     C89 : 00 00               		dw		0 													; 0 func 0 marks the end of the table.
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm - page 2 - 12/1/2015 15:27:47
+
+
+      61/     C8B : 00 00               		dw		0
+      62/     C8D :                     
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm - page 3 - 12/1/2015 15:27:47
+
+
+  symbol table (* = unused):
+  ------------------------
+
+*ARCHITECTURE :  i386-unknown-win32 - | *BIGENDIAN :                      0 - |
+*BRANCHEXT :                      0 - | *CASESENSITIVE :                  0 - |
+*CONSTPI :        3.141592653589793 - | *DATE :                   12/1/2015 - |
+ FAILED :                       C7F C | *FALSE :                          0 - |
+*FULLPMMU :                       1 - |  HALT :                         C81 C |
+*HAS64 :                          1 - | *HASDSP :                         0 - |
+*HASFPU :                         0 - | *HASPMMU :                        0 - |
+*INEXTMODE :                      0 - | *INLWORDMODE :                    0 - |
+*INMAXMODE :                      0 - | *INSRCMODE :                      0 - |
+*INSUPMODE :                      0 - | *LISTON :                         1 - |
+*MACEXP :                         1 - | *MOMCPU :                         C - |
+*MOMCPUNAME :                 SC/MP - | *NESTMAX :                      100 - |
+ OPERATOR :                      2A - | *PACKING :                        0 - |
+*PADDING :                        1 - |  PROCESSNEXT :                  C46 C |
+*RELAXED :                        0 - |  TESTBLOCKSIZE :                  6 - |
+*TESTSTART :                    C40 C |  TESTTABLE :                    C83 C |
+*TIME :                    15:27:47 - | *TRUE :                           1 - |
+*VERSION :                     142F - |
+
+     35 symbols
+     29 unused symbols
+
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm - page 4 - 12/1/2015 15:27:47
+
+
+  codepages:
+  ----------
+
+STANDARD (0 changed characters)
+
+
+0.00 seconds assembly time
+
+     62 lines source file
+      2 passes
+      0 errors
+      0 warnings

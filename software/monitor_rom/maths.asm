@@ -47,7 +47,8 @@ Maths:															; maths support routine.
 	jz 		MATH_Divide
 	scl 														; error, unknown command.
 MATH_Exit:
-	jmp  	MATH_Exit
+	xppc 	p3 													; return
+	jmp  	Maths 												; re-entrant
 
 ; ******************************************************************************************************************
 ;													+ :	16 Bit Add
