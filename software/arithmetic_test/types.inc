@@ -1,0 +1,3 @@
+operator = '*' 	
+testBlockSize = 6 						
+

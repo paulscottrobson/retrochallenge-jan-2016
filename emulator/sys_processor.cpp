@@ -283,8 +283,8 @@ void CPULoadBinary(const char *file) {
 		file++; 																	// Skip the @
 		target = ramMemory;															// New target
 	}
-	FILE *f = fopen(file,"rb");														// And load 2k max in.
-	fread(target,2048,1,f);
+	FILE *f = fopen(file,"rb");														// And load 8k max in.
+	fread(target,8192,1,f);
 	fclose(f);	
 }
 

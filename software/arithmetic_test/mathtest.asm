@@ -7,8 +7,7 @@
 		cpu 	sc/mp
 		org 	0xC40
 
-operator = '*' 														; what we are testing.
-testBlockSize = 6 													; how many bytes in each test block.
+		include types.inc 											; defines operator and testBlockSize
 
 testStart:
 		ldi 	testTable/256 										; make P1 point to test table.
@@ -50,17 +49,28 @@ processNext:
 		xor 	5(p1)
 		jnz 	Failed
 
+		ldi 	operator 											; division ?
+		xri 	'/'
+		jnz 	advanceNext 
+
+		ld 		-2(p2)												; check remainder.
+		xor 	6(p1)
+		jnz 	Failed
+		ld 		-1(p2)
+		xor 	7(p1)
+		jnz 	Failed
+
+advanceNext:
 		ld 		@testBlockSize(p1) 									; go to next test
 		jmp 	processNext
 
+Failed:	ldi 	0xFF 												; error P1 points to sum, P2 answer
+Halt:	xae 														; display result in E and A
+		lde
+		jmp 	Halt 												; just stop.
 
-Failed:	ldi 	0xFF
-Halt:	jmp 	Halt
-
+		org 	0x1000
 testTable:
-		dw 		-8
-		dw 		2
-		dw 		-16
-
+		include tests.inc		
 		dw		0 													; 0 func 0 marks the end of the table.
 		dw		0
