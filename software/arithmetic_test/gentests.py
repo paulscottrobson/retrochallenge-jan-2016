@@ -4,13 +4,15 @@
 import random
 
 random.seed(42)															# seed RNG
-testType = "/"															# * or /
+testType = "\\"															# * or /
+signed = False 															# signed or unsigned
+
 space = 0x1FF8 - 0x1000													# where it goes.
 
-blockSize = 8 if testType == "/" else 6 								# 6 normally but 8 bytes for divide (remainder)
+blockSize = 8 if testType == "/" or testType == "\\" else 6 			# 6 normally but 8 bytes for divide (remainder)
 
 typesFile = open("types.inc","w")										# create types.inc
-typesFile.write("operator = '{0}'\n".format(testType))
+typesFile.write("operator = '{0}'\n".format(testType if testType != "\\" else "\\\\"))
 typesFile.write("testBlockSize = {0}\n".format(blockSize))
 
 testFile = open("tests.inc","w")										# create tests.inc
@@ -22,11 +24,16 @@ for i in range(0,space / blockSize):									# create tests
 		if testType == "*":												# multiply two numbers
 			n1 = random.randrange(-32767,32767)
 			n2 = random.randrange(-32767,32767)
+			limit = 32767
+			if not signed:
+				n1 = random.randrange(0,65535)
+				n2 = random.randrange(0,65535)
+				limit = 65535
 			result = n1 * n2
 			test = [n1,n2,result]
-			isOk = ((n1 != 0 or n2 != 0) and abs(result) <= 32767)		# one must be non-zero,|product| <= 32767
+			isOk = ((n1 != 0 or n2 != 0) and abs(result) <= limit)		# one must be non-zero,|product| <= 32767
 
-		if testType == "/":												# divide two numbers
+		if testType == "/" or testType == "\\":							# divide two numbers
 
 			n1 = random.randrange(1,32767)								# numerator
 			n2 = random.randrange(1,178)								# denominator skewed to the bottom
@@ -34,9 +41,14 @@ for i in range(0,space / blockSize):									# create tests
 			if random.random() < 0.3:
 				n2 = random.randrange(2,99)
 			assert n2 <= 32767
-			n1s = -1 if random.random() < 0.5 else 1
-			n2s = -1 if random.random() < 0.5 else 1
-
+			if signed:
+				n1s = -1 if random.random() < 0.5 else 1
+				n2s = -1 if random.random() < 0.5 else 1
+			else:
+				n1 = n1 * 2 + random.randrange(0,1)
+				n2 = n2 * 2 + random.randrange(0,1)
+				n1s = 1
+				n2s = 1
 			result = int(n1 / n2) * n1s * n2s
 			remainder = n1 % n2
 			test = [n1*n1s,n2*n2s,result,remainder]

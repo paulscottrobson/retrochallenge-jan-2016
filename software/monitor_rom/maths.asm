@@ -93,7 +93,7 @@ __MARandomNoXor:
 ;		on entry, A is the function (+,-,*,/ etc.). P2 should be left in the 'correct' state afterwards,
 ;		so if you add two numbers then p2 will be 2 higher than when the routine was entered.
 ;
-;		Supported : + - * / ? (ASCII @ p1 -> integer, p1 updated) ' (random number)
+;		Supported : + - * / ? (ASCII @ p1 -> integer, p1 updated) ' (random number) \ (unsigned divide)
 ;
 ;		Returns CS on error (division by zero, bad ASCII String) - in this case the parameters are not touched.
 ;
@@ -103,15 +103,19 @@ __MARandomNoXor:
 
 Maths:															; maths support routine.
 
-	xri 	'+' 												; dispatch function in A to the executing code.
-	jz 		MATH_Add
-	xri 	'+'!'-'
+	xri 	'+' 												; 16 bit addition
+	jz 		MATH_Add 
+	xri 	'+'!'-' 											; 16 bit subtraction
 	jz 		MATH_Subtract
-	xri 	'-'!'*'
-	jz 		MATH_Multiply
-	xri 	'*'!'/'
+	xri 	'-'!'*'												; 16 bit signed/unsigned multiplication
+	jz 		MATH_Multiply 										
+	xri 	'*'!'/' 											; 16 bit signed division
+	ccl 
 	jz 		MATH_Divide2
-	xri 	'/'!'?' 											; ASCII (P1) -> Integer (? operator)
+	xri 	'/'!'\\' 											; 16 bit unsigned division
+	scl
+	jz 		MATH_Divide2
+	xri 	'\\'!'?' 											; ASCII (P1) -> Integer (? operator)
 	jz 		MATH_ToInteger
 	xri 	'?'!0x27 											; Random number generator (' operator)
 	jz 		MATH_Random 
@@ -153,7 +157,7 @@ MATH_Subtract:
 	jmp 	MATH_Exit
 
 ; ******************************************************************************************************************
-;												'*' : 16 bit signed multiply
+;									'*' : 16 bit signed or unsigned multiply
 ; ******************************************************************************************************************
 
 MATH_Multiply:
@@ -280,8 +284,12 @@ MATH_Exit3:
 
 
 ; ******************************************************************************************************************
-;											'/' : 16 bit signed divide
+;							'/' : 16 bit signed/unsigned divide (CY/L = 0 = signed)
 ; ******************************************************************************************************************
+
+MATH_DivideByZero:												; come here for divide by zero.
+	scl
+	jmp 	MATH_Exit3
 
 MATH_Divide:
 
@@ -299,11 +307,11 @@ remainderHi = -5 												; remainder
 remainderLo = -6
 signCount = -7 													; sign of result (bit 0)
 eTemp = -8 														; temporary value of sign.
+tempHi = -9 													; high byte temporary
 
 	ld 		denominatorLo(p2) 									; check denominator 
 	or 		denominatorHi(p2) 
-	scl 														; if zero return CY/L Set
-	jz 		MATH_Exit3
+	jz 		MATH_DivideByZero 									; fail if dividing by zero.
 
 	ldi 	0 													; clear quotient and remainder
 	st 		quotientHi(p2)
@@ -317,6 +325,10 @@ eTemp = -8 														; temporary value of sign.
 
 	lde 														; save E
 	st 		eTemp(p2)
+
+	csa 														; look at carry bit
+	ani 	0x80 												; if set, unsigned division.
+	jnz 	__DivideLoop 										; so skip over the sign removal code.
 
 	ldi 	3
 __DivideUnsignLoop:
@@ -364,7 +376,10 @@ __DivideNoIncRemainder:
 	xae 														; save in E.
 	ld 		remainderHi(p2)
 	cad 	denominatorHi(p2) 									; temp.high is now in A
-	jp 		__DivideRemainderGreater 							; if >= 0 then remainder >= denominator
+	st 		tempHi(p2) 											; temp.high now saved
+	csa 														; check carry flag
+	ani 	0x80 	
+	jnz 	__DivideRemainderGreater 							; if set then remainder >= denominator
 
 __DivideContinue:
 	shiftright 	bitLo 											; shift bit right
@@ -400,6 +415,7 @@ __DivideComplete:
 	jmp 	__MATH_Exit2
 
 __DivideRemainderGreater: 										; this is the "if temp >= 0 bit"
+	ld 		tempHi(p2) 											; get the difference back.
 	st 		remainderHi(p2) 									; save temp.high value into remainder.high
 	lde 														; copy temp.low to remainder.low
 	st 		remainderLo(p2) 

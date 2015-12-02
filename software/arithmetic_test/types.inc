@@ -1,2 +1,2 @@
-operator = '/'
+operator = '\\'
 testBlockSize = 8
