@@ -39,7 +39,7 @@ tapeDelay 	= 4 												; DLY parameter for 1 tape bit width.
 
 ; ******************************************************************************************************************
 ;
-;									Find Top of Memory to initialise the stack.
+;				Boot Up. First we check for a ROM @ $9000 and if it is 0x68 we boot there instead
 ;
 ; ******************************************************************************************************************
 
@@ -51,6 +51,13 @@ BootMonitor:
 		jnz 	__BootMonitor
 		xppc 	p1 												; e.g. JMP $9001
 __BootMonitor:
+
+; ******************************************************************************************************************
+;
+;									Find Top of Memory to initialise the stack.
+;
+;			(slightly tweaked to work round 4+12 emulator limitations - will work on real chip)
+; ******************************************************************************************************************
 
 		ldi 	0x0F 											; point P2 to theoretical top of RAM on basic m/c
 		xpah 	p2 												; e.g. 0xFFF
@@ -119,7 +126,9 @@ MessageLoop:
 		jmp 	MessageLoop
 
 Message:
-		db 		"** SC/MP OS **",13,0
+		db 		"** SC/MP OS **",13
+		db 		"(C) PSR 2015",13
+		db 		0
 
 ; ****************************************************************************************************************
 ;

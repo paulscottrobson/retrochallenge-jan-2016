@@ -53,7 +53,9 @@ shiftRight macro val
 ;		on entry, A is the function (+,-,*,/ etc.). P2 should be left in the 'correct' state afterwards,
 ;		so if you add two numbers then p2 will be 2 higher than when the routine was entered.
 ;
-;		Returns CS on error (division by zero) - in this case the parameters are not touched.
+;		Supported : + - * / ? (ASCII @ p1 -> integer, p1 updated) ' (random number)
+;
+;		Returns CS on error (division by zero, bad ASCII String) - in this case the parameters are not touched.
 ;
 ;		Note that division uses a fair chunk of the stack :)
 ;
