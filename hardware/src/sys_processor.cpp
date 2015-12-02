@@ -278,9 +278,19 @@ CPUSTATUS *CPUGetStatus(void) {
 // *******************************************************************************************************************************
 
 void CPULoadBinary(const char *file) {
-	FILE *f = fopen(file,"rb");
-	fread(romMemory,2048,1,f);
+	BYTE8* target = romMemory;														// Default target ROM
+	int n = 0;
+	if (*file == '@') {																// @xxxxx loads into RAM
+		file++; 																	// Skip the @
+		target = ramMemory;															// New target
+	}
+	//printf("Reading file %s\n",file);
+	FILE *f = fopen(file,"rb");														// And load in.
+	while (!feof(f)) {
+		target[n++] = fgetc(f);
+	}
 	fclose(f);	
+	//printf("Read %d\n",n);
 }
 
 #endif

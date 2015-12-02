@@ -122,7 +122,7 @@ ClearScreenLoop:
 		xpal 	p1
 MessageLoop:
 		ld 		@1(p1) 											; read character
-		jz 		CommandMainLoop 								; end of message
+		jz 		InitialBeep 									; end of message
 		xppc 	p3 												; print it
 		jmp 	MessageLoop
 
@@ -130,6 +130,16 @@ Message:
 		db 		"** SC/MP OS **",13
 		db 		"V0.91 PSR 2016",13
 		db 		0
+
+InitialBeep:
+		ldi 	1 												; Beep on booting.
+		cas
+		dly 	0xFF
+		ldi 	3
+		cas
+		dly 	0xFF
+		ldi 	0
+		cas
 
 ; ****************************************************************************************************************
 ;
