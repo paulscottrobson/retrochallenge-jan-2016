@@ -8,6 +8,7 @@
 
 	jmp	 	GoBoot 												; this will be at location 1.
 	jmp 	Maths 												; maths routine, at location 3.
+
 	; any other routines you care to call.
 
 GoBoot:
@@ -42,6 +43,45 @@ shiftRight macro val
 	endm
 
 ; ******************************************************************************************************************
+;										' Random Number generator
+; ******************************************************************************************************************
+
+MATH_Random:
+	ldi 	Random & 255 										; set P1 to point to RNG, push P1 on stack.
+	xpal 	p1
+	st 		@-3(p2)												; we allow 2 bytes for the final result here.
+	ldi 	Random / 256 	
+	xpah 	p1
+	st 		@-1(p2)
+	ccl 														; shift random seed right.
+	ld 		1(p1)
+	rrl
+	st 		1(p1)
+	ld 		0(p1)
+	rrl 
+	st 		0(p1)
+	csa 														; look at carry out, lost bit.
+	ani 	0x80 												; is it clear ?
+	jnz 	__MARandomNoXor
+	ld 		0(p1) 												; xor lfsr with $A1A1
+	xri 	0xA1
+	st 		0(p1)
+	ld 		1(p1)
+	xri 	0xA1
+	st 		1(p1)
+__MARandomNoXor:
+	ld 		0(p1) 												; put the LFSR in the result space on the stack
+	st 		2(p2)
+	ld 		1(p1)
+	st 		3(p2)
+	ld 		@1(p2) 												; restore P1
+	xpah 	p1
+	ld 		@1(p2)
+	xpal 	p1
+	ccl 														; no problems
+	jmp 	MATH_Exit
+
+; ******************************************************************************************************************
 ;
 ;		Maths routines : the (P2) stack functions as a number stack.  So to push $1234 on the stack you do
 ;
@@ -71,8 +111,10 @@ Maths:															; maths support routine.
 	jz 		MATH_Multiply
 	xri 	'*'!'/'
 	jz 		MATH_Divide2
-	xri 	'/'!'?'
+	xri 	'/'!'?' 											; ASCII (P1) -> Integer (? operator)
 	jz 		MATH_ToInteger
+	xri 	'?'!0x27 											; Random number generator (' operator)
+	jz 		MATH_Random 
 MATH_Error:
 	scl 														; error, unknown command.
 MATH_Exit:

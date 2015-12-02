@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file mathtest.asm - page 1 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm - page 1 - 12/2/2015 13:44:47
 
 
        1/       0 :                     ; ******************************************************************************************************************
@@ -61,7 +61,7 @@
       55/     C81 :                     
       56/     C81 :                     ;		ld 		-2(p2)												; check remainder.
       57/     C81 :                     ;		xor 	6(p1)
- AS V1.42 Beta [Bld 102] - source file mathtest.asm - page 2 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm - page 2 - 12/2/2015 13:44:47
 
 
       58/     C81 :                     ;		jnz 	Failed
@@ -124,7 +124,7 @@
 (1)   21/    10A0 : 46 2B F8 FF 98 FA       dw 11078,65528,64152,6
                     06 00 
 (1)   22/    10A8 : 1D 8C BE FF C1 01       dw 35869,65470,449,33
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 3 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 3 - 12/2/2015 13:44:47
 
 
                     21 00 
@@ -187,7 +187,7 @@
 (1)   51/    1190 : 57 1F D6 FF 41 FF       dw 8023,65494,65345,1
                     01 00 
 (1)   52/    1198 : DF A6 34 1F FE FF       dw 42719,7988,65534,6841
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 4 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 4 - 12/2/2015 13:44:47
 
 
                     B9 1A 
@@ -250,7 +250,7 @@
 (1)   81/    1280 : F1 24 C2 04 07 00       dw 9457,1218,7,931
                     A3 03 
 (1)   82/    1288 : CC C0 F8 FE 3D 00       dw 49356,65272,61,76
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 5 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 5 - 12/2/2015 13:44:47
 
 
                     4C 00 
@@ -313,7 +313,7 @@
 (1)  111/    1370 : BD CB DC F9 08 00       dw 52157,63964,8,803
                     23 03 
 (1)  112/    1378 : 90 71 37 04 1A 00       dw 29072,1079,26,1018
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 6 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 6 - 12/2/2015 13:44:47
 
 
                     FA 03 
@@ -376,7 +376,7 @@
 (1)  141/    1460 : EF BC 19 EB 03 00       dw 48367,60185,3,1116
                     5C 04 
 (1)  142/    1468 : A9 BE B7 03 EF FF       dw 48809,951,65519,560
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 7 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 7 - 12/2/2015 13:44:47
 
 
                     30 02 
@@ -439,7 +439,7 @@
 (1)  171/    1550 : A7 9C 15 00 45 FB       dw 40103,21,64325,2
                     02 00 
 (1)  172/    1558 : 08 BE B5 FF E1 00       dw 48648,65461,225,13
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 8 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 8 - 12/2/2015 13:44:47
 
 
                     0D 00 
@@ -502,7 +502,7 @@
 (1)  201/    1640 : 3B 9E 11 12 FB FF       dw 40507,4625,65531,1904
                     70 07 
 (1)  202/    1648 : 6A 09 9F FF E8 FF       dw 2410,65439,65512,82
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 9 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 9 - 12/2/2015 13:44:47
 
 
                     52 00 
@@ -565,7 +565,7 @@
 (1)  231/    1730 : B2 B6 DF FB 11 00       dw 46770,64479,17,797
                     1D 03 
 (1)  232/    1738 : 5C B5 1F 03 E9 FF       dw 46428,799,65513,731
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 10 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 10 - 12/2/2015 13:44:47
 
 
                     DB 02 
@@ -628,7 +628,7 @@
 (1)  261/    1820 : C7 9E 64 FD 25 00       dw 40647,64868,37,173
                     AD 00 
 (1)  262/    1828 : 9A 43 ED FE C2 FF       dw 17306,65261,65474,256
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 11 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 11 - 12/2/2015 13:44:47
 
 
                     00 01 
@@ -691,7 +691,7 @@
 (1)  291/    1910 : C7 93 72 32 FE FF       dw 37831,12914,65534,1877
                     55 07 
 (1)  292/    1918 : 27 F5 B5 02 FC FF       dw 62759,693,65532,5
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 12 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 12 - 12/2/2015 13:44:47
 
 
                     05 00 
@@ -754,7 +754,7 @@
 (1)  321/    1A00 : 05 9C 77 0C F8 FF       dw 39941,3191,65528,67
                     43 00 
 (1)  322/    1A08 : 30 DD A7 FC 0A 00       dw 56624,64679,10,342
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 13 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 13 - 12/2/2015 13:44:47
 
 
                     56 01 
@@ -817,7 +817,7 @@
 (1)  351/    1AF0 : 8F 27 E9 FF 48 FE       dw 10127,65513,65096,7
                     07 00 
 (1)  352/    1AF8 : 7C 75 92 05 15 00       dw 30076,1426,21,130
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 14 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 14 - 12/2/2015 13:44:47
 
 
                     82 00 
@@ -880,7 +880,7 @@
 (1)  381/    1BE0 : 92 02 5A 00 07 00       dw 658,90,7,28
                     1C 00 
 (1)  382/    1BE8 : 30 30 00 10 03 00       dw 12336,4096,3,48
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 15 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 15 - 12/2/2015 13:44:47
 
 
                     30 00 
@@ -943,7 +943,7 @@
 (1)  411/    1CD0 : 2C 7B E3 0A 0B 00       dw 31532,2787,11,875
                     6B 03 
 (1)  412/    1CD8 : 00 9A A3 FF 18 01       dw 39424,65443,280,72
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 16 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 16 - 12/2/2015 13:44:47
 
 
                     48 00 
@@ -1006,7 +1006,7 @@
 (1)  441/    1DC0 : 9F 55 EA 1B 03 00       dw 21919,7146,3,481
                     E1 01 
 (1)  442/    1DC8 : A3 A8 45 10 FB FF       dw 43171,4165,65531,1540
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 17 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 17 - 12/2/2015 13:44:47
 
 
                     04 06 
@@ -1069,7 +1069,7 @@
 (1)  471/    1EB0 : 4B 9A FA 53 FF FF       dw 39499,21498,65535,4539
                     BB 11 
 (1)  472/    1EB8 : 24 D4 D9 FF 1F 01       dw 54308,65497,287,35
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 18 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 18 - 12/2/2015 13:44:47
 
 
                     23 00 
@@ -1132,7 +1132,7 @@
 (1)  501/    1FA0 : 20 DC 4F 00 8C FF       dw 56352,79,65420,20
                     14 00 
 (1)  502/    1FA8 : 51 40 A0 FF 55 FF       dw 16465,65440,65365,49
- AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 19 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm(tests.inc) - page 19 - 12/2/2015 13:44:47
 
 
                     31 00 
@@ -1158,7 +1158,7 @@
       75/    1FF8 : 00 00               		dw		0 													; 0 func 0 marks the end of the table.
       76/    1FFA : 00 00               		dw		0
       77/    1FFC :                     
- AS V1.42 Beta [Bld 102] - source file mathtest.asm - page 20 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm - page 20 - 12/2/2015 13:44:47
 
 
   symbol table (* = unused):
@@ -1180,13 +1180,13 @@
 *PACKING :                        0 - | *PADDING :                        1 - |
  PROCESSNEXT :                  C46 C | *RELAXED :                        0 - |
  TESTBLOCKSIZE :                  8 - | *TESTSTART :                    C40 C |
- TESTTABLE :                   1000 C | *TIME :                     8:24:36 - |
+ TESTTABLE :                   1000 C | *TIME :                    13:44:47 - |
 *TRUE :                           1 - | *VERSION :                     142F - |
 
      36 symbols
      29 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file mathtest.asm - page 21 - 12/2/2015 8:24:36
+ AS V1.42 Beta [Bld 102] - source file mathtest.asm - page 21 - 12/2/2015 13:44:47
 
 
   codepages:
@@ -1195,7 +1195,7 @@
 STANDARD (0 changed characters)
 
 
-0.03 seconds assembly time
+0.01 seconds assembly time
 
     592 lines source file
       2 passes
