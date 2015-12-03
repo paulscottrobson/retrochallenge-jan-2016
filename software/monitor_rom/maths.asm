@@ -102,9 +102,22 @@ __ToASCII_Loop:
 ;		on entry, A is the function (+,-,*,/ etc.). P2 should be left in the 'correct' state afterwards,
 ;		so if you add two numbers then p2 will be 2 higher than when the routine was entered.
 ;
-;		Supported : + - * / ? (ASCII @ p1 -> integer, p1 updated) \ (unsigned divide) $ (integer -> ASCII p1 back)
+;		Supported : + - (add/subtract)
+;					* 	(multiply) 
+;					/ 	(signed divide) 
+;					\ 	(unsigned divide)
+;					? 	(ASCII @ p1 -> Integer. CS on error. P1 points to first non numeric character
+;					$ 	(Integer -> ASCII @p1. On start, p1 should point to the end of butter as written backwards)
 ;
-;		Returns CS on error (division by zero, bad ASCII String) - in this case the parameters are not touched.
+;		Returns CS on error:
+;				Divisons			Division by zero error, no change to the stack values
+;				ASCII->Integer 		No legal number, p1 points to 'bad' character, no change to stack.
+;									(Note that the conversion is terminated by the first non digit, so this
+;									 error means the first character was not a digit.)
+;
+;		For both divisions, the remainder is kept on the stack immediately below the TOS, this is by design.
+;		and can be accessed by ld -1(p2) (hi) ld -2(p2) (lo).
+;
 ;
 ;		Note that division uses a fair chunk of the stack :)
 ;
