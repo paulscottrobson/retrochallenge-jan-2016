@@ -122,7 +122,7 @@ MessageLoop:
 
 Message:
 		db 		"** SC/MP OS **",13
-		db 		"V0.91 PSR 2016",13
+		db 		"V0.92 PSR 2016",13
 		db 		0
 
 InitialBeep:

@@ -43,6 +43,54 @@ shiftRight macro val
 	endm
 
 ; ******************************************************************************************************************
+;										$ (Integer -> ASCII, p1 backwards)
+; ******************************************************************************************************************
+
+MATH_ToASCII:
+	ldi 	0 												; write a terminating NULL to the string
+	st 		0(p1)
+
+	ld 		@-2(p2) 										; reserve 2 spaces on the stack.
+	ld 		3(p2) 											; copy original TOS to new TOS
+	st 		1(p2)
+	ld 		2(p2)
+	st 		0(p2)
+
+	xpah 	p3 												; save P3 on stack.
+	st 		3(p2) 											; where the number has just come from
+	xpal 	p3												; we restore P3 last.
+	st 		2(p2)
+
+__ToASCII_Loop:
+	ldi 	(Maths-1)/256 									; set P3 to Maths routine
+	xpah 	p3
+	ldi 	(Maths-1)&255
+	xpal 	p3
+	ldi 	0  												; push 10 on the stack
+	st 		@-1(p2)
+	ldi 	10
+	st 		@-1(p2)
+	ldi 	'\\'											; unsigned division
+	xppc 	p3 												; calculate the result.
+
+	ld 		-2(p2) 											; get the remainder
+	ori 	'0'												; make ASCII
+	st 		@-1(p1) 										; save in the buffer, moving pointer backwards.
+
+	ld 		0(p2) 											; loop back if TOS non zero
+	or 		1(p2)
+	jnz 	__ToASCII_Loop
+
+	ld 		@2(p2) 											; throw that away
+
+	ld 		@1(p2) 											; restore P3
+	xpal 	p3
+	ld 		@1(p2)
+	xpah 	p3
+	ccl 													; result is fine.
+	jmp 	MATH_Exit
+
+; ******************************************************************************************************************
 ;
 ;		Maths routines : the (P2) stack functions as a number stack.  So to push $1234 on the stack you do
 ;
@@ -54,7 +102,7 @@ shiftRight macro val
 ;		on entry, A is the function (+,-,*,/ etc.). P2 should be left in the 'correct' state afterwards,
 ;		so if you add two numbers then p2 will be 2 higher than when the routine was entered.
 ;
-;		Supported : + - * / ? (ASCII @ p1 -> integer, p1 updated) \ (unsigned divide)
+;		Supported : + - * / ? (ASCII @ p1 -> integer, p1 updated) \ (unsigned divide) $ (integer -> ASCII p1 back)
 ;
 ;		Returns CS on error (division by zero, bad ASCII String) - in this case the parameters are not touched.
 ;
@@ -63,8 +111,9 @@ shiftRight macro val
 ; ******************************************************************************************************************
 
 Maths:															; maths support routine.
-
-	xri 	'+' 												; 16 bit addition
+	xri 	'$'													; integer to ASCII conversion
+	jz 		MATH_ToASCII
+	xri 	'$'!'+' 											; 16 bit addition
 	jz 		MATH_Add 
 	xri 	'+'!'-' 											; 16 bit subtraction
 	jz 		MATH_Subtract
