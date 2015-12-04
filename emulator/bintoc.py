@@ -10,3 +10,4 @@ def convert(srcFile,hFile):
 	open("binaries"+os.sep+hFile,"w").write(src)
 
 convert("monitor.bin","__monitor_rom.h")
+convert("rom9000.bin","__rom_9000.h")

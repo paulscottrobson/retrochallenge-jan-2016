@@ -19,6 +19,7 @@ typedef unsigned char  BYTE8;
 #define DEFAULT_BUS_VALUE (0xFF)													// What's on the bus if it's not memory.
 
 #define RAMSIZE		(1024+4096)														// Ram available from 0xC00 upwards.
+#define XROMSIZE	(4096) 															// ROM available above $9000
 
 void CPUReset(void);																// CPU methods
 void CPURequestInterrupt(void);														// Request Interrupt

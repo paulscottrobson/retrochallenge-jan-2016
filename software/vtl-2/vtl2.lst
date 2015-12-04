@@ -1,0 +1,77 @@
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 1 - 12/4/2015 16:10:47
+
+
+       1/       0 :                     ; ****************************************************************************************************************
+       2/       0 :                     ; ****************************************************************************************************************
+       3/       0 :                     ;
+       4/       0 :                     ;													VTL-2 SC/MP
+       5/       0 :                     ;
+       6/       0 :                     ; ****************************************************************************************************************
+       7/       0 :                     ; ****************************************************************************************************************
+       8/       0 :                     
+       9/       0 :                     ; ****************************************************************************************************************
+      10/       0 :                     ;												 Memory Allocation
+      11/       0 :                     ; ****************************************************************************************************************
+      12/       0 :                     
+      13/       0 :                     	cpu 	sc/mp
+      14/       0 :                     	
+      15/       0 : =0xC00              ScreenMirror = 0xC00 											; Screen mirror, 128 bytes, 256 byte page boundary.
+      16/       0 : =0xC80              ScreenCursor = ScreenMirror+0x80  								; Position on that screen (00..7F)
+      17/       0 :                     
+      18/       0 : =0xCC0              VariableBase = 0xCC0 											; Base of variables. Variables start from here, 2 bytes
+      19/       0 :                     																; each, 6 bit ASCII (e.g. @,A,B,C)
+      20/       0 :                     																; VTL-2 other variables work backwards from here.
+      21/       0 :                     
+      22/       0 : =0x1000             ProgramSpace = 0x1000 											; Page with program memory.
+      23/       0 :                     
+      24/       0 : =0xFFF              StackSearch = 0xFFF 											; Search for stack space back from here.
+      25/       0 :                     
+      26/       0 :                     
+      27/    9000 :                     	org 	0x9000 												; the ROM starts her
+      28/    9000 : 68                  	db 		0x68
+      29/    9001 :                     wait:
+      30/    9001 : 08                  	nop
+      31/    9002 : 90 FD               	jmp 	wait
+      32/    9004 :                     
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 2 - 12/4/2015 16:10:47
+
+
+  symbol table (* = unused):
+  ------------------------
+
+*ARCHITECTURE :  i386-unknown-win32 - | *BIGENDIAN :                      0 - |
+*BRANCHEXT :                      0 - | *CASESENSITIVE :                  0 - |
+*CONSTPI :        3.141592653589793 - | *DATE :                   12/4/2015 - |
+*FALSE :                          0 - | *FULLPMMU :                       1 - |
+*HAS64 :                          1 - | *HASDSP :                         0 - |
+*HASFPU :                         0 - | *HASPMMU :                        0 - |
+*INEXTMODE :                      0 - | *INLWORDMODE :                    0 - |
+*INMAXMODE :                      0 - | *INSRCMODE :                      0 - |
+*INSUPMODE :                      0 - | *LISTON :                         1 - |
+*MACEXP :                         1 - | *MOMCPU :                         C - |
+*MOMCPUNAME :                 SC/MP - | *NESTMAX :                      100 - |
+*PACKING :                        0 - | *PADDING :                        1 - |
+*PROGRAMSPACE :                1000 - | *RELAXED :                        0 - |
+*SCREENCURSOR :                 C80 - |  SCREENMIRROR :                 C00 - |
+*STACKSEARCH :                  FFF - | *TIME :                    16:10:47 - |
+*TRUE :                           1 - | *VARIABLEBASE :                 CC0 - |
+*VERSION :                     142F - |  WAIT :                        9001 C |
+
+     34 symbols
+     32 unused symbols
+
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 3 - 12/4/2015 16:10:47
+
+
+  codepages:
+  ----------
+
+STANDARD (0 changed characters)
+
+
+0.00 seconds assembly time
+
+     32 lines source file
+      1 pass
+      0 errors
+      0 warnings
