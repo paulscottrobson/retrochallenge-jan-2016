@@ -1,0 +1,188 @@
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+;
+;											Screen I/O, VTL-2 ROM
+;
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+;
+;	Print routine. Prints either character in A, or ASCIIZ string at P1 (if A is zero). Preserves all registers
+;	except if printing string, P1 points to the character after the NULL terminator.
+;
+;	Scrolls automatically. Understands character codes 32-255, 8 (Backspace) 12 (Clear Screen) 13 (Carriage
+;	Return). Others are currently ignored (except 0, see above)
+;
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+
+Print:
+
+	section 	Print
+
+	st 		@-1(p2) 											; save character on stack.
+	xpah 	p1
+	st 		@-1(p2) 											; save P1 on the stack.
+	xpal 	p1
+	st 		@-1(p2)
+	xae 	
+	st 		@-1(p2) 											; save E on the stack.
+
+	ld 		3(p2) 												; read character 
+	jnz 	__PRPrintCharacterA 								; if non zero print it on its own.
+
+__PRPrintString:
+	ld 		1(p2) 												; restore original P1
+	xpal 	p1
+	ld 		2(p2)
+	xpah 	p1 													; read character at P1.
+	ld 		@1(p1)
+	xae 														; save in E.
+	xpah 	p1 													; write P1 back.
+	st 		2(p2)
+	xpal 	p1
+	st 		1(p2)
+	lde 														; get character from E
+	jz 		__PRExitNoCheck 									; exit without loop check.
+;
+;	Read cursor and set P1 to that address
+;
+__PRPrintCharacterA:
+	xae 														; save character in E.
+	ldi 	ScreenCursor/256 									; set P1 to point to screen cursor
+	xpah 	p1
+	ldi 	ScreenCursor&255
+	xpal 	p1
+	ld 		0(p1) 												; put cursor position in P1.L
+	xpal 	p1
+;
+;	Check for control
+;
+	lde 														; look at character
+	ani 	0xE0 												; is it code 0-31
+	jz 		__PRIsControlChar
+;
+;	Print non-control
+;
+	lde 														; read character
+	scl 														; CY/L clear if < 96
+	cai 	96 
+	csa 	 	 												; skip if carry set
+	xri 	0x80													
+	jp 		__PRNotASCII
+	lde 														; if ASCII make 6 bit.
+	ani 	0x3F
+	xae
+__PRNotASCII:
+	lde 														; get character.
+	st 		(p1) 												; save in shadow memory
+	xpah 	p1 													; switch to VRAM, preserving A.
+	ldi 	0 													
+	xpah 	p1
+	st 		@1(p1) 												; save in screen memory, advance write position.
+;
+;	Write cursor position back from P1.L
+;
+__PRUpdateCursor:
+	ldi		ScreenCursor / 256 									; set P1 to point to screen cursor, restore position to P1
+	xpah 	p1
+	ldi 	ScreenCursor & 255 
+	xpal 	p1 													; after this, adjusted cursor position is in AC.
+	st 		(p1) 												; write back in cursor position
+	jp 		__PRExit 											; if position is off the bottom then scroll.
+;
+;	Scroll display
+;
+	ldi 	(ScreenMirror+16) / 256 							; point P1 to 2nd line.
+	xpah 	p1
+	ldi 	(ScreenMirror+16) & 255
+__PRScrollLoop:
+	xpal 	p1
+	ld 		0(p1) 												; copy char to previous line
+	st 		-16(p1)
+	ld 		@1(p1) 												; bump pointer.
+	xpal 	p1
+	jp 		__PRScrollLoop
+	ldi 	128-16 												; clear from and move to last line
+	jmp 	__PRClearFromMoveTo
+;
+;	Exit screen drawing routine.
+;
+__PRExit:
+	ld 		3(p2) 												; if character was zero, loop
+	jz 		__PRPrintString 									; back as printing string at P1.
+__PRExitNoCheck:
+	ld 		@1(p2) 												; restore E
+	xae
+	ld 		@1(p2) 												; restore P1
+	xpal 	p1
+	ld 		@1(p2)
+	xpah 	p1
+	ld 		@1(p2)												; restore A
+	xppc 	p3 													; return
+	jmp 	Print 												; make re-entrant.
+;
+;	Check for supported control characters 8 (Backspace) 12 (Clear) 13 (Carriage Return)
+;
+__PRIsControlChar:
+	lde 														; restore character.
+	xri 	13 													; carriage return ? (13)
+	jz 		__PRIsReturn
+	xri 	13!12 												; form feed ? (12)
+	jz 		__PRClearScreen
+	xri 	12!8 												; backspace ? (8)
+	jnz 	__PRExit 
+;
+;	Handle backspace (8)
+;
+	xpal 	p1 													; check cursor position is zero
+	jz 		__PRExit 											; if it is, cannot backspace so exit.
+	xpal 	p1  												; put it back
+	ld 		@-1(p1)												; move it back one
+	jmp 	__PRUpdateCursor 									; and exit
+;
+;	Handle carriage return (13)
+;
+__PRIsReturn:
+	xpal 	p1 													; cursor position in A
+	ani 	0xF0 												; start of current line
+	ccl 														; down one line
+	adi 	0x10 	
+	xpal 	p1 													; put it back in P1.
+	jmp 	__PRUpdateCursor
+;
+;	Handle clear screen (12)
+;
+__PRClearScreen:
+	ldi 	0 													; clear shadow memory from here.
+;
+;	From position A, clear the memory in the shadow screen to the end, copy the shadow screen to VRAM
+;	then use position A as the new cursor position.
+;
+__PRClearFromMoveTo:
+	st 		@-1(p2) 											; save this position, the cursor goes here.
+__PRClearLoop:
+	xpal 	p1 													; save position in P1.
+	ldi 	' '													; write space there.
+	st 		@1(p1)
+	xpal 	p1
+	jp 		__PRClearLoop 										; until reached shadow memory start.
+	ldi 	0 													; now copy shadow memory to screen memory.
+__PRCopy:
+	xpal 	p1 													; set up P1.L
+	ldi 	ScreenMirror/256 									; point to shadow memory.
+	xpah 	p1 													
+	ld 		(p1) 												; read shadow memory
+	xpah 	p1 													; zero P1.H preserving A
+	ldi 	0
+	xpah 	p1
+	st 		@1(p1) 												; save and increment p1
+	xpal 	p1 
+	jp 		__PRCopy 											; keep doing till all copied.
+	ld 		@1(p2) 												; read cursor position
+	xpal 	p1 													; put in P1.L
+	jmp 	__PRUpdateCursor
+
+	endsection 	Print
