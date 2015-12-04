@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 1 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 1 - 12/4/2015 10:28:39
 
 
        1/       0 :                     ; ******************************************************************************************************************
@@ -61,7 +61,7 @@
 (1)   26/       C :                     	ccl 													
 (1)   27/       C :                     	ld 		val(p2)
 (1)   28/       C :                     	add 	val(p2)
- AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 2 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 2 - 12/4/2015 10:28:39
 
 
 (1)   29/       C :                     	st 		val(p2)
@@ -124,7 +124,7 @@
 (1)   86/      3F : C6 01               	ld 		@1(p2) 											; restore P3
 (1)   87/      41 : 33                  	xpal 	p3
 (1)   88/      42 : C6 01               	ld 		@1(p2)
- AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 3 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 3 - 12/4/2015 10:28:39
 
 
 (1)   89/      44 : 37                  	xpah 	p3
@@ -187,7 +187,7 @@
 (1)  146/      67 :                     
 (1)  147/      67 :                     MATH_Exit:
 (1)  148/      67 : 3F                  	xppc 	p3 													; return
- AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 4 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 4 - 12/4/2015 10:28:39
 
 
 (1)  149/      68 : 90 DE               	jmp  	Maths 												; re-entrant
@@ -250,7 +250,7 @@
 (1)  206/      9C : 98 0D               	jz 		__MultiplyNoAdd
 (1)  207/      9E : 02                  	ccl 														; add a to the result
 (1)  208/      9F : C2 FE               	ld 		resultLo(p2)
- AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 5 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 5 - 12/4/2015 10:28:39
 
 
 (1)  209/      A1 : F2 02               	add 	aLo(p2)
@@ -313,7 +313,7 @@
 (1)  252/      DA : CA FD               	st 		resultLo(p2)
 (1)  253/      DC :                     ToInt_Loop:
 (1)  254/      DC : C1 00               	ld 		0(p1) 												; read next digit
- AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 6 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 6 - 12/4/2015 10:28:39
 
 
 (1)  255/      DE : 03                  	scl 	
@@ -376,7 +376,7 @@
 (1)  305/     135 : 90 99               	jmp 	MATH_Exit1
 (1)  306/     137 :                     
 (1)  307/     137 :                     ; ******************************************************************************************************************
- AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 7 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 7 - 12/4/2015 10:28:39
 
 
 (1)  308/     137 :                     ;							'/' : 16 bit signed/unsigned divide (CY/L = 0 = signed)
@@ -439,7 +439,7 @@
 (1)  365/     16C : C6 01               	ld 		@1(p2) 												; inc P2 to access the MSB
 (1)  366/     16E : C4 00               	ldi 	0
 (1)  367/     170 : FA 80               	cad 	-0x80(p2)
- AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 8 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 8 - 12/4/2015 10:28:39
 
 
 (1)  368/     172 : CA 80               	st 		-0x80(p2)
@@ -502,7 +502,7 @@
 (1)  407/     1BC : CA 02                       st              NUMERATORLO(p2)
 (1)  407/     1BE : C2 03                       ld              NUMERATORLO+1(p2)
 (1)  407/     1C0 : F2 03                       add     NUMERATORLO+1(p2)
- AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 9 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(maths.asm) - page 9 - 12/4/2015 10:28:39
 
 
 (1)  407/     1C2 : CA 03                       st              NUMERATORLO+1(p2)               
@@ -564,8 +564,8 @@
       41/     206 : C4 90               		ldi 	0x90 											; point P1 to $9000 which is the first ROM.
       42/     208 : 35                  		xpah 	p1
       43/     209 : C1 00               		ld 		0(p1) 											; if that byte is $68, go straight there.
-      44/     20B : E4 68               		xri 	0x68
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 10 - 12/3/2015 12:53:40
+      44/     20B : E4 68               		xri 	0x68  											; we can boot into VTL-2 or whatever.
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 10 - 12/4/2015 10:28:39
 
 
       45/     20D : 9C 01               		jnz 	__BootMonitor
@@ -628,7 +628,7 @@
      102/     241 : C4 0C               		ldi 	codeStart/256 									; set the initial work address
      103/     243 : C9 02               		st 		Current-Cursor+1(p1)
      104/     245 : C4 2E               		ldi 	codeStart&255
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 11 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 11 - 12/4/2015 10:28:39
 
 
      105/     247 : C9 01               		st 		Current-Cursor(p1)
@@ -660,10 +660,10 @@
      127/     27B : C4 01               		ldi 	1 												; Beep on booting.
      128/     27D : 07                  		cas 													; play low tone
      129/     27E : 8F FF               		dly 	0xFF
-     130/     280 : C4 05               		ldi 	5
+     130/     280 : C4 05               		ldi 	5												; play high tone.
      131/     282 : 07                  		cas
      132/     283 : 8F FF               		dly 	0xFF
-     133/     285 : C4 00               		ldi 	0
+     133/     285 : C4 00               		ldi 	0 												; sound off.
      134/     287 : 07                  		cas
      135/     288 :                     
      136/     288 :                     ; ****************************************************************************************************************
@@ -691,7 +691,7 @@
      158/     29A :                     ;
      159/     29A :                     ;											Keyboard Line Input
      160/     29A :                     ;
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 12 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 12 - 12/4/2015 10:28:39
 
 
      161/     29A :                     ; ****************************************************************************************************************
@@ -754,7 +754,7 @@
      218/     2E4 :                     __CmdMainLoop1:
      219/     2E4 : 90 A2               		jmp 	CommandMainLoop
      220/     2E6 :                     
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 13 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 13 - 12/4/2015 10:28:39
 
 
      221/     2E6 :                     __KBDExit:
@@ -817,7 +817,7 @@
      278/     323 : 98 31               		jz 		__CommandError
      279/     325 : C5 03               		ld 		@3(p1) 											; read low byte, and point to next
      280/     327 : 60                  		xre
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 14 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 14 - 12/4/2015 10:28:39
 
 
      281/     328 : 9C F5               		jnz 	__FindCommandLoop 								; if different to LSB loop back.
@@ -880,7 +880,7 @@
      338/     368 :                     
      339/     368 : C4 1C               		ldi 	parPosn & 255
      340/     36A : 31                  		xpal 	p1 												; get the parameter LSB
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 15 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 15 - 12/4/2015 10:28:39
 
 
      341/     36B : CE FF               		st 		@-1(p2) 										; push that on the stack, set P1 to parPosn
@@ -943,7 +943,7 @@
      398/     3BE : C1 FF               		ld 		-1(p1) 											; read operand
      399/     3C0 : 02                  		ccl 													; one fewer because we want the current addr+1 low
      400/     3C1 : FB 00               		cad 	(p3) 											; subtract the current address low.
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 16 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 16 - 12/4/2015 10:28:39
 
 
      401/     3C3 : C9 FF               		st 		-1(p1) 											; write it back
@@ -1006,7 +1006,7 @@
      458/     3F3 : 37                  		xpah 	p3
      459/     3F4 : C7 FF               		ld 		@-1(p3) 										; fix up for pre increment
      460/     3F6 : 3F                  		xppc 	p3 												; call the routine.		
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 17 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 17 - 12/4/2015 10:28:39
 
 
      461/     3F7 :                     __CmdMainLoop3:
@@ -1069,7 +1069,7 @@
      518/     444 : 01                  		xae 
      519/     445 : 19                  		sio
      520/     446 :                     __CmdMainLoop4:
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 18 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 18 - 12/4/2015 10:28:39
 
 
      521/     446 : 90 AF               		jmp 	__CmdMainLoop3
@@ -1132,7 +1132,7 @@
      578/     483 : 31                  		xpal 	p1
      579/     484 : C1 00               		ld 		(p1) 											; read current address
      580/     486 : 31                  		xpal 	p1 												; save in P1.Low
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 19 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 19 - 12/4/2015 10:28:39
 
 
      581/     487 : C4 00               		ldi 	Labels&255 										; get labels low byte in same page as current address
@@ -1195,7 +1195,7 @@
      638/     4CA : 01                  		xae 													; save it in E
      639/     4CB : C1 00               		ld 		0(p1) 											; copy address to save to into P3
      640/     4CD : 33                  		xpal 	p3
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 20 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 20 - 12/4/2015 10:28:39
 
 
      641/     4CE : C1 01               		ld 		1(p1) 
@@ -1258,7 +1258,7 @@
      698/     51E :                     __DAssNextOpcode:
      699/     51E : C7 FD               		ld 		@-3(p3) 										; go to previous entry in table
      700/     520 : 90 E9               		jmp 	__DAssFindOpcode
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 21 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 21 - 12/4/2015 10:28:39
 
 
      701/     522 :                     
@@ -1321,7 +1321,7 @@
      758/     572 :                     
      759/     572 :                     __DAssPrintOperand:
      760/     572 : C2 01               		ld 		1(p2) 											; get original opcode
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 22 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 22 - 12/4/2015 10:28:39
 
 
      761/     574 : 94 0A               		jp 		__DAssNext 										; if no operand go to next line of disassembly.
@@ -1384,7 +1384,7 @@
      818/     5B5 : 06                  		csa 													; check carry
      819/     5B6 : 94 03               		jp 		__PHBNoSpace									; if clear, no space.
      820/     5B8 : C4 20               		ldi 	' '												; print leading space
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 23 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 23 - 12/4/2015 10:28:39
 
 
      821/     5BA : 3F                  		xppc 	p3 
@@ -1447,7 +1447,7 @@
      878/     5F7 : C2 04               		ld 		4(p2) 											; read character to print.
      879/     5F9 : E4 0D               		xri 	13 												; is it CR ?
      880/     5FB : 98 40               		jz 		__PCNewLine 									; if so, go to new line.
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 24 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 24 - 12/4/2015 10:28:39
 
 
      881/     5FD : E4 05               		xri 	13!8 											; is it Backspace ?
@@ -1510,7 +1510,7 @@
      938/     649 :                     ;					Print current address followed by A data bytes. Doesn't update current address
      939/     649 :                     ;
      940/     649 :                     ; ****************************************************************************************************************
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 25 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 25 - 12/4/2015 10:28:39
 
 
      941/     649 :                     ; ****************************************************************************************************************
@@ -1573,7 +1573,7 @@
      998/     688 :                     
      999/     688 : C1 00               		ld 		(p1) 											; read the current position,P1 points to character
     1000/     68A : 31                  		xpal 	p1 												; when we put it in P1.L
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 26 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 26 - 12/4/2015 10:28:39
 
 
     1001/     68B :                     
@@ -1636,7 +1636,7 @@
     1058/     6E3 : C2 FE               		ld 		-2(p2)
     1059/     6E5 : 35                  		xpah 	p1
     1060/     6E6 : 03                  		scl 													; set CY/L to indicate okay
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 27 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 27 - 12/4/2015 10:28:39
 
 
     1061/     6E7 : 90 22               		jmp 	__GPAExit
@@ -1699,7 +1699,7 @@
     1118/     71C :                     GetCurrentAddress:
     1119/     71C : C4 0C               		ldi 	current/256 									; current address ptr in P1
     1120/     71E : 35                  		xpah 	p1
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 28 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 28 - 12/4/2015 10:28:39
 
 
     1121/     71F : C4 19               		ldi 	current&255
@@ -1762,7 +1762,7 @@
 (1)   41/     77C : 23                          db    0x23
 (1)   42/     77D : B4 1C                       dw    0x1cb4 ; GET
 (1)   43/     77F : 24                          db    0x24
- AS V1.42 Beta [Bld 102] - source file monitor.asm(commands.inc) - page 29 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(commands.inc) - page 29 - 12/4/2015 10:28:39
 
 
 (1)   44/     780 : 03 00                       dw    0x0003 ; C
@@ -1825,7 +1825,7 @@
 (1)  101/     7D6 : E0                          db    0xe0
 (1)  102/     7D7 : 49 62                       dw    0x6249 ; XRI
 (1)  103/     7D9 : E4                          db    0xe4
- AS V1.42 Beta [Bld 102] - source file monitor.asm(commands.inc) - page 30 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm(commands.inc) - page 30 - 12/4/2015 10:28:39
 
 
 (1)  104/     7DA : 24 10                       dw    0x1024 ; DAD
@@ -1880,19 +1880,19 @@
     1161/     800 :                     ; ****************************************************************************************************************
     1162/     800 :                     ;
     1163/     800 :                     ;		A [aaaa] 			Set current address to aaaa
-    1164/     800 :                     ;		B [cc] [dd] [ee]..	Fill memory from current address
+    1164/     800 :                     ;		B [cc] [dd] [ee]..	Put Bytes cc dd ee etc. in memory from current address onwards.
     1165/     800 :                     ; 		C 					Clear screen
-    1166/     800 :                     ;		D [aaaa] 			Disassemble from aaaa
+    1166/     800 :                     ;		D [aaaa] 			Disassemble from aaaa (7 lines of disassembly)
     1167/     800 :                     ;		G aaaa 				Run from address - address must be given - return with XPPC P3
-    1168/     800 :                     ; 		L n 				Set label n to the current address (up to 32 labels 00-1F)
-    1169/     800 :                     ; 		M [aaaa] 			Memory dump from current address/aaaa (6 lines, 4 bytes per line)
+    1168/     800 :                     ; 		L n 				Set label n to the current address (up to 24 labels 00-17)
+    1169/     800 :                     ; 		M [aaaa] 			Memory dump from current address/aaaa (7 lines, 4 bytes per line)
     1170/     800 :                     ; 		GET [aaaa] 			Load tape to current address/aaa
     1171/     800 :                     ;		PUT [nnnn]			Write nnnn bytes from current address onwards to tape.
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 31 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 31 - 12/4/2015 10:28:39
 
 
     1172/     800 :                     ;
-    1173/     800 :                     ;		Command Line Assembler
+    1173/     800 :                     ;		Command Line Assembler:
     1174/     800 :                     ;
     1175/     800 :                     ;		Standard SC/MP mnemonics, except for XPAH, XPAL, XPPC, HALT and DINT which are XPH XPL XPC HLT DIN
     1176/     800 :                     ;		respectively (4 character mnemonics not supported)
@@ -1912,7 +1912,7 @@
     1190/     800 :                     ;
     1191/     800 :                     ; ****************************************************************************************************************
     1192/     800 :                     
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 32 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 32 - 12/4/2015 10:28:39
 
 
   symbol table (* = unused):
@@ -1928,7 +1928,7 @@
  CLEARSCREENLOOP :              225 C |  CLEARSCREEN_COMMAND :          220 C |
  CODESTART :                    C2E - |  COMMANDMAINLOOP :              288 C |
 *CONSTPI :        3.141592653589793 - |  CURRENT :                      C19 - |
- CURSOR :                       C18 - | *DATE :                   12/3/2015 - |
+ CURSOR :                       C18 - | *DATE :                   12/4/2015 - |
  DENOMINATORHI [SCMPDIVIDE] :     1 - |  DENOMINATORLO [SCMPDIVIDE] :     0 - |
  DIGITCOUNT [SCMPTOINTEGER] :                              FFFFFFFFFFFFFFFF - |
  DISASSEMBLE_COMMAND :          4DC C |  ENTERBYTES_COMMAND :           4BA C |
@@ -1975,12 +1975,12 @@
  SIGNCOUNT [SCMPDIVIDE] :                                  FFFFFFFFFFFFFFF9 - |
  TAPEDELAY :                      4 - |
  TEMPHI [SCMPTOINTEGER] :                                  FFFFFFFFFFFFFFFB - |
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 33 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 33 - 12/4/2015 10:28:39
 
 
  TEMPHI [SCMPDIVIDE] :                                     FFFFFFFFFFFFFFF7 - |
  TEMPLO [SCMPTOINTEGER] :                                  FFFFFFFFFFFFFFFA - |
-*TIME :                    12:53:40 - |  TOINT_END [SCMPTOINTEGER] :    127 C |
+*TIME :                    10:28:39 - |  TOINT_END [SCMPTOINTEGER] :    127 C |
  TOINT_LOOP [SCMPTOINTEGER] :    DC C |  TOINT_NOADD [SCMPTOINTEGER] :  113 C |
  TOINT_SHIFT [SCMPTOINTEGER] :   F5 C | *TRUE :                           1 - |
 *UPDATECURRENTADDRESS :         70C C |  VARBASE :                      C18 - |
@@ -2031,7 +2031,7 @@
     184 symbols
      31 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 34 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 34 - 12/4/2015 10:28:39
 
 
   defined macros:
@@ -2041,7 +2041,7 @@ SHIFTLEFT                             | SHIFTRIGHT
 
       2 macros
 
- AS V1.42 Beta [Bld 102] - source file monitor.asm - page 35 - 12/3/2015 12:53:40
+ AS V1.42 Beta [Bld 102] - source file monitor.asm - page 35 - 12/4/2015 10:28:39
 
 
   codepages:

@@ -37,7 +37,7 @@
 #endif
 
 ROMTYPE      romMemory[2048] = {													// 0x0000-0x07FF ROM Memory
-	#include "binaries/__image.h"
+	#include "binaries/__monitor_rom.h"
 };
 
 static BYTE8 ramMemory[RAMSIZE];													// 0x0C00-0x7FFF RAM Memory

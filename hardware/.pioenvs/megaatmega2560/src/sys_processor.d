@@ -11,4 +11,4 @@
  .pioenvs\megaatmega2560\FrameworkArduino/USBAPI.h \
  .pioenvs\megaatmega2560\FrameworkArduino/Arduino.h \
  .pioenvs\megaatmega2560\FrameworkArduinoVariant/pins_arduino.h \
- src\binaries/__image.h src\scmp/__scmp_opcodes.h
+ src\binaries/__monitor_rom.h src\scmp/__scmp_opcodes.h
