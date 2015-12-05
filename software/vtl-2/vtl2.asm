@@ -26,6 +26,10 @@ ProgramSpace = 0x1000 											; Page with program memory.
 
 StackSearch = 0xFFF 											; Search for stack space back from here.
 
+; ****************************************************************************************************************
+;														Macros
+; ****************************************************************************************************************
+
 lpi	macro	ptr,addr
 	ldi 	(addr) / 256
 	xpah 	ptr
@@ -33,10 +37,23 @@ lpi	macro	ptr,addr
 	xpal 	ptr
 	endm
 
-	org 	0x9000 												; the ROM starts here
-	db 		0x68												; this makes it boot straight into this ROM.
+; ****************************************************************************************************************
+;													Main Program
+; ****************************************************************************************************************
 
-	lpi 	p2,0xFFF
+	org 	0x9000 												; the ROM starts here
+
+	db 		0x68												; this makes it boot straight into this ROM.
+VTL2Boot:
+	lpi 	p2,StackSearch 										; possible top of stack, we check by working down.
+	ld 		@64(p2) 											; get round the 4:12 wrapping non emulation.
+FindStackTop:
+	ldi 	0x75 												; write this at potential TOS
+	st 		@-64(p2)
+	xor 	(p2) 												; did the write work
+	jnz 	FindStackTop
+
+
 	lpi 	p3,Print-1
 	ldi 	12
 	xppc 	p3
