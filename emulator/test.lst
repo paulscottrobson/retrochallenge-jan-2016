@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file test.asm - page 1 - 12/4/2015 16:10:13
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 1 - 12/5/2015 9:06:18
 
 
        1/       0 :                     ; ******************************************************************************************************************
@@ -19,7 +19,7 @@
       16/       2 : 08                  		nop
       17/       3 :                     
       18/       3 :                     
- AS V1.42 Beta [Bld 102] - source file test.asm - page 2 - 12/4/2015 16:10:13
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 2 - 12/5/2015 9:06:18
 
 
   symbol table (* = unused):
@@ -27,7 +27,7 @@
 
 *ARCHITECTURE :  i386-unknown-win32 - | *BIGENDIAN :                      0 - |
 *BRANCHEXT :                      0 - | *CASESENSITIVE :                  0 - |
-*CONSTPI :        3.141592653589793 - | *DATE :                   12/4/2015 - |
+*CONSTPI :        3.141592653589793 - | *DATE :                   12/5/2015 - |
 *FALSE :                          0 - | *FULLPMMU :                       1 - |
 *HAS64 :                          1 - | *HASDSP :                         0 - |
 *HASFPU :                         0 - | *HASPMMU :                        0 - |
@@ -37,13 +37,13 @@
 *MACEXP :                         1 - | *MOMCPU :                         C - |
 *MOMCPUNAME :                 SC/MP - | *NESTMAX :                      100 - |
 *PACKING :                        0 - | *PADDING :                        1 - |
-*RELAXED :                        0 - | *TIME :                    16:10:13 - |
+*RELAXED :                        0 - | *TIME :                     9:06:18 - |
 *TRUE :                           1 - | *VERSION :                     142F - |
 
      28 symbols
      28 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file test.asm - page 3 - 12/4/2015 16:10:13
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 3 - 12/5/2015 9:06:18
 
 
   codepages:
@@ -52,7 +52,7 @@
 STANDARD (0 changed characters)
 
 
-0.03 seconds assembly time
+0.02 seconds assembly time
 
      18 lines source file
       1 pass

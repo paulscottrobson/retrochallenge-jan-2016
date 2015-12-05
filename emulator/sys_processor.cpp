@@ -71,7 +71,7 @@ static void inline _Read(void) {
 		return;
 	}
 	if (MA >= 0x9000 && MA < 0x9000+XROMSIZE) {
-		MB = extRomMemory[MA-0x9000];
+		MB = ROM(extRomMemory,MA-0x9000);
 		return;
 	}
 	if (MA >= 0xC00 && MA < 0xC00+RAMSIZE) {

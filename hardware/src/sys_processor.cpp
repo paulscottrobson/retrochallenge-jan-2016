@@ -42,6 +42,10 @@ ROMTYPE      romMemory[2048] = {													// 0x0000-0x07FF ROM Memory
 
 static BYTE8 ramMemory[RAMSIZE];													// 0x0C00-0x7FFF RAM Memory
 
+ROMTYPE      extRomMemory[XROMSIZE] = {												// 0x9000-0x9FFF ROM Memory
+	#include "binaries/__rom_9000.h"
+};
+
 // *******************************************************************************************************************************
 //														CPU / Memory
 // *******************************************************************************************************************************
@@ -64,6 +68,10 @@ static WORD16 MA,temp16,offset;
 static void inline _Read(void) {
 	if (MA < 0x800) {
 		MB = ROM(romMemory,MA);
+		return;
+	}
+	if (MA >= 0x9000 && MA < 0x9000+XROMSIZE) {
+		MB = ROM(extRomMemory,MA-0x9000);
 		return;
 	}
 	if (MA >= 0xC00 && MA < 0xC00+RAMSIZE) {
@@ -283,6 +291,10 @@ void CPULoadBinary(const char *file) {
 	if (*file == '@') {																// @xxxxx loads into RAM
 		file++; 																	// Skip the @
 		target = ramMemory;															// New target
+	}
+	if (*file == '$') {																// $xxxxx loads into 9000 ROM
+		file++;
+		target = extRomMemory;
 	}
 	//printf("Reading file %s\n",file);
 	FILE *f = fopen(file,"rb");														// And load in.
