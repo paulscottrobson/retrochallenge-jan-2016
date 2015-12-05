@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 1 - 12/5/2015 14:28:08
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 1 - 12/5/2015 18:40:55
 
 
        1/       0 :                     ; ****************************************************************************************************************
@@ -25,413 +25,474 @@
       22/       0 :                     																; each, 6 bit ASCII (e.g. @,A,B,C)
       23/       0 :                     																; VTL-2 other variables work backwards from here.
       24/       0 :                     
-      25/       0 : =0x1000             ProgramSpace = 0x1000 											; Page with program memory.
+      25/       0 : =0xCFF              Error = VariableBase-1 											; Error Flag (single character if not $00)
       26/       0 :                     
-      27/       0 : =0xFFF              StackSearch = 0xFFF 											; Search for stack space back from here.
+      27/       0 : =0x3                MathLibrary = 3 												; Monitor Mathematics Routine Address
       28/       0 :                     
-      29/       0 :                     ; ****************************************************************************************************************
-      30/       0 :                     ;														Macros
-      31/       0 :                     ; ****************************************************************************************************************
+      29/       0 : =0x1000             ProgramSpace = 0x1000 											; Page with program memory.
+      30/       0 :                     
+      31/       0 : =0xFFF              StackSearch = 0xFFF 											; Search for stack space back from here.
       32/       0 :                     
-      33/       0 :                     lpi	macro	ptr,addr
-      34/       0 :                     	ldi 	(addr) / 256
-      35/       0 :                     	xpah 	ptr
-      36/       0 :                     	ldi 	(addr) & 255
-      37/       0 :                     	xpal 	ptr
-      38/       0 :                     	endm
-      39/       0 :                     
-      40/       0 :                     ; ****************************************************************************************************************
-      41/       0 :                     ;													Main Program
-      42/       0 :                     ; ****************************************************************************************************************
+      33/       0 :                     ; ****************************************************************************************************************
+      34/       0 :                     ;														Macros
+      35/       0 :                     ; ****************************************************************************************************************
+      36/       0 :                     
+      37/       0 :                     lpi	macro	ptr,addr
+      38/       0 :                     	ldi 	(addr) / 256
+      39/       0 :                     	xpah 	ptr
+      40/       0 :                     	ldi 	(addr) & 255
+      41/       0 :                     	xpal 	ptr
+      42/       0 :                     	endm
       43/       0 :                     
-      44/    9000 :                     	org 	0x9000 												; the ROM starts here
-      45/    9000 :                     
-      46/    9000 : 68                  	db 		0x68												; this makes it boot straight into this ROM.
-      47/    9001 :                     VTL2Boot:
-      48/    9001 : (MACRO)             	lpi 	p2,StackSearch 										; possible top of stack, we check by working down.
-      48/    9001 : C4 0F                       ldi     (STACKSEARCH) / 256
-      48/    9003 : 36                          xpah    P2
-      48/    9004 : C4 FF                       ldi     (STACKSEARCH) & 255
-      48/    9006 : 32                          xpal    P2
-      49/    9007 : C6 40               	ld 		@64(p2) 											; get round the 4:12 wrapping non emulation.
-      50/    9009 :                     FindStackTop:
-      51/    9009 : C4 75               	ldi 	0x75 												; write this at potential TOS
-      52/    900B : CE C0               	st 		@-64(p2)
-      53/    900D : E2 00               	xor 	(p2) 												; did the write work
-      54/    900F : 9C F8               	jnz 	FindStackTop
-      55/    9011 :                     
-      56/    9011 :                     
- AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 2 - 12/5/2015 14:28:08
+      44/       0 :                     ; ****************************************************************************************************************
+      45/       0 :                     ;													Main Program
+      46/       0 :                     ; ****************************************************************************************************************
+      47/       0 :                     
+      48/    9000 :                     	org 	0x9000 												; the ROM starts here
+      49/    9000 :                     
+      50/    9000 : 68                  	db 		0x68												; this makes it boot straight into this ROM.
+      51/    9001 :                     VTL2Boot:
+      52/    9001 : (MACRO)             	lpi 	p2,StackSearch 										; possible top of stack, we check by working down.
+      52/    9001 : C4 0F                       ldi     (STACKSEARCH) / 256
+      52/    9003 : 36                          xpah    P2
+      52/    9004 : C4 FF                       ldi     (STACKSEARCH) & 255
+      52/    9006 : 32                          xpal    P2
+      53/    9007 : C6 40               	ld 		@64(p2) 											; get round the 4:12 wrapping non emulation.
+      54/    9009 :                     FindStackTop:
+      55/    9009 : C4 75               	ldi 	0x75 												; write this at potential TOS
+      56/    900B : CE C0               	st 		@-64(p2)
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 2 - 12/5/2015 18:40:55
 
 
-      57/    9011 : (MACRO)             	lpi 	p3,Print-1
-      57/    9011 : C4 90                       ldi     (PRINT-1) / 256
-      57/    9013 : 37                          xpah    P3
-      57/    9014 : C4 2A                       ldi     (PRINT-1) & 255
-      57/    9016 : 33                          xpal    P3
-      58/    9017 : C4 0C               	ldi 	12
-      59/    9019 : 3F                  	xppc 	p3
-      60/    901A : (MACRO)             	lpi 	p3,GetString-1
-      60/    901A : C4 91                       ldi     (GETSTRING-1) / 256
-      60/    901C : 37                          xpah    P3
-      60/    901D : C4 0E                       ldi     (GETSTRING-1) & 255
-      60/    901F : 33                          xpal    P3
-      61/    9020 : (MACRO)             	lpi 	p1,KeyboardBuffer
-      61/    9020 : C4 0C                       ldi     (KEYBOARDBUFFER) / 256
-      61/    9022 : 35                          xpah    P1
-      61/    9023 : C4 BE                       ldi     (KEYBOARDBUFFER) & 255
-      61/    9025 : 31                          xpal    P1
-      62/    9026 : C4 40               	ldi 	KeyboardBufferSize
-      63/    9028 : 3F                  	xppc 	p3
-      64/    9029 :                     wait:
-      65/    9029 : 90 FE               	jmp 	wait
-      66/    902B :                     
-      67/    902B :                     
-      68/    902B :                     	include Source\screen.asm 									; screen I/O stuff.
-(1)    1/    902B :                     ; ****************************************************************************************************************
-(1)    2/    902B :                     ; ****************************************************************************************************************
-(1)    3/    902B :                     ;
-(1)    4/    902B :                     ;											Screen I/O, VTL-2 ROM
-(1)    5/    902B :                     ;											=====================
-(1)    6/    902B :                     ;
-(1)    7/    902B :                     ;	Provides Character and String Input/Output functionality.
-(1)    8/    902B :                     ;
-(1)    9/    902B :                     ; ****************************************************************************************************************
-(1)   10/    902B :                     ; ****************************************************************************************************************
-(1)   11/    902B :                     
-(1)   12/    902B :                     ; ****************************************************************************************************************
-(1)   13/    902B :                     ; ****************************************************************************************************************
-(1)   14/    902B :                     ;
-(1)   15/    902B :                     ;	Print routine. Prints either character in A, or ASCIIZ string at P1 (if A is zero). Preserves all registers
-(1)   16/    902B :                     ;	except if printing string, P1 points to the character after the NULL terminator.
-(1)   17/    902B :                     ;
-(1)   18/    902B :                     ;	Scrolls automatically. Understands character codes 32-255, 8 (Backspace) 12 (Clear Screen) 13 (Carriage
-(1)   19/    902B :                     ;	Return). Others are currently ignored (except 0, see above). Note L/C values (97....) display those characters
-(1)   20/    902B :                     ;	in the ROM font *not* lower case :)
-(1)   21/    902B :                     ;
-(1)   22/    902B :                     ; ****************************************************************************************************************
-(1)   23/    902B :                     ; ****************************************************************************************************************
-(1)   24/    902B :                     
-(1)   25/    902B :                     Print:
-(1)   26/    902B :                     	section 	Print
-(1)   27/    902B :                     
-(1)   28/    902B : CE FF               	st 		@-1(p2) 											; save character on stack.
-(1)   29/    902D : 35                  	xpah 	p1
-(1)   30/    902E : CE FF               	st 		@-1(p2) 											; save P1 on the stack.
-(1)   31/    9030 : 31                  	xpal 	p1
-(1)   32/    9031 : CE FF               	st 		@-1(p2)
-(1)   33/    9033 : 01                  	xae 	
-(1)   34/    9034 : CE FF               	st 		@-1(p2) 											; save E on the stack.
-(1)   35/    9036 :                     
-(1)   36/    9036 : C2 03               	ld 		3(p2) 												; read character 
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 3 - 12/5/2015 14:28:08
+      57/    900D : E2 00               	xor 	(p2) 												; did the write work
+      58/    900F : 9C F8               	jnz 	FindStackTop
+      59/    9011 :                     
+      60/    9011 :                     
+      61/    9011 : (MACRO)             	lpi 	p3,Evaluate-1
+      61/    9011 : C4 91                       ldi     (EVALUATE-1) / 256
+      61/    9013 : 37                          xpah    P3
+      61/    9014 : C4 6E                       ldi     (EVALUATE-1) & 255
+      61/    9016 : 33                          xpal    P3
+      62/    9017 : (MACRO)             	lpi 	p1,Test
+      62/    9017 : C4 91                       ldi     (TEST) / 256
+      62/    9019 : 35                          xpah    P1
+      62/    901A : C4 69                       ldi     (TEST) & 255
+      62/    901C : 31                          xpal    P1
+      63/    901D : 3F                  	xppc 	p3
+      64/    901E :                     wait:
+      65/    901E : 90 FE               	jmp 	wait
+      66/    9020 :                     
+      67/    9020 :                     
+      68/    9020 :                     	include Source\screen.asm 									; screen I/O stuff.
+(1)    1/    9020 :                     ; ****************************************************************************************************************
+(1)    2/    9020 :                     ; ****************************************************************************************************************
+(1)    3/    9020 :                     ;
+(1)    4/    9020 :                     ;											Screen I/O, VTL-2 ROM
+(1)    5/    9020 :                     ;											=====================
+(1)    6/    9020 :                     ;
+(1)    7/    9020 :                     ;	Provides Character and String Input/Output functionality.
+(1)    8/    9020 :                     ;
+(1)    9/    9020 :                     ; ****************************************************************************************************************
+(1)   10/    9020 :                     ; ****************************************************************************************************************
+(1)   11/    9020 :                     
+(1)   12/    9020 :                     ; ****************************************************************************************************************
+(1)   13/    9020 :                     ; ****************************************************************************************************************
+(1)   14/    9020 :                     ;
+(1)   15/    9020 :                     ;	Print routine. Prints either character in A, or ASCIIZ string at P1 (if A is zero). Preserves all registers
+(1)   16/    9020 :                     ;	except if printing string, P1 points to the character after the NULL terminator.
+(1)   17/    9020 :                     ;
+(1)   18/    9020 :                     ;	Scrolls automatically. Understands character codes 32-255, 8 (Backspace) 12 (Clear Screen) 13 (Carriage
+(1)   19/    9020 :                     ;	Return). Others are currently ignored (except 0, see above). Note L/C values (97....) display those characters
+(1)   20/    9020 :                     ;	in the ROM font *not* lower case :)
+(1)   21/    9020 :                     ;
+(1)   22/    9020 :                     ; ****************************************************************************************************************
+(1)   23/    9020 :                     ; ****************************************************************************************************************
+(1)   24/    9020 :                     
+(1)   25/    9020 :                     Print:
+(1)   26/    9020 :                     	section 	Print
+(1)   27/    9020 :                     
+(1)   28/    9020 : CE FF               	st 		@-1(p2) 											; save character on stack.
+(1)   29/    9022 : 35                  	xpah 	p1
+(1)   30/    9023 : CE FF               	st 		@-1(p2) 											; save P1 on the stack.
+(1)   31/    9025 : 31                  	xpal 	p1
+(1)   32/    9026 : CE FF               	st 		@-1(p2)
+(1)   33/    9028 : 01                  	xae 	
+(1)   34/    9029 : CE FF               	st 		@-1(p2) 											; save E on the stack.
+(1)   35/    902B :                     
+(1)   36/    902B : C2 03               	ld 		3(p2) 												; read character 
+(1)   37/    902D : 9C 12               	jnz 	__PRPrintCharacterA 								; if non zero print it on its own.
+(1)   38/    902F :                     
+(1)   39/    902F :                     __PRPrintString:
+(1)   40/    902F : C2 01               	ld 		1(p2) 												; restore original P1
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 3 - 12/5/2015 18:40:55
 
 
-(1)   37/    9038 : 9C 12               	jnz 	__PRPrintCharacterA 								; if non zero print it on its own.
-(1)   38/    903A :                     
-(1)   39/    903A :                     __PRPrintString:
-(1)   40/    903A : C2 01               	ld 		1(p2) 												; restore original P1
-(1)   41/    903C : 31                  	xpal 	p1
-(1)   42/    903D : C2 02               	ld 		2(p2)
-(1)   43/    903F : 35                  	xpah 	p1 													; read character at P1.
-(1)   44/    9040 : C5 01               	ld 		@1(p1)
-(1)   45/    9042 : 01                  	xae 														; save in E.
-(1)   46/    9043 : 35                  	xpah 	p1 													; write P1 back.
-(1)   47/    9044 : CA 02               	st 		2(p2)
-(1)   48/    9046 : 31                  	xpal 	p1
-(1)   49/    9047 : CA 01               	st 		1(p2)
-(1)   50/    9049 : 40                  	lde 														; get character from E
-(1)   51/    904A : 98 46               	jz 		__PRExitNoCheck 									; exit without loop check.
-(1)   52/    904C :                     ;
-(1)   53/    904C :                     ;	Print character in A now ; throughout it is stored in E.
-(1)   54/    904C :                     ;
-(1)   55/    904C :                     __PRPrintCharacterA:
-(1)   56/    904C : 01                  	xae 														; save character in E.
-(1)   57/    904D :                     ;
-(1)   58/    904D :                     ;	Read cursor and set P1 to that address
-(1)   59/    904D :                     ;
-(1)   60/    904D : C4 0C               	ldi 	ScreenCursor/256 									; set P1 to point to screen cursor
-(1)   61/    904F : 35                  	xpah 	p1
-(1)   62/    9050 : C4 80               	ldi 	ScreenCursor&255
-(1)   63/    9052 : 31                  	xpal 	p1
-(1)   64/    9053 : C1 00               	ld 		0(p1) 												; put cursor position in P1.L
-(1)   65/    9055 : 31                  	xpal 	p1
-(1)   66/    9056 :                     ;
-(1)   67/    9056 :                     ;	Check for control
-(1)   68/    9056 :                     ;
-(1)   69/    9056 : 40                  	lde 														; look at character
-(1)   70/    9057 : D4 E0               	ani 	0xE0 												; is it code 0-31
-(1)   71/    9059 : 98 45               	jz 		__PRIsControlChar
-(1)   72/    905B :                     ;
-(1)   73/    905B :                     ;	Print non-control
-(1)   74/    905B :                     ;
-(1)   75/    905B : 40                  	lde 														; read character
-(1)   76/    905C : 03                  	scl 														; CY/L clear if < 96
-(1)   77/    905D : FC 60               	cai 	96 
-(1)   78/    905F : 06                  	csa 	 	 												; skip if carry set
-(1)   79/    9060 : E4 80               	xri 	0x80													
-(1)   80/    9062 : 94 04               	jp 		__PRNotASCII
-(1)   81/    9064 : 40                  	lde 														; if ASCII make 6 bit.
-(1)   82/    9065 : D4 3F               	ani 	0x3F
-(1)   83/    9067 : 01                  	xae
-(1)   84/    9068 :                     __PRNotASCII:
-(1)   85/    9068 : 40                  	lde 														; get character.
-(1)   86/    9069 : C9 00               	st 		(p1) 												; save in shadow memory
-(1)   87/    906B : 35                  	xpah 	p1 													; switch to VRAM, preserving A.
-(1)   88/    906C : C4 00               	ldi 	0 													
-(1)   89/    906E : 35                  	xpah 	p1
-(1)   90/    906F : CD 01               	st 		@1(p1) 												; save in screen memory, advance write position.
-(1)   91/    9071 :                     ;
-(1)   92/    9071 :                     ;	Write cursor position back from P1.L
-(1)   93/    9071 :                     ;
-(1)   94/    9071 :                     __PRUpdateCursor:
-(1)   95/    9071 : C4 0C               	ldi		ScreenCursor / 256 									; set P1 to point to screen cursor, restore position to P1
-(1)   96/    9073 : 35                  	xpah 	p1
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 4 - 12/5/2015 14:28:08
+(1)   41/    9031 : 31                  	xpal 	p1
+(1)   42/    9032 : C2 02               	ld 		2(p2)
+(1)   43/    9034 : 35                  	xpah 	p1 													; read character at P1.
+(1)   44/    9035 : C5 01               	ld 		@1(p1)
+(1)   45/    9037 : 01                  	xae 														; save in E.
+(1)   46/    9038 : 35                  	xpah 	p1 													; write P1 back.
+(1)   47/    9039 : CA 02               	st 		2(p2)
+(1)   48/    903B : 31                  	xpal 	p1
+(1)   49/    903C : CA 01               	st 		1(p2)
+(1)   50/    903E : 40                  	lde 														; get character from E
+(1)   51/    903F : 98 46               	jz 		__PRExitNoCheck 									; exit without loop check.
+(1)   52/    9041 :                     ;
+(1)   53/    9041 :                     ;	Print character in A now ; throughout it is stored in E.
+(1)   54/    9041 :                     ;
+(1)   55/    9041 :                     __PRPrintCharacterA:
+(1)   56/    9041 : 01                  	xae 														; save character in E.
+(1)   57/    9042 :                     ;
+(1)   58/    9042 :                     ;	Read cursor and set P1 to that address
+(1)   59/    9042 :                     ;
+(1)   60/    9042 : C4 0C               	ldi 	ScreenCursor/256 									; set P1 to point to screen cursor
+(1)   61/    9044 : 35                  	xpah 	p1
+(1)   62/    9045 : C4 80               	ldi 	ScreenCursor&255
+(1)   63/    9047 : 31                  	xpal 	p1
+(1)   64/    9048 : C1 00               	ld 		0(p1) 												; put cursor position in P1.L
+(1)   65/    904A : 31                  	xpal 	p1
+(1)   66/    904B :                     ;
+(1)   67/    904B :                     ;	Check for control
+(1)   68/    904B :                     ;
+(1)   69/    904B : 40                  	lde 														; look at character
+(1)   70/    904C : D4 E0               	ani 	0xE0 												; is it code 0-31
+(1)   71/    904E : 98 45               	jz 		__PRIsControlChar
+(1)   72/    9050 :                     ;
+(1)   73/    9050 :                     ;	Print non-control
+(1)   74/    9050 :                     ;
+(1)   75/    9050 : 40                  	lde 														; read character
+(1)   76/    9051 : 03                  	scl 														; CY/L clear if < 96
+(1)   77/    9052 : FC 60               	cai 	96 
+(1)   78/    9054 : 06                  	csa 	 	 												; skip if carry set
+(1)   79/    9055 : E4 80               	xri 	0x80													
+(1)   80/    9057 : 94 04               	jp 		__PRNotASCII
+(1)   81/    9059 : 40                  	lde 														; if ASCII make 6 bit.
+(1)   82/    905A : D4 3F               	ani 	0x3F
+(1)   83/    905C : 01                  	xae
+(1)   84/    905D :                     __PRNotASCII:
+(1)   85/    905D : 40                  	lde 														; get character.
+(1)   86/    905E : C9 00               	st 		(p1) 												; save in shadow memory
+(1)   87/    9060 : 35                  	xpah 	p1 													; switch to VRAM, preserving A.
+(1)   88/    9061 : C4 00               	ldi 	0 													
+(1)   89/    9063 : 35                  	xpah 	p1
+(1)   90/    9064 : CD 01               	st 		@1(p1) 												; save in screen memory, advance write position.
+(1)   91/    9066 :                     ;
+(1)   92/    9066 :                     ;	Write cursor position back from P1.L
+(1)   93/    9066 :                     ;
+(1)   94/    9066 :                     __PRUpdateCursor:
+(1)   95/    9066 : C4 0C               	ldi		ScreenCursor / 256 									; set P1 to point to screen cursor, restore position to P1
+(1)   96/    9068 : 35                  	xpah 	p1
+(1)   97/    9069 : C4 80               	ldi 	ScreenCursor & 255 
+(1)   98/    906B : 31                  	xpal 	p1 													; after this, adjusted cursor position is in AC.
+(1)   99/    906C : C9 00               	st 		(p1) 												; write back in cursor position
+(1)  100/    906E : 94 13               	jp 		__PRExit 											; if position is off the bottom then scroll.
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 4 - 12/5/2015 18:40:55
 
 
-(1)   97/    9074 : C4 80               	ldi 	ScreenCursor & 255 
-(1)   98/    9076 : 31                  	xpal 	p1 													; after this, adjusted cursor position is in AC.
-(1)   99/    9077 : C9 00               	st 		(p1) 												; write back in cursor position
-(1)  100/    9079 : 94 13               	jp 		__PRExit 											; if position is off the bottom then scroll.
-(1)  101/    907B :                     ;
-(1)  102/    907B :                     ;	Scroll display
-(1)  103/    907B :                     ;
-(1)  104/    907B : C4 0C               	ldi 	(ScreenMirror+16) / 256 							; point P1 to 2nd line.
-(1)  105/    907D : 35                  	xpah 	p1
-(1)  106/    907E : C4 10               	ldi 	(ScreenMirror+16) & 255
-(1)  107/    9080 :                     __PRScrollLoop:
-(1)  108/    9080 : 31                  	xpal 	p1
-(1)  109/    9081 : C1 00               	ld 		0(p1) 												; copy char to previous line
-(1)  110/    9083 : C9 F0               	st 		-16(p1)
-(1)  111/    9085 : C5 01               	ld 		@1(p1) 												; bump pointer.
-(1)  112/    9087 : 31                  	xpal 	p1
-(1)  113/    9088 : 94 F6               	jp 		__PRScrollLoop
-(1)  114/    908A : C4 70               	ldi 	128-16 												; clear from and move to last line
-(1)  115/    908C : 90 3D               	jmp 	__PRClearFromMoveTo
-(1)  116/    908E :                     ;
-(1)  117/    908E :                     ;	Exit screen drawing routine.
-(1)  118/    908E :                     ;
-(1)  119/    908E :                     __PRExit:
-(1)  120/    908E : C2 03               	ld 		3(p2) 												; if character was zero, loop
-(1)  121/    9090 : 98 A8               	jz 		__PRPrintString 									; back as printing string at P1.
-(1)  122/    9092 :                     __PRExitNoCheck:
-(1)  123/    9092 : C6 01               	ld 		@1(p2) 												; restore E
-(1)  124/    9094 : 01                  	xae
-(1)  125/    9095 : C6 01               	ld 		@1(p2) 												; restore P1
-(1)  126/    9097 : 31                  	xpal 	p1
-(1)  127/    9098 : C6 01               	ld 		@1(p2)
-(1)  128/    909A : 35                  	xpah 	p1
-(1)  129/    909B : C6 01               	ld 		@1(p2)												; restore A
-(1)  130/    909D : 3F                  	xppc 	p3 													; return
-(1)  131/    909E : 90 8B               	jmp 	Print 												; make re-entrant.
-(1)  132/    90A0 :                     ;
-(1)  133/    90A0 :                     ;	Check for supported control characters 8 (Backspace) 12 (Clear) 13 (Carriage Return)
-(1)  134/    90A0 :                     ;
-(1)  135/    90A0 :                     __PRIsControlChar:
-(1)  136/    90A0 : 40                  	lde 														; restore character.
-(1)  137/    90A1 : E4 0D               	xri 	13 													; carriage return ? (13)
-(1)  138/    90A3 : 98 1B               	jz 		__PRIsReturn
-(1)  139/    90A5 : E4 01               	xri 	13!12 												; form feed ? (12)
-(1)  140/    90A7 : 98 20               	jz 		__PRClearScreen
-(1)  141/    90A9 : E4 04               	xri 	12!8 												; backspace ? (8)
-(1)  142/    90AB : 9C E1               	jnz 	__PRExit 
-(1)  143/    90AD :                     ;
-(1)  144/    90AD :                     ;	Handle backspace (8)
-(1)  145/    90AD :                     ;
-(1)  146/    90AD : 31                  	xpal 	p1 													; check cursor position is zero
-(1)  147/    90AE : 98 DE               	jz 		__PRExit 											; if it is, cannot backspace so exit.
-(1)  148/    90B0 : 31                  	xpal 	p1  												; put it back
-(1)  149/    90B1 : C5 FF               	ld 		@-1(p1)												; move it back one
-(1)  150/    90B3 : C4 20               	ldi 	' '	 												; erase in shadow
-(1)  151/    90B5 : C9 00               	st 		(p1)
-(1)  152/    90B7 : C4 00               	ldi 	0 													; point P1 to VRAM
-(1)  153/    90B9 : 35                  	xpah 	p1
-(1)  154/    90BA : C4 20               	ldi 	' '													; erase in VRAM
-(1)  155/    90BC : C9 00               	st 		(p1)
-(1)  156/    90BE : 90 B1               	jmp 	__PRUpdateCursor 									; and exit
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 5 - 12/5/2015 14:28:08
+(1)  101/    9070 :                     ;
+(1)  102/    9070 :                     ;	Scroll display
+(1)  103/    9070 :                     ;
+(1)  104/    9070 : C4 0C               	ldi 	(ScreenMirror+16) / 256 							; point P1 to 2nd line.
+(1)  105/    9072 : 35                  	xpah 	p1
+(1)  106/    9073 : C4 10               	ldi 	(ScreenMirror+16) & 255
+(1)  107/    9075 :                     __PRScrollLoop:
+(1)  108/    9075 : 31                  	xpal 	p1
+(1)  109/    9076 : C1 00               	ld 		0(p1) 												; copy char to previous line
+(1)  110/    9078 : C9 F0               	st 		-16(p1)
+(1)  111/    907A : C5 01               	ld 		@1(p1) 												; bump pointer.
+(1)  112/    907C : 31                  	xpal 	p1
+(1)  113/    907D : 94 F6               	jp 		__PRScrollLoop
+(1)  114/    907F : C4 70               	ldi 	128-16 												; clear from and move to last line
+(1)  115/    9081 : 90 3D               	jmp 	__PRClearFromMoveTo
+(1)  116/    9083 :                     ;
+(1)  117/    9083 :                     ;	Exit screen drawing routine.
+(1)  118/    9083 :                     ;
+(1)  119/    9083 :                     __PRExit:
+(1)  120/    9083 : C2 03               	ld 		3(p2) 												; if character was zero, loop
+(1)  121/    9085 : 98 A8               	jz 		__PRPrintString 									; back as printing string at P1.
+(1)  122/    9087 :                     __PRExitNoCheck:
+(1)  123/    9087 : C6 01               	ld 		@1(p2) 												; restore E
+(1)  124/    9089 : 01                  	xae
+(1)  125/    908A : C6 01               	ld 		@1(p2) 												; restore P1
+(1)  126/    908C : 31                  	xpal 	p1
+(1)  127/    908D : C6 01               	ld 		@1(p2)
+(1)  128/    908F : 35                  	xpah 	p1
+(1)  129/    9090 : C6 01               	ld 		@1(p2)												; restore A
+(1)  130/    9092 : 3F                  	xppc 	p3 													; return
+(1)  131/    9093 : 90 8B               	jmp 	Print 												; make re-entrant.
+(1)  132/    9095 :                     ;
+(1)  133/    9095 :                     ;	Check for supported control characters 8 (Backspace) 12 (Clear) 13 (Carriage Return)
+(1)  134/    9095 :                     ;
+(1)  135/    9095 :                     __PRIsControlChar:
+(1)  136/    9095 : 40                  	lde 														; restore character.
+(1)  137/    9096 : E4 0D               	xri 	13 													; carriage return ? (13)
+(1)  138/    9098 : 98 1B               	jz 		__PRIsReturn
+(1)  139/    909A : E4 01               	xri 	13!12 												; form feed ? (12)
+(1)  140/    909C : 98 20               	jz 		__PRClearScreen
+(1)  141/    909E : E4 04               	xri 	12!8 												; backspace ? (8)
+(1)  142/    90A0 : 9C E1               	jnz 	__PRExit 
+(1)  143/    90A2 :                     ;
+(1)  144/    90A2 :                     ;	Handle backspace (8)
+(1)  145/    90A2 :                     ;
+(1)  146/    90A2 : 31                  	xpal 	p1 													; check cursor position is zero
+(1)  147/    90A3 : 98 DE               	jz 		__PRExit 											; if it is, cannot backspace so exit.
+(1)  148/    90A5 : 31                  	xpal 	p1  												; put it back
+(1)  149/    90A6 : C5 FF               	ld 		@-1(p1)												; move it back one
+(1)  150/    90A8 : C4 20               	ldi 	' '	 												; erase in shadow
+(1)  151/    90AA : C9 00               	st 		(p1)
+(1)  152/    90AC : C4 00               	ldi 	0 													; point P1 to VRAM
+(1)  153/    90AE : 35                  	xpah 	p1
+(1)  154/    90AF : C4 20               	ldi 	' '													; erase in VRAM
+(1)  155/    90B1 : C9 00               	st 		(p1)
+(1)  156/    90B3 : 90 B1               	jmp 	__PRUpdateCursor 									; and exit
+(1)  157/    90B5 :                     ;
+(1)  158/    90B5 :                     ;	Handle carriage return (13)
+(1)  159/    90B5 :                     ;
+(1)  160/    90B5 :                     __PRIsReturn:
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 5 - 12/5/2015 18:40:55
 
 
-(1)  157/    90C0 :                     ;
-(1)  158/    90C0 :                     ;	Handle carriage return (13)
-(1)  159/    90C0 :                     ;
-(1)  160/    90C0 :                     __PRIsReturn:
-(1)  161/    90C0 : 31                  	xpal 	p1 													; cursor position in A
-(1)  162/    90C1 : D4 F0               	ani 	0xF0 												; start of current line
-(1)  163/    90C3 : 02                  	ccl 														; down one line
-(1)  164/    90C4 : F4 10               	adi 	0x10 	
-(1)  165/    90C6 : 31                  	xpal 	p1 													; put it back in P1.
-(1)  166/    90C7 : 90 A8               	jmp 	__PRUpdateCursor
-(1)  167/    90C9 :                     ;
-(1)  168/    90C9 :                     ;	Handle clear screen (12)
-(1)  169/    90C9 :                     ;
-(1)  170/    90C9 :                     __PRClearScreen:
-(1)  171/    90C9 : C4 00               	ldi 	0 													; clear shadow memory from here.
-(1)  172/    90CB :                     ;
-(1)  173/    90CB :                     ;	From position A, clear the memory in the shadow screen to the end, copy the shadow screen to VRAM
-(1)  174/    90CB :                     ;	then use position A as the new cursor position.
-(1)  175/    90CB :                     ;
-(1)  176/    90CB :                     __PRClearFromMoveTo:
-(1)  177/    90CB : CE FF               	st 		@-1(p2) 											; save this position, the cursor goes here.
-(1)  178/    90CD :                     __PRClearLoop:
-(1)  179/    90CD : 31                  	xpal 	p1 													; save position in P1.
-(1)  180/    90CE : C4 20               	ldi 	' '													; write space there.
-(1)  181/    90D0 : CD 01               	st 		@1(p1)
-(1)  182/    90D2 : 31                  	xpal 	p1
-(1)  183/    90D3 : 94 F8               	jp 		__PRClearLoop 										; until reached shadow memory start.
-(1)  184/    90D5 : C4 00               	ldi 	0 													; now copy shadow memory to screen memory.
-(1)  185/    90D7 :                     __PRCopy:
-(1)  186/    90D7 : 31                  	xpal 	p1 													; set up P1.L
-(1)  187/    90D8 : C4 0C               	ldi 	ScreenMirror/256 									; point to shadow memory.
-(1)  188/    90DA : 35                  	xpah 	p1 													
-(1)  189/    90DB : C1 00               	ld 		(p1) 												; read shadow memory
-(1)  190/    90DD : 35                  	xpah 	p1 													; zero P1.H preserving A
-(1)  191/    90DE : C4 00               	ldi 	0
-(1)  192/    90E0 : 35                  	xpah 	p1
-(1)  193/    90E1 : CD 01               	st 		@1(p1) 												; save and increment p1
-(1)  194/    90E3 : 31                  	xpal 	p1 
-(1)  195/    90E4 : 94 F1               	jp 		__PRCopy 											; keep doing till all copied.
-(1)  196/    90E6 : C6 01               	ld 		@1(p2) 												; read cursor position
-(1)  197/    90E8 : 31                  	xpal 	p1 													; put in P1.L
-(1)  198/    90E9 : 90 86               	jmp 	__PRUpdateCursor
-(1)  199/    90EB :                     
-(1)  200/    90EB :                     	endsection 	Print
-(1)  201/    90EB :                     
-(1)  202/    90EB :                     ; ****************************************************************************************************************
-(1)  203/    90EB :                     ; ****************************************************************************************************************
-(1)  204/    90EB :                     ;
-(1)  205/    90EB :                     ;		Input a single character into A. Case is converted to Upper. All registers preserved except A
-(1)  206/    90EB :                     ;
-(1)  207/    90EB :                     ; ****************************************************************************************************************
-(1)  208/    90EB :                     ; ****************************************************************************************************************
-(1)  209/    90EB :                     
-(1)  210/    90EB :                     GetChar:
-(1)  211/    90EB :                     	section 	GetChar
-(1)  212/    90EB : C4 08               	ldi 	0x8 												; set P1 to $8xx, and save P1.H
-(1)  213/    90ED : 35                  	xpah 	p1
-(1)  214/    90EE : CE FF               	st 		@-1(p2)
-(1)  215/    90F0 :                     __GCWaitKey: 													; wait for key press
-(1)  216/    90F0 : C1 00               	ld 		0(p1)
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 6 - 12/5/2015 14:28:08
+(1)  161/    90B5 : 31                  	xpal 	p1 													; cursor position in A
+(1)  162/    90B6 : D4 F0               	ani 	0xF0 												; start of current line
+(1)  163/    90B8 : 02                  	ccl 														; down one line
+(1)  164/    90B9 : F4 10               	adi 	0x10 	
+(1)  165/    90BB : 31                  	xpal 	p1 													; put it back in P1.
+(1)  166/    90BC : 90 A8               	jmp 	__PRUpdateCursor
+(1)  167/    90BE :                     ;
+(1)  168/    90BE :                     ;	Handle clear screen (12)
+(1)  169/    90BE :                     ;
+(1)  170/    90BE :                     __PRClearScreen:
+(1)  171/    90BE : C4 00               	ldi 	0 													; clear shadow memory from here.
+(1)  172/    90C0 :                     ;
+(1)  173/    90C0 :                     ;	From position A, clear the memory in the shadow screen to the end, copy the shadow screen to VRAM
+(1)  174/    90C0 :                     ;	then use position A as the new cursor position.
+(1)  175/    90C0 :                     ;
+(1)  176/    90C0 :                     __PRClearFromMoveTo:
+(1)  177/    90C0 : CE FF               	st 		@-1(p2) 											; save this position, the cursor goes here.
+(1)  178/    90C2 :                     __PRClearLoop:
+(1)  179/    90C2 : 31                  	xpal 	p1 													; save position in P1.
+(1)  180/    90C3 : C4 20               	ldi 	' '													; write space there.
+(1)  181/    90C5 : CD 01               	st 		@1(p1)
+(1)  182/    90C7 : 31                  	xpal 	p1
+(1)  183/    90C8 : 94 F8               	jp 		__PRClearLoop 										; until reached shadow memory start.
+(1)  184/    90CA : C4 00               	ldi 	0 													; now copy shadow memory to screen memory.
+(1)  185/    90CC :                     __PRCopy:
+(1)  186/    90CC : 31                  	xpal 	p1 													; set up P1.L
+(1)  187/    90CD : C4 0C               	ldi 	ScreenMirror/256 									; point to shadow memory.
+(1)  188/    90CF : 35                  	xpah 	p1 													
+(1)  189/    90D0 : C1 00               	ld 		(p1) 												; read shadow memory
+(1)  190/    90D2 : 35                  	xpah 	p1 													; zero P1.H preserving A
+(1)  191/    90D3 : C4 00               	ldi 	0
+(1)  192/    90D5 : 35                  	xpah 	p1
+(1)  193/    90D6 : CD 01               	st 		@1(p1) 												; save and increment p1
+(1)  194/    90D8 : 31                  	xpal 	p1 
+(1)  195/    90D9 : 94 F1               	jp 		__PRCopy 											; keep doing till all copied.
+(1)  196/    90DB : C6 01               	ld 		@1(p2) 												; read cursor position
+(1)  197/    90DD : 31                  	xpal 	p1 													; put in P1.L
+(1)  198/    90DE : 90 86               	jmp 	__PRUpdateCursor
+(1)  199/    90E0 :                     
+(1)  200/    90E0 :                     	endsection 	Print
+(1)  201/    90E0 :                     
+(1)  202/    90E0 :                     ; ****************************************************************************************************************
+(1)  203/    90E0 :                     ; ****************************************************************************************************************
+(1)  204/    90E0 :                     ;
+(1)  205/    90E0 :                     ;		Input a single character into A. Case is converted to Upper. All registers preserved except A
+(1)  206/    90E0 :                     ;
+(1)  207/    90E0 :                     ; ****************************************************************************************************************
+(1)  208/    90E0 :                     ; ****************************************************************************************************************
+(1)  209/    90E0 :                     
+(1)  210/    90E0 :                     GetChar:
+(1)  211/    90E0 :                     	section 	GetChar
+(1)  212/    90E0 : C4 08               	ldi 	0x8 												; set P1 to $8xx, and save P1.H
+(1)  213/    90E2 : 35                  	xpah 	p1
+(1)  214/    90E3 : CE FF               	st 		@-1(p2)
+(1)  215/    90E5 :                     __GCWaitKey: 													; wait for key press
+(1)  216/    90E5 : C1 00               	ld 		0(p1)
+(1)  217/    90E7 : 94 FC               	jp 		__GCWaitKey
+(1)  218/    90E9 : D4 7F               	ani	 	0x7F 												; throw away the upper bit.
+(1)  219/    90EB : CA FF               	st 		-1(p2) 												; save it below stack
+(1)  220/    90ED :                     __GCWaitRelease:
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 6 - 12/5/2015 18:40:55
 
 
-(1)  217/    90F2 : 94 FC               	jp 		__GCWaitKey
-(1)  218/    90F4 : D4 7F               	ani	 	0x7F 												; throw away the upper bit.
-(1)  219/    90F6 : CA FF               	st 		-1(p2) 												; save it below stack
-(1)  220/    90F8 :                     __GCWaitRelease:
-(1)  221/    90F8 : C1 00               	ld 		0(p1) 												; wait for release
-(1)  222/    90FA : D4 80               	ani 	0x80
-(1)  223/    90FC : 9C FA               	jnz 	__GCWaitRelease
-(1)  224/    90FE : C6 01               	ld 		@1(p2) 												; restore P1.H
-(1)  225/    9100 : 35                  	xpah 	p1
-(1)  226/    9101 : C2 FE               	ld 		-2(p2) 												; restore saved value
-(1)  227/    9103 : 02                  	ccl
-(1)  228/    9104 : F4 20               	adi 	0x20												; will make lower case -ve
-(1)  229/    9106 : 94 02               	jp 		__GCNotLower
-(1)  230/    9108 : FC 20               	cai 	0x20 												; capitalise
-(1)  231/    910A :                     __GCNotLower:
-(1)  232/    910A : F4 E0               	adi 	0xE0 												; fix up.
-(1)  233/    910C : 3F                  	xppc 	p3 													; return
-(1)  234/    910D : 90 DC               	jmp 	GetChar 											; make re-entrant
-(1)  235/    910F :                     	endsection 	GetChar
-(1)  236/    910F :                     
-(1)  237/    910F :                     ; ****************************************************************************************************************
-(1)  238/    910F :                     ; ****************************************************************************************************************
-(1)  239/    910F :                     ;
-(1)  240/    910F :                     ;			Read an ASCIIZ string from keyboard into P1 of length A maximum (excludes NULL terminator)
-(1)  241/    910F :                     ;
-(1)  242/    910F :                     ; ****************************************************************************************************************
-(1)  243/    910F :                     ; ****************************************************************************************************************
-(1)  244/    910F :                     
-(1)  245/    910F :                     GetString:
-(1)  246/    910F :                     	section GetString
-(1)  247/    910F : CE FF               	st 		@-1(p2) 											; save length on stack.
-(1)  248/    9111 : 37                  	xpah 	p3 													; save P3 on stack
-(1)  249/    9112 : CE FF               	st 		@-1(p2)
-(1)  250/    9114 : 33                  	xpal 	p3
-(1)  251/    9115 : CE FF               	st 		@-1(p2)
-(1)  252/    9117 : 40                  	lde
-(1)  253/    9118 : CE FF               	st 		@-1(p2) 											; save E on stack
-(1)  254/    911A : C4 00               	ldi 	0 													; set E (current position) to A.
-(1)  255/    911C : 01                  	xae
-(1)  256/    911D :                     __GSLoop:
-(1)  257/    911D : (MACRO)             	lpi 	p3,Print-1 											; print the prompt (half coloured square)
-(1)  257/    911D : C4 90                       ldi     (PRINT-1) / 256
-(1)  257/    911F : 37                          xpah    P3
-(1)  257/    9120 : C4 2A                       ldi     (PRINT-1) & 255
-(1)  257/    9122 : 33                          xpal    P3
-(1)  258/    9123 : C4 9B               	ldi 	155
-(1)  259/    9125 : 3F                  	xppc 	p3
-(1)  260/    9126 : (MACRO)             	lpi 	p3,GetChar-1 										; get a character
-(1)  260/    9126 : C4 90                       ldi     (GETCHAR-1) / 256
-(1)  260/    9128 : 37                          xpah    P3
-(1)  260/    9129 : C4 EA                       ldi     (GETCHAR-1) & 255
-(1)  260/    912B : 33                          xpal    P3
-(1)  261/    912C : 3F                  	xppc 	p3
-(1)  262/    912D : C9 80               	st 		-0x80(p1) 											; save it in the current position.
-(1)  263/    912F : (MACRO)             	lpi 	p3,Print-1 											; erase the prompt with backspace.
-(1)  263/    912F : C4 90                       ldi     (PRINT-1) / 256
-(1)  263/    9131 : 37                          xpah    P3
-(1)  263/    9132 : C4 2A                       ldi     (PRINT-1) & 255
-(1)  263/    9134 : 33                          xpal    P3
-(1)  264/    9135 : C4 08               	ldi 	8
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 7 - 12/5/2015 14:28:08
+(1)  221/    90ED : C1 00               	ld 		0(p1) 												; wait for release
+(1)  222/    90EF : D4 80               	ani 	0x80
+(1)  223/    90F1 : 9C FA               	jnz 	__GCWaitRelease
+(1)  224/    90F3 : C6 01               	ld 		@1(p2) 												; restore P1.H
+(1)  225/    90F5 : 35                  	xpah 	p1
+(1)  226/    90F6 : C2 FE               	ld 		-2(p2) 												; restore saved value
+(1)  227/    90F8 : 02                  	ccl
+(1)  228/    90F9 : F4 20               	adi 	0x20												; will make lower case -ve
+(1)  229/    90FB : 94 02               	jp 		__GCNotLower
+(1)  230/    90FD : FC 20               	cai 	0x20 												; capitalise
+(1)  231/    90FF :                     __GCNotLower:
+(1)  232/    90FF : F4 E0               	adi 	0xE0 												; fix up.
+(1)  233/    9101 : 3F                  	xppc 	p3 													; return
+(1)  234/    9102 : 90 DC               	jmp 	GetChar 											; make re-entrant
+(1)  235/    9104 :                     	endsection 	GetChar
+(1)  236/    9104 :                     
+(1)  237/    9104 :                     ; ****************************************************************************************************************
+(1)  238/    9104 :                     ; ****************************************************************************************************************
+(1)  239/    9104 :                     ;
+(1)  240/    9104 :                     ;			Read an ASCIIZ string from keyboard into P1 of length A maximum (excludes NULL terminator)
+(1)  241/    9104 :                     ;
+(1)  242/    9104 :                     ; ****************************************************************************************************************
+(1)  243/    9104 :                     ; ****************************************************************************************************************
+(1)  244/    9104 :                     
+(1)  245/    9104 :                     GetString:
+(1)  246/    9104 :                     	section GetString
+(1)  247/    9104 : CE FF               	st 		@-1(p2) 											; save length on stack.
+(1)  248/    9106 : 37                  	xpah 	p3 													; save P3 on stack
+(1)  249/    9107 : CE FF               	st 		@-1(p2)
+(1)  250/    9109 : 33                  	xpal 	p3
+(1)  251/    910A : CE FF               	st 		@-1(p2)
+(1)  252/    910C : 40                  	lde
+(1)  253/    910D : CE FF               	st 		@-1(p2) 											; save E on stack
+(1)  254/    910F : C4 00               	ldi 	0 													; set E (current position) to A.
+(1)  255/    9111 : 01                  	xae
+(1)  256/    9112 :                     __GSLoop:
+(1)  257/    9112 : (MACRO)             	lpi 	p3,Print-1 											; print the prompt (half coloured square)
+(1)  257/    9112 : C4 90                       ldi     (PRINT-1) / 256
+(1)  257/    9114 : 37                          xpah    P3
+(1)  257/    9115 : C4 1F                       ldi     (PRINT-1) & 255
+(1)  257/    9117 : 33                          xpal    P3
+(1)  258/    9118 : C4 9B               	ldi 	155
+(1)  259/    911A : 3F                  	xppc 	p3
+(1)  260/    911B : (MACRO)             	lpi 	p3,GetChar-1 										; get a character
+(1)  260/    911B : C4 90                       ldi     (GETCHAR-1) / 256
+(1)  260/    911D : 37                          xpah    P3
+(1)  260/    911E : C4 DF                       ldi     (GETCHAR-1) & 255
+(1)  260/    9120 : 33                          xpal    P3
+(1)  261/    9121 : 3F                  	xppc 	p3
+(1)  262/    9122 : C9 80               	st 		-0x80(p1) 											; save it in the current position.
+(1)  263/    9124 : (MACRO)             	lpi 	p3,Print-1 											; erase the prompt with backspace.
+(1)  263/    9124 : C4 90                       ldi     (PRINT-1) / 256
+(1)  263/    9126 : 37                          xpah    P3
+(1)  263/    9127 : C4 1F                       ldi     (PRINT-1) & 255
+(1)  263/    9129 : 33                          xpal    P3
+(1)  264/    912A : C4 08               	ldi 	8
+(1)  265/    912C : 3F                  	xppc 	p3
+(1)  266/    912D : C1 80               	ld 		-0x80(p1) 											; re-read character
+(1)  267/    912F : D4 E0               	ani 	0xE0 												; check if control key.
+(1)  268/    9131 : 98 0F               	jz 		__GSControlKey 
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 7 - 12/5/2015 18:40:55
 
 
-(1)  265/    9137 : 3F                  	xppc 	p3
-(1)  266/    9138 : C1 80               	ld 		-0x80(p1) 											; re-read character
-(1)  267/    913A : D4 E0               	ani 	0xE0 												; check if control key.
-(1)  268/    913C : 98 0F               	jz 		__GSControlKey 
-(1)  269/    913E : 40                  	lde 														; get current position.
-(1)  270/    913F : E2 03               	xor 	3(p2) 												; reached maximum length of buffer ?
-(1)  271/    9141 : 98 DA               	jz 		__GSLoop 											; if so, ignore the key and go round again.
-(1)  272/    9143 : C1 80               	ld 		-0x80(p1) 											; get character and print it
-(1)  273/    9145 : 3F                  	xppc 	p3
-(1)  274/    9146 : C4 01               	ldi 	1 													; increment E
-(1)  275/    9148 : 02                  	ccl
-(1)  276/    9149 : 70                  	ade
-(1)  277/    914A : 01                  	xae
-(1)  278/    914B : 90 D0               	jmp 	__GSLoop 											; and go round again.
-(1)  279/    914D :                     ;
-(1)  280/    914D :                     ;	Handle control keys (0x00-0x1F)
-(1)  281/    914D :                     ;
-(1)  282/    914D :                     __GSControlKey:
-(1)  283/    914D : C1 80               	ld 		-0x80(p1) 											; get typed in key
-(1)  284/    914F : E4 08               	xri 	8 													; check for backspace.
-(1)  285/    9151 : 98 14               	jz 		__GSBackspace 			
-(1)  286/    9153 : E4 05               	xri 	8!13 												; check for CR
-(1)  287/    9155 : 9C C6               	jnz 	__GSLoop 											; if not, ignore the key.
-(1)  288/    9157 :                     ;
-(1)  289/    9157 :                     ;	Carriage Return, ending input.
-(1)  290/    9157 :                     ;
-(1)  291/    9157 : C9 80               	st 		-0x80(p1) 											; replace the CR written with NULL terminator.
-(1)  292/    9159 : C6 01               	ld 		@1(p2) 												; pop E
-(1)  293/    915B : 01                  	xae
-(1)  294/    915C : C6 01               	ld 		@1(p2) 												; pop P3
-(1)  295/    915E : 33                  	xpal 	p3
-(1)  296/    915F : C6 01               	ld 		@1(p2)
-(1)  297/    9161 : 37                  	xpah 	p3
-(1)  298/    9162 : C6 01               	ld 		@1(p2)												; pop A
-(1)  299/    9164 : 3F                  	xppc 	p3 													; return
-(1)  300/    9165 : 90 A8               	jmp 	GetString 											; make re-entrant (probably unneccessary !!)
-(1)  301/    9167 :                     ;
-(1)  302/    9167 :                     ;	Backspace entered
-(1)  303/    9167 :                     ;
-(1)  304/    9167 :                     __GSBackspace
-(1)  305/    9167 : 40                  	lde 														; if E = 0 we can't backspace any further.
-(1)  306/    9168 : 98 B3               	jz 		__GSLoop
-(1)  307/    916A : C4 08               	ldi 	8 													; backspace on screen
-(1)  308/    916C : 3F                  	xppc 	p3
-(1)  309/    916D : C4 FF               	ldi 	0xFF 												; decrement E
-(1)  310/    916F : 02                  	ccl
-(1)  311/    9170 : 70                  	ade
-(1)  312/    9171 : 01                  	xae
-(1)  313/    9172 : 90 A9               	jmp 	__GSLoop 											; and go round again.
-(1)  314/    9174 :                     
-(1)  315/    9174 :                     	endsection GetString
-(1)  316/    9174 :                     
- AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 8 - 12/5/2015 14:28:08
+(1)  269/    9133 : 40                  	lde 														; get current position.
+(1)  270/    9134 : E2 03               	xor 	3(p2) 												; reached maximum length of buffer ?
+(1)  271/    9136 : 98 DA               	jz 		__GSLoop 											; if so, ignore the key and go round again.
+(1)  272/    9138 : C1 80               	ld 		-0x80(p1) 											; get character and print it
+(1)  273/    913A : 3F                  	xppc 	p3
+(1)  274/    913B : C4 01               	ldi 	1 													; increment E
+(1)  275/    913D : 02                  	ccl
+(1)  276/    913E : 70                  	ade
+(1)  277/    913F : 01                  	xae
+(1)  278/    9140 : 90 D0               	jmp 	__GSLoop 											; and go round again.
+(1)  279/    9142 :                     ;
+(1)  280/    9142 :                     ;	Handle control keys (0x00-0x1F)
+(1)  281/    9142 :                     ;
+(1)  282/    9142 :                     __GSControlKey:
+(1)  283/    9142 : C1 80               	ld 		-0x80(p1) 											; get typed in key
+(1)  284/    9144 : E4 08               	xri 	8 													; check for backspace.
+(1)  285/    9146 : 98 14               	jz 		__GSBackspace 			
+(1)  286/    9148 : E4 05               	xri 	8!13 												; check for CR
+(1)  287/    914A : 9C C6               	jnz 	__GSLoop 											; if not, ignore the key.
+(1)  288/    914C :                     ;
+(1)  289/    914C :                     ;	Carriage Return, ending input.
+(1)  290/    914C :                     ;
+(1)  291/    914C : C9 80               	st 		-0x80(p1) 											; replace the CR written with NULL terminator.
+(1)  292/    914E : C6 01               	ld 		@1(p2) 												; pop E
+(1)  293/    9150 : 01                  	xae
+(1)  294/    9151 : C6 01               	ld 		@1(p2) 												; pop P3
+(1)  295/    9153 : 33                  	xpal 	p3
+(1)  296/    9154 : C6 01               	ld 		@1(p2)
+(1)  297/    9156 : 37                  	xpah 	p3
+(1)  298/    9157 : C6 01               	ld 		@1(p2)												; pop A
+(1)  299/    9159 : 3F                  	xppc 	p3 													; return
+(1)  300/    915A : 90 A8               	jmp 	GetString 											; make re-entrant (probably unneccessary !!)
+(1)  301/    915C :                     ;
+(1)  302/    915C :                     ;	Backspace entered
+(1)  303/    915C :                     ;
+(1)  304/    915C :                     __GSBackspace
+(1)  305/    915C : 40                  	lde 														; if E = 0 we can't backspace any further.
+(1)  306/    915D : 98 B3               	jz 		__GSLoop
+(1)  307/    915F : C4 08               	ldi 	8 													; backspace on screen
+(1)  308/    9161 : 3F                  	xppc 	p3
+(1)  309/    9162 : C4 FF               	ldi 	0xFF 												; decrement E
+(1)  310/    9164 : 02                  	ccl
+(1)  311/    9165 : 70                  	ade
+(1)  312/    9166 : 01                  	xae
+(1)  313/    9167 : 90 A9               	jmp 	__GSLoop 											; and go round again.
+(1)  314/    9169 :                     
+(1)  315/    9169 :                     	endsection GetString
+(1)  316/    9169 :                     
+      69/    9169 :                     	include Source\evaluate.asm 								; evaluate an expression.
+(1)    1/    9169 :                     ; ****************************************************************************************************************
+(1)    2/    9169 :                     ; ****************************************************************************************************************
+(1)    3/    9169 :                     ;
+(1)    4/    9169 :                     ;											Evaluate, VTL-2 ROM
+(1)    5/    9169 :                     ;											===================
+(1)    6/    9169 :                     ;
+(1)    7/    9169 :                     ;	R-Expression Evaluator.
+(1)    8/    9169 :                     ;
+(1)    9/    9169 :                     ; ****************************************************************************************************************
+(1)   10/    9169 :                     ; ****************************************************************************************************************
+(1)   11/    9169 :                     
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 8 - 12/5/2015 18:40:55
+
+
+(1)   12/    9169 : 30 31 32 33 34 00   Test:db 	"01234",0
+(1)   13/    916F :                     
+(1)   14/    916F :                     Evaluate:
+(1)   15/    916F : 37                  	xpah 	p3  												; push return address on stack.
+(1)   16/    9170 : CE FF               	st 		@-1(p2)
+(1)   17/    9172 : 33                  	xpal 	p3 									
+(1)   18/    9173 : CE FF               	st 		@-1(p2)
+(1)   19/    9175 :                     
+(1)   20/    9175 : C4 00               	ldi 	0 													; we push $0000 and '+' on, as if we'd gone into
+(1)   21/    9177 : CE FF               	st 		@-1(p2) 											; the middle of an evaluation. The next thing is 
+(1)   22/    9179 : CE FF               	st 		@-1(p2)												; a term, but we don't have to make the first case
+(1)   23/    917B : C4 2B               	ldi 	'+'													; a special one. It is like putting '0+' on the front.
+(1)   24/    917D : CE FF               	st 		@-1(p2)
+(1)   25/    917F :                     
+(1)   26/    917F :                     __EVNextTerm:
+(1)   27/    917F : C5 01               	ld 		@1(p1) 												; get the next character
+(1)   28/    9181 : 03                  	scl
+(1)   29/    9182 : FC 20               	cai 	' '													; is it a space character
+(1)   30/    9184 : 98 F9               	jz 		__EVNextTerm 										; go back and get the next character.
+(1)   31/    9186 : D4 C0               	ani 	0xC0 												; this will be 00xx xxxx if was 32-95, legal value
+(1)   32/    9188 : 98 04               	jz 		__EVLegalTerm
+(1)   33/    918A : C4 54               	ldi 	'T'													; return 'T' (bad term error)
+(1)   34/    918C :                     __EVError:
+(1)   35/    918C : 90 FE               	jmp 	__EVError
+(1)   36/    918E :                     
+(1)   37/    918E :                     __EVLegalTerm: 													; we now know it is 33-95
+(1)   38/    918E : C1 FF               	ld 		-1(p1) 												; reload the legal term ASCII value.
+(1)   39/    9190 : 03                  	scl 
+(1)   40/    9191 : FC 3A               	cai 	'9'+1 												; this will be +ve if > '9' (e.g. not a number)
+(1)   41/    9193 : 94 0F               	jp 		__EVVariableTerm 									
+(1)   42/    9195 : FC 75               	cai 	128-10-1 							 				; will now be +ve if < '0'
+(1)   43/    9197 : 94 0B               	jp 		__EVVariableTerm
+(1)   44/    9199 : C5 FF               	ld 		@-1(p1) 											; point back to first digit
+(1)   45/    919B : (MACRO)             	lpi 	p3,MathLibrary-1 									; point P3 to math library
+(1)   45/    919B : C4 00                       ldi     (MATHLIBRARY-1) / 256
+(1)   45/    919D : 37                          xpah    P3
+(1)   45/    919E : C4 02                       ldi     (MATHLIBRARY-1) & 255
+(1)   45/    91A0 : 33                          xpal    P3
+(1)   46/    91A1 : C4 3F               	ldi 	'?' 												; function '?' (ASCII -> Int)
+(1)   47/    91A3 : 3F                  	xppc 	p3 													; calculate it.
+(1)   48/    91A4 :                     
+(1)   49/    91A4 :                     __EVVariableTerm:
+(1)   50/    91A4 : 90 FE               wait2:jmp 	wait2
+(1)   51/    91A6 :                     
+(1)   52/    91A6 :                     	; can be numeric.   (0-9)
+(1)   53/    91A6 :                     	; can be an open parenthesis, indicating a parenthesised term.
+(1)   54/    91A6 :                     	; can be a variable (anything else < 96) including 'special' variables.
+(1)   55/    91A6 :                     
+(1)   56/    91A6 :                     
+      70/    91A6 :                     
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 9 - 12/5/2015 18:40:55
 
 
   symbol table (* = unused):
@@ -440,38 +501,43 @@
 *ARCHITECTURE :  i386-unknown-win32 - | *BIGENDIAN :                      0 - |
 *BRANCHEXT :                      0 - | *CASESENSITIVE :                  0 - |
 *CONSTPI :        3.141592653589793 - | *DATE :                   12/5/2015 - |
+*ERROR :                        CFF - |  EVALUATE :                    916F C |
 *FALSE :                          0 - |  FINDSTACKTOP :                9009 C |
-*FULLPMMU :                       1 - |  GETCHAR :                     90EB C |
- GETSTRING :                   910F C | *HAS64 :                          1 - |
+*FULLPMMU :                       1 - |  GETCHAR :                     90E0 C |
+ GETSTRING :                   9104 C | *HAS64 :                          1 - |
 *HASDSP :                         0 - | *HASFPU :                         0 - |
 *HASPMMU :                        0 - | *INEXTMODE :                      0 - |
 *INLWORDMODE :                    0 - | *INMAXMODE :                      0 - |
 *INSRCMODE :                      0 - | *INSUPMODE :                      0 - |
- KEYBOARDBUFFER :               CBE - |  KEYBOARDBUFFERSIZE :            40 - |
+*KEYBOARDBUFFER :               CBE - | *KEYBOARDBUFFERSIZE :            40 - |
 *LISTON :                         1 - | *MACEXP :                         1 - |
-*MOMCPU :                         C - | *MOMCPUNAME :                 SC/MP - |
-*NESTMAX :                      100 - | *PACKING :                        0 - |
-*PADDING :                        1 - |  PRINT :                       902B C |
-*PROGRAMSPACE :                1000 - | *RELAXED :                        0 - |
- SCREENCURSOR :                 C80 - |  SCREENMIRROR :                 C00 - |
- STACKSEARCH :                  FFF - | *TIME :                    14:28:08 - |
-*TRUE :                           1 - | *VARIABLEBASE :                 D00 - |
+ MATHLIBRARY :                    3 - | *MOMCPU :                         C - |
+*MOMCPUNAME :                 SC/MP - | *NESTMAX :                      100 - |
+*PACKING :                        0 - | *PADDING :                        1 - |
+ PRINT :                       9020 C | *PROGRAMSPACE :                1000 - |
+*RELAXED :                        0 - |  SCREENCURSOR :                 C80 - |
+ SCREENMIRROR :                 C00 - |  STACKSEARCH :                  FFF - |
+ TEST :                        9169 C | *TIME :                    18:40:55 - |
+*TRUE :                           1 - |  VARIABLEBASE :                 D00 - |
 *VERSION :                     142F - | *VTL2BOOT :                    9001 C |
- WAIT :                        9029 C |  __GCNOTLOWER [GETCHAR] :      910A C |
- __GCWAITKEY [GETCHAR] :       90F0 C |  __GCWAITRELEASE [GETCHAR] :   90F8 C |
- __GSBACKSPACE [GETSTRING] :   9167 C |  __GSCONTROLKEY [GETSTRING] :  914D C |
- __GSLOOP [GETSTRING] :        911D C |  __PRCLEARFROMMOVETO [PRINT] : 90CB C |
- __PRCLEARLOOP [PRINT] :       90CD C |  __PRCLEARSCREEN [PRINT] :     90C9 C |
- __PRCOPY [PRINT] :            90D7 C |  __PREXIT [PRINT] :            908E C |
- __PREXITNOCHECK [PRINT] :     9092 C |  __PRISCONTROLCHAR [PRINT] :   90A0 C |
- __PRISRETURN [PRINT] :        90C0 C |  __PRNOTASCII [PRINT] :        9068 C |
- __PRPRINTCHARACTERA [PRINT] : 904C C |  __PRPRINTSTRING [PRINT] :     903A C |
- __PRSCROLLLOOP [PRINT] :      9080 C |  __PRUPDATECURSOR [PRINT] :    9071 C |
+ WAIT :                        901E C |  WAIT2 :                       91A4 C |
+ __EVERROR :                   918C C |  __EVLEGALTERM :               918E C |
+ __EVNEXTTERM :                917F C |  __EVVARIABLETERM :            91A4 C |
+ __GCNOTLOWER [GETCHAR] :      90FF C |  __GCWAITKEY [GETCHAR] :       90E5 C |
+ __GCWAITRELEASE [GETCHAR] :   90ED C |  __GSBACKSPACE [GETSTRING] :   915C C |
+ __GSCONTROLKEY [GETSTRING] :  9142 C |  __GSLOOP [GETSTRING] :        9112 C |
+ __PRCLEARFROMMOVETO [PRINT] : 90C0 C |  __PRCLEARLOOP [PRINT] :       90C2 C |
+ __PRCLEARSCREEN [PRINT] :     90BE C |  __PRCOPY [PRINT] :            90CC C |
+ __PREXIT [PRINT] :            9083 C |  __PREXITNOCHECK [PRINT] :     9087 C |
+ __PRISCONTROLCHAR [PRINT] :   9095 C |  __PRISRETURN [PRINT] :        90B5 C |
+ __PRNOTASCII [PRINT] :        905D C |  __PRPRINTCHARACTERA [PRINT] : 9041 C |
+ __PRPRINTSTRING [PRINT] :     902F C |  __PRSCROLLLOOP [PRINT] :      9075 C |
+ __PRUPDATECURSOR [PRINT] :    9066 C |
 
-     60 symbols
-     31 unused symbols
+     69 symbols
+     33 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 9 - 12/5/2015 14:28:08
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 10 - 12/5/2015 18:40:55
 
 
   defined macros:
@@ -481,7 +547,7 @@ LPI                                   |
 
       1 macro
 
- AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 10 - 12/5/2015 14:28:08
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 11 - 12/5/2015 18:40:55
 
 
   codepages:
@@ -492,8 +558,8 @@ STANDARD (0 changed characters)
 
 0.00 seconds assembly time
 
-    384 lines source file
-    412 lines incl. macro expansions
+    442 lines source file
+    470 lines incl. macro expansions
       2 passes
       0 errors
       0 warnings

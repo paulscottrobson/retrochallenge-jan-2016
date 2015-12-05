@@ -22,6 +22,12 @@ VariableBase = 0xD00 											; Base of variables. Variables start from here, 
 																; each, 6 bit ASCII (e.g. @,A,B,C)
 																; VTL-2 other variables work backwards from here.
 
+
+Error = VariableBase-1 											; Error Flag (single character if not $00)
+ExpressionLevel = VariableBase-2 								; Expression Level (e.g. how many open parenthesis)
+
+MathLibrary = 3 												; Monitor Mathematics Routine Address
+
 ProgramSpace = 0x1000 											; Page with program memory.
 
 StackSearch = 0xFFF 											; Search for stack space back from here.
@@ -54,15 +60,12 @@ FindStackTop:
 	jnz 	FindStackTop
 
 
-	lpi 	p3,Print-1
-	ldi 	12
-	xppc 	p3
-	lpi 	p3,GetString-1
-	lpi 	p1,KeyboardBuffer
-	ldi 	KeyboardBufferSize
+	lpi 	p3,Evaluate-1
+	lpi 	p1,Test
 	xppc 	p3
 wait:
 	jmp 	wait
 
 
 	include Source\screen.asm 									; screen I/O stuff.
+	include Source\evaluate.asm 								; evaluate an expression.
