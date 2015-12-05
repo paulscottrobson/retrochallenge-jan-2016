@@ -144,9 +144,11 @@ __PRIsControlChar:
 	jz 		__PRExit 											; if it is, cannot backspace so exit.
 	xpal 	p1  												; put it back
 	ld 		@-1(p1)												; move it back one
+	ldi 	' '	 												; erase in shadow
+	st 		(p1)
 	ldi 	0 													; point P1 to VRAM
 	xpah 	p1
-	ldi 	' '													; erase in VRAM, don't bother in shadow.
+	ldi 	' '													; erase in VRAM
 	st 		(p1)
 	jmp 	__PRUpdateCursor 									; and exit
 ;
