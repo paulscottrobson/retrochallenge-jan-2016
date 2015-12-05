@@ -13,13 +13,13 @@
 ;	except if printing string, P1 points to the character after the NULL terminator.
 ;
 ;	Scrolls automatically. Understands character codes 32-255, 8 (Backspace) 12 (Clear Screen) 13 (Carriage
-;	Return). Others are currently ignored (except 0, see above)
+;	Return). Others are currently ignored (except 0, see above). Note L/C values (97....) display those characters
+;	in the ROM font *not* lower case :)
 ;
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
 Print:
-
 	section 	Print
 
 	st 		@-1(p2) 											; save character on stack.
@@ -47,10 +47,13 @@ __PRPrintString:
 	lde 														; get character from E
 	jz 		__PRExitNoCheck 									; exit without loop check.
 ;
-;	Read cursor and set P1 to that address
+;	Print character in A now ; throughout it is stored in E.
 ;
 __PRPrintCharacterA:
 	xae 														; save character in E.
+;
+;	Read cursor and set P1 to that address
+;
 	ldi 	ScreenCursor/256 									; set P1 to point to screen cursor
 	xpah 	p1
 	ldi 	ScreenCursor&255
@@ -141,6 +144,10 @@ __PRIsControlChar:
 	jz 		__PRExit 											; if it is, cannot backspace so exit.
 	xpal 	p1  												; put it back
 	ld 		@-1(p1)												; move it back one
+	ldi 	0 													; point P1 to VRAM
+	xpah 	p1
+	ldi 	' '													; erase in VRAM, don't bother in shadow.
+	st 		(p1)
 	jmp 	__PRUpdateCursor 									; and exit
 ;
 ;	Handle carriage return (13)
@@ -186,3 +193,39 @@ __PRCopy:
 	jmp 	__PRUpdateCursor
 
 	endsection 	Print
+
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+;
+;		Input a single character into A. Case is converted to Upper. All registers preserved except A
+;
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+
+GetChar:
+	section 	GetChar
+	ldi 	0x8 												; set P1 to $8xx, and save P1.H
+	xpah 	p1
+	st 		@-1(p2)
+__GCWaitKey: 													; wait for key press
+	ld 		0(p1)
+	jp 		__GCWaitKey
+	ani	 	0x7F 												; throw away the upper bit.
+	st 		-1(p2) 												; save it below stack
+__GCWaitRelease:
+	ld 		0(p1) 												; wait for release
+	ani 	0x80
+	jnz 	__GCWaitRelease
+	ld 		@1(p2) 												; restore P1.H
+	xpah 	p1
+	ld 		-2(p2) 												; restore saved value
+	ccl
+	adi 	0x20												; will make lower case -ve
+	jp 		__GCNotLower
+	cai 	0x20 												; capitalise
+__GCNotLower:
+	adi 	0xE0 												; fix up.
+	xppc 	p3 													; return
+	jmp 	GetChar 											; make re-entrant
+	endsection 	GetChar
+

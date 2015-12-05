@@ -36,14 +36,16 @@ lpi	macro	ptr,addr
 	org 	0x9000 												; the ROM starts here
 	db 		0x68												; this makes it boot straight into this ROM.
 
-	lpi 	p1,message
 	lpi 	p2,0xFFF
-	lpi 	p3,Print-1
-	ldi 	0
-	xppc 	p3
 
-wait:
-	jmp 	wait
+Loop:
+	lpi 	p3,GetChar-1
+	xppc 	p3
+	xae
+	lpi 	p3,Print-1
+	lde
+	xppc 	p3
+	jmp 	Loop
 
 message:
 	db 		12,"HELLO WORLD",13,"ABCE",8,"DE",13,"X",13,"Y",13,"Z",13
