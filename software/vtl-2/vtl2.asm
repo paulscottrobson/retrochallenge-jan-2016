@@ -37,19 +37,15 @@ lpi	macro	ptr,addr
 	db 		0x68												; this makes it boot straight into this ROM.
 
 	lpi 	p2,0xFFF
-
-Loop:
-	lpi 	p3,GetChar-1
-	xppc 	p3
-	xae
 	lpi 	p3,Print-1
-	lde
+	ldi 	12
 	xppc 	p3
-	jmp 	Loop
+	lpi 	p3,GetString-1
+	lpi 	p1,KeyboardBuffer
+	ldi 	KeyboardBufferSize
+	xppc 	p3
+wait:
+	jmp 	wait
 
-message:
-	db 		12,"HELLO WORLD",13,"ABCE",8,"DE",13,"X",13,"Y",13,"Z",13
-	db 		"ABC",13,"DEF",13
-	db 		"SCROLLNOW",13,"X",0
 
 	include Source\screen.asm 									; screen I/O stuff.

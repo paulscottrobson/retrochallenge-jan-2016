@@ -2,6 +2,9 @@
 ; ****************************************************************************************************************
 ;
 ;											Screen I/O, VTL-2 ROM
+;											=====================
+;
+;	Provides Character and String Input/Output functionality.
 ;
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
@@ -231,3 +234,82 @@ __GCNotLower:
 	jmp 	GetChar 											; make re-entrant
 	endsection 	GetChar
 
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+;
+;			Read an ASCIIZ string from keyboard into P1 of length A maximum (excludes NULL terminator)
+;
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+
+GetString:
+	section GetString
+	st 		@-1(p2) 											; save length on stack.
+	xpah 	p3 													; save P3 on stack
+	st 		@-1(p2)
+	xpal 	p3
+	st 		@-1(p2)
+	lde
+	st 		@-1(p2) 											; save E on stack
+	ldi 	0 													; set E (current position) to A.
+	xae
+__GSLoop:
+	lpi 	p3,Print-1 											; print the prompt (half coloured square)
+	ldi 	155
+	xppc 	p3
+	lpi 	p3,GetChar-1 										; get a character
+	xppc 	p3
+	st 		-0x80(p1) 											; save it in the current position.
+	lpi 	p3,Print-1 											; erase the prompt with backspace.
+	ldi 	8
+	xppc 	p3
+	ld 		-0x80(p1) 											; re-read character
+	ani 	0xE0 												; check if control key.
+	jz 		__GSControlKey 
+	lde 														; get current position.
+	xor 	3(p2) 												; reached maximum length of buffer ?
+	jz 		__GSLoop 											; if so, ignore the key and go round again.
+	ld 		-0x80(p1) 											; get character and print it
+	xppc 	p3
+	ldi 	1 													; increment E
+	ccl
+	ade
+	xae
+	jmp 	__GSLoop 											; and go round again.
+;
+;	Handle control keys (0x00-0x1F)
+;
+__GSControlKey:
+	ld 		-0x80(p1) 											; get typed in key
+	xri 	8 													; check for backspace.
+	jz 		__GSBackspace 			
+	xri 	8!13 												; check for CR
+	jnz 	__GSLoop 											; if not, ignore the key.
+;
+;	Carriage Return, ending input.
+;
+	st 		-0x80(p1) 											; replace the CR written with NULL terminator.
+	ld 		@1(p2) 												; pop E
+	xae
+	ld 		@1(p2) 												; pop P3
+	xpal 	p3
+	ld 		@1(p2)
+	xpah 	p3
+	ld 		@1(p2)												; pop A
+	xppc 	p3 													; return
+	jmp 	GetString 											; make re-entrant (probably unneccessary !!)
+;
+;	Backspace entered
+;
+__GSBackspace
+	lde 														; if E = 0 we can't backspace any further.
+	jz 		__GSLoop
+	ldi 	8 													; backspace on screen
+	xppc 	p3
+	ldi 	0xFF 												; decrement E
+	ccl
+	ade
+	xae
+	jmp 	__GSLoop 											; and go round again.
+
+	endsection GetString
