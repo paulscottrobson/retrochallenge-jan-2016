@@ -9,7 +9,7 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-Test:db 	"128/5*0+%",0
+Test:db 	"1/0",0
 
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
@@ -20,6 +20,8 @@ Test:db 	"128/5*0+%",0
 ; ****************************************************************************************************************
 
 EvaluateExpression:
+
+	section EvaluateExpression
 
 EXExprResult = 4
 
@@ -40,11 +42,12 @@ EXExprResult = 4
 	xppc 	p3
 	csa
 	jp 		__EXTermOkay 										; term is okay if CY/L = 0
+
 __EXError:
 	scl 														; return with CY/L set and erroneous value.
 	jmp 	__EXCopyAndExit
 
-__EXClearCarryCopyAndExit
+__EXClearCarryCopyAndExit 										; come here if finished successfully.
 	ccl
 __EXCopyAndExit:	
 	ld 		@1(p2) 												; copy stack to result space
@@ -61,15 +64,15 @@ __EXCopyAndExit:
 	ld 		@1(p2)
 	xppc 	p3 													; return and make re-entrant.
 	jmp 	EvaluateExpression 
-
 ;
-;	Successfully aquired first term / main loop.
+;	Successfully acquired first term / main loop.
 ;
 __EXTermOkay:
 	ld 		(p1) 												; look at next character to find operator.
 	jz 		__EXClearCarryCopyAndExit							; if zero, then end of string.
 	xri 	')'													; found a close bracket, ending paren expr
-	jz 		__EXClearCarryCopyAndExit
+	jz 		__EXClearCarryCopyAndExit 							; keep P1 pointing to that close bracket though.
+
 	ld 		@1(p1) 												; get character and bump
 	xri 	' '													; if space, keep going
 	jz 		__EXTermOkay
@@ -91,7 +94,12 @@ __EXDropValueAndExitWithError:
 ;	Do the operator in E.
 ;
 __EXDoOperator:
-
+	xri 	'='													; check for comparisons.
+	jz 		__EXDoCompare
+	xri		'>'!'='
+	jz 		__EXDoCompare
+	xri 	'<'!'>'
+	jz 		__EXDoCompare
 	; TODO: Test for >,=,<
 
 	lpi 	p3,MathLibrary-1 									; do the math operation.
@@ -100,10 +108,24 @@ __EXDoOperator:
 	csa 														; if CY/L = 0 then try and get another term.
 	ani 	0x80
 	jnz 	__EXDropValueAndExitWithError 						; if set drop the value and exit with error.
-
-	; TODO: Store remainder if division.
-
+	lde 														; check if it was division
+	xri 	'/'
+	jnz 	__EXTermOkay 										; if not it's fine, exit.
+	lpi 	p3,VariableBase+('%' & 0x3F) * 2					; point to the '%' variable.
+	ld 		-2(p2) 												; copy remainder to % variable
+	st 		(p3)
+	ld 		-1(p2)
+	st 		1(p3)
 	jmp 	__EXTermOkay 										; loop round to get the next operator.
+;
+;	Do the comparison in E (yields 1 or 0)
+;
+__EXDoCompare:
+	
+wait2:
+	jmp 	wait2
+
+	endsection EvaluateExpression
 
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
