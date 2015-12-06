@@ -75,8 +75,24 @@ FindStackTop:
 	ldi 	0xFF
 	st 		5(p1)
 	
-	lpi 	p3,EvaluateTerm-1
+	lpi 	p3,Print-1
+	ldi 	12
+	xppc 	p3
+	lpi 	p3,EvaluateExpression-1
 	lpi 	p1,Test
+	xppc 	p3
+	csa
+	jp 		NoError
+	lpi 	p3,Print-1
+	ldi 	'?'
+	xppc 	p3
+NoError:
+	lpi 	p3,MathLibrary-1
+	lpi 	p1,KeyboardBuffer+10
+	ldi 	'$'
+	xppc 	p3
+	lpi 	p3,Print-1
+	ldi 	0
 	xppc 	p3
 wait:
 	jmp 	wait
