@@ -98,5 +98,8 @@ wait:
 	jmp 	wait
 
 
+Test:db 	"?+1000",0
+
+
 	include Source\screen.asm 									; screen I/O stuff.
 	include Source\evaluate.asm 								; evaluate an expression.

@@ -289,6 +289,8 @@ __GSControlKey:
 ;	Carriage Return, ending input.
 ;
 	st 		-0x80(p1) 											; replace the CR written with NULL terminator.
+	ldi 	13 													; print CR
+	xppc 	p3
 	ld 		@1(p2) 												; pop E
 	xae
 	ld 		@1(p2) 												; pop P3

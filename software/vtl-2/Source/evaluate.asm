@@ -4,12 +4,10 @@
 ;											Evaluate, VTL-2 ROM
 ;											===================
 ;
-;	R-Expression and Term Evaluators
+;	R-Expression and Term Evaluators, including specials.
 ;
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
-
-Test:db 	"$+1000",0
 
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
@@ -101,9 +99,8 @@ __EXDoOperator:
 	jz 		__EXDoCompare
 	xri 	'<'!'>'
 	jz 		__EXDoCompare
-	; TODO: Test for >,=,<
 
-	lpi 	p3,MathLibrary-1 									; do the math operation.
+	lpi 	p3,MathLibrary-1 									; do the maths operations + - * /
 	lde 	
 	xppc 	p3 	
 	csa 														; if CY/L = 0 then try and get another term.
@@ -172,7 +169,7 @@ __EXLessThan:													; < test
 ;		A numeric constant (e.g. "46")
 ;		A parenthesised expression ( (5+2) )
 ;		An array expression :42)
-;		A system variable (?)
+;		A system variable (e.g. $ or ?)
 ;		A variable (all other values 32-95)
 ;
 ;	Registers are unchanged except P1, which points to the erroneous character, or the next character.
@@ -344,13 +341,18 @@ __ETFindClosure:
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 ;
-;		A is a variable whose value has been requested. Returns single value.
+;		A is a variable whose value has been requested. Returns single value. This is used for non
+;		standard variables, things like $ and ? which have side-effects.
+;
 ;		If legitimate value return CY/L = 0, else return CY/L = 1
 ;
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
 TermSystemVariableCheck:
+
+	section ReadSystemVariables
+
 	xpah 	p3													; save P3 preserving A, reserve space for result.
 	st 		@-3(p2)
 	xpal 	p3
@@ -368,7 +370,7 @@ __TSVCExit:
 	xpal 	p3
 	ld 		@1(p2)
 	xpah 	p3
-	xppc	p3
+	xppc	p3 													; doesn't need to be re-entrant
 ;
 ;	$ (read character ASCII code)
 ;
@@ -384,6 +386,26 @@ __TSVCGetCharacter:
 ;	? (read keyboard line in and evaluate it)
 ;
 __TSVCGetNumber:
-	
-wait4:
-	jmp 	wait4
+	xpah 	p1 													; save P1 on the stack
+	st 		@-1(p2)
+	xpal 	p1
+	st 		@-1(p2)
+	lpi 	p1,KeyboardBuffer 									; P1 points to keyboard buffer
+	lpi 	p3,GetString-1 										; P3 points to string read function
+	ldi 	KeyboardBufferSize 									; max length
+	xppc 	p3 													; read keyboard input.
+	lpi 	p3,EvaluateExpression-1 							; evaluate and push on stack, ignore any errors.
+	xppc 	p3
+	ld 		0(p2) 												; copy result
+	st 		6(p2)
+	ld 		1(p2)
+	st 		7(p2)
+	ld 		@2(p2) 												; skip over result
+	ld 		@1(p2)												; restore P1
+	xpal 	p1
+	ld 		@1(p2)
+	xpah 	p1
+	ccl 														; clear carry as done
+	jmp 	__TSVCExit
+
+	endsection ReadSystemVariables
