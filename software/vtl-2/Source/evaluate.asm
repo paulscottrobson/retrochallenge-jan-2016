@@ -9,7 +9,7 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-Test:db 	"1/0",0
+Test:db 	"$+1000",0
 
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
@@ -94,7 +94,8 @@ __EXDropValueAndExitWithError:
 ;	Do the operator in E.
 ;
 __EXDoOperator:
-	xri 	'='													; check for comparisons.
+	lde
+	xri 	'='													; check for comparisons. = > <
 	jz 		__EXDoCompare
 	xri		'>'!'='
 	jz 		__EXDoCompare
@@ -116,14 +117,48 @@ __EXDoOperator:
 	st 		(p3)
 	ld 		-1(p2)
 	st 		1(p3)
+__EXTermOkay2:
 	jmp 	__EXTermOkay 										; loop round to get the next operator.
 ;
 ;	Do the comparison in E (yields 1 or 0)
 ;
 __EXDoCompare:
-	
-wait2:
-	jmp 	wait2
+	ld 		2(p2) 												; do the subtraction comparison
+	scl
+	cad 	0(p2)
+	st 		0(p2)
+	ld 		3(p2)
+	cad 	1(p2)
+	or 		0(p2)												; A = 0 if equal
+	xpah 	p3 													; save temporarily in P3.H
+	ldi 	0
+	st 		2(p2)												; zero the result. 
+	st 		3(p2)
+	ld 		@2(p2) 												; drop the 2nd value off the stack.
+	lde 														; check for < 
+	xri 	'<'	
+	jz 		__EXLessThan
+	xri 	'<'!'='												; check for =
+	jz 		__EXEquals
+
+	xpah 	p3 													; greater than test
+	jz 		__EXTermOkay2 										; if equal then it is false.
+	csa 														; for >= requires carry set
+	jp 		__EXTermOkay2 										; exit if clear.
+__EXReturnTrue:
+	ild 	0(p2) 												; return 1 rather than 0.
+	jmp 	__EXTermOkay2
+
+__EXEquals:														; equal test
+	xpah 	p3 													; get zero test.
+	jz 		__EXReturnTrue										; if zero, return 1.
+	jmp 	__EXTermOkay2
+
+__EXLessThan:													; < test
+	csa 														; look at carry
+	jp 		__EXReturnTrue										; if carry clear then <
+	jmp 	__EXTermOkay2 										; pop and continue.
+
 
 	endsection EvaluateExpression
 
@@ -225,6 +260,7 @@ __ETTermNotConstant:
 	xppc 	p3 													; call it
 	csa 														; if CY/L is clear, this has done the work.
 	jp 		__ETSucceed 										; and the result is on the stack, so process it.
+	ld 		@2(p2) 												; throw away the saved value
 ;
 ;	Okay, finally we think it's just a normal variable. We copy it in, don't bother shoving it on the stack.
 ;
@@ -308,15 +344,46 @@ __ETFindClosure:
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 ;
-;		A is a variable whose value has been requested. If it is non standard (?,$) push on stack and
-;		return CY/L = 0, else return CY/L = 1
+;		A is a variable whose value has been requested. Returns single value.
+;		If legitimate value return CY/L = 0, else return CY/L = 1
 ;
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
 TermSystemVariableCheck:
-;	TODO: Implement ? and $ as readables.
-	scl
+	xpah 	p3													; save P3 preserving A, reserve space for result.
+	st 		@-3(p2)
+	xpal 	p3
+	st 		@-1(p2)
+
+	xpah 	p3 													; get system variable back.
+
+	xri 	'$'													; $ as a term reads a keystroke.
+	jz 		__TSVCGetCharacter
+	xri 	'$'!'?'												; ? reads a keyboard line in and evaluates it.
+	jz 		__TSVCGetNumber
+	scl 														; fail - set CY/L and just restore P3 and exit
+__TSVCExit:
+	ld 		@1(p2)
+	xpal 	p3
+	ld 		@1(p2)
+	xpah 	p3
 	xppc	p3
-
-
+;
+;	$ (read character ASCII code)
+;
+__TSVCGetCharacter:
+	lpi 	p3,GetChar-1 										; get a character
+	xppc 	p3 													; from the keyboard.
+	st 		2(p2) 												; put on stack in return slot
+	ldi 	0
+	st 		3(p2) 												; clear MSB of answer.
+	ccl 														; mark as done
+	jmp 	__TSVCExit 											; and exit.
+;
+;	? (read keyboard line in and evaluate it)
+;
+__TSVCGetNumber:
+	
+wait4:
+	jmp 	wait4
