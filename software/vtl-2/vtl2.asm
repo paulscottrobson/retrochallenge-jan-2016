@@ -21,7 +21,7 @@ KeyboardBufferSize = 74 										; max characters, excluding terminating NULL.
 VariableBase = 0xD00 											; Base of variables. Variables start from here, 2 bytes
 																; each, 6 bit ASCII (e.g. @,A,B,C)
 																; VTL-2 other variables work backwards from here.
-																; must be on a page boundary.
+																	; must be on a page boundary.
 
 MathLibrary = 3 												; Monitor Mathematics Routine Address
 
@@ -57,10 +57,23 @@ FindStackTop:
 	jnz 	FindStackTop
 
 	lpi 	p1,VariableBase
-	ldi 	42
+	ldi 	42 													; A = $142
 	st 		2(p1)
 	ldi 	1
 	st 		3(p1)
+
+	ldi 	0x20 												; set up & to $D20
+	st 		76(p1)
+	ldi 	0xD
+	st 		77(p1)
+
+	xpah 	p1
+	ldi 	0x20
+	xpal 	p1
+	ldi 	0x14
+	st 		4(p1)
+	ldi 	0xFF
+	st 		5(p1)
 	
 	lpi 	p3,EvaluateTerm-1
 	lpi 	p1,Test
