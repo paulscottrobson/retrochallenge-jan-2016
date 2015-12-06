@@ -15,16 +15,13 @@
 ScreenMirror = 0xC00 											; Screen mirror, 128 bytes, 256 byte page boundary.
 ScreenCursor = ScreenMirror+0x80  								; Position on that screen (00..7F)
 
-KeyboardBuffer = ScreenMirror + 0xBE 							; 64 character keyboard buffer
-KeyboardBufferSize = 64 										; max characters, excluding terminating NULL.
+KeyboardBuffer = ScreenMirror + 0x90 							; 74 character keyboard buffer
+KeyboardBufferSize = 74 										; max characters, excluding terminating NULL.
 
 VariableBase = 0xD00 											; Base of variables. Variables start from here, 2 bytes
 																; each, 6 bit ASCII (e.g. @,A,B,C)
 																; VTL-2 other variables work backwards from here.
-
-
-Error = VariableBase-1 											; Error Flag (single character if not $00)
-ExpressionLevel = VariableBase-2 								; Expression Level (e.g. how many open parenthesis)
+																; must be on a page boundary.
 
 MathLibrary = 3 												; Monitor Mathematics Routine Address
 
@@ -59,8 +56,13 @@ FindStackTop:
 	xor 	(p2) 												; did the write work
 	jnz 	FindStackTop
 
-
-	lpi 	p3,Evaluate-1
+	lpi 	p1,VariableBase
+	ldi 	42
+	st 		2(p1)
+	ldi 	1
+	st 		3(p1)
+	
+	lpi 	p3,EvaluateTerm-1
 	lpi 	p1,Test
 	xppc 	p3
 wait:

@@ -4,73 +4,130 @@
 ;											Evaluate, VTL-2 ROM
 ;											===================
 ;
-;	R-Expression Evaluator.
+;	R-Expression and Term Evaluators
 ;
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-Test:db 	"01234",0
+Test:db 	"A",0
 
-Evaluate:
-	ldi 	ExpressionLevel/256									; push return address on stack, point P3 to explevel
-	xpah 	p3  				
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+;
+;					Evaluate a single term from P1 and push it on the stack. CY/L set on error
+;
+;	Terms can be:
+;
+;		A numeric constant (e.g. "46")
+;		A parenthesised expression ( (5+2) )
+;		An array expression :42)
+;		A system variable (?)
+;		A variable (all other values 32-95)
+;
+;	Registers are unchanged except P1, which points to the erroneous character, or the next character.
+;
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+
+EvaluateTerm:
+
+	section EvaluateTerm
+
+EVTermResult = 4 												; offset in stack to result.
+
+	st 		@-3(p2) 											; save A, reserving room for the result.
+	lde 														; save E
+	st 		@-1(p2) 	
+	xpah 	p3 													; save P3
 	st 		@-1(p2)
-	ldi 	ExpressionLevel&255
-	xpal 	p3 									
+	xpal	p3
 	st 		@-1(p2)
 
-	ldi 	0 													; we push $0000 and '+' on, as if we'd gone into
-	st 		@-1(p2) 											; the middle of an evaluation. The next thing is 
-	st 		@-1(p2)												; a term, but we don't have to make the first case
- 	st 		(p3)												; a special one. It is like putting '0+' on the front.
-	ldi 	'+'	 												; we also reset the expression level.
-	st 		@-1(p2)
-;
-;	We have a term, and an operator (albeit faked first time), so get another term to work with it.
-;
-__EVNextTerm:
-	ld 		@1(p1) 												; get the next character
+	ldi 	0 													; blank the result on the stack
+	st 		EVTermResult(p2) 									; not strictly necessary :)
+	st 		EVTermResult+1(p2)
+	jmp 	__ETFindTerm
+
+__ETSkipSpace:
+	ld 		@1(p1) 												; bump P1
+__ETFindTerm:
+	ld 		(p1) 												; read the first term character
 	scl
-	cai 	' '													; is it a space character
-	jz 		__EVNextTerm 										; go back and get the next character.
-	ani 	0xC0 												; this will be 00xx xxxx if was 32-95, legal value
-	jz 		__EVLegalTerm
-	ldi 	'T'													; return 'T' (bad term error)
+	cai 	32													; if space, skip over it and try again.
+	jz 		__ETSkipSpace
+	ani 	0xC0												; should be in range 00-3F to be 32-95 (legal chars)
+	scl
+	jnz 	__ETExit 											; if not, exit with error.
 
-__EVError:
-	jmp 	__EVError
+	ld 		(p1) 												; read term first character again
+	scl
+	cai 	'9'+1 												; if >= '9' will be +ve
+	jp 		__ETTermNotConstant
+	adi 	128+10 												; if < '0' will be +ve
+	jp 		__ETTermNotConstant
+;
+;	Term is an ASCII Constant
+;
+	lpi 	p3,MathLibrary-1 									; use Math library to convert to integer.
+	ldi 	'?'													; function ASCII->Int, cannot fail as first digit numeric
+	xppc 	p3
+;
+;	Result on TOS - have to reposition past the stacked SC/MP registers.
+;
+__ETSucceed:
+	ld 		@1(p2)												; put result in its proper place
+	st 		EVTermResult+1(p2) 									; unstacking TOS.
+	ld 		@1(p2)
+	st 		EVTermResult+1(p2)
+__ETCCLAndExit:
+	ccl 														; clear carry indicating success
+__ETExit:
+	ld 		@1(p2) 												; restore P3
+	xpal 	p3
+	ld 		@1(p2)
+	xpah 	p3
+	ld 		@1(p2) 												; restore E
+	xae
+	ld 		@1(p2) 												; restore A, leaving the result on the tack
+	xppc 	p3 													; return
+	jmp 	EvaluateTerm 										; make re-entrant
+;
+;	P1 still points to first non space, which is in range 33-95. It is not a numeric character.
+;
+__ETTermNotConstant:
 
-__EVLegalTerm: 													; we now know it is 33-95
-	ld 		-1(p1) 												; reload the legal term ASCII value.
-	scl 
-	cai 	'9'+1 												; this will be +ve if > '9' (e.g. not a number)
-	jp 		__EVVariableTerm 									
-	cai 	128-10-1 							 				; will now be +ve if < '0'
-	jp 		__EVVariableTerm
-;
-;	At this point, we know we have a number. P1 points to the character after the first digit.
-;
-	ld 		@-1(p1) 											; point back to first digit
-	lpi 	p3,MathLibrary-1 									; point P3 to math library
-	ldi 	'?' 												; function '?' (ASCII->Int) (Cannot fail as checked digit)
-	xppc 	p3 													; calculate it, on exit P1 points to next character.
-	jmp 	__EVPerformOperation 								; go and perform the operation pending.
-;
-;	We now have a legal term (e.g. 33 > 95) and it is not a number. It is either a variable or a parenthesised
-;	Expression.
-;
-__EVVariableTerm:												; at this point, it is either parentheses or variable.
-	jmp 	__EVVariableTerm
+;	TODO: Array check
+; 	TODO: Parenthesis check
 
-	; if parenthesis, bump level and go back to start. on exit parenthesis after operation, pop level.
 ;
-;	Perform operation. Note stack is (value 2) (operator) (value 1) so a little rearranging is required.
+;	System variable checks.
 ;
-__EVPerformOperation:
+	lpi 	p3,TermSystemVariableCheck-1 						; this routine checks for system variables.
+	ld 		@1(p1)												; read the variable name and bump, finally.
+	xppc 	p3 													; call it
+	csa 														; if CY/L is clear, this has done the work.
+	jp 		__ETSucceed 										; and the result is on the stack, so process it.
+;
+;	Okay, finally we think it's just a normal variable.
+;
+	ld 		-1(p1) 												; read the variable name and skip over it
+	ccl
+	add 	-1(p1) 												; double it.
+	ani 	0x7E 												; arrangement is 6 bit ASCII, this is 3F x 2
+	xpal 	p3
+	ldi 	VariableBase/256 									; point P3 to the variables
+	xpah 	p3
+	ld 		@1(p3) 												; read low 
+	st 		EVTermResult(p2) 									; copy to stack space
+	ld 		(p3) 												; same for high
+	st 		EVTermResult+1(p2)
+	jmp 	__ETCCLAndExit 										; clear carry and exit.
 
-wait2:jmp 	wait2
+	endsection EvaluateTerm
 
-	; can be numeric.   (0-9)
-	; can be an open parenthesis, indicating a parenthesised term.
-	; can be a variable (anything else < 96) including 'special' variables.
 
+TermSystemVariableCheck:
+	; for var in A, if it is a non-standard variable, read it and push on stack and return CY/L = 0
+	; if normal variable, return CY/L = 1
+	scl
+	xppc	p3
