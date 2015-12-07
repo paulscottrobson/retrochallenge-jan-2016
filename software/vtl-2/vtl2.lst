@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 1 - 12/6/2015 19:40:15
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 1 - 12/7/2015 19:42:52
 
 
        1/       0 :                     ; ****************************************************************************************************************
@@ -61,7 +61,7 @@
       54/    9009 : C4 75               	ldi 	0x75 												; write this at potential TOS
       55/    900B : CE C0               	st 		@-64(p2)
       56/    900D : E2 00               	xor 	(p2) 												; did the write work
- AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 2 - 12/6/2015 19:40:15
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 2 - 12/7/2015 19:42:52
 
 
       57/    900F : 9C F8               	jnz 	FindStackTop
@@ -124,7 +124,7 @@
       90/    905A : 33                          xpal    P3
       91/    905B : (MACRO)             	lpi 	p1,KeyboardBuffer+10
       91/    905B : C4 0C                       ldi     (KEYBOARDBUFFER+10) / 256
- AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 3 - 12/6/2015 19:40:15
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 3 - 12/7/2015 19:42:52
 
 
       91/    905D : 35                          xpah    P1
@@ -187,7 +187,7 @@
 (1)   37/    9083 : 9C 12               	jnz 	__PRPrintCharacterA 								; if non zero print it on its own.
 (1)   38/    9085 :                     
 (1)   39/    9085 :                     __PRPrintString:
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 4 - 12/6/2015 19:40:15
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 4 - 12/7/2015 19:42:52
 
 
 (1)   40/    9085 : C2 01               	ld 		1(p2) 												; restore original P1
@@ -250,7 +250,7 @@
 (1)   97/    90BF : C4 80               	ldi 	ScreenCursor & 255 
 (1)   98/    90C1 : 31                  	xpal 	p1 													; after this, adjusted cursor position is in AC.
 (1)   99/    90C2 : C9 00               	st 		(p1) 												; write back in cursor position
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 5 - 12/6/2015 19:40:15
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 5 - 12/7/2015 19:42:52
 
 
 (1)  100/    90C4 : 94 13               	jp 		__PRExit 											; if position is off the bottom then scroll.
@@ -313,7 +313,7 @@
 (1)  157/    910B :                     ;
 (1)  158/    910B :                     ;	Handle carriage return (13)
 (1)  159/    910B :                     ;
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 6 - 12/6/2015 19:40:15
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 6 - 12/7/2015 19:42:52
 
 
 (1)  160/    910B :                     __PRIsReturn:
@@ -376,7 +376,7 @@
 (1)  217/    913D : 94 FC               	jp 		__GCWaitKey
 (1)  218/    913F : D4 7F               	ani	 	0x7F 												; throw away the upper bit.
 (1)  219/    9141 : CA FF               	st 		-1(p2) 												; save it below stack
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 7 - 12/6/2015 19:40:15
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 7 - 12/7/2015 19:42:52
 
 
 (1)  220/    9143 :                     __GCWaitRelease:
@@ -439,7 +439,7 @@
 (1)  265/    9182 : 3F                  	xppc 	p3
 (1)  266/    9183 : C1 80               	ld 		-0x80(p1) 											; re-read character
 (1)  267/    9185 : D4 E0               	ani 	0xE0 												; check if control key.
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 8 - 12/6/2015 19:40:15
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(screen.asm) - page 8 - 12/7/2015 19:42:52
 
 
 (1)  268/    9187 : 98 0F               	jz 		__GSControlKey 
@@ -500,9 +500,9 @@
 (1)    4/    91C2 :                     ;											Evaluate, VTL-2 ROM
 (1)    5/    91C2 :                     ;											===================
 (1)    6/    91C2 :                     ;
-(1)    7/    91C2 :                     ;	R-Expression and Term Evaluators
+(1)    7/    91C2 :                     ;	R-Expression and Term Evaluators, including specials.
 (1)    8/    91C2 :                     ;
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 9 - 12/6/2015 19:40:15
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 9 - 12/7/2015 19:42:52
 
 
 (1)    9/    91C2 :                     ; ****************************************************************************************************************
@@ -522,457 +522,465 @@
 (1)   23/    91C2 :                     
 (1)   24/    91C2 : =0x4                EXExprResult = 4
 (1)   25/    91C2 :                     
-(1)   26/    91C2 : CE FD               	st 		@-3(p2) 											; save A, allow space for answer
-(1)   27/    91C4 : 40                  	lde
-(1)   28/    91C5 : CE FF               	st 		@-1(p2) 											; save E
-(1)   29/    91C7 : 37                  	xpah 	p3 												
-(1)   30/    91C8 : CE FF               	st 		@-1(p2) 											; save P3
-(1)   31/    91CA : 33                  	xpal 	p3
-(1)   32/    91CB : CE FF               	st 		@-1(p2)
-(1)   33/    91CD : C4 00               	ldi 	0 													; clear final result, not technically required
-(1)   34/    91CF : CA 04               	st 		EXExprResult(p2)
-(1)   35/    91D1 : CA 05               	st 		EXExprResult+1(p2)
-(1)   36/    91D3 :                     ;
-(1)   37/    91D3 :                     ;	Evaluate the first term.
-(1)   38/    91D3 :                     ;
-(1)   39/    91D3 : (MACRO)             	lpi 	p3,EvaluateTerm-1 									; evaluate term and push on stack.
-(1)   39/    91D3 : C4 92                       ldi     (EVALUATETERM-1) / 256
-(1)   39/    91D5 : 37                          xpah    P3
-(1)   39/    91D6 : C4 7B                       ldi     (EVALUATETERM-1) & 255
-(1)   39/    91D8 : 33                          xpal    P3
-(1)   40/    91D9 : 3F                  	xppc 	p3
-(1)   41/    91DA : 06                  	csa
-(1)   42/    91DB : 94 1A               	jp 		__EXTermOkay 										; term is okay if CY/L = 0
-(1)   43/    91DD :                     
-(1)   44/    91DD :                     __EXError:
-(1)   45/    91DD : 03                  	scl 														; return with CY/L set and erroneous value.
-(1)   46/    91DE : 90 01               	jmp 	__EXCopyAndExit
-(1)   47/    91E0 :                     
-(1)   48/    91E0 :                     __EXClearCarryCopyAndExit 										; come here if finished successfully.
-(1)   49/    91E0 : 02                  	ccl
-(1)   50/    91E1 :                     __EXCopyAndExit:	
-(1)   51/    91E1 : C6 01               	ld 		@1(p2) 												; copy stack to result space
-(1)   52/    91E3 : CA 05               	st 		EXExprResult+1(p2)
-(1)   53/    91E5 : C6 01               	ld 		@1(p2)
-(1)   54/    91E7 : CA 05               	st 		EXExprResult+1(p2)
-(1)   55/    91E9 :                     
-(1)   56/    91E9 : C6 01               	ld 		@1(p2) 												; restore P3,E,A
-(1)   57/    91EB : 33                  	xpal 	p3
-(1)   58/    91EC : C6 01               	ld 		@1(p2)
-(1)   59/    91EE : 37                  	xpah 	p3
-(1)   60/    91EF : C6 01               	ld 		@1(p2)
-(1)   61/    91F1 : 01                  	xae
-(1)   62/    91F2 : C6 01               	ld 		@1(p2)
-(1)   63/    91F4 : 3F                  	xppc 	p3 													; return and make re-entrant.
-(1)   64/    91F5 : 90 CB               	jmp 	EvaluateExpression 
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 10 - 12/6/2015 19:40:15
+(1)   26/    91C2 : CE FD               	st 		@-3(p2) 											; save A, allow space for answer lde
+(1)   27/    91C4 : CE FF               	st 		@-1(p2) 											; save E
+(1)   28/    91C6 : 37                  	xpah 	p3 												
+(1)   29/    91C7 : CE FF               	st 		@-1(p2) 											; save P3
+(1)   30/    91C9 : 33                  	xpal 	p3
+(1)   31/    91CA : CE FF               	st 		@-1(p2)
+(1)   32/    91CC : C4 00               	ldi 	0 													; clear final result, not technically required
+(1)   33/    91CE : CA 04               	st 		EXExprResult(p2)
+(1)   34/    91D0 : CA 05               	st 		EXExprResult+1(p2)
+(1)   35/    91D2 :                     ;
+(1)   36/    91D2 :                     ;	Evaluate the first term.
+(1)   37/    91D2 :                     ;
+(1)   38/    91D2 : (MACRO)             	lpi 	p3,EvaluateTerm-1 									; evaluate term and push on stack.
+(1)   38/    91D2 : C4 92                       ldi     (EVALUATETERM-1) / 256
+(1)   38/    91D4 : 37                          xpah    P3
+(1)   38/    91D5 : C4 82                       ldi     (EVALUATETERM-1) & 255
+(1)   38/    91D7 : 33                          xpal    P3
+(1)   39/    91D8 : 3F                  	xppc 	p3
+(1)   40/    91D9 : 06                  	csa
+(1)   41/    91DA : 94 1A               	jp 		__EXTermOkay 										; term is okay if CY/L = 0
+(1)   42/    91DC :                     
+(1)   43/    91DC :                     __EXError:
+(1)   44/    91DC : 03                  	scl 														; return with CY/L set and erroneous value.
+(1)   45/    91DD : 90 01               	jmp 	__EXCopyAndExit
+(1)   46/    91DF :                     
+(1)   47/    91DF :                     __EXClearCarryCopyAndExit 										; come here if finished successfully.
+(1)   48/    91DF : 02                  	ccl
+(1)   49/    91E0 :                     __EXCopyAndExit:	
+(1)   50/    91E0 : C6 01               	ld 		@1(p2) 												; copy stack to result space
+(1)   51/    91E2 : CA 05               	st 		EXExprResult+1(p2)
+(1)   52/    91E4 : C6 01               	ld 		@1(p2)
+(1)   53/    91E6 : CA 05               	st 		EXExprResult+1(p2)
+(1)   54/    91E8 :                     
+(1)   55/    91E8 : C6 01               	ld 		@1(p2) 												; restore P3,E,A
+(1)   56/    91EA : 33                  	xpal 	p3
+(1)   57/    91EB : C6 01               	ld 		@1(p2)
+(1)   58/    91ED : 37                  	xpah 	p3
+(1)   59/    91EE : C6 01               	ld 		@1(p2)
+(1)   60/    91F0 : 01                  	xae
+(1)   61/    91F1 : C6 01               	ld 		@1(p2)
+(1)   62/    91F3 : 3F                  	xppc 	p3 													; return and make re-entrant.
+(1)   63/    91F4 : 90 CC               	jmp 	EvaluateExpression 
+(1)   64/    91F6 :                     ;
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 10 - 12/7/2015 19:42:52
 
 
-(1)   65/    91F7 :                     ;
-(1)   66/    91F7 :                     ;	Successfully acquired first term / main loop.
-(1)   67/    91F7 :                     ;
-(1)   68/    91F7 :                     __EXTermOkay:
-(1)   69/    91F7 : C1 00               	ld 		(p1) 												; look at next character to find operator.
-(1)   70/    91F9 : 98 E5               	jz 		__EXClearCarryCopyAndExit							; if zero, then end of string.
-(1)   71/    91FB : E4 29               	xri 	')'													; found a close bracket, ending paren expr
-(1)   72/    91FD : 98 E1               	jz 		__EXClearCarryCopyAndExit 							; keep P1 pointing to that close bracket though.
-(1)   73/    91FF :                     
-(1)   74/    91FF : C5 01               	ld 		@1(p1) 												; get character and bump
-(1)   75/    9201 : E4 20               	xri 	' '													; if space, keep going
-(1)   76/    9203 : 98 F2               	jz 		__EXTermOkay
-(1)   77/    9205 : E4 08               	xri 	'('!' '												; found an open bracket which would be comment
-(1)   78/    9207 : 98 D7               	jz 		__EXClearCarryCopyAndExit
-(1)   79/    9209 : C1 FF               	ld 		-1(p1) 												; get this, this is the operator.
-(1)   80/    920B : 01                  	xae 														; save in E.
-(1)   81/    920C : (MACRO)             	lpi 	p3,EvaluateTerm-1 	
-(1)   81/    920C : C4 92                       ldi     (EVALUATETERM-1) / 256
-(1)   81/    920E : 37                          xpah    P3
-(1)   81/    920F : C4 7B                       ldi     (EVALUATETERM-1) & 255
-(1)   81/    9211 : 33                          xpal    P3
-(1)   82/    9212 : 3F                  	xppc 	p3 													; get the second term
-(1)   83/    9213 : 06                  	csa 														; if CY/L = 0 do operator.
-(1)   84/    9214 : 94 04               	jp 		__EXDoOperator
-(1)   85/    9216 :                     ;
-(1)   86/    9216 :                     ;	Drop an unwanted value and exit with error flag set
-(1)   87/    9216 :                     ;
-(1)   88/    9216 :                     __EXDropValueAndExitWithError:
-(1)   89/    9216 : C6 02               	ld 		@2(p2) 												; throw away the 2nd operand
-(1)   90/    9218 : 90 C3               	jmp 	__EXError 											; and exit.
-(1)   91/    921A :                     ;
-(1)   92/    921A :                     ;	Do the operator in E.
-(1)   93/    921A :                     ;
-(1)   94/    921A :                     __EXDoOperator:
-(1)   95/    921A : 40                  	lde
-(1)   96/    921B : E4 3D               	xri 	'='													; check for comparisons. = > <
-(1)   97/    921D : 98 2A               	jz 		__EXDoCompare
-(1)   98/    921F : E4 03               	xri		'>'!'='
-(1)   99/    9221 : 98 26               	jz 		__EXDoCompare
-(1)  100/    9223 : E4 02               	xri 	'<'!'>'
-(1)  101/    9225 : 98 22               	jz 		__EXDoCompare
-(1)  102/    9227 :                     	; TODO: Test for >,=,<
-(1)  103/    9227 :                     
-(1)  104/    9227 : (MACRO)             	lpi 	p3,MathLibrary-1 									; do the math operation.
-(1)  104/    9227 : C4 00                       ldi     (MATHLIBRARY-1) / 256
-(1)  104/    9229 : 37                          xpah    P3
-(1)  104/    922A : C4 02                       ldi     (MATHLIBRARY-1) & 255
-(1)  104/    922C : 33                          xpal    P3
-(1)  105/    922D : 40                  	lde 	
-(1)  106/    922E : 3F                  	xppc 	p3 	
-(1)  107/    922F : 06                  	csa 														; if CY/L = 0 then try and get another term.
-(1)  108/    9230 : D4 80               	ani 	0x80
-(1)  109/    9232 : 9C E2               	jnz 	__EXDropValueAndExitWithError 						; if set drop the value and exit with error.
-(1)  110/    9234 : 40                  	lde 														; check if it was division
-(1)  111/    9235 : E4 2F               	xri 	'/'
-(1)  112/    9237 : 9C BE               	jnz 	__EXTermOkay 										; if not it's fine, exit.
-(1)  113/    9239 : (MACRO)             	lpi 	p3,VariableBase+('%' & 0x3F) * 2					; point to the '%' variable.
-(1)  113/    9239 : C4 0D                       ldi     (VARIABLEBASE+('%' & 0X3F) * 2) / 256
-(1)  113/    923B : 37                          xpah    P3
-(1)  113/    923C : C4 4A                       ldi     (VARIABLEBASE+('%' & 0X3F) * 2) & 255
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 11 - 12/6/2015 19:40:15
+(1)   65/    91F6 :                     ;	Successfully acquired first term / main loop.
+(1)   66/    91F6 :                     ;
+(1)   67/    91F6 :                     __EXTermOkay:
+(1)   68/    91F6 : C1 00               	ld 		(p1) 												; look at next character to find operator.
+(1)   69/    91F8 : 98 E5               	jz 		__EXClearCarryCopyAndExit							; if zero, then end of string.
+(1)   70/    91FA : E4 29               	xri 	')'													; found a close bracket, ending paren expr
+(1)   71/    91FC : 98 E1               	jz 		__EXClearCarryCopyAndExit 							; keep P1 pointing to that close bracket though.
+(1)   72/    91FE :                     
+(1)   73/    91FE : C5 01               	ld 		@1(p1) 												; get character and bump
+(1)   74/    9200 : E4 20               	xri 	' '													; if space, keep going
+(1)   75/    9202 : 98 F2               	jz 		__EXTermOkay
+(1)   76/    9204 : E4 08               	xri 	'('!' '												; found an open bracket which would be comment
+(1)   77/    9206 : 98 D7               	jz 		__EXClearCarryCopyAndExit
+(1)   78/    9208 : C1 FF               	ld 		-1(p1) 												; get this, this is the operator.
+(1)   79/    920A : 01                  	xae 														; save in E.
+(1)   80/    920B : (MACRO)             	lpi 	p3,EvaluateTerm-1 	
+(1)   80/    920B : C4 92                       ldi     (EVALUATETERM-1) / 256
+(1)   80/    920D : 37                          xpah    P3
+(1)   80/    920E : C4 82                       ldi     (EVALUATETERM-1) & 255
+(1)   80/    9210 : 33                          xpal    P3
+(1)   81/    9211 : 3F                  	xppc 	p3 													; get the second term
+(1)   82/    9212 : 06                  	csa 														; if CY/L = 0 do operator.
+(1)   83/    9213 : 94 04               	jp 		__EXDoOperator
+(1)   84/    9215 :                     ;
+(1)   85/    9215 :                     ;	Drop an unwanted value and exit with error flag set
+(1)   86/    9215 :                     ;
+(1)   87/    9215 :                     __EXDropValueAndExitWithError:
+(1)   88/    9215 : C6 02               	ld 		@2(p2) 												; throw away the 2nd operand
+(1)   89/    9217 : 90 C3               	jmp 	__EXError 											; and exit.
+(1)   90/    9219 :                     ;
+(1)   91/    9219 :                     ;	Do the operator in E.
+(1)   92/    9219 :                     ;
+(1)   93/    9219 :                     __EXDoOperator:
+(1)   94/    9219 : 40                  	lde
+(1)   95/    921A : E4 2F               	xri 	'/'													; convert signed division to unsigned division
+(1)   96/    921C : 9C 03               	jnz 	__EXNotDivision
+(1)   97/    921E : C4 5C               	ldi 	'\\'
+(1)   98/    9220 : 01                  	xae
+(1)   99/    9221 :                     __EXNotDivision:
+(1)  100/    9221 : 40                  	lde
+(1)  101/    9222 : E4 3D               	xri 	'='													; check for comparisons. = > <
+(1)  102/    9224 : 98 2A               	jz 		__EXDoCompare
+(1)  103/    9226 : E4 03               	xri		'>'!'='
+(1)  104/    9228 : 98 26               	jz 		__EXDoCompare
+(1)  105/    922A : E4 02               	xri 	'<'!'>'
+(1)  106/    922C : 98 22               	jz 		__EXDoCompare
+(1)  107/    922E :                     
+(1)  108/    922E : (MACRO)             	lpi 	p3,MathLibrary-1 									; do the maths operations + - * /
+(1)  108/    922E : C4 00                       ldi     (MATHLIBRARY-1) / 256
+(1)  108/    9230 : 37                          xpah    P3
+(1)  108/    9231 : C4 02                       ldi     (MATHLIBRARY-1) & 255
+(1)  108/    9233 : 33                          xpal    P3
+(1)  109/    9234 : 40                  	lde 	
+(1)  110/    9235 : 3F                  	xppc 	p3 	
+(1)  111/    9236 : 06                  	csa 														; if CY/L = 0 then try and get another term.
+(1)  112/    9237 : D4 80               	ani 	0x80
+(1)  113/    9239 : 9C DA               	jnz 	__EXDropValueAndExitWithError 						; if set drop the value and exit with error.
+(1)  114/    923B : 40                  	lde 														; check if it was division
+(1)  115/    923C : E4 5C               	xri 	'\\'
+(1)  116/    923E : 9C B6               	jnz 	__EXTermOkay 										; if not it's fine, exit.
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 11 - 12/7/2015 19:42:52
 
 
-(1)  113/    923E : 33                          xpal    P3
-(1)  114/    923F : C2 FE               	ld 		-2(p2) 												; copy remainder to % variable
-(1)  115/    9241 : CB 00               	st 		(p3)
-(1)  116/    9243 : C2 FF               	ld 		-1(p2)
-(1)  117/    9245 : CB 01               	st 		1(p3)
-(1)  118/    9247 :                     __EXTermOkay2:
-(1)  119/    9247 : 90 AE               	jmp 	__EXTermOkay 										; loop round to get the next operator.
-(1)  120/    9249 :                     ;
-(1)  121/    9249 :                     ;	Do the comparison in E (yields 1 or 0)
-(1)  122/    9249 :                     ;
-(1)  123/    9249 :                     __EXDoCompare:
-(1)  124/    9249 : C2 02               	ld 		2(p2) 												; do the subtraction comparison
-(1)  125/    924B : 03                  	scl
-(1)  126/    924C : FA 00               	cad 	0(p2)
-(1)  127/    924E : CA 00               	st 		0(p2)
-(1)  128/    9250 : C2 03               	ld 		3(p2)
-(1)  129/    9252 : FA 01               	cad 	1(p2)
-(1)  130/    9254 : DA 00               	or 		0(p2)												; A = 0 if equal
-(1)  131/    9256 : 37                  	xpah 	p3 													; save temporarily in P3.H
-(1)  132/    9257 : C4 00               	ldi 	0
-(1)  133/    9259 : CA 02               	st 		2(p2)												; zero the result. 
-(1)  134/    925B : CA 03               	st 		3(p2)
-(1)  135/    925D : C6 02               	ld 		@2(p2) 												; drop the 2nd value off the stack.
-(1)  136/    925F : 40                  	lde 														; check for < 
-(1)  137/    9260 : E4 3C               	xri 	'<'	
-(1)  138/    9262 : 98 13               	jz 		__EXLessThan
-(1)  139/    9264 : E4 01               	xri 	'<'!'='												; check for =
-(1)  140/    9266 : 98 0A               	jz 		__EXEquals
-(1)  141/    9268 :                     
-(1)  142/    9268 : 37                  	xpah 	p3 													; greater than test
-(1)  143/    9269 : 98 DC               	jz 		__EXTermOkay2 										; if equal then it is false.
-(1)  144/    926B : 06                  	csa 														; for >= requires carry set
-(1)  145/    926C : 94 D9               	jp 		__EXTermOkay2 										; exit if clear.
-(1)  146/    926E :                     __EXReturnTrue:
-(1)  147/    926E : AA 00               	ild 	0(p2) 												; return 1 rather than 0.
-(1)  148/    9270 : 90 D5               	jmp 	__EXTermOkay2
-(1)  149/    9272 :                     
-(1)  150/    9272 :                     __EXEquals:														; equal test
-(1)  151/    9272 : 37                  	xpah 	p3 													; get zero test.
-(1)  152/    9273 : 98 F9               	jz 		__EXReturnTrue										; if zero, return 1.
-(1)  153/    9275 : 90 D0               	jmp 	__EXTermOkay2
-(1)  154/    9277 :                     
-(1)  155/    9277 :                     __EXLessThan:													; < test
-(1)  156/    9277 : 06                  	csa 														; look at carry
-(1)  157/    9278 : 94 F4               	jp 		__EXReturnTrue										; if carry clear then <
-(1)  158/    927A : 90 CB               	jmp 	__EXTermOkay2 										; pop and continue.
-(1)  159/    927C :                     
-(1)  160/    927C :                     
-(1)  161/    927C :                     	endsection EvaluateExpression
-(1)  162/    927C :                     
-(1)  163/    927C :                     ; ****************************************************************************************************************
-(1)  164/    927C :                     ; ****************************************************************************************************************
-(1)  165/    927C :                     ;
-(1)  166/    927C :                     ;					Evaluate a single term from P1 and push it on the stack. CY/L set on error
-(1)  167/    927C :                     ;
-(1)  168/    927C :                     ;	Terms can be:
-(1)  169/    927C :                     ;
-(1)  170/    927C :                     ;		A numeric constant (e.g. "46")
-(1)  171/    927C :                     ;		A parenthesised expression ( (5+2) )
-(1)  172/    927C :                     ;		An array expression :42)
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 12 - 12/6/2015 19:40:15
+(1)  117/    9240 : (MACRO)             	lpi 	p3,VariableBase+('%' & 0x3F) * 2					; point to the '%' variable.
+(1)  117/    9240 : C4 0D                       ldi     (VARIABLEBASE+('%' & 0X3F) * 2) / 256
+(1)  117/    9242 : 37                          xpah    P3
+(1)  117/    9243 : C4 4A                       ldi     (VARIABLEBASE+('%' & 0X3F) * 2) & 255
+(1)  117/    9245 : 33                          xpal    P3
+(1)  118/    9246 : C2 FE               	ld 		-2(p2) 												; copy remainder to % variable
+(1)  119/    9248 : CB 00               	st 		(p3)
+(1)  120/    924A : C2 FF               	ld 		-1(p2)
+(1)  121/    924C : CB 01               	st 		1(p3)
+(1)  122/    924E :                     __EXTermOkay2:
+(1)  123/    924E : 90 A6               	jmp 	__EXTermOkay 										; loop round to get the next operator.
+(1)  124/    9250 :                     ;
+(1)  125/    9250 :                     ;	Do the comparison in E (yields 1 or 0)
+(1)  126/    9250 :                     ;
+(1)  127/    9250 :                     __EXDoCompare:
+(1)  128/    9250 : C2 02               	ld 		2(p2) 												; do the subtraction comparison
+(1)  129/    9252 : 03                  	scl
+(1)  130/    9253 : FA 00               	cad 	0(p2)
+(1)  131/    9255 : CA 00               	st 		0(p2)
+(1)  132/    9257 : C2 03               	ld 		3(p2)
+(1)  133/    9259 : FA 01               	cad 	1(p2)
+(1)  134/    925B : DA 00               	or 		0(p2)												; A = 0 if equal
+(1)  135/    925D : 37                  	xpah 	p3 													; save temporarily in P3.H
+(1)  136/    925E : C4 00               	ldi 	0
+(1)  137/    9260 : CA 02               	st 		2(p2)												; zero the result. 
+(1)  138/    9262 : CA 03               	st 		3(p2)
+(1)  139/    9264 : C6 02               	ld 		@2(p2) 												; drop the 2nd value off the stack.
+(1)  140/    9266 : 40                  	lde 														; check for < 
+(1)  141/    9267 : E4 3C               	xri 	'<'	
+(1)  142/    9269 : 98 13               	jz 		__EXLessThan
+(1)  143/    926B : E4 01               	xri 	'<'!'='												; check for =
+(1)  144/    926D : 98 0A               	jz 		__EXEquals
+(1)  145/    926F :                     
+(1)  146/    926F : 37                  	xpah 	p3 													; greater than test
+(1)  147/    9270 : 98 DC               	jz 		__EXTermOkay2 										; if equal then it is false.
+(1)  148/    9272 : 06                  	csa 														; for >= requires carry set
+(1)  149/    9273 : 94 D9               	jp 		__EXTermOkay2 										; exit if clear.
+(1)  150/    9275 :                     __EXReturnTrue:
+(1)  151/    9275 : AA 00               	ild 	0(p2) 												; return 1 rather than 0.
+(1)  152/    9277 : 90 D5               	jmp 	__EXTermOkay2
+(1)  153/    9279 :                     
+(1)  154/    9279 :                     __EXEquals:														; equal test
+(1)  155/    9279 : 37                  	xpah 	p3 													; get zero test.
+(1)  156/    927A : 98 F9               	jz 		__EXReturnTrue										; if zero, return 1.
+(1)  157/    927C : 90 D0               	jmp 	__EXTermOkay2
+(1)  158/    927E :                     
+(1)  159/    927E :                     __EXLessThan:													; < test
+(1)  160/    927E : 06                  	csa 														; look at carry
+(1)  161/    927F : 94 F4               	jp 		__EXReturnTrue										; if carry clear then <
+(1)  162/    9281 : 90 CB               	jmp 	__EXTermOkay2 										; pop and continue.
+(1)  163/    9283 :                     
+(1)  164/    9283 :                     
+(1)  165/    9283 :                     	endsection EvaluateExpression
+(1)  166/    9283 :                     
+(1)  167/    9283 :                     ; ****************************************************************************************************************
+(1)  168/    9283 :                     ; ****************************************************************************************************************
+(1)  169/    9283 :                     ;
+(1)  170/    9283 :                     ;					Evaluate a single term from P1 and push it on the stack. CY/L set on error
+(1)  171/    9283 :                     ;
+(1)  172/    9283 :                     ;	Terms can be:
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 12 - 12/7/2015 19:42:52
 
 
-(1)  173/    927C :                     ;		A system variable (?)
-(1)  174/    927C :                     ;		A variable (all other values 32-95)
-(1)  175/    927C :                     ;
-(1)  176/    927C :                     ;	Registers are unchanged except P1, which points to the erroneous character, or the next character.
-(1)  177/    927C :                     ;
-(1)  178/    927C :                     ; ****************************************************************************************************************
-(1)  179/    927C :                     ; ****************************************************************************************************************
-(1)  180/    927C :                     
-(1)  181/    927C :                     EvaluateTerm:
-(1)  182/    927C :                     
-(1)  183/    927C :                     	section EvaluateTerm
-(1)  184/    927C :                     
-(1)  185/    927C : =0x4                EVTermResult = 4 												; offset in stack to result.
-(1)  186/    927C :                     
-(1)  187/    927C : CE FD               	st 		@-3(p2) 											; save A, reserving room for the result.
-(1)  188/    927E : 40                  	lde 														; save E
-(1)  189/    927F : CE FF               	st 		@-1(p2) 	
-(1)  190/    9281 : 37                  	xpah 	p3 													; save P3
-(1)  191/    9282 : CE FF               	st 		@-1(p2)
-(1)  192/    9284 : 33                  	xpal	p3
-(1)  193/    9285 : CE FF               	st 		@-1(p2)
-(1)  194/    9287 :                     
-(1)  195/    9287 : C4 00               	ldi 	0 													; blank the result on the stack
-(1)  196/    9289 : CA 04               	st 		EVTermResult(p2) 									; not strictly necessary :)
-(1)  197/    928B : CA 05               	st 		EVTermResult+1(p2)
-(1)  198/    928D : 90 02               	jmp 	__ETFindTerm
-(1)  199/    928F :                     
-(1)  200/    928F :                     __ETSkipSpace:
-(1)  201/    928F : C5 01               	ld 		@1(p1) 												; bump P1
-(1)  202/    9291 :                     __ETFindTerm:
-(1)  203/    9291 : C1 00               	ld 		(p1) 												; read the first term character
-(1)  204/    9293 : 03                  	scl
-(1)  205/    9294 : FC 20               	cai 	32													; if space, skip over it and try again.
-(1)  206/    9296 : 98 F7               	jz 		__ETSkipSpace
-(1)  207/    9298 : D4 C0               	ani 	0xC0												; should be in range 00-3F to be 32-95 (legal chars)
+(1)  173/    9283 :                     ;
+(1)  174/    9283 :                     ;		A numeric constant (e.g. "46")
+(1)  175/    9283 :                     ;		A parenthesised expression ( (5+2) )
+(1)  176/    9283 :                     ;		An array expression :42)
+(1)  177/    9283 :                     ;		A system variable (e.g. $ or ?)
+(1)  178/    9283 :                     ;		A variable (all other values 32-95)
+(1)  179/    9283 :                     ;
+(1)  180/    9283 :                     ;	Registers are unchanged except P1, which points to the erroneous character, or the next character.
+(1)  181/    9283 :                     ;
+(1)  182/    9283 :                     ; ****************************************************************************************************************
+(1)  183/    9283 :                     ; ****************************************************************************************************************
+(1)  184/    9283 :                     
+(1)  185/    9283 :                     EvaluateTerm:
+(1)  186/    9283 :                     
+(1)  187/    9283 :                     	section EvaluateTerm
+(1)  188/    9283 :                     
+(1)  189/    9283 : =0x4                EVTermResult = 4 												; offset in stack to result.
+(1)  190/    9283 :                     
+(1)  191/    9283 : CE FD               	st 		@-3(p2) 											; save A, reserving room for the result.
+(1)  192/    9285 : 40                  	lde 														; save E
+(1)  193/    9286 : CE FF               	st 		@-1(p2) 	
+(1)  194/    9288 : 37                  	xpah 	p3 													; save P3
+(1)  195/    9289 : CE FF               	st 		@-1(p2)
+(1)  196/    928B : 33                  	xpal	p3
+(1)  197/    928C : CE FF               	st 		@-1(p2)
+(1)  198/    928E :                     
+(1)  199/    928E : C4 00               	ldi 	0 													; blank the result on the stack
+(1)  200/    9290 : CA 04               	st 		EVTermResult(p2) 									; not strictly necessary :)
+(1)  201/    9292 : CA 05               	st 		EVTermResult+1(p2)
+(1)  202/    9294 : 90 02               	jmp 	__ETFindTerm
+(1)  203/    9296 :                     
+(1)  204/    9296 :                     __ETSkipSpace:
+(1)  205/    9296 : C5 01               	ld 		@1(p1) 												; bump P1
+(1)  206/    9298 :                     __ETFindTerm:
+(1)  207/    9298 : C1 00               	ld 		(p1) 												; read the first term character
 (1)  208/    929A : 03                  	scl
-(1)  209/    929B : 9C 1D               	jnz 	__ETExit 											; if not, exit with error.
-(1)  210/    929D :                     
-(1)  211/    929D : C1 00               	ld 		(p1) 												; read term first character again
-(1)  212/    929F : 03                  	scl
-(1)  213/    92A0 : FC 3A               	cai 	'9'+1 												; if >= '9' will be +ve
-(1)  214/    92A2 : 94 24               	jp 		__ETTermNotConstant
-(1)  215/    92A4 : F4 8A               	adi 	128+10 												; if < '0' will be +ve
-(1)  216/    92A6 : 94 20               	jp 		__ETTermNotConstant
-(1)  217/    92A8 :                     ;
-(1)  218/    92A8 :                     ;	Term is an ASCII Constant
-(1)  219/    92A8 :                     ;
-(1)  220/    92A8 : (MACRO)             	lpi 	p3,MathLibrary-1 									; use Math library to convert to integer.
-(1)  220/    92A8 : C4 00                       ldi     (MATHLIBRARY-1) / 256
-(1)  220/    92AA : 37                          xpah    P3
-(1)  220/    92AB : C4 02                       ldi     (MATHLIBRARY-1) & 255
-(1)  220/    92AD : 33                          xpal    P3
-(1)  221/    92AE : C4 3F               	ldi 	'?'													; function ASCII->Int, cannot fail as first digit numeric
-(1)  222/    92B0 : 3F                  	xppc 	p3
-(1)  223/    92B1 :                     ;
-(1)  224/    92B1 :                     ;	Result on TOS - have to reposition past the stacked SC/MP registers.
-(1)  225/    92B1 :                     ;
-(1)  226/    92B1 :                     __ETSucceed:
-(1)  227/    92B1 : C6 01               	ld 		@1(p2)												; put result in its proper place
-(1)  228/    92B3 : CA 05               	st 		EVTermResult+1(p2) 									; unstacking TOS.
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 13 - 12/6/2015 19:40:15
+(1)  209/    929B : FC 20               	cai 	32													; if space, skip over it and try again.
+(1)  210/    929D : 98 F7               	jz 		__ETSkipSpace
+(1)  211/    929F : D4 C0               	ani 	0xC0												; should be in range 00-3F to be 32-95 (legal chars)
+(1)  212/    92A1 : 03                  	scl
+(1)  213/    92A2 : 9C 1D               	jnz 	__ETExit 											; if not, exit with error.
+(1)  214/    92A4 :                     
+(1)  215/    92A4 : C1 00               	ld 		(p1) 												; read term first character again
+(1)  216/    92A6 : 03                  	scl
+(1)  217/    92A7 : FC 3A               	cai 	'9'+1 												; if >= '9' will be +ve
+(1)  218/    92A9 : 94 24               	jp 		__ETTermNotConstant
+(1)  219/    92AB : F4 8A               	adi 	128+10 												; if < '0' will be +ve
+(1)  220/    92AD : 94 20               	jp 		__ETTermNotConstant
+(1)  221/    92AF :                     ;
+(1)  222/    92AF :                     ;	Term is an ASCII Constant
+(1)  223/    92AF :                     ;
+(1)  224/    92AF : (MACRO)             	lpi 	p3,MathLibrary-1 									; use Math library to convert to integer.
+(1)  224/    92AF : C4 00                       ldi     (MATHLIBRARY-1) / 256
+(1)  224/    92B1 : 37                          xpah    P3
+(1)  224/    92B2 : C4 02                       ldi     (MATHLIBRARY-1) & 255
+(1)  224/    92B4 : 33                          xpal    P3
+(1)  225/    92B5 : C4 3F               	ldi 	'?'													; function ASCII->Int, cannot fail as first digit numeric
+(1)  226/    92B7 : 3F                  	xppc 	p3
+(1)  227/    92B8 :                     ;
+(1)  228/    92B8 :                     ;	Result on TOS - have to reposition past the stacked SC/MP registers.
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 13 - 12/7/2015 19:42:52
 
 
-(1)  229/    92B5 : C6 01               	ld 		@1(p2)
-(1)  230/    92B7 : CA 05               	st 		EVTermResult+1(p2)
-(1)  231/    92B9 :                     __ETCCLAndExit:
-(1)  232/    92B9 : 02                  	ccl 														; clear carry indicating success
-(1)  233/    92BA :                     __ETExit:
-(1)  234/    92BA : C6 01               	ld 		@1(p2) 												; restore P3
-(1)  235/    92BC : 33                  	xpal 	p3
-(1)  236/    92BD : C6 01               	ld 		@1(p2)
-(1)  237/    92BF : 37                  	xpah 	p3
-(1)  238/    92C0 : C6 01               	ld 		@1(p2) 												; restore E
-(1)  239/    92C2 : 01                  	xae
-(1)  240/    92C3 : C6 01               	ld 		@1(p2) 												; restore A, leaving the result on the tack
-(1)  241/    92C5 : 3F                  	xppc 	p3 													; return
-(1)  242/    92C6 : 90 B4               	jmp 	EvaluateTerm 										; make re-entrant
-(1)  243/    92C8 :                     ;
-(1)  244/    92C8 :                     ;	P1 still points to first non space, which is in range 33-95. It is not a numeric character.
-(1)  245/    92C8 :                     ;
-(1)  246/    92C8 :                     __ETTermNotConstant:
-(1)  247/    92C8 :                     
-(1)  248/    92C8 : C1 00               	ld 		(p1) 												; read character
-(1)  249/    92CA : E4 3A               	xri 	':'													; array check ?
-(1)  250/    92CC : 98 2E               	jz 		__ETIsParenType 					
-(1)  251/    92CE : E4 12               	xri 	':'!'('												; parenthesis check ?
-(1)  252/    92D0 : 98 2A               	jz 		__ETIsParenType
-(1)  253/    92D2 :                     ;
-(1)  254/    92D2 :                     ;	System variable checks.
-(1)  255/    92D2 :                     ;
-(1)  256/    92D2 : (MACRO)             	lpi 	p3,TermSystemVariableCheck-1 						; this routine checks for system variables.
-(1)  256/    92D2 : C4 93                       ldi     (TERMSYSTEMVARIABLECHECK-1) / 256
-(1)  256/    92D4 : 37                          xpah    P3
-(1)  256/    92D5 : C4 47                       ldi     (TERMSYSTEMVARIABLECHECK-1) & 255
-(1)  256/    92D7 : 33                          xpal    P3
-(1)  257/    92D8 : C5 01               	ld 		@1(p1)												; read the variable name and bump, finally.
-(1)  258/    92DA : 3F                  	xppc 	p3 													; call it
-(1)  259/    92DB : 06                  	csa 														; if CY/L is clear, this has done the work.
-(1)  260/    92DC : 94 D3               	jp 		__ETSucceed 										; and the result is on the stack, so process it.
-(1)  261/    92DE : C6 02               	ld 		@2(p2) 												; throw away the saved value
-(1)  262/    92E0 :                     ;
-(1)  263/    92E0 :                     ;	Okay, finally we think it's just a normal variable. We copy it in, don't bother shoving it on the stack.
-(1)  264/    92E0 :                     ;
-(1)  265/    92E0 : C1 FF               	ld 		-1(p1) 												; read the variable name and skip over it
-(1)  266/    92E2 : 02                  	ccl
-(1)  267/    92E3 : F1 FF               	add 	-1(p1) 												; double it.
-(1)  268/    92E5 : D4 7E               	ani 	0x7E 												; arrangement is 6 bit ASCII, this is 3F x 2
-(1)  269/    92E7 : 33                  	xpal 	p3
-(1)  270/    92E8 : C4 0D               	ldi 	VariableBase/256 									; point P3 to the variables
-(1)  271/    92EA : 37                  	xpah 	p3
-(1)  272/    92EB : C7 01               	ld 		@1(p3) 												; read low 
-(1)  273/    92ED : CA 04               	st 		EVTermResult(p2) 									; copy to stack space
-(1)  274/    92EF : C3 00               	ld 		(p3) 												; same for high
-(1)  275/    92F1 : CA 05               	st 		EVTermResult+1(p2)
-(1)  276/    92F3 : 90 C4               	jmp 	__ETCCLAndExit 										; clear carry and exit.
-(1)  277/    92F5 :                     
-(1)  278/    92F5 :                     __ETSucceed2:													; allows extended jump from end of array code.
-(1)  279/    92F5 : 90 BA               	jmp 	__ETSucceed
-(1)  280/    92F7 :                     
-(1)  281/    92F7 :                     __ETFailParen:
-(1)  282/    92F7 : C6 02               	ld 		@2(p2) 												; throw away the index value as error
-(1)  283/    92F9 : 03                  	scl
-(1)  284/    92FA : 90 BE               	jmp 	__ETExit 											; and exit with failure.
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 14 - 12/6/2015 19:40:15
+(1)  229/    92B8 :                     ;
+(1)  230/    92B8 :                     __ETSucceed:
+(1)  231/    92B8 : C6 01               	ld 		@1(p2)												; put result in its proper place
+(1)  232/    92BA : CA 05               	st 		EVTermResult+1(p2) 									; unstacking TOS.
+(1)  233/    92BC : C6 01               	ld 		@1(p2)
+(1)  234/    92BE : CA 05               	st 		EVTermResult+1(p2)
+(1)  235/    92C0 :                     __ETCCLAndExit:
+(1)  236/    92C0 : 02                  	ccl 														; clear carry indicating success
+(1)  237/    92C1 :                     __ETExit:
+(1)  238/    92C1 : C6 01               	ld 		@1(p2) 												; restore P3
+(1)  239/    92C3 : 33                  	xpal 	p3
+(1)  240/    92C4 : C6 01               	ld 		@1(p2)
+(1)  241/    92C6 : 37                  	xpah 	p3
+(1)  242/    92C7 : C6 01               	ld 		@1(p2) 												; restore E
+(1)  243/    92C9 : 01                  	xae
+(1)  244/    92CA : C6 01               	ld 		@1(p2) 												; restore A, leaving the result on the tack
+(1)  245/    92CC : 3F                  	xppc 	p3 													; return
+(1)  246/    92CD : 90 B4               	jmp 	EvaluateTerm 										; make re-entrant
+(1)  247/    92CF :                     ;
+(1)  248/    92CF :                     ;	P1 still points to first non space, which is in range 33-95. It is not a numeric character.
+(1)  249/    92CF :                     ;
+(1)  250/    92CF :                     __ETTermNotConstant:
+(1)  251/    92CF :                     
+(1)  252/    92CF : C1 00               	ld 		(p1) 												; read character
+(1)  253/    92D1 : E4 3A               	xri 	':'													; array check ?
+(1)  254/    92D3 : 98 2E               	jz 		__ETIsParenType 					
+(1)  255/    92D5 : E4 12               	xri 	':'!'('												; parenthesis check ?
+(1)  256/    92D7 : 98 2A               	jz 		__ETIsParenType
+(1)  257/    92D9 :                     ;
+(1)  258/    92D9 :                     ;	System variable checks.
+(1)  259/    92D9 :                     ;
+(1)  260/    92D9 : (MACRO)             	lpi 	p3,TermSystemVariableCheck-1 						; this routine checks for system variables.
+(1)  260/    92D9 : C4 93                       ldi     (TERMSYSTEMVARIABLECHECK-1) / 256
+(1)  260/    92DB : 37                          xpah    P3
+(1)  260/    92DC : C4 4E                       ldi     (TERMSYSTEMVARIABLECHECK-1) & 255
+(1)  260/    92DE : 33                          xpal    P3
+(1)  261/    92DF : C5 01               	ld 		@1(p1)												; read the variable name and bump, finally.
+(1)  262/    92E1 : 3F                  	xppc 	p3 													; call it
+(1)  263/    92E2 : 06                  	csa 														; if CY/L is clear, this has done the work.
+(1)  264/    92E3 : 94 D3               	jp 		__ETSucceed 										; and the result is on the stack, so process it.
+(1)  265/    92E5 : C6 02               	ld 		@2(p2) 												; throw away the saved value
+(1)  266/    92E7 :                     ;
+(1)  267/    92E7 :                     ;	Okay, finally we think it's just a normal variable. We copy it in, don't bother shoving it on the stack.
+(1)  268/    92E7 :                     ;
+(1)  269/    92E7 : C1 FF               	ld 		-1(p1) 												; read the variable name and skip over it
+(1)  270/    92E9 : 02                  	ccl
+(1)  271/    92EA : F1 FF               	add 	-1(p1) 												; double it.
+(1)  272/    92EC : D4 7E               	ani 	0x7E 												; arrangement is 6 bit ASCII, this is 3F x 2
+(1)  273/    92EE : 33                  	xpal 	p3
+(1)  274/    92EF : C4 0D               	ldi 	VariableBase/256 									; point P3 to the variables
+(1)  275/    92F1 : 37                  	xpah 	p3
+(1)  276/    92F2 : C7 01               	ld 		@1(p3) 												; read low 
+(1)  277/    92F4 : CA 04               	st 		EVTermResult(p2) 									; copy to stack space
+(1)  278/    92F6 : C3 00               	ld 		(p3) 												; same for high
+(1)  279/    92F8 : CA 05               	st 		EVTermResult+1(p2)
+(1)  280/    92FA : 90 C4               	jmp 	__ETCCLAndExit 										; clear carry and exit.
+(1)  281/    92FC :                     
+(1)  282/    92FC :                     __ETSucceed2:													; allows extended jump from end of array code.
+(1)  283/    92FC : 90 BA               	jmp 	__ETSucceed
+(1)  284/    92FE :                     
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 14 - 12/7/2015 19:42:52
 
 
-(1)  285/    92FC :                     ;
-(1)  286/    92FC :                     ;	Parenthesis (expr) or Array :expr)
-(1)  287/    92FC :                     ;
-(1)  288/    92FC :                     __ETIsParenType:
-(1)  289/    92FC : C5 01               	ld 		@1(p1) 												; read the type and save in E so we know what it was.
-(1)  290/    92FE : 01                  	xae
-(1)  291/    92FF : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate the sub-expression.
-(1)  291/    92FF : C4 91                       ldi     (EVALUATEEXPRESSION-1) / 256
-(1)  291/    9301 : 37                          xpah    P3
-(1)  291/    9302 : C4 C1                       ldi     (EVALUATEEXPRESSION-1) & 255
-(1)  291/    9304 : 33                          xpal    P3
-(1)  292/    9305 : 3F                  	xppc 	p3 
-(1)  293/    9306 : 06                  	csa 														; if carry set, error occurred
-(1)  294/    9307 : D4 80               	ani 	0x80
-(1)  295/    9309 : 9C AF               	jnz 	__ETExit
-(1)  296/    930B :                     ;
-(1)  297/    930B :                     ;	Look for )
-(1)  298/    930B :                     ;
-(1)  299/    930B :                     __ETFindClosure:
-(1)  300/    930B : C1 00               	ld 		(p1) 												; what's next ?
-(1)  301/    930D : 98 E8               	jz 		__ETFailParen 										; if nothing, exit with fail (end of string)
-(1)  302/    930F : C5 01               	ld 		@1(p1) 												; read it with bumping
-(1)  303/    9311 : E4 20               	xri 	' ' 												; is it a space character ?
-(1)  304/    9313 : 98 F6               	jz 		__ETFindClosure 									; if so, try the next one.
-(1)  305/    9315 : E4 09               	xri 	' '!')'												; check it was close brackets ?
-(1)  306/    9317 : 9C DE               	jnz 	__ETFailParen 										; if not, exit with fail as both end in close bracket.
-(1)  307/    9319 :                     
-(1)  308/    9319 : 40                  	lde 														; was it :nnn) or (nnn)
-(1)  309/    931A : E4 28               	xri 	'('
-(1)  310/    931C : 98 93               	jz 		__ETSucceed 										; if '(' exit with value on TOS.
-(1)  311/    931E :                     ;
-(1)  312/    931E :                     ;	Now it is array type e.g. :expr) so we have to do the array lookup.
-(1)  313/    931E :                     ;
-(1)  314/    931E : 02                  	ccl 														; otherwise, it's an array reference.
-(1)  315/    931F : C2 00               	ld 		0(p2)  												; double TOS as it is word orientated
-(1)  316/    9321 : F2 00               	add 	0(p2)
-(1)  317/    9323 : CA 00               	st 		0(p2)
-(1)  318/    9325 : C2 01               	ld 		1(p2)
-(1)  319/    9327 : F2 01               	add 	1(p2)
-(1)  320/    9329 : CA 01               	st 		1(p2) 												; p2 is now double the index.
-(1)  321/    932B : C4 0D               	ldi 	VariableBase/256 									; point P3 to the program last byte variable (&)
-(1)  322/    932D : 37                  	xpah 	p3
-(1)  323/    932E : C4 4C               	ldi 	('&' & 0x3F) * 2
-(1)  324/    9330 : 33                  	xpal 	p3 
-(1)  325/    9331 : 02                  	ccl
-(1)  326/    9332 : C2 00               	ld 		0(p2)												; get offset
-(1)  327/    9334 : F3 00               	add 	0(p3) 												; add top of program memory
-(1)  328/    9336 : 01                  	xae 														; put in E temporarily
-(1)  329/    9337 : C2 01               	ld 		1(p2) 												; repeat for MSB
-(1)  330/    9339 : F3 01               	add 	1(p3)
-(1)  331/    933B : 37                  	xpah 	p3 													; put in P3.H
-(1)  332/    933C : 40                  	lde 														; get E temporary
-(1)  333/    933D : 33                  	xpal 	p3 													; put in P3.L - P3 now the address to access
-(1)  334/    933E : C3 00               	ld 		0(p3) 												; so access it
-(1)  335/    9340 : CA 00               	st 		0(p2)												; and override the array index
-(1)  336/    9342 : C3 01               	ld 		1(p3)
-(1)  337/    9344 : CA 01               	st 		1(p2) 
-(1)  338/    9346 : 90 AD               	jmp 	__ETSucceed2 										; and we are done.
-(1)  339/    9348 :                     
-(1)  340/    9348 :                     	endsection EvaluateTerm
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 15 - 12/6/2015 19:40:15
+(1)  285/    92FE :                     __ETFailParen:
+(1)  286/    92FE : C6 02               	ld 		@2(p2) 												; throw away the index value as error
+(1)  287/    9300 : 03                  	scl
+(1)  288/    9301 : 90 BE               	jmp 	__ETExit 											; and exit with failure.
+(1)  289/    9303 :                     ;
+(1)  290/    9303 :                     ;	Parenthesis (expr) or Array :expr)
+(1)  291/    9303 :                     ;
+(1)  292/    9303 :                     __ETIsParenType:
+(1)  293/    9303 : C5 01               	ld 		@1(p1) 												; read the type and save in E so we know what it was.
+(1)  294/    9305 : 01                  	xae
+(1)  295/    9306 : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate the sub-expression.
+(1)  295/    9306 : C4 91                       ldi     (EVALUATEEXPRESSION-1) / 256
+(1)  295/    9308 : 37                          xpah    P3
+(1)  295/    9309 : C4 C1                       ldi     (EVALUATEEXPRESSION-1) & 255
+(1)  295/    930B : 33                          xpal    P3
+(1)  296/    930C : 3F                  	xppc 	p3 
+(1)  297/    930D : 06                  	csa 														; if carry set, error occurred
+(1)  298/    930E : D4 80               	ani 	0x80
+(1)  299/    9310 : 9C AF               	jnz 	__ETExit
+(1)  300/    9312 :                     ;
+(1)  301/    9312 :                     ;	Look for )
+(1)  302/    9312 :                     ;
+(1)  303/    9312 :                     __ETFindClosure:
+(1)  304/    9312 : C1 00               	ld 		(p1) 												; what's next ?
+(1)  305/    9314 : 98 E8               	jz 		__ETFailParen 										; if nothing, exit with fail (end of string)
+(1)  306/    9316 : C5 01               	ld 		@1(p1) 												; read it with bumping
+(1)  307/    9318 : E4 20               	xri 	' ' 												; is it a space character ?
+(1)  308/    931A : 98 F6               	jz 		__ETFindClosure 									; if so, try the next one.
+(1)  309/    931C : E4 09               	xri 	' '!')'												; check it was close brackets ?
+(1)  310/    931E : 9C DE               	jnz 	__ETFailParen 										; if not, exit with fail as both end in close bracket.
+(1)  311/    9320 :                     
+(1)  312/    9320 : 40                  	lde 														; was it :nnn) or (nnn)
+(1)  313/    9321 : E4 28               	xri 	'('
+(1)  314/    9323 : 98 93               	jz 		__ETSucceed 										; if '(' exit with value on TOS.
+(1)  315/    9325 :                     ;
+(1)  316/    9325 :                     ;	Now it is array type e.g. :expr) so we have to do the array lookup.
+(1)  317/    9325 :                     ;
+(1)  318/    9325 : 02                  	ccl 														; otherwise, it's an array reference.
+(1)  319/    9326 : C2 00               	ld 		0(p2)  												; double TOS as it is word orientated
+(1)  320/    9328 : F2 00               	add 	0(p2)
+(1)  321/    932A : CA 00               	st 		0(p2)
+(1)  322/    932C : C2 01               	ld 		1(p2)
+(1)  323/    932E : F2 01               	add 	1(p2)
+(1)  324/    9330 : CA 01               	st 		1(p2) 												; p2 is now double the index.
+(1)  325/    9332 : C4 0D               	ldi 	VariableBase/256 									; point P3 to the program last byte variable (&)
+(1)  326/    9334 : 37                  	xpah 	p3
+(1)  327/    9335 : C4 4C               	ldi 	('&' & 0x3F) * 2
+(1)  328/    9337 : 33                  	xpal 	p3 
+(1)  329/    9338 : 02                  	ccl
+(1)  330/    9339 : C2 00               	ld 		0(p2)												; get offset
+(1)  331/    933B : F3 00               	add 	0(p3) 												; add top of program memory
+(1)  332/    933D : 01                  	xae 														; put in E temporarily
+(1)  333/    933E : C2 01               	ld 		1(p2) 												; repeat for MSB
+(1)  334/    9340 : F3 01               	add 	1(p3)
+(1)  335/    9342 : 37                  	xpah 	p3 													; put in P3.H
+(1)  336/    9343 : 40                  	lde 														; get E temporary
+(1)  337/    9344 : 33                  	xpal 	p3 													; put in P3.L - P3 now the address to access
+(1)  338/    9345 : C3 00               	ld 		0(p3) 												; so access it
+(1)  339/    9347 : CA 00               	st 		0(p2)												; and override the array index
+(1)  340/    9349 : C3 01               	ld 		1(p3)
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 15 - 12/7/2015 19:42:52
 
 
-(1)  341/    9348 :                     
-(1)  342/    9348 :                     ; ****************************************************************************************************************
-(1)  343/    9348 :                     ; ****************************************************************************************************************
-(1)  344/    9348 :                     ;
-(1)  345/    9348 :                     ;		A is a variable whose value has been requested. Returns single value. This is used for non
-(1)  346/    9348 :                     ;		standard variables, things like $ and ? which have side-effects.
-(1)  347/    9348 :                     ;
-(1)  348/    9348 :                     ;		If legitimate value return CY/L = 0, else return CY/L = 1
-(1)  349/    9348 :                     ;
-(1)  350/    9348 :                     ; ****************************************************************************************************************
-(1)  351/    9348 :                     ; ****************************************************************************************************************
-(1)  352/    9348 :                     
-(1)  353/    9348 :                     TermSystemVariableCheck:
-(1)  354/    9348 : 37                  	xpah 	p3													; save P3 preserving A, reserve space for result.
-(1)  355/    9349 : CE FD               	st 		@-3(p2)
-(1)  356/    934B : 33                  	xpal 	p3
-(1)  357/    934C : CE FF               	st 		@-1(p2)
-(1)  358/    934E :                     
-(1)  359/    934E : 37                  	xpah 	p3 													; get system variable back.
+(1)  341/    934B : CA 01               	st 		1(p2) 
+(1)  342/    934D : 90 AD               	jmp 	__ETSucceed2 										; and we are done.
+(1)  343/    934F :                     
+(1)  344/    934F :                     	endsection EvaluateTerm
+(1)  345/    934F :                     
+(1)  346/    934F :                     ; ****************************************************************************************************************
+(1)  347/    934F :                     ; ****************************************************************************************************************
+(1)  348/    934F :                     ;
+(1)  349/    934F :                     ;		A is a variable whose value has been requested. Returns single value. This is used for non
+(1)  350/    934F :                     ;		standard variables, things like $ and ? which have side-effects.
+(1)  351/    934F :                     ;
+(1)  352/    934F :                     ;		If legitimate value return CY/L = 0, else return CY/L = 1
+(1)  353/    934F :                     ;
+(1)  354/    934F :                     ; ****************************************************************************************************************
+(1)  355/    934F :                     ; ****************************************************************************************************************
+(1)  356/    934F :                     
+(1)  357/    934F :                     TermSystemVariableCheck:
+(1)  358/    934F :                     
+(1)  359/    934F :                     	section ReadSystemVariables
 (1)  360/    934F :                     
-(1)  361/    934F : E4 24               	xri 	'$'													; $ as a term reads a keystroke.
-(1)  362/    9351 : 98 0C               	jz 		__TSVCGetCharacter
-(1)  363/    9353 : E4 1B               	xri 	'$'!'?'												; ? reads a keyboard line in and evaluates it.
-(1)  364/    9355 : 98 18               	jz 		__TSVCGetNumber
-(1)  365/    9357 : 03                  	scl 														; fail - set CY/L and just restore P3 and exit
-(1)  366/    9358 :                     __TSVCExit:
-(1)  367/    9358 : C6 01               	ld 		@1(p2)
-(1)  368/    935A : 33                  	xpal 	p3
-(1)  369/    935B : C6 01               	ld 		@1(p2)
-(1)  370/    935D : 37                  	xpah 	p3
-(1)  371/    935E : 3F                  	xppc	p3 													; doesn't need to be re-entrant
-(1)  372/    935F :                     ;
-(1)  373/    935F :                     ;	$ (read character ASCII code)
-(1)  374/    935F :                     ;
-(1)  375/    935F :                     __TSVCGetCharacter:
-(1)  376/    935F : (MACRO)             	lpi 	p3,GetChar-1 										; get a character
-(1)  376/    935F : C4 91                       ldi     (GETCHAR-1) / 256
-(1)  376/    9361 : 37                          xpah    P3
-(1)  376/    9362 : C4 35                       ldi     (GETCHAR-1) & 255
-(1)  376/    9364 : 33                          xpal    P3
-(1)  377/    9365 : 3F                  	xppc 	p3 													; from the keyboard.
-(1)  378/    9366 : CA 02               	st 		2(p2) 												; put on stack in return slot
-(1)  379/    9368 : C4 00               	ldi 	0
-(1)  380/    936A : CA 03               	st 		3(p2) 												; clear MSB of answer.
-(1)  381/    936C : 02                  	ccl 														; mark as done
-(1)  382/    936D : 90 E9               	jmp 	__TSVCExit 											; and exit.
-(1)  383/    936F :                     ;
-(1)  384/    936F :                     ;	? (read keyboard line in and evaluate it)
-(1)  385/    936F :                     ;
-(1)  386/    936F :                     __TSVCGetNumber:
-(1)  387/    936F : 35                  	xpah 	p1 													; save P1 on the stack
-(1)  388/    9370 : CE FF               	st 		@-1(p2)
-(1)  389/    9372 : 31                  	xpal 	p1
-(1)  390/    9373 : CE FF               	st 		@-1(p2)
-(1)  391/    9375 : (MACRO)             	lpi 	p1,KeyboardBuffer 									; P1 points to keyboard buffer
-(1)  391/    9375 : C4 0C                       ldi     (KEYBOARDBUFFER) / 256
-(1)  391/    9377 : 35                          xpah    P1
-(1)  391/    9378 : C4 90                       ldi     (KEYBOARDBUFFER) & 255
-(1)  391/    937A : 31                          xpal    P1
-(1)  392/    937B : (MACRO)             	lpi 	p3,GetString-1 										; P3 points to string read function
- AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 16 - 12/6/2015 19:40:15
+(1)  361/    934F : 37                  	xpah 	p3													; save P3 preserving A, reserve space for result.
+(1)  362/    9350 : CE FD               	st 		@-3(p2)
+(1)  363/    9352 : 33                  	xpal 	p3
+(1)  364/    9353 : CE FF               	st 		@-1(p2)
+(1)  365/    9355 :                     
+(1)  366/    9355 : 37                  	xpah 	p3 													; get system variable back.
+(1)  367/    9356 :                     
+(1)  368/    9356 : E4 24               	xri 	'$'													; $ as a term reads a keystroke.
+(1)  369/    9358 : 98 0C               	jz 		__TSVCGetCharacter
+(1)  370/    935A : E4 1B               	xri 	'$'!'?'												; ? reads a keyboard line in and evaluates it.
+(1)  371/    935C : 98 18               	jz 		__TSVCGetNumber
+(1)  372/    935E : 03                  	scl 														; fail - set CY/L and just restore P3 and exit
+(1)  373/    935F :                     __TSVCExit:
+(1)  374/    935F : C6 01               	ld 		@1(p2)
+(1)  375/    9361 : 33                  	xpal 	p3
+(1)  376/    9362 : C6 01               	ld 		@1(p2)
+(1)  377/    9364 : 37                  	xpah 	p3
+(1)  378/    9365 : 3F                  	xppc	p3 													; doesn't need to be re-entrant
+(1)  379/    9366 :                     ;
+(1)  380/    9366 :                     ;	$ (read character ASCII code)
+(1)  381/    9366 :                     ;
+(1)  382/    9366 :                     __TSVCGetCharacter:
+(1)  383/    9366 : (MACRO)             	lpi 	p3,GetChar-1 										; get a character
+(1)  383/    9366 : C4 91                       ldi     (GETCHAR-1) / 256
+(1)  383/    9368 : 37                          xpah    P3
+(1)  383/    9369 : C4 35                       ldi     (GETCHAR-1) & 255
+(1)  383/    936B : 33                          xpal    P3
+(1)  384/    936C : 3F                  	xppc 	p3 													; from the keyboard.
+(1)  385/    936D : CA 02               	st 		2(p2) 												; put on stack in return slot
+(1)  386/    936F : C4 00               	ldi 	0
+(1)  387/    9371 : CA 03               	st 		3(p2) 												; clear MSB of answer.
+(1)  388/    9373 : 02                  	ccl 														; mark as done
+(1)  389/    9374 : 90 E9               	jmp 	__TSVCExit 											; and exit.
+(1)  390/    9376 :                     ;
+(1)  391/    9376 :                     ;	? (read keyboard line in and evaluate it)
+(1)  392/    9376 :                     ;
+(1)  393/    9376 :                     __TSVCGetNumber:
+(1)  394/    9376 : 35                  	xpah 	p1 													; save P1 on the stack
+(1)  395/    9377 : CE FF               	st 		@-1(p2)
+(1)  396/    9379 : 31                  	xpal 	p1
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm(evaluate.asm) - page 16 - 12/7/2015 19:42:52
 
 
-(1)  392/    937B : C4 91                       ldi     (GETSTRING-1) / 256
-(1)  392/    937D : 37                          xpah    P3
-(1)  392/    937E : C4 59                       ldi     (GETSTRING-1) & 255
-(1)  392/    9380 : 33                          xpal    P3
-(1)  393/    9381 : C4 4A               	ldi 	KeyboardBufferSize 									; max length
-(1)  394/    9383 : 3F                  	xppc 	p3 													; read keyboard input.
-(1)  395/    9384 : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate and push on stack, ignore any errors.
-(1)  395/    9384 : C4 91                       ldi     (EVALUATEEXPRESSION-1) / 256
-(1)  395/    9386 : 37                          xpah    P3
-(1)  395/    9387 : C4 C1                       ldi     (EVALUATEEXPRESSION-1) & 255
-(1)  395/    9389 : 33                          xpal    P3
-(1)  396/    938A : 3F                  	xppc 	p3
-(1)  397/    938B : C2 00               	ld 		0(p2) 												; copy result
-(1)  398/    938D : CA 06               	st 		6(p2)
-(1)  399/    938F : C2 01               	ld 		1(p2)
-(1)  400/    9391 : CA 07               	st 		7(p2)
-(1)  401/    9393 : C6 02               	ld 		@2(p2) 												; skip over result
-(1)  402/    9395 : C6 01               	ld 		@1(p2)												; restore P1
-(1)  403/    9397 : 31                  	xpal 	p1
-(1)  404/    9398 : C6 01               	ld 		@1(p2)
-(1)  405/    939A : 35                  	xpah 	p1
-(1)  406/    939B : 02                  	ccl 														; clear carry as done
-(1)  407/    939C : 90 BA               	jmp 	__TSVCExit
-(1)  408/    939E :                     
-(1)  409/    939E :                     
-     106/    939E :                     
- AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 17 - 12/6/2015 19:40:15
+(1)  397/    937A : CE FF               	st 		@-1(p2)
+(1)  398/    937C : (MACRO)             	lpi 	p1,KeyboardBuffer 									; P1 points to keyboard buffer
+(1)  398/    937C : C4 0C                       ldi     (KEYBOARDBUFFER) / 256
+(1)  398/    937E : 35                          xpah    P1
+(1)  398/    937F : C4 90                       ldi     (KEYBOARDBUFFER) & 255
+(1)  398/    9381 : 31                          xpal    P1
+(1)  399/    9382 : (MACRO)             	lpi 	p3,GetString-1 										; P3 points to string read function
+(1)  399/    9382 : C4 91                       ldi     (GETSTRING-1) / 256
+(1)  399/    9384 : 37                          xpah    P3
+(1)  399/    9385 : C4 59                       ldi     (GETSTRING-1) & 255
+(1)  399/    9387 : 33                          xpal    P3
+(1)  400/    9388 : C4 4A               	ldi 	KeyboardBufferSize 									; max length
+(1)  401/    938A : 3F                  	xppc 	p3 													; read keyboard input.
+(1)  402/    938B : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate and push on stack, ignore any errors.
+(1)  402/    938B : C4 91                       ldi     (EVALUATEEXPRESSION-1) / 256
+(1)  402/    938D : 37                          xpah    P3
+(1)  402/    938E : C4 C1                       ldi     (EVALUATEEXPRESSION-1) & 255
+(1)  402/    9390 : 33                          xpal    P3
+(1)  403/    9391 : 3F                  	xppc 	p3
+(1)  404/    9392 : C2 00               	ld 		0(p2) 												; copy result
+(1)  405/    9394 : CA 06               	st 		6(p2)
+(1)  406/    9396 : C2 01               	ld 		1(p2)
+(1)  407/    9398 : CA 07               	st 		7(p2)
+(1)  408/    939A : C6 02               	ld 		@2(p2) 												; skip over result
+(1)  409/    939C : C6 01               	ld 		@1(p2)												; restore P1
+(1)  410/    939E : 31                  	xpal 	p1
+(1)  411/    939F : C6 01               	ld 		@1(p2)
+(1)  412/    93A1 : 35                  	xpah 	p1
+(1)  413/    93A2 : 02                  	ccl 														; clear carry as done
+(1)  414/    93A3 : 90 BA               	jmp 	__TSVCExit
+(1)  415/    93A5 :                     
+(1)  416/    93A5 :                     	endsection ReadSystemVariables
+(1)  417/    93A5 :                     	
+     106/    93A5 :                     
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 17 - 12/7/2015 19:42:52
 
 
   symbol table (* = unused):
@@ -980,8 +988,8 @@
 
 *ARCHITECTURE :  i386-unknown-win32 - | *BIGENDIAN :                      0 - |
 *BRANCHEXT :                      0 - | *CASESENSITIVE :                  0 - |
-*CONSTPI :        3.141592653589793 - | *DATE :                   12/6/2015 - |
- EVALUATEEXPRESSION :          91C2 C |  EVALUATETERM :                927C C |
+*CONSTPI :        3.141592653589793 - | *DATE :                   12/7/2015 - |
+ EVALUATEEXPRESSION :          91C2 C |  EVALUATETERM :                9283 C |
  EVTERMRESULT [EVALUATETERM] :    4 - |
  EXEXPRRESULT [EVALUATEEXPRESSION] :                                      4 - |
 *FALSE :                          0 - |  FINDSTACKTOP :                9009 C |
@@ -999,31 +1007,32 @@
 *PADDING :                        1 - |  PRINT :                       9076 C |
 *PROGRAMSPACE :                1000 - | *RELAXED :                        0 - |
  SCREENCURSOR :                 C80 - |  SCREENMIRROR :                 C00 - |
- STACKSEARCH :                  FFF - |  TERMSYSTEMVARIABLECHECK :     9348 C |
- TEST :                        906F C | *TIME :                    19:40:15 - |
+ STACKSEARCH :                  FFF - |  TERMSYSTEMVARIABLECHECK :     934F C |
+ TEST :                        906F C | *TIME :                    19:42:52 - |
 *TRUE :                           1 - |  VARIABLEBASE :                 D00 - |
 *VERSION :                     142F - | *VTL2BOOT :                    9001 C |
  WAIT :                        906D C |
- __ETCCLANDEXIT [EVALUATETERM] :                                       92B9 C |
- __ETEXIT [EVALUATETERM] :     92BA C |
- __ETFAILPAREN [EVALUATETERM] : 92F7 C |
- __ETFINDCLOSURE [EVALUATETERM] :                                      930B C |
- __ETFINDTERM [EVALUATETERM] : 9291 C |
- __ETISPARENTYPE [EVALUATETERM] :                                      92FC C |
- __ETSKIPSPACE [EVALUATETERM] : 928F C |
- __ETSUCCEED [EVALUATETERM] :  92B1 C |  __ETSUCCEED2 [EVALUATETERM] : 92F5 C |
- __ETTERMNOTCONSTANT [EVALUATETERM] :                                  92C8 C |
- __EXCLEARCARRYCOPYANDEXIT [EVALUATEEXPRESSION] :                      91E0 C |
- __EXCOPYANDEXIT [EVALUATEEXPRESSION] :                                91E1 C |
- __EXDOCOMPARE [EVALUATEEXPRESSION] :                                  9249 C |
- __EXDOOPERATOR [EVALUATEEXPRESSION] :                                 921A C |
- __EXDROPVALUEANDEXITWITHERROR [EVALUATEEXPRESSION] :                  9216 C |
- __EXEQUALS [EVALUATEEXPRESSION] :                                     9272 C |
- __EXERROR [EVALUATEEXPRESSION] :                                      91DD C |
- __EXLESSTHAN [EVALUATEEXPRESSION] :                                   9277 C |
- __EXRETURNTRUE [EVALUATEEXPRESSION] :                                 926E C |
- __EXTERMOKAY [EVALUATEEXPRESSION] :                                   91F7 C |
- __EXTERMOKAY2 [EVALUATEEXPRESSION] :                                  9247 C |
+ __ETCCLANDEXIT [EVALUATETERM] :                                       92C0 C |
+ __ETEXIT [EVALUATETERM] :     92C1 C |
+ __ETFAILPAREN [EVALUATETERM] : 92FE C |
+ __ETFINDCLOSURE [EVALUATETERM] :                                      9312 C |
+ __ETFINDTERM [EVALUATETERM] : 9298 C |
+ __ETISPARENTYPE [EVALUATETERM] :                                      9303 C |
+ __ETSKIPSPACE [EVALUATETERM] : 9296 C |
+ __ETSUCCEED [EVALUATETERM] :  92B8 C |  __ETSUCCEED2 [EVALUATETERM] : 92FC C |
+ __ETTERMNOTCONSTANT [EVALUATETERM] :                                  92CF C |
+ __EXCLEARCARRYCOPYANDEXIT [EVALUATEEXPRESSION] :                      91DF C |
+ __EXCOPYANDEXIT [EVALUATEEXPRESSION] :                                91E0 C |
+ __EXDOCOMPARE [EVALUATEEXPRESSION] :                                  9250 C |
+ __EXDOOPERATOR [EVALUATEEXPRESSION] :                                 9219 C |
+ __EXDROPVALUEANDEXITWITHERROR [EVALUATEEXPRESSION] :                  9215 C |
+ __EXEQUALS [EVALUATEEXPRESSION] :                                     9279 C |
+ __EXERROR [EVALUATEEXPRESSION] :                                      91DC C |
+ __EXLESSTHAN [EVALUATEEXPRESSION] :                                   927E C |
+ __EXNOTDIVISION [EVALUATEEXPRESSION] :                                9221 C |
+ __EXRETURNTRUE [EVALUATEEXPRESSION] :                                 9275 C |
+ __EXTERMOKAY [EVALUATEEXPRESSION] :                                   91F6 C |
+ __EXTERMOKAY2 [EVALUATEEXPRESSION] :                                  924E C |
  __GCNOTLOWER [GETCHAR] :      9155 C |  __GCWAITKEY [GETCHAR] :       913B C |
  __GCWAITRELEASE [GETCHAR] :   9143 C |  __GSBACKSPACE [GETSTRING] :   91B5 C |
  __GSCONTROLKEY [GETSTRING] :  9198 C |  __GSLOOP [GETSTRING] :        9168 C |
@@ -1033,16 +1042,18 @@
  __PRISCONTROLCHAR [PRINT] :   90EB C |  __PRISRETURN [PRINT] :        910B C |
  __PRNOTASCII [PRINT] :        90B3 C |  __PRPRINTCHARACTERA [PRINT] : 9097 C |
  __PRPRINTSTRING [PRINT] :     9085 C |  __PRSCROLLLOOP [PRINT] :      90CB C |
- __PRUPDATECURSOR [PRINT] :    90BC C |  __TSVCEXIT :                  9358 C |
- __TSVCGETCHARACTER :          935F C |  __TSVCGETNUMBER :             936F C |
- AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 18 - 12/6/2015 19:40:15
+ __PRUPDATECURSOR [PRINT] :    90BC C |
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 18 - 12/7/2015 19:42:52
 
 
+ __TSVCEXIT [READSYSTEMVARIABLES] :                                    935F C |
+ __TSVCGETCHARACTER [READSYSTEMVARIABLES] :                            9366 C |
+ __TSVCGETNUMBER [READSYSTEMVARIABLES] :                               9376 C |
 
-     92 symbols
+     93 symbols
      30 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 19 - 12/6/2015 19:40:15
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 19 - 12/7/2015 19:42:52
 
 
   defined macros:
@@ -1052,7 +1063,7 @@ LPI                                   |
 
       1 macro
 
- AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 20 - 12/6/2015 19:40:15
+ AS V1.42 Beta [Bld 102] - source file vtl2.asm - page 20 - 12/7/2015 19:42:52
 
 
   codepages:
@@ -1063,8 +1074,8 @@ STANDARD (0 changed characters)
 
 0.01 seconds assembly time
 
-    833 lines source file
-    925 lines incl. macro expansions
+    841 lines source file
+    933 lines incl. macro expansions
       2 passes
       0 errors
       0 warnings

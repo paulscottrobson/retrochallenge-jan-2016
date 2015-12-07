@@ -23,7 +23,7 @@ EvaluateExpression:
 
 EXExprResult = 4
 
-	st 		@-3(p2) 											; save A, allow space for answer
+	st 		@-3(p2) 											; save A, allow space for answer 
 	lde
 	st 		@-1(p2) 											; save E
 	xpah 	p3 												
@@ -93,6 +93,12 @@ __EXDropValueAndExitWithError:
 ;
 __EXDoOperator:
 	lde
+	xri 	'/'													; convert signed division to unsigned division
+	jnz 	__EXNotDivision
+	ldi 	'\\'
+	xae
+__EXNotDivision:
+	lde
 	xri 	'='													; check for comparisons. = > <
 	jz 		__EXDoCompare
 	xri		'>'!'='
@@ -107,7 +113,7 @@ __EXDoOperator:
 	ani 	0x80
 	jnz 	__EXDropValueAndExitWithError 						; if set drop the value and exit with error.
 	lde 														; check if it was division
-	xri 	'/'
+	xri 	'\\'
 	jnz 	__EXTermOkay 										; if not it's fine, exit.
 	lpi 	p3,VariableBase+('%' & 0x3F) * 2					; point to the '%' variable.
 	ld 		-2(p2) 												; copy remainder to % variable
