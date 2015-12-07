@@ -133,17 +133,11 @@ GetString:
 
 	include ..\vtl-2\Source\evaluate.asm 						; evaluate an expression code from VTL-2 directory
 ;
-;	Q+A test data. 
+;	Q+A test data. ASCIIZ string followed by word result. Empty string indicates end of code.
 ;
 TestData:
-	db 	"111+1000",0
-	dw 	1111
-	db 	"22/2",0
-	dw 	11
-	db 	"A",0
-	dw 	37
-	db 	"2+(7*4)-52/7",0
-	dw  9359
-	db 	"65514/317",0
-	dw	206
+	include 	tests.inc
 	db 	0
+
+; TODO: Fix GT ... GE
+; TODO: Comparison Tests.

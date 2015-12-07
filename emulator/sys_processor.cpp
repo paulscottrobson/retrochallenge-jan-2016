@@ -42,7 +42,7 @@ ROMTYPE      romMemory[2048] = {													// 0x0000-0x07FF ROM Memory
 
 static BYTE8 ramMemory[RAMSIZE];													// 0x0C00-0x7FFF RAM Memory
 
-ROMTYPE      extRomMemory[XROMSIZE] = {												// 0x9000-0x9FFF ROM Memory
+ROMTYPE      extRomMemory[0x7000] = {												// 0x9000-0x9FFF ROM Memory
 	#include "binaries/__rom_9000.h"
 };
 
@@ -70,7 +70,7 @@ static void inline _Read(void) {
 		MB = ROM(romMemory,MA);
 		return;
 	}
-	if (MA >= 0x9000 && MA < 0x9000+XROMSIZE) {
+	if (MA >= 0x9000) {
 		MB = ROM(extRomMemory,MA-0x9000);
 		return;
 	}
