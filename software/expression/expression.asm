@@ -16,7 +16,8 @@
 ; ****************************************************************************************************************
 
 test:
-	db 		"A+B+100/25,",0  
+	db 		"2+3*4*5",0  
+
 
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
@@ -35,8 +36,10 @@ EvaluateExpression:
 
 __EEValue = 0 													; stack positions of current value & pending
 __EEOperator = 1 												; operator.
-
 __EERandomOffset = 26 											; offset to random seed from p3
+
+ERROR_BadTerm = 4
+ERROR_DivZero = 7
 
 	lde 														; save E on stack
 	st 		@-1(p2)
@@ -50,12 +53,52 @@ __EERandomOffset = 26 											; offset to random seed from p3
 	st 		@-1(p2)
 	jmp 	__EELoop
 
+; ****************************************************************************************************************
+;											! term (random number)
+; ****************************************************************************************************************
+
 __EERandom:
-	; TODO : handle (!)
-	jmp 	__EERandom
+	ld 		__EERandomOffset(p3) 								; does it need initialising
+	or 		__EERandomOffset+1(p3)
+	jnz		__EERandom_IsInitialised
+	ldi 	0xE1												; if so, set to $ACE1
+	st 		__EERandomOffset(p3)
+	ldi 	0xAC
+	st 		__EERandomOffset+1(p3)
+__EERandom_IsInitialised:
+	ld 		__EERandomOffset+1(p3) 								; shift seed right into carry
+	ccl
+	rrl
+	st 		__EERandomOffset+1(p3)
+	ld 		__EERandomOffset(p3)
+	rrl
+	st 		__EERandomOffset(p3)
+	csa  														; if the LSB was 1
+	jp 		__EERandomNoToggle
+	ld 		__EERandomOffset+1(p3)
+	xri 	0xB4
+	st 		__EERandomOffset+1(p3)
+__EERandomNoToggle:
+	ld 		__EERandomOffset(p3) 								; XOR two values together into E.
+	xor 	__EERandomOffset+1(p3)
+	xae
+	jmp 	__EECalculate2
+
+; ****************************************************************************************************************
+;												  Read data (h,l)
+; ****************************************************************************************************************
+
 __EEDataAccess:
-	; TODO : handle (x,y)
-	jmp 	__EEDataAccess
+	lpi 	p3,ReadHLMemory-1 									; read HL memory into A
+	xppc 	p3
+	xae 														; save in E
+	csa 														; if carry is clear then calculate as normal
+	jp 		__EECalculate2
+	lde 														; get error code
+	jmp 	__EEError
+
+__EECalculate2:
+	jmp 	__EECalculate3
 
 ; ****************************************************************************************************************
 ;
@@ -132,6 +175,7 @@ __EENotDigit:
 	xae 														; E is variable number 0-25
 	ld 		-0x80(p3) 											; read variable value.
 	xae 														; put in E
+__EECalculate3:
 	jmp 	__EECalculate 										; calculate result of delayed operation.
 ;
 ;	Bump over spaces to find operator.
@@ -162,6 +206,14 @@ __EEDoOperator:
 	st 		1(p2)
 	jmp		__EELoop 											; go get another term. 			
 ;
+;	Handle Errors (1) Bad Term (2) Divide by zero.
+;
+__EEBadTerm:
+	ldi 	ERROR_BadTerm 										; syntax in expression
+__EEError:
+	st 		__EEValue(p2) 										; error code as result.
+	ccl 														; CY/L clear indicating error
+;
 ;	Exit with the value in __EEValue(p2) and CY/L set accordingly.
 ;
 __EEExit:
@@ -174,18 +226,10 @@ __EEExit:
 	xae 
 	ld 		-5(p2)												; get answer into A
 	xppc 	p3 													; and exit.
-;
-;	Handle Errors (1) Bad Term (2) Divide by zero.
-;
-__EEBadTerm:
-	ldi 	1 													; syntax in expression
-	jmp 	__EEError
+
 __EE_Divide_Zero:
-	ldi 	2 													; division by zero error.
-__EEError:
-	st 		__EEValue(p2) 										; error code as result.
-	ccl 														; CY/L clear indicating error
-	jmp		__EEExit 											; exit routine.
+	ldi 	ERROR_DivZero 										; come here for divide by zero.	
+	jmp 	__EEError
 
 ; ****************************************************************************************************************
 ;
@@ -328,3 +372,19 @@ __EE_Divide_Temp_Positive:
 ;			quotient = quotient | bit
 ;		bit = (bit >> 1) & 0xFF
 ;		numerator = (numerator << 1) & 0xFF
+
+
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+;
+;		P1 points to <expr>,<expr>) - parse out the values, read memory location and return in A, 
+;		CY/L = 0 => error A. -2(p2) and -1(p2) should contain the address if we need to read it later.
+;	
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+
+ReadHLMemory:
+	; TODO: parse out nn,nn)
+	ccl
+	ldi 	42
+	xppc 	p3
