@@ -37,14 +37,63 @@ lpi	macro	ptr,addr
 	ldi 	33
 	st 		25(p1) 												; Z = 33
 
+	lpi 	p1,0xCB0 											; $CB0 is the pointer
+	ldi 	TestData&255 										; reset it.
+	st 		0(p1)
+	ldi 	TestData/256
+	st 		1(p1)
+
+TestLoop:
+	lpi 	p3,0xCB0 											; read the pointer into P1.
+	ld 		0(p3)
+	xpal 	p1
+	ld 		1(p3)
+	xpah 	p1
+	ld 		0(p1) 												; reached end of list.
+	jz 		Complete
+
 	lpi 	p2,0xFFF											; set up stack
-	lpi		p1,test
 	lpi 	p3,EvaluateExpression-1
 	xppc 	p3
-wait22:
-	jmp 	wait22
+	xae 														; result in E
+	csa 														; check error
 
-test:
-	db 		"(144,1)-196+Z",0  
+	jp 		FailError
+	lpi 	p3,0xCB0 											; read the pointer into P1.
+	ld 		0(p3)
+	xpal 	p1
+	ld 		1(p3)
+	xpah 	p1
+FindEOS: 														; find end of string
+	ld 		@1(p1)
+	jnz 	FindEOS
+	ld 		@1(p1) 												; get expected result
+	xre
+	jnz 	FailWrong 											; result doesn't match.
+	xpal 	p1 													; write pointer back.
+	st 		0(p3) 												
+	xpah 	p1
+	st 		1(p3)
+	jmp 	TestLoop
+
+FailWrong:
+	ldi 	0xFF
+	xae
+	jmp 	FailWrong
+
+FailError:
+	lde 		
+	jmp 	FailError
+
+Complete:
+	ldi 	0
+	xae
+	jmp 	Complete
 
 	include expression.asm 										; screen I/O stuff.
+
+TestData:
+	db 		"3+4*5/2",0,17
+	db 		"1+1",0,2
+	db		0
+
