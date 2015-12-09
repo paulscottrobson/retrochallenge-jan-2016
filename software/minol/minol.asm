@@ -21,7 +21,8 @@ MinolVars = Variables + 32 										; MINOL variables start here.
 
 CurrentLine = MinolVars + 0 									; current line number (0 = not running)
 CurrentAddr = MinolVars + 1 									; position in current line (Low,High)
-ProgramBase = MinolVars + 3 									; address of program base (Low,High)
+
+ERROR_Label = 1 												; Undefined GOTO.
 
 ; ****************************************************************************************************************
 ;														Macros
@@ -60,6 +61,7 @@ stop:
 ; ****************************************************************************************************************
 	
 	include source\execute.asm									; command execution
+	include source\program.asm 									; program space management.
 
 ; ****************************************************************************************************************
 ;						Routines developed and tested seperately in other subdirectories.
