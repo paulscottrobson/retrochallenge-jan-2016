@@ -15,7 +15,13 @@
 ScreenMirror = 0xC00 											; Screen mirror, 128 bytes, 256 byte page boundary.
 ScreenCursor = ScreenMirror+0x80  								; Position on that screen (00..7F)
 
-Variables = 0xC84 												; uses 32 bytes for expression evaluation
+Variables = ScreenCursor+2 										; uses 32 bytes for expression evaluation
+
+MinolVars = Variables + 32 										; MINOL variables start here.
+
+CurrentLine = MinolVars + 0 									; current line number (0 = not running)
+CurrentAddr = MinolVars + 1 									; position in current line (Low,High)
+ProgramBase = MinolVars + 3 									; address of program base (Low,High)
 
 ; ****************************************************************************************************************
 ;														Macros
@@ -40,20 +46,26 @@ lpi	macro	ptr,addr
 	lpi 	p3,Print-1 											; clear screen
 	ldi 	12
 	xppc 	p3
-
-loop:
 	ldi 	']'													; Prompt
 	xppc 	p3
-	lpi 	p3,GetString-1 										; Input a string
-	lpi 	p1,0xD00
-	ldi 	15
+	lpi 	p1,test
+	lpi 	p3,ExecuteCommand-1
 	xppc 	p3
-	lpi 	p3,EvaluateExpression-1
-	xppc 	p3
+
 stop:
 	jmp 	stop
+
+; ****************************************************************************************************************
+;										Routines in source subdirectory
+; ****************************************************************************************************************
+	
+	include source\execute.asm									; command execution
+
+; ****************************************************************************************************************
+;						Routines developed and tested seperately in other subdirectories.
+; ****************************************************************************************************************
 
 	include ..\screen\screen.asm 								; screen I/O stuff.
 	include ..\expression\expression.asm 						; expression stuff.
 
-	
+
