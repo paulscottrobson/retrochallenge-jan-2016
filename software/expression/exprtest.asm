@@ -93,7 +93,6 @@ Complete:
 	include expression.asm 										; screen I/O stuff.
 
 TestData:
-	db 		"3+4*5/2",0,17
-	db 		"1+1",0,2
+	include tests.inc
 	db		0
 
