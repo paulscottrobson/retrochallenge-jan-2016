@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file exprtest.asm - page 1 - 12/8/2015 21:20:58
+ AS V1.42 Beta [Bld 102] - source file exprtest.asm - page 1 - 12/9/2015 8:16:14
 
 
        1/       0 :                     ; ****************************************************************************************************************
@@ -37,450 +37,520 @@
       32/    9003 : 35                          xpah    P1
       32/    9004 : C4 A0                       ldi     (VARIABLES) & 255
       32/    9006 : 31                          xpal    P1
-      33/    9007 : C4 0A               	ldi 	10
-      34/    9009 : C9 00               	st 		0(p1)
+      33/    9007 : C4 0A               	ldi 	10 													
+      34/    9009 : C9 00               	st 		0(p1)												; A = 10
       35/    900B : C4 14               	ldi 	20
-      36/    900D : C9 01               	st 		1(p1)
-      37/    900F :                     
-      38/    900F : (MACRO)             	lpi 	p2,0xFFF											; set up stack
-      38/    900F : C4 0F                       ldi     (0XFFF) / 256
-      38/    9011 : 36                          xpah    P2
-      38/    9012 : C4 FF                       ldi     (0XFFF) & 255
-      38/    9014 : 32                          xpal    P2
-      39/    9015 : (MACRO)             	lpi		p1,test
-      39/    9015 : C4 90                       ldi     (TEST) / 256
-      39/    9017 : 35                          xpah    P1
-      39/    9018 : C4 24                       ldi     (TEST) & 255
-      39/    901A : 31                          xpal    P1
-      40/    901B : (MACRO)             	lpi 	p3,EvaluateExpression-1
-      40/    901B : C4 90                       ldi     (EVALUATEEXPRESSION-1) / 256
-      40/    901D : 37                          xpah    P3
-      40/    901E : C4 2B                       ldi     (EVALUATEEXPRESSION-1) & 255
-      40/    9020 : 33                          xpal    P3
-      41/    9021 : 3F                  	xppc 	p3
-      42/    9022 :                     wait22:
-      43/    9022 : 90 FE               	jmp 	wait22
-      44/    9024 :                     
- AS V1.42 Beta [Bld 102] - source file exprtest.asm - page 2 - 12/8/2015 21:20:58
+      36/    900D : C9 01               	st 		1(p1)												; B = 20
+      37/    900F : C4 21               	ldi 	33
+      38/    9011 : C9 19               	st 		25(p1) 												; Z = 33
+      39/    9013 :                     
+      40/    9013 : (MACRO)             	lpi 	p2,0xFFF											; set up stack
+      40/    9013 : C4 0F                       ldi     (0XFFF) / 256
+      40/    9015 : 36                          xpah    P2
+      40/    9016 : C4 FF                       ldi     (0XFFF) & 255
+      40/    9018 : 32                          xpal    P2
+      41/    9019 : (MACRO)             	lpi		p1,test
+      41/    9019 : C4 90                       ldi     (TEST) / 256
+      41/    901B : 35                          xpah    P1
+      41/    901C : C4 28                       ldi     (TEST) & 255
+      41/    901E : 31                          xpal    P1
+      42/    901F : (MACRO)             	lpi 	p3,EvaluateExpression-1
+      42/    901F : C4 90                       ldi     (EVALUATEEXPRESSION-1) / 256
+      42/    9021 : 37                          xpah    P3
+      42/    9022 : C4 35                       ldi     (EVALUATEEXPRESSION-1) & 255
+      42/    9024 : 33                          xpal    P3
+      43/    9025 : 3F                  	xppc 	p3
+      44/    9026 :                     wait22:
+ AS V1.42 Beta [Bld 102] - source file exprtest.asm - page 2 - 12/9/2015 8:16:14
 
 
-      45/    9024 :                     
-      46/    9024 :                     	include expression.asm 										; screen I/O stuff.
-(1)    1/    9024 :                     ; ****************************************************************************************************************
-(1)    2/    9024 :                     ; ****************************************************************************************************************
-(1)    3/    9024 :                     ;
-(1)    4/    9024 :                     ;											Expression, MINOL
-(1)    5/    9024 :                     ;											=================
-(1)    6/    9024 :                     ;
-(1)    7/    9024 :                     ;	Terms are :
-(1)    8/    9024 :                     ;		0-9* 		Numeric constant
-(1)    9/    9024 :                     ;		A-Z 		Variables
-(1)   10/    9024 :                     ;		(h,l) 		Memory direct access
-(1)   11/    9024 :                     ;		! 			Random number
-(1)   12/    9024 :                     ;
-(1)   13/    9024 :                     ;	Operators are:	+,-,*,/
-(1)   14/    9024 :                     ;
-(1)   15/    9024 :                     ; ****************************************************************************************************************
-(1)   16/    9024 :                     ; ****************************************************************************************************************
-(1)   17/    9024 :                     
-(1)   18/    9024 :                     test:
-(1)   19/    9024 : 32 2B 33 2A 34 2A   	db 		"2+3*4*5",0  
-                    35 00 
-(1)   20/    902C :                     
-(1)   21/    902C :                     
-(1)   22/    902C :                     ; ****************************************************************************************************************
-(1)   23/    902C :                     ; ****************************************************************************************************************
-(1)   24/    902C :                     ;
-(1)   25/    902C :                     ;				Evaluate an expression at P1. Returns A = Result, CY/L = 1 or A = Error, CY/L = 0
-(1)   26/    902C :                     ;
-(1)   27/    902C :                     ;	Preserves registers except A and P1, which is advanced to the end of the expression - on exit it points to
-(1)   28/    902C :                     ;	NULL or the next character - so 2+3, will return A = 5, CY/L = 1,P1 pointing to the comma.
-(1)   29/    902C :                     ;
-(1)   30/    902C :                     ;	This isn't re-entrant at present.
-(1)   31/    902C :                     ;
-(1)   32/    902C :                     ; ****************************************************************************************************************
-(1)   33/    902C :                     ; ****************************************************************************************************************
-(1)   34/    902C :                     
-(1)   35/    902C :                     EvaluateExpression:
-(1)   36/    902C :                     
-(1)   37/    902C : =0x0                __EEValue = 0 													; stack positions of current value & pending
-(1)   38/    902C : =0x1                __EEOperator = 1 												; operator.
-(1)   39/    902C : =0x1A               __EERandomOffset = 26 											; offset to random seed from p3
-(1)   40/    902C :                     
-(1)   41/    902C : =0x4                ERROR_BadTerm = 4
-(1)   42/    902C : =0x7                ERROR_DivZero = 7
-(1)   43/    902C :                     
-(1)   44/    902C : 40                  	lde 														; save E on stack
-(1)   45/    902D : CE FF               	st 		@-1(p2)
-(1)   46/    902F : 37                  	xpah 	p3 													; save P3 on stack
-(1)   47/    9030 : CE FF               	st 		@-1(p2)
-(1)   48/    9032 : 33                  	xpal 	p3
-(1)   49/    9033 : CE FF               	st 		@-1(p2)
-(1)   50/    9035 : C4 2B               	ldi 	'+'													; pending expression (+) at +1(p2)
-(1)   51/    9037 : CE FF               	st 		@-1(p2)												; set up so done "0+" in theory :)
-(1)   52/    9039 : C4 00               	ldi 	0 													; current value (0) at +0(p2)
-(1)   53/    903B : CE FF               	st 		@-1(p2)
-(1)   54/    903D : 90 39               	jmp 	__EELoop
-(1)   55/    903F :                     
-(1)   56/    903F :                     ; ****************************************************************************************************************
-(1)   57/    903F :                     ;											! term (random number)
- AS V1.42 Beta [Bld 102] - source file exprtest.asm(expression.asm) - page 3 - 12/8/2015 21:20:58
+      45/    9026 : 90 FE               	jmp 	wait22
+      46/    9028 :                     
+      47/    9028 :                     test:
+      48/    9028 : 28 31 34 34 2C 31   	db 		"(144,1)-196+Z",0  
+                    29 2D 31 39 36 2B 
+                    5A 00 
+      49/    9036 :                     
+      50/    9036 :                     	include expression.asm 										; screen I/O stuff.
+(1)    1/    9036 :                     ; ****************************************************************************************************************
+(1)    2/    9036 :                     ; ****************************************************************************************************************
+(1)    3/    9036 :                     ;
+(1)    4/    9036 :                     ;											Expression, MINOL
+(1)    5/    9036 :                     ;											=================
+(1)    6/    9036 :                     ;
+(1)    7/    9036 :                     ;	Terms are :
+(1)    8/    9036 :                     ;		0-9* 		Numeric constant
+(1)    9/    9036 :                     ;		A-Z 		Variables
+(1)   10/    9036 :                     ;		(h,l) 		Memory direct access
+(1)   11/    9036 :                     ;		! 			Random number
+(1)   12/    9036 :                     ;
+(1)   13/    9036 :                     ;	Operators are:	+,-,*,/
+(1)   14/    9036 :                     ;
+(1)   15/    9036 :                     ; ****************************************************************************************************************
+(1)   16/    9036 :                     ; ****************************************************************************************************************
+(1)   17/    9036 :                     
+(1)   18/    9036 :                     ; ****************************************************************************************************************
+(1)   19/    9036 :                     ; ****************************************************************************************************************
+(1)   20/    9036 :                     ;
+(1)   21/    9036 :                     ;				Evaluate an expression at P1. Returns A = Result, CY/L = 1 or A = Error, CY/L = 0
+(1)   22/    9036 :                     ;
+(1)   23/    9036 :                     ;	Preserves registers except A and P1, which is advanced to the end of the expression - on exit it points to
+(1)   24/    9036 :                     ;	NULL or the next character - so 2+3, will return A = 5, CY/L = 1,P1 pointing to the comma.
+(1)   25/    9036 :                     ;
+(1)   26/    9036 :                     ;	This isn't re-entrant.
+(1)   27/    9036 :                     ;
+(1)   28/    9036 :                     ; ****************************************************************************************************************
+(1)   29/    9036 :                     ; ****************************************************************************************************************
+(1)   30/    9036 :                     
+(1)   31/    9036 :                     EvaluateExpression:
+(1)   32/    9036 :                     
+(1)   33/    9036 : =0x0                __EEValue = 0 													; stack positions of current value & pending
+(1)   34/    9036 : =0x1                __EEOperator = 1 												; operator.
+(1)   35/    9036 : =0x1A               __EERandomOffset = 26 											; offset to random seed from p3
+(1)   36/    9036 :                     
+(1)   37/    9036 : =0x4                ERROR_BadTerm = 4
+(1)   38/    9036 : =0x5                ERROR_Syntax = 5
+(1)   39/    9036 : =0x7                ERROR_DivZero = 7
+(1)   40/    9036 :                     
+(1)   41/    9036 : 40                  	lde 														; save E on stack
+(1)   42/    9037 : CE FF               	st 		@-1(p2)
+(1)   43/    9039 : 37                  	xpah 	p3 													; save P3 on stack
+(1)   44/    903A : CE FF               	st 		@-1(p2)
+(1)   45/    903C : 33                  	xpal 	p3
+(1)   46/    903D : CE FF               	st 		@-1(p2)
+(1)   47/    903F : C4 2B               	ldi 	'+'													; pending expression (+) at +1(p2)
+(1)   48/    9041 : CE FF               	st 		@-1(p2)												; set up so done "0+" in theory :)
+(1)   49/    9043 : C4 00               	ldi 	0 													; current value (0) at +0(p2)
+(1)   50/    9045 : CE FF               	st 		@-1(p2)
+(1)   51/    9047 : 90 39               	jmp 	__EELoop
+(1)   52/    9049 :                     
+ AS V1.42 Beta [Bld 102] - source file exprtest.asm(expression.asm) - page 3 - 12/9/2015 8:16:14
 
 
-(1)   58/    903F :                     ; ****************************************************************************************************************
-(1)   59/    903F :                     
-(1)   60/    903F :                     __EERandom:
-(1)   61/    903F : C3 1A               	ld 		__EERandomOffset(p3) 								; does it need initialising
-(1)   62/    9041 : DB 1B               	or 		__EERandomOffset+1(p3)
-(1)   63/    9043 : 9C 08               	jnz		__EERandom_IsInitialised
-(1)   64/    9045 : C4 E1               	ldi 	0xE1												; if so, set to $ACE1
-(1)   65/    9047 : CB 1A               	st 		__EERandomOffset(p3)
-(1)   66/    9049 : C4 AC               	ldi 	0xAC
-(1)   67/    904B : CB 1B               	st 		__EERandomOffset+1(p3)
-(1)   68/    904D :                     __EERandom_IsInitialised:
-(1)   69/    904D : C3 1B               	ld 		__EERandomOffset+1(p3) 								; shift seed right into carry
-(1)   70/    904F : 02                  	ccl
-(1)   71/    9050 : 1F                  	rrl
-(1)   72/    9051 : CB 1B               	st 		__EERandomOffset+1(p3)
-(1)   73/    9053 : C3 1A               	ld 		__EERandomOffset(p3)
-(1)   74/    9055 : 1F                  	rrl
-(1)   75/    9056 : CB 1A               	st 		__EERandomOffset(p3)
-(1)   76/    9058 : 06                  	csa  														; if the LSB was 1
-(1)   77/    9059 : 94 06               	jp 		__EERandomNoToggle
-(1)   78/    905B : C3 1B               	ld 		__EERandomOffset+1(p3)
-(1)   79/    905D : E4 B4               	xri 	0xB4
-(1)   80/    905F : CB 1B               	st 		__EERandomOffset+1(p3)
-(1)   81/    9061 :                     __EERandomNoToggle:
-(1)   82/    9061 : C3 1A               	ld 		__EERandomOffset(p3) 								; XOR two values together into E.
-(1)   83/    9063 : E3 1B               	xor 	__EERandomOffset+1(p3)
-(1)   84/    9065 : 01                  	xae
-(1)   85/    9066 : 90 0E               	jmp 	__EECalculate2
-(1)   86/    9068 :                     
-(1)   87/    9068 :                     ; ****************************************************************************************************************
-(1)   88/    9068 :                     ;												  Read data (h,l)
-(1)   89/    9068 :                     ; ****************************************************************************************************************
-(1)   90/    9068 :                     
-(1)   91/    9068 :                     __EEDataAccess:
-(1)   92/    9068 : (MACRO)             	lpi 	p3,ReadHLMemory-1 									; read HL memory into A
-(1)   92/    9068 : C4 91                       ldi     (READHLMEMORY-1) / 256
-(1)   92/    906A : 37                          xpah    P3
-(1)   92/    906B : C4 8C                       ldi     (READHLMEMORY-1) & 255
-(1)   92/    906D : 33                          xpal    P3
-(1)   93/    906E : 3F                  	xppc 	p3
-(1)   94/    906F : 01                  	xae 														; save in E
-(1)   95/    9070 : 06                  	csa 														; if carry is clear then calculate as normal
-(1)   96/    9071 : 94 03               	jp 		__EECalculate2
-(1)   97/    9073 : 40                  	lde 														; get error code
-(1)   98/    9074 : 90 7F               	jmp 	__EEError
-(1)   99/    9076 :                     
-(1)  100/    9076 :                     __EECalculate2:
-(1)  101/    9076 : 90 54               	jmp 	__EECalculate3
-(1)  102/    9078 :                     
-(1)  103/    9078 :                     ; ****************************************************************************************************************
-(1)  104/    9078 :                     ;
-(1)  105/    9078 :                     ;											Main loop - get another term.
-(1)  106/    9078 :                     ;
-(1)  107/    9078 :                     ; ****************************************************************************************************************
-(1)  108/    9078 :                     __EELoop:
-(1)  109/    9078 : C4 A0               	ldi 	Variables&255 										; point P3 to variables.
-(1)  110/    907A : 33                  	xpal 	p3
-(1)  111/    907B : C4 0C               	ldi 	Variables/256
-(1)  112/    907D : 37                  	xpah 	p3
-(1)  113/    907E :                     
- AS V1.42 Beta [Bld 102] - source file exprtest.asm(expression.asm) - page 4 - 12/8/2015 21:20:58
+(1)   53/    9049 :                     ; ****************************************************************************************************************
+(1)   54/    9049 :                     ;											! term (random number)
+(1)   55/    9049 :                     ; ****************************************************************************************************************
+(1)   56/    9049 :                     
+(1)   57/    9049 :                     __EERandom:
+(1)   58/    9049 : C3 1A               	ld 		__EERandomOffset(p3) 								; does it need initialising
+(1)   59/    904B : DB 1B               	or 		__EERandomOffset+1(p3)
+(1)   60/    904D : 9C 08               	jnz		__EERandom_IsInitialised
+(1)   61/    904F : C4 E1               	ldi 	0xE1												; if so, set to $ACE1
+(1)   62/    9051 : CB 1A               	st 		__EERandomOffset(p3)
+(1)   63/    9053 : C4 AC               	ldi 	0xAC
+(1)   64/    9055 : CB 1B               	st 		__EERandomOffset+1(p3)
+(1)   65/    9057 :                     __EERandom_IsInitialised:
+(1)   66/    9057 : C3 1B               	ld 		__EERandomOffset+1(p3) 								; shift seed right into carry
+(1)   67/    9059 : 02                  	ccl
+(1)   68/    905A : 1F                  	rrl
+(1)   69/    905B : CB 1B               	st 		__EERandomOffset+1(p3)
+(1)   70/    905D : C3 1A               	ld 		__EERandomOffset(p3)
+(1)   71/    905F : 1F                  	rrl
+(1)   72/    9060 : CB 1A               	st 		__EERandomOffset(p3)
+(1)   73/    9062 : 06                  	csa  														; if the LSB was 1
+(1)   74/    9063 : 94 06               	jp 		__EERandomNoToggle
+(1)   75/    9065 : C3 1B               	ld 		__EERandomOffset+1(p3)
+(1)   76/    9067 : E4 B4               	xri 	0xB4
+(1)   77/    9069 : CB 1B               	st 		__EERandomOffset+1(p3)
+(1)   78/    906B :                     __EERandomNoToggle:
+(1)   79/    906B : C3 1A               	ld 		__EERandomOffset(p3) 								; XOR two values together into E.
+(1)   80/    906D : E3 1B               	xor 	__EERandomOffset+1(p3)
+(1)   81/    906F : 01                  	xae
+(1)   82/    9070 : 90 64               	jmp 	__EECalculate3
+(1)   83/    9072 :                     
+(1)   84/    9072 :                     ; ****************************************************************************************************************
+(1)   85/    9072 :                     ;												  Read data (h,l)
+(1)   86/    9072 :                     ; ****************************************************************************************************************
+(1)   87/    9072 :                     
+(1)   88/    9072 :                     __EEDataAccess:
+(1)   89/    9072 : (MACRO)             	lpi 	p3,ReadHLMemory-1 									; read HL memory into A
+(1)   89/    9072 : C4 91                       ldi     (READHLMEMORY-1) / 256
+(1)   89/    9074 : 37                          xpah    P3
+(1)   89/    9075 : C4 96                       ldi     (READHLMEMORY-1) & 255
+(1)   89/    9077 : 33                          xpal    P3
+(1)   90/    9078 : 3F                  	xppc 	p3
+(1)   91/    9079 : 01                  	xae 														; save in E
+(1)   92/    907A : 06                  	csa 														; if carry is set then calculate as normal.
+(1)   93/    907B : D4 80               	ani 	0x80
+(1)   94/    907D : 9C 57               	jnz 	__EECalculate3
+(1)   95/    907F : 40                  	lde 														; get error code
+(1)   96/    9080 : 90 7D               	jmp 	__EEError
+(1)   97/    9082 :                     
+(1)   98/    9082 :                     ; ****************************************************************************************************************
+(1)   99/    9082 :                     ;
+(1)  100/    9082 :                     ;											Main loop - get another term.
+(1)  101/    9082 :                     ;
+(1)  102/    9082 :                     ; ****************************************************************************************************************
+(1)  103/    9082 :                     __EELoop:
+(1)  104/    9082 : C4 A0               	ldi 	Variables&255 										; point P3 to variables.
+(1)  105/    9084 : 33                  	xpal 	p3
+(1)  106/    9085 : C4 0C               	ldi 	Variables/256
+(1)  107/    9087 : 37                  	xpah 	p3
+(1)  108/    9088 :                     
+ AS V1.42 Beta [Bld 102] - source file exprtest.asm(expression.asm) - page 4 - 12/9/2015 8:16:14
 
 
-(1)  114/    907E : C1 00               	ld 		(p1) 												; check end of string.
-(1)  115/    9080 : 98 71               	jz 		__EEBadTerm 				
-(1)  116/    9082 : C5 01               	ld 		@1(p1) 												; get next character till non-space
-(1)  117/    9084 : E4 20               	xri		' '
-(1)  118/    9086 : 98 F0               	jz 		__EELoop
-(1)  119/    9088 :                     
-(1)  120/    9088 : E4 08               	xri 	' ' ! '('											; if ( then (x,y) memory access.
-(1)  121/    908A : 98 DC               	jz 		__EEDataAccess
-(1)  122/    908C : E4 09               	xri 	'(' ! '!' 											; if ! then random number.
-(1)  123/    908E : 98 AF               	jz 		__EERandom
-(1)  124/    9090 :                     
-(1)  125/    9090 : C1 FF               	ld 		-1(p1) 												; get character.
-(1)  126/    9092 : 02                  	ccl
-(1)  127/    9093 : F4 50               	adi 	128-'0' 											; if < '0' then there is an error.
-(1)  128/    9095 : 94 5C               	jp 		__EEBadTerm
-(1)  129/    9097 : F4 76               	adi 	0xFF-0x89 											; if > '9' then it is not a digit.
-(1)  130/    9099 : 94 20               	jp 		__EENotDigit 										; so check for A-Z
-(1)  131/    909B :                     
-(1)  132/    909B :                     ; ****************************************************************************************************************
-(1)  133/    909B :                     ;
-(1)  134/    909B :                     ;								We have a constant value 0-255, extract it
-(1)  135/    909B :                     ;
-(1)  136/    909B :                     ; ****************************************************************************************************************
-(1)  137/    909B :                     
-(1)  138/    909B : C1 FF               	ld 		-1(p1) 												; re-read digit
-(1)  139/    909D : D4 0F               	ani 	0x0F 												; make number
-(1)  140/    909F : 01                  	xae 														; put in E.
-(1)  141/    90A0 :                     __EEConstantLoop:
-(1)  142/    90A0 : C1 00               	ld 		(p1) 												; keep going until non digit found
-(1)  143/    90A2 : 02                  	ccl
-(1)  144/    90A3 : F4 50               	adi 	128-'0'												; exit if outside range 0-9.
-(1)  145/    90A5 : 94 63               	jp 		__EECalculate 										; calculate the result.
-(1)  146/    90A7 : F4 76               	adi 	0xFF-0x89 
-(1)  147/    90A9 : 94 5F               	jp 		__EECalculate 
-(1)  148/    90AB : 40                  	lde 														; A = E
-(1)  149/    90AC : 02                  	ccl
-(1)  150/    90AD : 70                  	ade 														; A = E * 2
-(1)  151/    90AE : 70                  	ade 														; A = E * 3
-(1)  152/    90AF : 70                  	ade 														; A = E * 4
-(1)  153/    90B0 : 70                  	ade 														; A = E * 5
-(1)  154/    90B1 : 01                  	xae 														; E = E * 5
-(1)  155/    90B2 : C5 01               	ld 		@1(p1) 												; read digit and bump pointer.
-(1)  156/    90B4 : D4 0F               	ani 	0x0F 												; make number
-(1)  157/    90B6 : 70                  	ade 														; add E * 5 twice, e.g. E * 10
-(1)  158/    90B7 : 70                  	ade
-(1)  159/    90B8 : 01                  	xae 														; put into E
-(1)  160/    90B9 : 90 E5               	jmp 	__EEConstantLoop
-(1)  161/    90BB :                     
-(1)  162/    90BB :                     ; ****************************************************************************************************************
-(1)  163/    90BB :                     ;
-(1)  164/    90BB :                     ;												Check for variable A-Z.
-(1)  165/    90BB :                     ;
-(1)  166/    90BB :                     ; ****************************************************************************************************************
-(1)  167/    90BB :                     __EENotDigit:
-(1)  168/    90BB : C1 FF               	ld 		-1(p1) 												; read character again.
-(1)  169/    90BD : 02                  	ccl
-(1)  170/    90BE : F4 3F               	adi 	128-'A' 											; check in range A-Z.
-(1)  171/    90C0 : 94 31               	jp 		__EEBadTerm 										; if not in that range, we failed.
-(1)  172/    90C2 : F4 66               	adi 	0x80-26 
-(1)  173/    90C4 : 94 2D               	jp 		__EEBadTerm 
- AS V1.42 Beta [Bld 102] - source file exprtest.asm(expression.asm) - page 5 - 12/8/2015 21:20:58
+(1)  109/    9088 : C1 00               	ld 		(p1) 												; check end of string.
+(1)  110/    908A : 98 71               	jz 		__EEBadTerm 				
+(1)  111/    908C : C5 01               	ld 		@1(p1) 												; get next character till non-space
+(1)  112/    908E : E4 20               	xri		' '
+(1)  113/    9090 : 98 F0               	jz 		__EELoop
+(1)  114/    9092 :                     
+(1)  115/    9092 : E4 08               	xri 	' ' ! '('											; if ( then (x,y) memory access.
+(1)  116/    9094 : 98 DC               	jz 		__EEDataAccess
+(1)  117/    9096 : E4 09               	xri 	'(' ! '!' 											; if ! then random number.
+(1)  118/    9098 : 98 AF               	jz 		__EERandom
+(1)  119/    909A :                     
+(1)  120/    909A : C1 FF               	ld 		-1(p1) 												; get character.
+(1)  121/    909C : 02                  	ccl
+(1)  122/    909D : F4 50               	adi 	128-'0' 											; if < '0' then there is an error.
+(1)  123/    909F : 94 5C               	jp 		__EEBadTerm
+(1)  124/    90A1 : F4 76               	adi 	0xFF-0x89 											; if > '9' then it is not a digit.
+(1)  125/    90A3 : 94 20               	jp 		__EENotDigit 										; so check for A-Z
+(1)  126/    90A5 :                     
+(1)  127/    90A5 :                     ; ****************************************************************************************************************
+(1)  128/    90A5 :                     ;
+(1)  129/    90A5 :                     ;								We have a constant value 0-255, extract it
+(1)  130/    90A5 :                     ;
+(1)  131/    90A5 :                     ; ****************************************************************************************************************
+(1)  132/    90A5 :                     
+(1)  133/    90A5 : C1 FF               	ld 		-1(p1) 												; re-read digit
+(1)  134/    90A7 : D4 0F               	ani 	0x0F 												; make number
+(1)  135/    90A9 : 01                  	xae 														; put in E.
+(1)  136/    90AA :                     __EEConstantLoop:
+(1)  137/    90AA : C1 00               	ld 		(p1) 												; keep going until non digit found
+(1)  138/    90AC : 02                  	ccl
+(1)  139/    90AD : F4 50               	adi 	128-'0'												; exit if outside range 0-9.
+(1)  140/    90AF : 94 63               	jp 		__EECalculate 										; calculate the result.
+(1)  141/    90B1 : F4 76               	adi 	0xFF-0x89 
+(1)  142/    90B3 : 94 5F               	jp 		__EECalculate 
+(1)  143/    90B5 : 40                  	lde 														; A = E
+(1)  144/    90B6 : 02                  	ccl
+(1)  145/    90B7 : 70                  	ade 														; A = E * 2
+(1)  146/    90B8 : 70                  	ade 														; A = E * 3
+(1)  147/    90B9 : 70                  	ade 														; A = E * 4
+(1)  148/    90BA : 70                  	ade 														; A = E * 5
+(1)  149/    90BB : 01                  	xae 														; E = E * 5
+(1)  150/    90BC : C5 01               	ld 		@1(p1) 												; read digit and bump pointer.
+(1)  151/    90BE : D4 0F               	ani 	0x0F 												; make number
+(1)  152/    90C0 : 70                  	ade 														; add E * 5 twice, e.g. E * 10
+(1)  153/    90C1 : 70                  	ade
+(1)  154/    90C2 : 01                  	xae 														; put into E
+(1)  155/    90C3 : 90 E5               	jmp 	__EEConstantLoop
+(1)  156/    90C5 :                     
+(1)  157/    90C5 :                     ; ****************************************************************************************************************
+(1)  158/    90C5 :                     ;
+(1)  159/    90C5 :                     ;												Check for variable A-Z.
+(1)  160/    90C5 :                     ;
+(1)  161/    90C5 :                     ; ****************************************************************************************************************
+(1)  162/    90C5 :                     __EENotDigit:
+(1)  163/    90C5 : C1 FF               	ld 		-1(p1) 												; read character again.
+(1)  164/    90C7 : 02                  	ccl
+(1)  165/    90C8 : F4 3F               	adi 	128-'A' 											; check in range A-Z.
+(1)  166/    90CA : 94 31               	jp 		__EEBadTerm 										; if not in that range, we failed.
+(1)  167/    90CC : F4 66               	adi 	0x80-26 
+(1)  168/    90CE : 94 2D               	jp 		__EEBadTerm 
+ AS V1.42 Beta [Bld 102] - source file exprtest.asm(expression.asm) - page 5 - 12/9/2015 8:16:14
 
 
-(1)  174/    90C6 : F4 1A               	adi 	26 													; make it 0-25 (A-Z)
-(1)  175/    90C8 : 01                  	xae 														; E is variable number 0-25
-(1)  176/    90C9 : C3 80               	ld 		-0x80(p3) 											; read variable value.
-(1)  177/    90CB : 01                  	xae 														; put in E
-(1)  178/    90CC :                     __EECalculate3:
-(1)  179/    90CC : 90 3C               	jmp 	__EECalculate 										; calculate result of delayed operation.
-(1)  180/    90CE :                     ;
-(1)  181/    90CE :                     ;	Bump over spaces to find operator.
-(1)  182/    90CE :                     ;
-(1)  183/    90CE :                     __EEGetNextOperator:
-(1)  184/    90CE : 03                  	scl 														; set Carry/Link indicating okay.
-(1)  185/    90CF : C1 00               	ld 		0(p1) 												; skip spaces, checking for exit.
-(1)  186/    90D1 : 98 25               	jz 		__EEExit 											; exit on NULL.
-(1)  187/    90D3 : E4 20               	xri 	' ' 												
-(1)  188/    90D5 : 9C 04               	jnz 	__EECheckOperator
-(1)  189/    90D7 : C5 01               	ld 		@1(p1)
-(1)  190/    90D9 : 90 F3               	jmp 	__EEGetNextOperator
-(1)  191/    90DB :                     ;
-(1)  192/    90DB :                     ;	Found something not NULL or space - see if it is an operator + - * /, in which case go round again.
-(1)  193/    90DB :                     ;
-(1)  194/    90DB :                     __EECheckOperator:
-(1)  195/    90DB : C1 00               	ld 		(p1) 												; get operator
-(1)  196/    90DD : E4 2B               	xri 	'+' 												; check if it is +,-,*,/
-(1)  197/    90DF : 98 0C               	jz 		__EEDoOperator
-(1)  198/    90E1 : E4 06               	xri 	'+'!'-'
-(1)  199/    90E3 : 98 08               	jz 		__EEDoOperator
-(1)  200/    90E5 : E4 07               	xri 	'-'!'*'
-(1)  201/    90E7 : 98 04               	jz 		__EEDoOperator
-(1)  202/    90E9 : E4 05               	xri 	'*'!'/'
-(1)  203/    90EB : 9C 0B               	jnz 	__EEExit 											; if not any of those, then exit.
-(1)  204/    90ED :                     __EEDoOperator:
-(1)  205/    90ED : C5 01               	ld 		@1(p1) 												; get and save operator
-(1)  206/    90EF : CA 01               	st 		1(p2)
-(1)  207/    90F1 : 90 85               	jmp		__EELoop 											; go get another term. 			
-(1)  208/    90F3 :                     ;
-(1)  209/    90F3 :                     ;	Handle Errors (1) Bad Term (2) Divide by zero.
-(1)  210/    90F3 :                     ;
-(1)  211/    90F3 :                     __EEBadTerm:
-(1)  212/    90F3 : C4 04               	ldi 	ERROR_BadTerm 										; syntax in expression
-(1)  213/    90F5 :                     __EEError:
-(1)  214/    90F5 : CA 00               	st 		__EEValue(p2) 										; error code as result.
-(1)  215/    90F7 : 02                  	ccl 														; CY/L clear indicating error
-(1)  216/    90F8 :                     ;
-(1)  217/    90F8 :                     ;	Exit with the value in __EEValue(p2) and CY/L set accordingly.
-(1)  218/    90F8 :                     ;
-(1)  219/    90F8 :                     __EEExit:
-(1)  220/    90F8 : C6 02               	ld 		@2(p2) 												; skip over saved values
-(1)  221/    90FA : C6 01               	ld 		@1(p2) 												; restore P3
-(1)  222/    90FC : 33                  	xpal 	p3
-(1)  223/    90FD : C6 01               	ld 		@1(p2)
-(1)  224/    90FF : 37                  	xpah 	p3
-(1)  225/    9100 : C6 01               	ld 		@1(p2) 												; restore E
-(1)  226/    9102 : 01                  	xae 
-(1)  227/    9103 : C2 FB               	ld 		-5(p2)												; get answer into A
-(1)  228/    9105 : 3F                  	xppc 	p3 													; and exit.
-(1)  229/    9106 :                     
-(1)  230/    9106 :                     __EE_Divide_Zero:
-(1)  231/    9106 : C4 07               	ldi 	ERROR_DivZero 										; come here for divide by zero.	
-(1)  232/    9108 : 90 EB               	jmp 	__EEError
-(1)  233/    910A :                     
- AS V1.42 Beta [Bld 102] - source file exprtest.asm(expression.asm) - page 6 - 12/8/2015 21:20:58
+(1)  169/    90D0 : F4 1A               	adi 	26 													; make it 0-25 (A-Z)
+(1)  170/    90D2 : 01                  	xae 														; E is variable number 0-25
+(1)  171/    90D3 : C3 80               	ld 		-0x80(p3) 											; read variable value.
+(1)  172/    90D5 : 01                  	xae 														; put in E
+(1)  173/    90D6 :                     __EECalculate3:
+(1)  174/    90D6 : 90 3C               	jmp 	__EECalculate 										; calculate result of delayed operation.
+(1)  175/    90D8 :                     ;
+(1)  176/    90D8 :                     ;	Bump over spaces to find operator.
+(1)  177/    90D8 :                     ;
+(1)  178/    90D8 :                     __EEGetNextOperator:
+(1)  179/    90D8 : 03                  	scl 														; set Carry/Link indicating okay.
+(1)  180/    90D9 : C1 00               	ld 		0(p1) 												; skip spaces, checking for exit.
+(1)  181/    90DB : 98 25               	jz 		__EEExit 											; exit on NULL.
+(1)  182/    90DD : E4 20               	xri 	' ' 												
+(1)  183/    90DF : 9C 04               	jnz 	__EECheckOperator
+(1)  184/    90E1 : C5 01               	ld 		@1(p1)
+(1)  185/    90E3 : 90 F3               	jmp 	__EEGetNextOperator
+(1)  186/    90E5 :                     ;
+(1)  187/    90E5 :                     ;	Found something not NULL or space - see if it is an operator + - * /, in which case go round again.
+(1)  188/    90E5 :                     ;
+(1)  189/    90E5 :                     __EECheckOperator:
+(1)  190/    90E5 : C1 00               	ld 		(p1) 												; get operator
+(1)  191/    90E7 : E4 2B               	xri 	'+' 												; check if it is +,-,*,/
+(1)  192/    90E9 : 98 0C               	jz 		__EEDoOperator
+(1)  193/    90EB : E4 06               	xri 	'+'!'-'
+(1)  194/    90ED : 98 08               	jz 		__EEDoOperator
+(1)  195/    90EF : E4 07               	xri 	'-'!'*'
+(1)  196/    90F1 : 98 04               	jz 		__EEDoOperator
+(1)  197/    90F3 : E4 05               	xri 	'*'!'/'
+(1)  198/    90F5 : 9C 0B               	jnz 	__EEExit 											; if not any of those, then exit.
+(1)  199/    90F7 :                     __EEDoOperator:
+(1)  200/    90F7 : C5 01               	ld 		@1(p1) 												; get and save operator
+(1)  201/    90F9 : CA 01               	st 		1(p2)
+(1)  202/    90FB : 90 85               	jmp		__EELoop 											; go get another term. 			
+(1)  203/    90FD :                     ;
+(1)  204/    90FD :                     ;	Handle Errors (1) Bad Term (2) Divide by zero.
+(1)  205/    90FD :                     ;
+(1)  206/    90FD :                     __EEBadTerm:
+(1)  207/    90FD : C4 04               	ldi 	ERROR_BadTerm 										; syntax in expression
+(1)  208/    90FF :                     __EEError:
+(1)  209/    90FF : CA 00               	st 		__EEValue(p2) 										; error code as result.
+(1)  210/    9101 : 02                  	ccl 														; CY/L clear indicating error
+(1)  211/    9102 :                     ;
+(1)  212/    9102 :                     ;	Exit with the value in __EEValue(p2) and CY/L set accordingly.
+(1)  213/    9102 :                     ;
+(1)  214/    9102 :                     __EEExit:
+(1)  215/    9102 : C6 02               	ld 		@2(p2) 												; skip over saved values
+(1)  216/    9104 : C6 01               	ld 		@1(p2) 												; restore P3
+(1)  217/    9106 : 33                  	xpal 	p3
+(1)  218/    9107 : C6 01               	ld 		@1(p2)
+(1)  219/    9109 : 37                  	xpah 	p3
+(1)  220/    910A : C6 01               	ld 		@1(p2) 												; restore E
+(1)  221/    910C : 01                  	xae 
+(1)  222/    910D : C2 FB               	ld 		-5(p2)												; get answer into A
+(1)  223/    910F : 3F                  	xppc 	p3 													; and exit.
+(1)  224/    9110 :                     
+(1)  225/    9110 :                     __EE_Divide_Zero:
+(1)  226/    9110 : C4 07               	ldi 	ERROR_DivZero 										; come here for divide by zero.	
+(1)  227/    9112 : 90 EB               	jmp 	__EEError
+(1)  228/    9114 :                     
+ AS V1.42 Beta [Bld 102] - source file exprtest.asm(expression.asm) - page 6 - 12/9/2015 8:16:14
 
 
-(1)  234/    910A :                     ; ****************************************************************************************************************
-(1)  235/    910A :                     ;
-(1)  236/    910A :                     ;							Do 0(p2) op E where op is 1(p2) and is a valid operator.
-(1)  237/    910A :                     ;	
-(1)  238/    910A :                     ; ****************************************************************************************************************
-(1)  239/    910A :                     __EECalculate:
-(1)  240/    910A : C2 01               	ld 		__EEOperator(p2) 									; get the operator.
-(1)  241/    910C : E4 2D               	xri 	'-'
-(1)  242/    910E : 98 10               	jz 		__EE_Subtract
-(1)  243/    9110 : E4 07               	xri 	'-'!'*'
-(1)  244/    9112 : 98 14               	jz 		__EE_Multiply
-(1)  245/    9114 : E4 05               	xri 	'*'!'/'
-(1)  246/    9116 : 98 32               	jz 		__EE_Divide
-(1)  247/    9118 :                     
-(1)  248/    9118 :                     ; ****************************************************************************************************************
-(1)  249/    9118 :                     ;														  Add.
-(1)  250/    9118 :                     ; ****************************************************************************************************************
-(1)  251/    9118 :                     
-(1)  252/    9118 :                     __EE_Add:
-(1)  253/    9118 : 02                  	ccl
-(1)  254/    9119 : C2 00               	ld 		__EEValue(p2)
-(1)  255/    911B : 70                  	ade
-(1)  256/    911C : CA 00               	st 		__EEValue(p2)
-(1)  257/    911E : 90 AE               	jmp 	__EEGetNextOperator
-(1)  258/    9120 :                     
-(1)  259/    9120 :                     ; ****************************************************************************************************************
-(1)  260/    9120 :                     ;														Subtract
-(1)  261/    9120 :                     ; ****************************************************************************************************************
-(1)  262/    9120 :                     
-(1)  263/    9120 :                     __EE_Subtract:
-(1)  264/    9120 : 03                  	scl
-(1)  265/    9121 : C2 00               	ld 		__EEValue(p2)
-(1)  266/    9123 : 78                  	cae
-(1)  267/    9124 : CA 00               	st 		__EEValue(p2)
-(1)  268/    9126 :                     __EEGetNextOperator2:
-(1)  269/    9126 : 90 A6               	jmp 	__EEGetNextOperator
-(1)  270/    9128 :                     
-(1)  271/    9128 :                     ; ****************************************************************************************************************
-(1)  272/    9128 :                     ;														Multiply
-(1)  273/    9128 :                     ; ****************************************************************************************************************
-(1)  274/    9128 :                     
-(1)  275/    9128 :                     __EE_Multiply:										
-(1)  276/    9128 : C2 00               	ld 		__EEValue(p2) 													; a = __EEOperator(p2)
-(1)  277/    912A : CA 01               	st 		__EEOperator(p2)
-(1)  278/    912C : C4 00               	ldi 	0																; res = __EEValue(p2)
-(1)  279/    912E : CA 00               	st 		__EEValue(p2) 													; clear it.
-(1)  280/    9130 :                     __EE_MultiplyLoop:
-(1)  281/    9130 : 40                  	lde  																	; if B == 0 then we are done.
-(1)  282/    9131 : 98 9B               	jz 		__EEGetNextOperator
-(1)  283/    9133 : D4 01               	ani 	1 																; if B LSB is non zero.
-(1)  284/    9135 : 98 07               	jz 		__EE_Multiply_B0IsZero
-(1)  285/    9137 : C2 01               	ld 		__EEOperator(p2) 												; add A to Result
-(1)  286/    9139 : 02                  	ccl
-(1)  287/    913A : F2 00               	add 	__EEValue(p2)
-(1)  288/    913C : CA 00               	st 		__EEValue(p2)
-(1)  289/    913E :                     __EE_Multiply_B0IsZero:
-(1)  290/    913E : 40                  	lde 																	; shift B right
-(1)  291/    913F : 1C                  	sr
-(1)  292/    9140 : 01                  	xae
-(1)  293/    9141 : C2 01               	ld 		__EEOperator(p2) 												; shift A left
- AS V1.42 Beta [Bld 102] - source file exprtest.asm(expression.asm) - page 7 - 12/8/2015 21:20:58
+(1)  229/    9114 :                     ; ****************************************************************************************************************
+(1)  230/    9114 :                     ;
+(1)  231/    9114 :                     ;							Do 0(p2) op E where op is 1(p2) and is a valid operator.
+(1)  232/    9114 :                     ;	
+(1)  233/    9114 :                     ; ****************************************************************************************************************
+(1)  234/    9114 :                     
+(1)  235/    9114 :                     __EECalculate:
+(1)  236/    9114 : C2 01               	ld 		__EEOperator(p2) 									; get the operator.
+(1)  237/    9116 : E4 2D               	xri 	'-'
+(1)  238/    9118 : 98 10               	jz 		__EE_Subtract
+(1)  239/    911A : E4 07               	xri 	'-'!'*'
+(1)  240/    911C : 98 14               	jz 		__EE_Multiply
+(1)  241/    911E : E4 05               	xri 	'*'!'/'
+(1)  242/    9120 : 98 32               	jz 		__EE_Divide
+(1)  243/    9122 :                     
+(1)  244/    9122 :                     ; ****************************************************************************************************************
+(1)  245/    9122 :                     ;														  Add.
+(1)  246/    9122 :                     ; ****************************************************************************************************************
+(1)  247/    9122 :                     
+(1)  248/    9122 :                     __EE_Add:
+(1)  249/    9122 : 02                  	ccl
+(1)  250/    9123 : C2 00               	ld 		__EEValue(p2)
+(1)  251/    9125 : 70                  	ade
+(1)  252/    9126 : CA 00               	st 		__EEValue(p2)
+(1)  253/    9128 : 90 AE               	jmp 	__EEGetNextOperator
+(1)  254/    912A :                     
+(1)  255/    912A :                     ; ****************************************************************************************************************
+(1)  256/    912A :                     ;														Subtract
+(1)  257/    912A :                     ; ****************************************************************************************************************
+(1)  258/    912A :                     
+(1)  259/    912A :                     __EE_Subtract:
+(1)  260/    912A : 03                  	scl
+(1)  261/    912B : C2 00               	ld 		__EEValue(p2)
+(1)  262/    912D : 78                  	cae
+(1)  263/    912E : CA 00               	st 		__EEValue(p2)
+(1)  264/    9130 :                     __EEGetNextOperator2:
+(1)  265/    9130 : 90 A6               	jmp 	__EEGetNextOperator
+(1)  266/    9132 :                     
+(1)  267/    9132 :                     ; ****************************************************************************************************************
+(1)  268/    9132 :                     ;														Multiply
+(1)  269/    9132 :                     ; ****************************************************************************************************************
+(1)  270/    9132 :                     
+(1)  271/    9132 :                     __EE_Multiply:										
+(1)  272/    9132 : C2 00               	ld 		__EEValue(p2) 													; a = __EEOperator(p2)
+(1)  273/    9134 : CA 01               	st 		__EEOperator(p2)
+(1)  274/    9136 : C4 00               	ldi 	0																; res = __EEValue(p2)
+(1)  275/    9138 : CA 00               	st 		__EEValue(p2) 													; clear it.
+(1)  276/    913A :                     __EE_MultiplyLoop:
+(1)  277/    913A : 40                  	lde  																	; if B == 0 then we are done.
+(1)  278/    913B : 98 9B               	jz 		__EEGetNextOperator
+(1)  279/    913D : D4 01               	ani 	1 																; if B LSB is non zero.
+(1)  280/    913F : 98 07               	jz 		__EE_Multiply_B0IsZero
+(1)  281/    9141 : C2 01               	ld 		__EEOperator(p2) 												; add A to Result
+(1)  282/    9143 : 02                  	ccl
+(1)  283/    9144 : F2 00               	add 	__EEValue(p2)
+(1)  284/    9146 : CA 00               	st 		__EEValue(p2)
+(1)  285/    9148 :                     __EE_Multiply_B0IsZero:
+(1)  286/    9148 : 40                  	lde 																	; shift B right
+(1)  287/    9149 : 1C                  	sr
+(1)  288/    914A : 01                  	xae
+ AS V1.42 Beta [Bld 102] - source file exprtest.asm(expression.asm) - page 7 - 12/9/2015 8:16:14
 
 
-(1)  294/    9143 : 02                  	ccl
-(1)  295/    9144 : F2 01               	add 	__EEOperator(p2)
-(1)  296/    9146 : CA 01               	st 		__EEOperator(p2)
-(1)  297/    9148 : 90 E6               	jmp 	__EE_MultiplyLoop
-(1)  298/    914A :                     
-(1)  299/    914A :                     ;	res = 0
-(1)  300/    914A :                     ;	while (b != 0):
-(1)  301/    914A :                     ;		if (b & 1) != 0:
-(1)  302/    914A :                     ;		 	res = (res + a) & 0xFF
-(1)  303/    914A :                     ;		a = (a << 1) & 0xFF
-(1)  304/    914A :                     ;		b = (b >> 1) & 0xFF
-(1)  305/    914A :                     
-(1)  306/    914A :                     
-(1)  307/    914A :                     ; ****************************************************************************************************************
-(1)  308/    914A :                     ;														Divide
-(1)  309/    914A :                     ; ****************************************************************************************************************
-(1)  310/    914A :                     
-(1)  311/    914A :                     __EE_Divide:
-(1)  312/    914A : 40                  	lde 																	; if denominator zero, error 2.
-(1)  313/    914B : 98 B9               	jz 		__EE_Divide_Zero
-(1)  314/    914D : C2 00               	ld 		__EEValue(p2) 													; numerator into __EEOperator(p2)
-(1)  315/    914F : CA 01               	st 		__EEOperator(p2) 												; denominator is in E
-(1)  316/    9151 : C4 00               	ldi 	0
-(1)  317/    9153 : CA 00               	st 		__EEValue(p2)													; quotient in __EEValue(p2)
-(1)  318/    9155 : CA FF               	st 		-1(p2) 															; remainder in -1(p2)
-(1)  319/    9157 : C4 80               	ldi 	0x80 									
-(1)  320/    9159 : CA FE               	st 		-2(p2) 															; bit in -2(p2)
-(1)  321/    915B :                     
-(1)  322/    915B :                     __EE_Divide_Loop:
-(1)  323/    915B : C2 FE               	ld 		-2(p2) 															; exit if bit = 0,we've finished.
-(1)  324/    915D : 98 C7               	jz 		__EEGetNextOperator2
-(1)  325/    915F :                     
-(1)  326/    915F : 02                  	ccl 	 																; shift remainder left.
-(1)  327/    9160 : C2 FF               	ld 		-1(p2)
-(1)  328/    9162 : F2 FF               	add 	-1(p2)
-(1)  329/    9164 : CA FF               	st 		-1(p2)
-(1)  330/    9166 :                     
-(1)  331/    9166 : C2 01               	ld 		__EEOperator(p2)												; get numerator.
-(1)  332/    9168 : 94 02               	jp 		__EE_Divide_Numerator_Positive
-(1)  333/    916A : AA FF               	ild 	-1(p2)  														; if numerator -ve, increment remainder.
-(1)  334/    916C :                     __EE_Divide_Numerator_Positive:
-(1)  335/    916C :                     
-(1)  336/    916C : C2 FF               	ld 		-1(p2) 															; calculate remainder - denominator
-(1)  337/    916E : 03                  	scl
-(1)  338/    916F : 78                  	cae 
-(1)  339/    9170 : CA FD               	st 		-3(p2) 															; save in temp -3(p2)
-(1)  340/    9172 : 06                  	csa 																	; if temp >= 0, CY/L is set
-(1)  341/    9173 : 94 0A               	jp 		__EE_Divide_Temp_Positive
-(1)  342/    9175 :                     
-(1)  343/    9175 : C2 FD               	ld 		-3(p2) 															; copy temp to remainder
-(1)  344/    9177 : CA FF               	st 		-1(p2)
-(1)  345/    9179 : C2 FE               	ld 		-2(p2) 															; or bit into quotient
-(1)  346/    917B : DA 00               	or 		__EEValue(p2)
-(1)  347/    917D : CA 00               	st 		__EEValue(p2)
-(1)  348/    917F :                     __EE_Divide_Temp_Positive:
-(1)  349/    917F :                     
-(1)  350/    917F : C2 FE               	ld 		-2(p2) 															; shift bit right
-(1)  351/    9181 : 1C                  	sr
-(1)  352/    9182 : CA FE               	st 		-2(p2)
-(1)  353/    9184 :                     
- AS V1.42 Beta [Bld 102] - source file exprtest.asm(expression.asm) - page 8 - 12/8/2015 21:20:58
+(1)  289/    914B : C2 01               	ld 		__EEOperator(p2) 												; shift A left
+(1)  290/    914D : 02                  	ccl
+(1)  291/    914E : F2 01               	add 	__EEOperator(p2)
+(1)  292/    9150 : CA 01               	st 		__EEOperator(p2)
+(1)  293/    9152 : 90 E6               	jmp 	__EE_MultiplyLoop
+(1)  294/    9154 :                     
+(1)  295/    9154 :                     ;	res = 0
+(1)  296/    9154 :                     ;	while (b != 0):
+(1)  297/    9154 :                     ;		if (b & 1) != 0:
+(1)  298/    9154 :                     ;		 	res = (res + a) & 0xFF
+(1)  299/    9154 :                     ;		a = (a << 1) & 0xFF
+(1)  300/    9154 :                     ;		b = (b >> 1) & 0xFF
+(1)  301/    9154 :                     
+(1)  302/    9154 :                     
+(1)  303/    9154 :                     ; ****************************************************************************************************************
+(1)  304/    9154 :                     ;														Divide
+(1)  305/    9154 :                     ; ****************************************************************************************************************
+(1)  306/    9154 :                     
+(1)  307/    9154 :                     __EE_Divide:
+(1)  308/    9154 : 40                  	lde 																	; if denominator zero, error 2.
+(1)  309/    9155 : 98 B9               	jz 		__EE_Divide_Zero
+(1)  310/    9157 : C2 00               	ld 		__EEValue(p2) 													; numerator into __EEOperator(p2)
+(1)  311/    9159 : CA 01               	st 		__EEOperator(p2) 												; denominator is in E
+(1)  312/    915B : C4 00               	ldi 	0
+(1)  313/    915D : CA 00               	st 		__EEValue(p2)													; quotient in __EEValue(p2)
+(1)  314/    915F : CA FF               	st 		-1(p2) 															; remainder in -1(p2)
+(1)  315/    9161 : C4 80               	ldi 	0x80 									
+(1)  316/    9163 : CA FE               	st 		-2(p2) 															; bit in -2(p2)
+(1)  317/    9165 :                     
+(1)  318/    9165 :                     __EE_Divide_Loop:
+(1)  319/    9165 : C2 FE               	ld 		-2(p2) 															; exit if bit = 0,we've finished.
+(1)  320/    9167 : 98 C7               	jz 		__EEGetNextOperator2
+(1)  321/    9169 :                     
+(1)  322/    9169 : 02                  	ccl 	 																; shift remainder left.
+(1)  323/    916A : C2 FF               	ld 		-1(p2)
+(1)  324/    916C : F2 FF               	add 	-1(p2)
+(1)  325/    916E : CA FF               	st 		-1(p2)
+(1)  326/    9170 :                     
+(1)  327/    9170 : C2 01               	ld 		__EEOperator(p2)												; get numerator.
+(1)  328/    9172 : 94 02               	jp 		__EE_Divide_Numerator_Positive
+(1)  329/    9174 : AA FF               	ild 	-1(p2)  														; if numerator -ve, increment remainder.
+(1)  330/    9176 :                     __EE_Divide_Numerator_Positive:
+(1)  331/    9176 :                     
+(1)  332/    9176 : C2 FF               	ld 		-1(p2) 															; calculate remainder - denominator
+(1)  333/    9178 : 03                  	scl
+(1)  334/    9179 : 78                  	cae 
+(1)  335/    917A : CA FD               	st 		-3(p2) 															; save in temp -3(p2)
+(1)  336/    917C : 06                  	csa 																	; if temp >= 0, CY/L is set
+(1)  337/    917D : 94 0A               	jp 		__EE_Divide_Temp_Positive
+(1)  338/    917F :                     
+(1)  339/    917F : C2 FD               	ld 		-3(p2) 															; copy temp to remainder
+(1)  340/    9181 : CA FF               	st 		-1(p2)
+(1)  341/    9183 : C2 FE               	ld 		-2(p2) 															; or bit into quotient
+(1)  342/    9185 : DA 00               	or 		__EEValue(p2)
+(1)  343/    9187 : CA 00               	st 		__EEValue(p2)
+(1)  344/    9189 :                     __EE_Divide_Temp_Positive:
+(1)  345/    9189 :                     
+(1)  346/    9189 : C2 FE               	ld 		-2(p2) 															; shift bit right
+(1)  347/    918B : 1C                  	sr
+(1)  348/    918C : CA FE               	st 		-2(p2)
+ AS V1.42 Beta [Bld 102] - source file exprtest.asm(expression.asm) - page 8 - 12/9/2015 8:16:14
 
 
-(1)  354/    9184 : C2 01               	ld 		__EEOperator(p2)												; shift numerator positive
-(1)  355/    9186 : 02                  	ccl
-(1)  356/    9187 : F2 01               	add 	__EEOperator(p2)
-(1)  357/    9189 : CA 01               	st 		__EEOperator(p2)
-(1)  358/    918B : 90 CE               	jmp 	__EE_Divide_Loop
-(1)  359/    918D :                     
-(1)  360/    918D :                     ;	quotient = 0			
-(1)  361/    918D :                     ;	remainder = 0 			
-(1)  362/    918D :                     ;	bit = 0x80
-(1)  363/    918D :                     ;
-(1)  364/    918D :                     ;	while (bit != 0):
-(1)  365/    918D :                     ;
-(1)  366/    918D :                     ;		remainder = remainder << 1
-(1)  367/    918D :                     ;		if numerator & 0x80 != 0:
-(1)  368/    918D :                     ;			remainder = (remainder + 1) & 0xFF
-(1)  369/    918D :                     ;		temp = remainder - denominator
-(1)  370/    918D :                     ;		if temp >= 0:
-(1)  371/    918D :                     ;			remainder = temp
-(1)  372/    918D :                     ;			quotient = quotient | bit
-(1)  373/    918D :                     ;		bit = (bit >> 1) & 0xFF
-(1)  374/    918D :                     ;		numerator = (numerator << 1) & 0xFF
-(1)  375/    918D :                     
-(1)  376/    918D :                     
-(1)  377/    918D :                     ; ****************************************************************************************************************
-(1)  378/    918D :                     ; ****************************************************************************************************************
-(1)  379/    918D :                     ;
-(1)  380/    918D :                     ;		P1 points to <expr>,<expr>) - parse out the values, read memory location and return in A, 
-(1)  381/    918D :                     ;		CY/L = 0 => error A. -2(p2) and -1(p2) should contain the address if we need to read it later.
-(1)  382/    918D :                     ;	
-(1)  383/    918D :                     ; ****************************************************************************************************************
-(1)  384/    918D :                     ; ****************************************************************************************************************
-(1)  385/    918D :                     
-(1)  386/    918D :                     ReadHLMemory:
-(1)  387/    918D : 02                  	ccl
-(1)  388/    918E : C4 2A               	ldi 	42
-(1)  389/    9190 : 3F                  	xppc 	p3
-(1)  390/    9191 :                     
-      47/    9191 :                     
- AS V1.42 Beta [Bld 102] - source file exprtest.asm - page 9 - 12/8/2015 21:20:58
+(1)  349/    918E :                     
+(1)  350/    918E : C2 01               	ld 		__EEOperator(p2)												; shift numerator positive
+(1)  351/    9190 : 02                  	ccl
+(1)  352/    9191 : F2 01               	add 	__EEOperator(p2)
+(1)  353/    9193 : CA 01               	st 		__EEOperator(p2)
+(1)  354/    9195 : 90 CE               	jmp 	__EE_Divide_Loop
+(1)  355/    9197 :                     
+(1)  356/    9197 :                     ;	quotient = 0			
+(1)  357/    9197 :                     ;	remainder = 0 			
+(1)  358/    9197 :                     ;	bit = 0x80
+(1)  359/    9197 :                     ;
+(1)  360/    9197 :                     ;	while (bit != 0):
+(1)  361/    9197 :                     ;
+(1)  362/    9197 :                     ;		remainder = remainder << 1
+(1)  363/    9197 :                     ;		if numerator & 0x80 != 0:
+(1)  364/    9197 :                     ;			remainder = (remainder + 1) & 0xFF
+(1)  365/    9197 :                     ;		temp = remainder - denominator
+(1)  366/    9197 :                     ;		if temp >= 0:
+(1)  367/    9197 :                     ;			remainder = temp
+(1)  368/    9197 :                     ;			quotient = quotient | bit
+(1)  369/    9197 :                     ;		bit = (bit >> 1) & 0xFF
+(1)  370/    9197 :                     ;		numerator = (numerator << 1) & 0xFF
+(1)  371/    9197 :                     
+(1)  372/    9197 :                     
+(1)  373/    9197 :                     ; ****************************************************************************************************************
+(1)  374/    9197 :                     ; ****************************************************************************************************************
+(1)  375/    9197 :                     ;
+(1)  376/    9197 :                     ;		P1 points to <expr>,<expr>) - parse out the values, read memory location and return in A, 
+(1)  377/    9197 :                     ;		CY/L = 0 => error A. -2(p2) and -1(p2) should contain the address if we need to read it later.
+(1)  378/    9197 :                     ;	
+(1)  379/    9197 :                     ; ****************************************************************************************************************
+(1)  380/    9197 :                     ; ****************************************************************************************************************
+(1)  381/    9197 :                     
+(1)  382/    9197 :                     ReadHLMemory:
+(1)  383/    9197 :                     
+(1)  384/    9197 : =0x3                RHL_AddrLo = 3
+(1)  385/    9197 : =0x4                RHL_AddrHi = 4
+(1)  386/    9197 : =0xFFFFFFFFF..      RHL_Result = -1
+(1)  387/    9197 :                     
+(1)  388/    9197 : 40                  	lde 														; save E
+(1)  389/    9198 : CE FD               	st 		@-3(p2) 											; save leaving room for addr.lo and addr.hi
+(1)  390/    919A : 37                  	xpah 	p3 													; save P3
+(1)  391/    919B : CE FF               	st 		@-1(p2)
+(1)  392/    919D : 33                  	xpal 	p3
+(1)  393/    919E : CE FF               	st 		@-1(p2)
+(1)  394/    91A0 : C4 2C               	ldi 	',' 												; first seperator is a comma.
+(1)  395/    91A2 : 01                  	xae
+(1)  396/    91A3 :                     __RHLLoop:	
+(1)  397/    91A3 : C2 03               	ld 		RHL_AddrLo(p2) 										; copy addr lo to addr hi
+(1)  398/    91A5 : CA 04               	st 		RHL_AddrHi(p2)
+(1)  399/    91A7 : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate the expression.
+(1)  399/    91A7 : C4 90                       ldi     (EVALUATEEXPRESSION-1) / 256
+(1)  399/    91A9 : 37                          xpah    P3
+(1)  399/    91AA : C4 35                       ldi     (EVALUATEEXPRESSION-1) & 255
+(1)  399/    91AC : 33                          xpal    P3
+(1)  400/    91AD : 3F                  	xppc 	p3
+(1)  401/    91AE : CA 03               	st 		RHL_AddrLo(p2) 										; save in addr.lo
+(1)  402/    91B0 : 06                  	csa  														; if error
+(1)  403/    91B1 : 94 25               	jp 		__RHLError
+(1)  404/    91B3 :                     __RHLSkip:
+ AS V1.42 Beta [Bld 102] - source file exprtest.asm(expression.asm) - page 9 - 12/9/2015 8:16:14
+
+
+(1)  405/    91B3 : C1 00               	ld 		0(p1) 												; check for end of line
+(1)  406/    91B5 : 98 25               	jz 		__RHLSyntax
+(1)  407/    91B7 : C5 01               	ld 		@1(p1) 												; fetch next character
+(1)  408/    91B9 : E4 20               	xri 	' ' 												; skip over spaces.
+(1)  409/    91BB : 98 F6               	jz 		__RHLSkip 
+(1)  410/    91BD : C1 FF               	ld 		-1(p1) 												; get fetched character
+(1)  411/    91BF : 60                  	xre 														; is it the one we wanted ?
+(1)  412/    91C0 : 9C 1A               	jnz 	__RHLSyntax 										; no, so fail.
+(1)  413/    91C2 : 40                  	lde 														; get character
+(1)  414/    91C3 : E4 05               	xri 	','!')'												; switch from , to )
+(1)  415/    91C5 : 01                  	xae 														; put back in E.
+(1)  416/    91C6 : 40                  	lde 														; if it is ')' , go back.
+(1)  417/    91C7 : E4 29               	xri 	')'
+(1)  418/    91C9 : 98 D8               	jz 		__RHLLoop 
+(1)  419/    91CB :                     
+(1)  420/    91CB : C2 03               	ld 		RHL_AddrLo(p2) 										; load address into P3
+(1)  421/    91CD : 33                  	xpal 	p3
+(1)  422/    91CE : C2 04               	ld 		RHL_AddrHi(p2)
+(1)  423/    91D0 : 37                  	xpah 	p3
+(1)  424/    91D1 : C3 00               	ld 		0(p3) 												; read byte there
+(1)  425/    91D3 : CA FF               	st 		-1(p2) 												; save in return value space.
+(1)  426/    91D5 : 03                  	scl 														; set CY/L indicating no error
+(1)  427/    91D6 : 90 09               	jmp 	__RHLExit 											; and exit.
+(1)  428/    91D8 :                     
+(1)  429/    91D8 :                     __RHLError:
+(1)  430/    91D8 : C2 03               	ld 		RHL_AddrLo(p2) 										; read error code
+(1)  431/    91DA : 90 02               	jmp 	__RHLSaveErrorAndExit
+(1)  432/    91DC :                     
+(1)  433/    91DC :                     __RHLSyntax:
+(1)  434/    91DC : C4 05               	ldi 	ERROR_Syntax 										; syntax error
+(1)  435/    91DE :                     __RHLSaveErrorAndExit:
+(1)  436/    91DE : CA FF               	st 		RHL_Result(p2)										; save as error code
+(1)  437/    91E0 : 02                  	ccl 														; return error
+(1)  438/    91E1 :                     
+(1)  439/    91E1 :                     __RHLExit:														; exit with result in RHL_AddrLo.
+(1)  440/    91E1 : C6 01               	ld 		@1(p2) 												; reload P3
+(1)  441/    91E3 : 33                  	xpal 	p3
+(1)  442/    91E4 : C6 01               	ld 		@1(p2)
+(1)  443/    91E6 : 37                  	xpah 	p3
+(1)  444/    91E7 : C6 03               	ld 		@3(p2)
+(1)  445/    91E9 : 01                  	xae
+(1)  446/    91EA : C2 FA               	ld 		-6(p2) 												; get the return value
+(1)  447/    91EC : 3F                  	xppc 	p3 													; and exit.
+(1)  448/    91ED :                     
+      51/    91ED :                     
+ AS V1.42 Beta [Bld 102] - source file exprtest.asm - page 10 - 12/9/2015 8:16:14
 
 
   symbol table (* = unused):
@@ -488,42 +558,47 @@
 
 *ARCHITECTURE :  i386-unknown-win32 - | *BIGENDIAN :                      0 - |
 *BRANCHEXT :                      0 - | *CASESENSITIVE :                  0 - |
-*CONSTPI :        3.141592653589793 - | *DATE :                   12/8/2015 - |
+*CONSTPI :        3.141592653589793 - | *DATE :                   12/9/2015 - |
  ERROR_BADTERM :                  4 - |  ERROR_DIVZERO :                  7 - |
- EVALUATEEXPRESSION :          902C C | *FALSE :                          0 - |
-*FULLPMMU :                       1 - | *HAS64 :                          1 - |
-*HASDSP :                         0 - | *HASFPU :                         0 - |
-*HASPMMU :                        0 - | *INEXTMODE :                      0 - |
-*INLWORDMODE :                    0 - | *INMAXMODE :                      0 - |
-*INSRCMODE :                      0 - | *INSUPMODE :                      0 - |
-*LISTON :                         1 - | *MACEXP :                         1 - |
-*MOMCPU :                         C - | *MOMCPUNAME :                 SC/MP - |
-*NESTMAX :                      100 - | *PACKING :                        0 - |
-*PADDING :                        1 - |  READHLMEMORY :                918D C |
-*RELAXED :                        0 - |  TEST :                        9024 C |
-*TIME :                    21:20:58 - | *TRUE :                           1 - |
+ ERROR_SYNTAX :                   5 - |  EVALUATEEXPRESSION :          9036 C |
+*FALSE :                          0 - | *FULLPMMU :                       1 - |
+*HAS64 :                          1 - | *HASDSP :                         0 - |
+*HASFPU :                         0 - | *HASPMMU :                        0 - |
+*INEXTMODE :                      0 - | *INLWORDMODE :                    0 - |
+*INMAXMODE :                      0 - | *INSRCMODE :                      0 - |
+*INSUPMODE :                      0 - | *LISTON :                         1 - |
+*MACEXP :                         1 - | *MOMCPU :                         C - |
+*MOMCPUNAME :                 SC/MP - | *NESTMAX :                      100 - |
+*PACKING :                        0 - | *PADDING :                        1 - |
+ READHLMEMORY :                9197 C | *RELAXED :                        0 - |
+ RHL_ADDRHI :                     4 - |  RHL_ADDRLO :                     3 - |
+ RHL_RESULT :      FFFFFFFFFFFFFFFF - |  TEST :                        9028 C |
+*TIME :                     8:16:14 - | *TRUE :                           1 - |
  VARIABLES :                    CA0 - | *VERSION :                     142F - |
- WAIT22 :                      9022 C |  __EEBADTERM :                 90F3 C |
- __EECALCULATE :               910A C |  __EECALCULATE2 :              9076 C |
- __EECALCULATE3 :              90CC C |  __EECHECKOPERATOR :           90DB C |
- __EECONSTANTLOOP :            90A0 C |  __EEDATAACCESS :              9068 C |
- __EEDOOPERATOR :              90ED C |  __EEERROR :                   90F5 C |
- __EEEXIT :                    90F8 C |  __EEGETNEXTOPERATOR :         90CE C |
- __EEGETNEXTOPERATOR2 :        9126 C |  __EELOOP :                    9078 C |
- __EENOTDIGIT :                90BB C |  __EEOPERATOR :                   1 - |
- __EERANDOM :                  903F C |  __EERANDOMNOTOGGLE :          9061 C |
- __EERANDOMOFFSET :              1A - |  __EERANDOM_ISINITIALISED :    904D C |
- __EEVALUE :                      0 - | *__EE_ADD :                    9118 C |
- __EE_DIVIDE :                 914A C |  __EE_DIVIDE_LOOP :            915B C |
- __EE_DIVIDE_NUMERATOR_POSITIVE :                                      916C C |
- __EE_DIVIDE_TEMP_POSITIVE :   917F C |  __EE_DIVIDE_ZERO :            9106 C |
- __EE_MULTIPLY :               9128 C |  __EE_MULTIPLYLOOP :           9130 C |
- __EE_MULTIPLY_B0ISZERO :      913E C |  __EE_SUBTRACT :               9120 C |
+ WAIT22 :                      9026 C |  __EEBADTERM :                 90FD C |
+ __EECALCULATE :               9114 C |  __EECALCULATE3 :              90D6 C |
+ __EECHECKOPERATOR :           90E5 C |  __EECONSTANTLOOP :            90AA C |
+ __EEDATAACCESS :              9072 C |  __EEDOOPERATOR :              90F7 C |
+ __EEERROR :                   90FF C |  __EEEXIT :                    9102 C |
+ __EEGETNEXTOPERATOR :         90D8 C |  __EEGETNEXTOPERATOR2 :        9130 C |
+ __EELOOP :                    9082 C |  __EENOTDIGIT :                90C5 C |
+ __EEOPERATOR :                   1 - |  __EERANDOM :                  9049 C |
+ __EERANDOMNOTOGGLE :          906B C |  __EERANDOMOFFSET :              1A - |
+ __EERANDOM_ISINITIALISED :    9057 C |  __EEVALUE :                      0 - |
+*__EE_ADD :                    9122 C |  __EE_DIVIDE :                 9154 C |
+ __EE_DIVIDE_LOOP :            9165 C |
+ __EE_DIVIDE_NUMERATOR_POSITIVE :                                      9176 C |
+ __EE_DIVIDE_TEMP_POSITIVE :   9189 C |  __EE_DIVIDE_ZERO :            9110 C |
+ __EE_MULTIPLY :               9132 C |  __EE_MULTIPLYLOOP :           913A C |
+ __EE_MULTIPLY_B0ISZERO :      9148 C |  __EE_SUBTRACT :               912A C |
+ __RHLERROR :                  91D8 C |  __RHLEXIT :                   91E1 C |
+ __RHLLOOP :                   91A3 C |  __RHLSAVEERRORANDEXIT :       91DE C |
+ __RHLSKIP :                   91B3 C |  __RHLSYNTAX :                 91DC C |
 
-     65 symbols
+     74 symbols
      29 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file exprtest.asm - page 10 - 12/8/2015 21:20:58
+ AS V1.42 Beta [Bld 102] - source file exprtest.asm - page 11 - 12/9/2015 8:16:14
 
 
   defined macros:
@@ -533,7 +608,7 @@ LPI                                   |
 
       1 macro
 
- AS V1.42 Beta [Bld 102] - source file exprtest.asm - page 11 - 12/8/2015 21:20:58
+ AS V1.42 Beta [Bld 102] - source file exprtest.asm - page 12 - 12/9/2015 8:16:14
 
 
   codepages:
@@ -542,10 +617,10 @@ LPI                                   |
 STANDARD (0 changed characters)
 
 
-0.00 seconds assembly time
+0.01 seconds assembly time
 
-    437 lines source file
-    457 lines incl. macro expansions
+    499 lines source file
+    523 lines incl. macro expansions
       2 passes
       0 errors
       0 warnings

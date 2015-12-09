@@ -30,10 +30,12 @@ lpi	macro	ptr,addr
 
 	db 		0x68												; this makes it boot straight into this ROM.
 	lpi 	p1,Variables
-	ldi 	10
-	st 		0(p1)
+	ldi 	10 													
+	st 		0(p1)												; A = 10
 	ldi 	20
-	st 		1(p1)
+	st 		1(p1)												; B = 20
+	ldi 	33
+	st 		25(p1) 												; Z = 33
 
 	lpi 	p2,0xFFF											; set up stack
 	lpi		p1,test
@@ -42,5 +44,7 @@ lpi	macro	ptr,addr
 wait22:
 	jmp 	wait22
 
+test:
+	db 		"(144,1)-196+Z",0  
 
 	include expression.asm 										; screen I/O stuff.

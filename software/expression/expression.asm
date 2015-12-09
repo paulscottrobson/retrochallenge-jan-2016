@@ -15,10 +15,6 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-test:
-	db 		"2+3*4*5",0  
-
-
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 ;
@@ -27,7 +23,7 @@ test:
 ;	Preserves registers except A and P1, which is advanced to the end of the expression - on exit it points to
 ;	NULL or the next character - so 2+3, will return A = 5, CY/L = 1,P1 pointing to the comma.
 ;
-;	This isn't re-entrant at present.
+;	This isn't re-entrant.
 ;
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
@@ -39,6 +35,7 @@ __EEOperator = 1 												; operator.
 __EERandomOffset = 26 											; offset to random seed from p3
 
 ERROR_BadTerm = 4
+ERROR_Syntax = 5
 ERROR_DivZero = 7
 
 	lde 														; save E on stack
@@ -82,7 +79,7 @@ __EERandomNoToggle:
 	ld 		__EERandomOffset(p3) 								; XOR two values together into E.
 	xor 	__EERandomOffset+1(p3)
 	xae
-	jmp 	__EECalculate2
+	jmp 	__EECalculate3
 
 ; ****************************************************************************************************************
 ;												  Read data (h,l)
@@ -92,13 +89,11 @@ __EEDataAccess:
 	lpi 	p3,ReadHLMemory-1 									; read HL memory into A
 	xppc 	p3
 	xae 														; save in E
-	csa 														; if carry is clear then calculate as normal
-	jp 		__EECalculate2
+	csa 														; if carry is set then calculate as normal.
+	ani 	0x80
+	jnz 	__EECalculate3
 	lde 														; get error code
 	jmp 	__EEError
-
-__EECalculate2:
-	jmp 	__EECalculate3
 
 ; ****************************************************************************************************************
 ;
@@ -236,6 +231,7 @@ __EE_Divide_Zero:
 ;							Do 0(p2) op E where op is 1(p2) and is a valid operator.
 ;	
 ; ****************************************************************************************************************
+
 __EECalculate:
 	ld 		__EEOperator(p2) 									; get the operator.
 	xri 	'-'
@@ -384,7 +380,68 @@ __EE_Divide_Temp_Positive:
 ; ****************************************************************************************************************
 
 ReadHLMemory:
-	; TODO: parse out nn,nn)
-	ccl
-	ldi 	42
+
+RHL_AddrLo = 3
+RHL_AddrHi = 4
+RHL_Result = -1
+
+	lde 														; save E
+	st 		@-3(p2) 											; save leaving room for addr.lo and addr.hi
+	xpah 	p3 													; save P3
+	st 		@-1(p2)
+	xpal 	p3
+	st 		@-1(p2)
+	ldi 	',' 												; first seperator is a comma.
+	xae
+__RHLLoop:	
+	ld 		RHL_AddrLo(p2) 										; copy addr lo to addr hi
+	st 		RHL_AddrHi(p2)
+	lpi 	p3,EvaluateExpression-1 							; evaluate the expression.
 	xppc 	p3
+	st 		RHL_AddrLo(p2) 										; save in addr.lo
+	csa  														; if error
+	jp 		__RHLError
+__RHLSkip:
+	ld 		0(p1) 												; check for end of line
+	jz 		__RHLSyntax
+	ld 		@1(p1) 												; fetch next character
+	xri 	' ' 												; skip over spaces.
+	jz 		__RHLSkip 
+	ld 		-1(p1) 												; get fetched character
+	xre 														; is it the one we wanted ?
+	jnz 	__RHLSyntax 										; no, so fail.
+	lde 														; get character
+	xri 	','!')'												; switch from , to )
+	xae 														; put back in E.
+	lde 														; if it is ')' , go back.
+	xri 	')'
+	jz 		__RHLLoop 
+
+	ld 		RHL_AddrLo(p2) 										; load address into P3
+	xpal 	p3
+	ld 		RHL_AddrHi(p2)
+	xpah 	p3
+	ld 		0(p3) 												; read byte there
+	st 		-1(p2) 												; save in return value space.
+	scl 														; set CY/L indicating no error
+	jmp 	__RHLExit 											; and exit.
+
+__RHLError:
+	ld 		RHL_AddrLo(p2) 										; read error code
+	jmp 	__RHLSaveErrorAndExit
+
+__RHLSyntax:
+	ldi 	ERROR_Syntax 										; syntax error
+__RHLSaveErrorAndExit:
+	st 		RHL_Result(p2)										; save as error code
+	ccl 														; return error
+
+__RHLExit:														; exit with result in RHL_AddrLo.
+	ld 		@1(p2) 												; reload P3
+	xpal 	p3
+	ld 		@1(p2)
+	xpah 	p3
+	ld 		@3(p2)
+	xae
+	ld 		-6(p2) 												; get the return value
+	xppc 	p3 													; and exit.
