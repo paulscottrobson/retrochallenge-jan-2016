@@ -379,6 +379,15 @@ __EE_Divide_Temp_Positive:
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
+ReadHLMemoryFull:
+	ld 		@1(p1) 												; look at next character and bump.
+	xri 	'(' 												; if it is '(' then evaluate normally.
+	jz 		ReadHLMemory
+	ld 		@-1(p1) 											; undo the post increment.
+	ccl 														; return with a syntax error.
+	ldi 	ERROR_Syntax 
+	xppc 	p3 
+
 ReadHLMemory:
 
 RHL_AddrLo = 3
