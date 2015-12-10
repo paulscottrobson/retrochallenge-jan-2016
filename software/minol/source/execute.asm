@@ -8,7 +8,7 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-test:db 	"GOTO 42",0
+test:db 	"    Q = 1",0
 
 __EXExit:
 	scl 														; is okay.
@@ -50,7 +50,6 @@ __EXNextCommand:
 	ld 		@1(p1) 												; fetch and bump
 	xri 	':'
 	jnz 	__EXNextCommand 									; until found a colon.
-__EXExit2:
 	jmp 	__EXExit
 ;
 ;	Report Error in E.
@@ -63,7 +62,7 @@ __EX_ReportError:
 
 ; ****************************************************************************************************************
 ;
-;	Instructions: (in alphabetical order except LET/LIST because of default assignment statement)
+;	Instructions: 
 ;
 ;		CALL 	(h,l)
 ;		CLEAR
@@ -72,11 +71,11 @@ __EX_ReportError:
 ;		NEW 	(stops running program as well)						[TODO: NewProgram()]
 ;		IN 		string|var,... (no spaces ???? check source)		[TODO: InCommand()]
 ;		IF 		<expr> [#<=] <expr> ; instruction
+;		[LET]	var|(h,l) = <expr>									[TODO: Code incomplete.]
+;		LIST 														[TODO: ListProgram()]
 ;		OS 		Boots to Monitor (JMP $210)
 ;		PR 		string|number|string const,....[;]					[TODO: OutCommand()]
 ;		RUN 														[TODO: RunProgram()]
-;		LIST
-;		[LET]	var|(h,l) = <expr>
 ;
 ;	Unimplemented:
 ;
@@ -93,10 +92,37 @@ __EXCode:
 	ani 	64 													; if it 
 	jz 		__EXDefaultLET 										; if it isn't try for a default LET.
 
-	lpi 	p3,__EXSkipCharacters-1 							; character/space skipping routine
-	ld 		-1(p1) 												; reload character for decoding.
-	xri 	'C'
-	jnz 	__EX_Decode_NotC									; check if it is C(A)LL or C(L)ear
+	lpi 	p3, JumpTable 										; P3 points to jump table (at end of file)
+	ldi 	ERROR_Syntax 										; syntax error in E ready for failure.
+	xae
+__EXSearch:
+	ld 		@3(p3)												; read token to match against
+	jz 		__EX_ReportError 									; end of table.
+	xor 	-1(p1)												; compare against first character
+	jnz 	__EXSearch 											; failed, keep searching.
+	ld 		-2(p3)												; LSB of address
+	xae
+	ld 		-1(p3) 												; MSB of address
+	xpah 	p3 													; put into P3
+	lde 														; put low address into P3
+	xpal 	p3
+	xppc 	p3 													; and go there.
+
+; ****************************************************************************************************************
+;											RUN Run Program
+; ****************************************************************************************************************
+
+__EX_Command_RUN:
+	lpi 	p3,RunProgram-1 									; run program, set everything up
+	xppc 	p3
+__EXExit2:
+	jmp 	__EXExit
+
+; ****************************************************************************************************************
+;											C (ALL or LEAR)
+; ****************************************************************************************************************
+
+__EX_Decode_C:
 	ld 		0(p1) 												; get next character
 	xri 	'A'
 	jz 		__EX_Command_CALL
@@ -117,17 +143,33 @@ __EX_CLEAR_Loop:
 	jmp 	__EXNextCommand 									; next command.
 
 ; ****************************************************************************************************************
+;										PR items .... [;] Print
+; ****************************************************************************************************************
+
+__EX_Command_PR:
+	lpi 	p3,__EXSkipCharacters-1
+	ldi 	1 													; skip R
+	xppc 	p3
+	lpi 	p3,OutCommand-1 									; handled via another source file.
+	xppc 	p3
+	xae 														; save error code.
+	csa 														; check for error.
+	jp 		__EX_ReportError 									; if occurred, report it.
+__EXNextCommand2:
+	jmp 	__EXNextCommand										; otherwise, try again.
+
+; ****************************************************************************************************************
 ;				CALL (h,l) Calls machine code routine at (H,L) where h,l are any two expressions.
 ; ****************************************************************************************************************
 
 __EX_Command_CALL:
+	lpi 	p3,__EXSkipCharacters-1
 	ldi 	3 													; skip 'A' 'L' 'L' and spaces.
 	xppc 	p3
 	lpi 	p3,ReadHLMemoryFull-1 								; read the (h,l)
 	xppc 	p3 
 	xae
 	csa 
-__EX_ReportErrorIfPositive:
 	jp 		__EX_ReportError 									; if CY/L = 0 then error.
 	ld 		-2(p2) 												; read L
 	xpal 	p3
@@ -135,14 +177,7 @@ __EX_ReportErrorIfPositive:
 	xpah 	p3
 	ld 		@-1(p3) 											; fix up for pre-increment
 	xppc 	p3
-	jmp 	__EXNextCommand										; next command.
-
-__EXExit3:
-	jmp 	__EXExit2
-
-__EX_Decode_NotC:
-	xri 	'C'!'E'												; check for E(ND)
-	jnz 	__EX_Decode_NotE
+	jmp 	__EXNextCommand2									; next command.
 
 ; ****************************************************************************************************************
 ;											END end running program
@@ -156,56 +191,8 @@ __EX_END_EndOfLine:
 	ld 		@1(p1) 												; keep going till find NULL EOL marker
 	jnz 	__EX_END_EndOfLine
 	ld 		@-1(p1) 											; point back to the EOS
-__EXNextCommand2:
-	jmp 	__EXNextCommand 									; and do next command, in this case will be input :)
-
-
-__EX_Decode_NotE:
-	xri 	'E'!'G'												; check for G(OTO)
-	jnz 	__EX_Decode_NotG
-
-; ****************************************************************************************************************
-;										 GOTO <expr> transfer control
-; ****************************************************************************************************************
-
-__EX_Command_GOTO:
-	ldi 	3 													; skip O T O
-	xppc 	p3
-	lpi 	p3,EvaluateExpression-1 							; get line number to GOTO ... to :)
-	xppc 	p3
-	xae 														; save in E
-	csa
-	jp 		__EX_ReportErrorIfPositive							; error in expression.
-
-	lpi 	p3,FindProgramLine-1 								; Find program line.
-	lde 														; with that number.		
-	xppc 	p3 												
-	csa 
-	jp 		__EX_GOTO_NotFound 									; if CY/L = 0 then not found.
-
-	lpi 	p3,CurrentLine
-	lde  														; save current line number
-	st 		(p3)
-	xpah 	p1 													; save P1 returned from line find in Current address
-	st 		CurrentAddr-CurrentLine(p3)
-	xpah 	p1
-	xpal 	p1
-	st 		CurrentAddr-CurrentLine(p3)
-	xpal 	p1
-__EXExit4:
-	jmp 	__EXExit3 											; exit, don't skip over.
-
-__EX_GOTO_NotFound:
-	ldi 	ERROR_Label 
-__EX_ReportErrorA:
-	xae
-__EX_ReportErrorE:
-	ldi 	0 													; makes P for jump tests which are JP.
-	jmp 	__EX_ReportErrorIfPositive
-
-__EX_Decode_NotG:
-	xri 	'G'!'N'												; check if N(EW)
-	jnz 	__EX_Decode_NotN
+__EXNextCommand3:
+	jmp 	__EXNextCommand2 									; and do next command, in this case will be input :)
 
 ; ****************************************************************************************************************
 ;								NEW Erase current program, and stop if running
@@ -226,38 +213,24 @@ __EX_NEW_Syntax:												; come here if test for NEW fails, report syntax
 	ldi 	ERROR_Syntax										; error - only this command is fully decoded.
 	jmp 	__EX_ReportErrorA
 
-__EXNextCommand3:
-	jmp 	__EXNextCommand2
+__EXExit3:
+	jmp 	__EXExit2
 
-__EX_Decode_NotN:
-	xri 	'N'!'I' 											; check for IF and IN.
-	jnz 	__EX_Decode_NotI
+; ****************************************************************************************************************
+;												I(N or F)
+; ****************************************************************************************************************
+
+__EX_Decode_I
 	ld 		0(p1)												; look at next.
-	xri 	'F'
-	jz 		__EX_Command_IF
-
-; ****************************************************************************************************************
-;										IN <variable>.... ; input
-; ****************************************************************************************************************
-
-__EX_Command_IN:
-	ldi 	1 													; skip over 1 character (N) and spaces
-	xppc 	p3
-	lpi 	p3,InCommand-1 										; handled via another source file.
-	xppc 	p3
-	xae 														; save error code.
-	csa 														; check for error.
-	jp 		__EX_ReportErrorE 									; if occurred, report it.
-	jmp 	__EXNextCommand3
-
-__EXExit5:
-	jmp 	__EXExit4
+	xri 	'N'
+	jz 		__EX_Command_IN
 
 ; ****************************************************************************************************************
 ;									IF <expr> [#<=] <expr> ; conditional
 ; ****************************************************************************************************************
 
 __EX_Command_IF:
+	lpi 	p3,__EXSkipCharacters-1
 	ldi 	1 													; skip over 1 character (F) and spaces
 	xppc 	p3
 	lpi 	p3,EvaluateExpression-1 							; get LHS of expression
@@ -286,7 +259,6 @@ __EX_IF_LegalTest:
 	xae 														; result in E
 	ld 		@2(p2) 												; fix the stack back up.
 	csa 														; check for error
-__EX_ReportErrorE_P:
 	jp 		__EX_ReportErrorE 									; we have got Left -2(p2) and operator -1(p2) and right (E)
 	ld 		-1(p2) 												; check if operator is <
 	xri 	'<'
@@ -300,14 +272,15 @@ __EX_IsEqual:													; at this point, A = 8 (different) A = 0 (equal)
 	ld 		-1(p2) 												; get operator.
 	ani 	0x08 												; # => $23 : = => $3D so A = 0 (for #) 8 (for =)
 	xre 														; if A = 0, E = 8 equal and = test and vice versa
+__EXNextCommand3IfZero:
 	jz 		__EXNextCommand3 									; so the XOR will be non zero, so this is pass
 __EX_IF_Succeed:
 	ld 		0(p1)												; look at next character
 	xri 	';'													; error if not semicolon.
 	jnz 	__EX_NEW_Syntax
 	ld 		@1(p1)												; skip over it.
-__EXExit6:
-	jmp 	__EXExit5 											; just exit , ready to do the 'success' code.
+__EXExit4:
+	jmp 	__EXExit3 											; just exit , ready to do the 'success' code.
 
 __EX_IF_LessThan:
 	ld 		-2(p2) 												; get left
@@ -316,60 +289,70 @@ __EX_IF_LessThan:
 	csa 														; CY/L = 0 if succeeded.
 	jp 		__EX_IF_Succeed
 __EXNextCommand4:
-	jmp 	__EXNextCommand3 									; failed.
+	ldi 	0 													; clear A so can use the JZ above.
+	jmp 	__EXNextCommand3IfZero 								; failed.
 
-__EX_NEW_Syntax2:
-	jmp 	__EX_NEW_Syntax
-
-__EX_Decode_NotI:
-	xri 	'I'!'O'												; check for O
-	jnz 	__EX_Decode_NotO
-
-; ****************************************************************************************************************
-;											OS Boot Monitor
-; ****************************************************************************************************************
-
-__EX_Command_OS:
-	ld 		0(p1) 												; check it is OS
-	xri 	'S'
-	jnz		__EX_NEW_Syntax_NZ2
-	lpi 	p3,MonitorBoot-1 									; boot to monitor
+__EX_ReportErrorA:
+	xae
+__EX_ReportErrorE:
+	lpi 	p3,__EX_ReportError-1 								; long jump
 	xppc 	p3
 
-__EX_Decode_NotO:
-	xri 	'O'!'P' 											; check for P
-	jnz 	__EX_Decode_NotP
-
 ; ****************************************************************************************************************
-;										PR items .... [;] Print
+;										IN <variable>.... ; input
 ; ****************************************************************************************************************
 
-__EX_Command_PR:
-	ldi 	1 													; skip R
+__EX_Command_IN:
+	lpi 	p3,__EXSkipCharacters-1
+	ldi 	1 													; skip over 1 character (N) and spaces
 	xppc 	p3
-	lpi 	p3,OutCommand-1 									; handled via another source file.
+	lpi 	p3,InCommand-1 										; handled via another source file.
 	xppc 	p3
 	xae 														; save error code.
 	csa 														; check for error.
-	jp 		__EX_ReportErrorE_P 								; if occurred, report it.
-	jmp 	__EXNextCommand4									; otherwise, try again.
-
-__EX_Decode_NotP:
-	xri 	'P'!'R'
-	jnz 	__EX_Decode_NotR
+	jp 		__EX_ReportErrorE 									; if occurred, report it.
+	jmp 	__EXNextCommand4
 
 ; ****************************************************************************************************************
-;											RUN Run Program
+;										 GOTO <expr> transfer control
 ; ****************************************************************************************************************
 
-__EX_Command_RUN:
-	lpi 	p3,RunProgram-1 									; run program, set everything up
+__EX_Command_GOTO:
+	lpi 	p3,__EXSkipCharacters-1
+	ldi 	3 													; skip O T O
 	xppc 	p3
-	jmp 	__EXExit6
+	lpi 	p3,EvaluateExpression-1 							; get line number to GOTO ... to :)
+	xppc 	p3
+	xae 														; save in E
+	csa
+	jp 		__EX_ReportErrorE									; error in expression.
 
-__EX_Decode_NotR:												; finally check for L.
-	xri 	'R'!'L'
-	jnz 	__EX_Command_LET_Optional
+	lpi 	p3,FindProgramLine-1 								; Find program line.
+	lde 														; with that number.		
+	xppc 	p3 												
+	csa 
+	jp 		__EX_GOTO_NotFound 									; if CY/L = 0 then not found.
+
+	lpi 	p3,CurrentLine
+	lde  														; save current line number
+	st 		(p3)
+	xpah 	p1 													; save P1 returned from line find in Current address
+	st 		CurrentAddr-CurrentLine(p3)
+	xpah 	p1
+	xpal 	p1
+	st 		CurrentAddr-CurrentLine(p3)
+	xpal 	p1
+	jmp 	__EXExit4 											; exit, don't skip over.
+
+__EX_GOTO_NotFound:
+	ldi 	ERROR_Label 
+	jmp 	__EX_ReportErrorA
+
+; ****************************************************************************************************************
+;													L(IST or ET)
+; ****************************************************************************************************************
+
+__EX_Decode_L:
 	ld 		0(p1)												; look at next
 	xri 	'E'													; is it LE
 	jz 		__EX_Command_LET
@@ -384,18 +367,56 @@ __EX_Command_LIST:
 	jmp 	__EXNextCommand4
 
 ; ****************************************************************************************************************
+;											OS Boot Monitor
+; ****************************************************************************************************************
+
+__EX_Command_OS:
+	ldi 	ERROR_Syntax
+	xae
+	ld 		0(p1) 												; check it is OS
+	xri 	'S'
+	jnz		__EX_ReportErrorE
+	lpi 	p3,MonitorBoot-1 									; boot to monitor
+	xppc 	p3
+
+; ****************************************************************************************************************
 ;								LET var = expr assignment, LET optional
 ; ****************************************************************************************************************
 
 __EX_Command_LET:
+	lpi 	p3,__EXSkipCharacters-1
 	ldi 	2													; skip over E and T
 	xppc 	p3
 __EX_Command_LET_Optional:										; analyse to look for a LET.
-	ld 		0(p1)
-	jz 		__EX_NEW_Syntax
 
-wait2:	jmp 	wait2
+	; TODO: push address of var on stack (use left over one from ReadHL)
+	; TODO: Check =
+	; TODO: Do R-Expr
+	; TODO: Do Assignment.
 
+wait4:
+	jmp 	wait4
+
+; ****************************************************************************************************************
+;													Jump Table.
+; ****************************************************************************************************************
+
+tableEntry macro ch,code
+	db 		ch
+	dw 		code-1
+	endm
+
+JumpTable:
+	tableEntry 'C',__EX_Decode_C
+	tableEntry 'E',__EX_Command_END
+	tableEntry 'G',__EX_Command_GOTO
+	tableEntry 'N',__EX_Command_NEW
+	tableEntry 'I',__EX_Decode_I
+	tableEntry 'L',__EX_Decode_L
+	tableEntry 'O',__EX_Command_OS
+	tableEntry 'P',__EX_Command_PR
+	tableEntry 'R',__EX_Command_RUN
+	db 		0
 
 ; ****************************************************************************************************************
 ;							Skip A characters from P1, and any subsequent spaces.
