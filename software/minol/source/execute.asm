@@ -8,7 +8,7 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-test:db 	"    Q = 1",0
+test:db 	"(4,6) = 1",0
 
 __EXExit:
 	scl 														; is okay.
@@ -88,6 +88,9 @@ __EXDefaultLET:
 	xppc 	p3
 
 __EXCode:
+	ld 		-1(p1) 												; if first character is '('
+	xri 	'('
+	jz 		__EXDefaultLET
 	ld 		0(p1) 												; check 2nd character is alphabetic
 	ani 	64 													; if it 
 	jz 		__EXDefaultLET 										; if it isn't try for a default LET.
@@ -154,6 +157,7 @@ __EX_Command_PR:
 	xppc 	p3
 	xae 														; save error code.
 	csa 														; check for error.
+__EX_ReportErrorIfPositive:
 	jp 		__EX_ReportError 									; if occurred, report it.
 __EXNextCommand2:
 	jmp 	__EXNextCommand										; otherwise, try again.
@@ -170,7 +174,7 @@ __EX_Command_CALL:
 	xppc 	p3 
 	xae
 	csa 
-	jp 		__EX_ReportError 									; if CY/L = 0 then error.
+	jp 		__EX_ReportErrorIfPositive 							; if CY/L = 0 then error.
 	ld 		-2(p2) 												; read L
 	xpal 	p3
 	ld 		-1(p2) 												; read H
@@ -388,6 +392,9 @@ __EX_Command_LET:
 	ldi 	2													; skip over E and T
 	xppc 	p3
 __EX_Command_LET_Optional:										; analyse to look for a LET.
+	ld 		(p1) 												; look at first character
+	xri 	'('													; is it open bracket (e.g. (H,L))
+	jz 		__EX_LET_IsHL
 
 	; TODO: push address of var on stack (use left over one from ReadHL)
 	; TODO: Check =
@@ -396,6 +403,10 @@ __EX_Command_LET_Optional:										; analyse to look for a LET.
 
 wait4:
 	jmp 	wait4
+
+__EX_LET_IsHL:													; found a ( so assuming (H,L)
+	lpi 	p3,
+
 
 ; ****************************************************************************************************************
 ;													Jump Table.
