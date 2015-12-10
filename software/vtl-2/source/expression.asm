@@ -6,11 +6,8 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-; TODO: Write test program using +,-,*,/ and numeric constants, and test that part.
 ; TODO: Add variable support (not special) and test that
 ; TODO: Add special terms.
-
-test:db 	"22/7-9",0
 
 operation = 3													; pending operation
 resultLo = 5
