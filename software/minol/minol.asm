@@ -22,6 +22,8 @@ MinolVars = Variables + 32 										; MINOL variables start here.
 CurrentLine = MinolVars + 0 									; current line number (0 = not running)
 CurrentAddr = MinolVars + 1 									; position in current line (Low,High)
 
+MonitorBoot = 0x210 											; go here to boot monitor
+
 ERROR_Label = 1 												; Undefined GOTO.
 
 ; ****************************************************************************************************************

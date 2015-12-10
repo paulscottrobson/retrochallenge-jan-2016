@@ -14,3 +14,11 @@ FindProgramLine:
 
 NewProgram:
 	xppc 	p3
+
+
+RunProgram:
+	xppc 	p3
+
+ListProgram:
+	xppc 	p3
+	

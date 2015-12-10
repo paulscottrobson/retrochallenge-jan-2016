@@ -8,7 +8,7 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-test:db 	"IF 1 # 12 ; ",0
+test:db 	"GOTO 42",0
 
 __EXExit:
 	scl 														; is okay.
@@ -71,19 +71,28 @@ __EX_ReportError:
 ;		GOTO	<expr>												[TODO: FindProgramLine()]
 ;		NEW 	(stops running program as well)						[TODO: NewProgram()]
 ;		IN 		string|var,... (no spaces ???? check source)		[TODO: InCommand()]
-;
-;	Unimplemented:
-;
 ;		IF 		<expr> [#<=] <expr> ; instruction
 ;		OS 		Boots to Monitor (JMP $210)
-;		PR 		string|number|string const,....[;]
-;		RUN
+;		PR 		string|number|string const,....[;]					[TODO: OutCommand()]
+;		RUN 														[TODO: RunProgram()]
 ;		LIST
 ;		[LET]	var|(h,l) = <expr>
 ;
+;	Unimplemented:
+;
+;
 ; ****************************************************************************************************************
 
+__EXDefaultLET:
+	ld 		@-1(p1) 											; point back to start of command
+	lpi 	p3,__EX_Command_LET_Optional-1						; and go to the LET code.
+	xppc 	p3
+
 __EXCode:
+	ld 		0(p1) 												; check 2nd character is alphabetic
+	ani 	64 													; if it 
+	jz 		__EXDefaultLET 										; if it isn't try for a default LET.
+
 	lpi 	p3,__EXSkipCharacters-1 							; character/space skipping routine
 	ld 		-1(p1) 												; reload character for decoding.
 	xri 	'C'
@@ -140,8 +149,6 @@ __EX_Decode_NotC:
 ; ****************************************************************************************************************
 
 __EX_Command_END:
-	ldi 	2 													; skip N and D
-	xppc 	p3 
 	lpi 	p3,CurrentLine 										; set current line to zero.
 	ldi 	0
 	st 		(p3)
@@ -168,7 +175,7 @@ __EX_Command_GOTO:
 	xppc 	p3
 	xae 														; save in E
 	csa
-	jp 		__EX_ReportError									; error in expression.
+	jp 		__EX_ReportErrorIfPositive							; error in expression.
 
 	lpi 	p3,FindProgramLine-1 								; Find program line.
 	lde 														; with that number.		
@@ -185,6 +192,7 @@ __EX_Command_GOTO:
 	xpal 	p1
 	st 		CurrentAddr-CurrentLine(p3)
 	xpal 	p1
+__EXExit4:
 	jmp 	__EXExit3 											; exit, don't skip over.
 
 __EX_GOTO_NotFound:
@@ -225,8 +233,25 @@ __EX_Decode_NotN:
 	xri 	'N'!'I' 											; check for IF and IN.
 	jnz 	__EX_Decode_NotI
 	ld 		0(p1)												; look at next.
-	xri 	'N'
-	jz 		__EX_Command_IN
+	xri 	'F'
+	jz 		__EX_Command_IF
+
+; ****************************************************************************************************************
+;										IN <variable>.... ; input
+; ****************************************************************************************************************
+
+__EX_Command_IN:
+	ldi 	1 													; skip over 1 character (N) and spaces
+	xppc 	p3
+	lpi 	p3,InCommand-1 										; handled via another source file.
+	xppc 	p3
+	xae 														; save error code.
+	csa 														; check for error.
+	jp 		__EX_ReportErrorE 									; if occurred, report it.
+	jmp 	__EXNextCommand3
+
+__EXExit5:
+	jmp 	__EXExit4
 
 ; ****************************************************************************************************************
 ;									IF <expr> [#<=] <expr> ; conditional
@@ -246,6 +271,7 @@ __EX_Command_IF:
 	xri 	'#'!'<'
 	jz 		__EX_IF_LegalTest
 	xri 	'<'!'='
+__EX_NEW_Syntax_NZ2:
 	jnz 	__EX_NEW_Syntax 									; this reports a syntax error
 ;
 ;	Now we have a legal left side, and a valid comparison =,#,or <
@@ -260,26 +286,114 @@ __EX_IF_LegalTest:
 	xae 														; result in E
 	ld 		@2(p2) 												; fix the stack back up.
 	csa 														; check for error
+__EX_ReportErrorE_P:
 	jp 		__EX_ReportErrorE 									; we have got Left -2(p2) and operator -1(p2) and right (E)
+	ld 		-1(p2) 												; check if operator is <
+	xri 	'<'
+	jz 		__EX_IF_LessThan
+	ld 		-2(p2) 												; XOR the two values together
+	xre 			
+	jz 		__EX_IsEqual
+	ldi 	0x08
+__EX_IsEqual:													; at this point, A = 8 (different) A = 0 (equal)
+	xae 														; put in E (8 different, 0 same)
+	ld 		-1(p2) 												; get operator.
+	ani 	0x08 												; # => $23 : = => $3D so A = 0 (for #) 8 (for =)
+	xre 														; if A = 0, E = 8 equal and = test and vice versa
+	jz 		__EXNextCommand3 									; so the XOR will be non zero, so this is pass
+__EX_IF_Succeed:
+	ld 		0(p1)												; look at next character
+	xri 	';'													; error if not semicolon.
+	jnz 	__EX_NEW_Syntax
+	ld 		@1(p1)												; skip over it.
+__EXExit6:
+	jmp 	__EXExit5 											; just exit , ready to do the 'success' code.
 
-wait4:
-	jmp 	wait4
+__EX_IF_LessThan:
+	ld 		-2(p2) 												; get left
+	scl 														; subtract right
+	cae
+	csa 														; CY/L = 0 if succeeded.
+	jp 		__EX_IF_Succeed
+__EXNextCommand4:
+	jmp 	__EXNextCommand3 									; failed.
+
+__EX_NEW_Syntax2:
+	jmp 	__EX_NEW_Syntax
+
+__EX_Decode_NotI:
+	xri 	'I'!'O'												; check for O
+	jnz 	__EX_Decode_NotO
 
 ; ****************************************************************************************************************
-;										IN <variable>.... ; input
+;											OS Boot Monitor
 ; ****************************************************************************************************************
 
-__EX_Command_IN:
-	ldi 	1 													; skip over 1 character (N) and spaces
+__EX_Command_OS:
+	ld 		0(p1) 												; check it is OS
+	xri 	'S'
+	jnz		__EX_NEW_Syntax_NZ2
+	lpi 	p3,MonitorBoot-1 									; boot to monitor
 	xppc 	p3
-	lpi 	p3,InCommand-1 										; handled via another source file.
+
+__EX_Decode_NotO:
+	xri 	'O'!'P' 											; check for P
+	jnz 	__EX_Decode_NotP
+
+; ****************************************************************************************************************
+;										PR items .... [;] Print
+; ****************************************************************************************************************
+
+__EX_Command_PR:
+	ldi 	1 													; skip R
+	xppc 	p3
+	lpi 	p3,OutCommand-1 									; handled via another source file.
 	xppc 	p3
 	xae 														; save error code.
 	csa 														; check for error.
-	jp 		__EX_ReportErrorE 									; if occurred, report it.
-	jmp 	__EXNextCommand3
+	jp 		__EX_ReportErrorE_P 								; if occurred, report it.
+	jmp 	__EXNextCommand4									; otherwise, try again.
 
-__EX_Decode_NotI:
+__EX_Decode_NotP:
+	xri 	'P'!'R'
+	jnz 	__EX_Decode_NotR
+
+; ****************************************************************************************************************
+;											RUN Run Program
+; ****************************************************************************************************************
+
+__EX_Command_RUN:
+	lpi 	p3,RunProgram-1 									; run program, set everything up
+	xppc 	p3
+	jmp 	__EXExit6
+
+__EX_Decode_NotR:												; finally check for L.
+	xri 	'R'!'L'
+	jnz 	__EX_Command_LET_Optional
+	ld 		0(p1)												; look at next
+	xri 	'E'													; is it LE
+	jz 		__EX_Command_LET
+
+; ****************************************************************************************************************
+;											LIST List Program
+; ****************************************************************************************************************
+
+__EX_Command_LIST:
+	lpi 	p3,ListProgram-1
+	xppc 	p3
+	jmp 	__EXNextCommand4
+
+; ****************************************************************************************************************
+;								LET var = expr assignment, LET optional
+; ****************************************************************************************************************
+
+__EX_Command_LET:
+	ldi 	2													; skip over E and T
+	xppc 	p3
+__EX_Command_LET_Optional:										; analyse to look for a LET.
+	ld 		0(p1)
+	jz 		__EX_NEW_Syntax
+
 wait2:	jmp 	wait2
 
 
