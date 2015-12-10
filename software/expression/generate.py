@@ -15,6 +15,10 @@ def createRandom(first,last):
 		k = options.keys()
 		k = k[random.randrange(0,len(k))]
 		ref = { "value":options[k],"expression":k }
+	v = ref["value"]
+	if v >= 32 and v < 96 and v != ord("&") and v != ord("<") and v != ord('"') and v != 0x27 and v != ord('\\'):
+		if random.randrange(0,4) == 0:
+			ref["expression"] = "'"+chr(v)+"'"
 	return ref
 
 pos = 0x9240

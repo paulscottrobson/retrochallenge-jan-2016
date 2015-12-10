@@ -7,6 +7,7 @@
 ;	Terms are :
 ;		0-9* 		Numeric constant
 ;		A-Z 		Variables
+;		'c'			Character ASCII value
 ;		(h,l) 		Memory direct access
 ;		! 			Random number
 ;
@@ -51,6 +52,24 @@ ERROR_DivZero = 7
 	jmp 	__EELoop
 
 ; ****************************************************************************************************************
+;											'c' term (character constant)
+; ****************************************************************************************************************
+
+__EECharacter:
+	ld 		(p1) 												; read character following quote
+	jz 		__EECharacterError 									; if EOS fail
+	xae 														; save in E
+	ld 		1(p1) 												; read the one after that
+	xri 	0x27												; check if closing quote
+	jnz 	__EECharacterError 									; should be a quote mark, fail if not.
+	ld 		@2(p1) 												; skip over 2 characters
+	jmp 	__EECalculate4 										; go and complete the calculation
+
+__EECharacterError:
+	ldi 	ERROR_BadTerm	 									; bad character
+	jmp 	__EEError3	
+
+; ****************************************************************************************************************
 ;											! term (random number)
 ; ****************************************************************************************************************
 
@@ -79,6 +98,7 @@ __EERandomNoToggle:
 	ld 		__EERandomOffset(p3) 								; XOR two values together into E.
 	xor 	__EERandomOffset+1(p3)
 	xae
+__EECalculate4:
 	jmp 	__EECalculate3
 
 ; ****************************************************************************************************************
@@ -93,7 +113,8 @@ __EEDataAccess:
 	ani 	0x80
 	jnz 	__EECalculate3
 	lde 														; get error code
-	jmp 	__EEError
+__EEError3:
+	jmp 	__EEError2
 
 ; ****************************************************************************************************************
 ;
@@ -101,10 +122,7 @@ __EEDataAccess:
 ;
 ; ****************************************************************************************************************
 __EELoop:
-	ldi 	Variables&255 										; point P3 to variables.
-	xpal 	p3
-	ldi 	Variables/256
-	xpah 	p3
+	lpi 	p3,Variables 										; point P3 to variables
 
 	ld 		(p1) 												; check end of string.
 	jz 		__EEBadTerm 				
@@ -116,6 +134,8 @@ __EELoop:
 	jz 		__EEDataAccess
 	xri 	'(' ! '!' 											; if ! then random number.
 	jz 		__EERandom
+	xri 	'!' ! 0x27											; if ' then character constant
+	jz 		__EECharacter
 
 	ld 		-1(p1) 												; get character.
 	ccl
@@ -153,6 +173,11 @@ __EEConstantLoop:
 	ade
 	xae 														; put into E
 	jmp 	__EEConstantLoop
+
+__EEError2:
+	jmp 	__EEError
+__EELoop2:
+	jmp 	__EELoop
 
 ; ****************************************************************************************************************
 ;
@@ -199,7 +224,7 @@ __EECheckOperator:
 __EEDoOperator:
 	ld 		@1(p1) 												; get and save operator
 	st 		1(p2)
-	jmp		__EELoop 											; go get another term. 			
+	jmp		__EELoop2 											; go get another term. 			
 ;
 ;	Handle Errors (1) Bad Term (2) Divide by zero.
 ;
