@@ -62,6 +62,7 @@ stop:
 	
 	include source\execute.asm									; command execution
 	include source\program.asm 									; program space management.
+	include source\console.asm 									; PR and IN command execution.
 
 ; ****************************************************************************************************************
 ;						Routines developed and tested seperately in other subdirectories.

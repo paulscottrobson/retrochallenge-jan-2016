@@ -8,7 +8,7 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-test:db 	"NEW:X = 42:LIST",0
+test:db 	"IF 1 # 12 ; ",0
 
 __EXExit:
 	scl 														; is okay.
@@ -68,13 +68,13 @@ __EX_ReportError:
 ;		CALL 	(h,l)
 ;		CLEAR
 ;		END
-;		GOTO	<expr>
-;		NEW 	(stops running program as well)
+;		GOTO	<expr>												[TODO: FindProgramLine()]
+;		NEW 	(stops running program as well)						[TODO: NewProgram()]
+;		IN 		string|var,... (no spaces ???? check source)		[TODO: InCommand()]
 ;
 ;	Unimplemented:
 ;
 ;		IF 		<expr> [#<=] <expr> ; instruction
-;		IN 		string|var,... (no spaces ???? check source)
 ;		OS 		Boots to Monitor (JMP $210)
 ;		PR 		string|number|string const,....[;]
 ;		RUN
@@ -149,6 +149,7 @@ __EX_END_EndOfLine:
 	ld 		@1(p1) 												; keep going till find NULL EOL marker
 	jnz 	__EX_END_EndOfLine
 	ld 		@-1(p1) 											; point back to the EOS
+__EXNextCommand2:
 	jmp 	__EXNextCommand 									; and do next command, in this case will be input :)
 
 
@@ -168,15 +169,17 @@ __EX_Command_GOTO:
 	xae 														; save in E
 	csa
 	jp 		__EX_ReportError									; error in expression.
+
 	lpi 	p3,FindProgramLine-1 								; Find program line.
 	lde 														; with that number.		
 	xppc 	p3 												
 	csa 
 	jp 		__EX_GOTO_NotFound 									; if CY/L = 0 then not found.
+
 	lpi 	p3,CurrentLine
-	lde  														; save current line
+	lde  														; save current line number
 	st 		(p3)
-	xpah 	p1 													; save P1 from line find in Current address
+	xpah 	p1 													; save P1 returned from line find in Current address
 	st 		CurrentAddr-CurrentLine(p3)
 	xpah 	p1
 	xpal 	p1
@@ -186,8 +189,9 @@ __EX_Command_GOTO:
 
 __EX_GOTO_NotFound:
 	ldi 	ERROR_Label 
-__EX_ReportErrorA
+__EX_ReportErrorA:
 	xae
+__EX_ReportErrorE:
 	ldi 	0 													; makes P for jump tests which are JP.
 	jmp 	__EX_ReportErrorIfPositive
 
@@ -202,19 +206,80 @@ __EX_Decode_NotG:
 __EX_Command_NEW:
 	ld 		0(p1) 												; check actually NEW as this is important !
 	xri 	'E' 												; check E
-	jnz 	__EX_NEW_NoMatch
+	jnz 	__EX_NEW_Syntax
 	ld 		1(p1)	
 	xri 	'W'													; check W
-	jnz 	__EX_NEW_NoMatch
+	jnz 	__EX_NEW_Syntax
 	lpi 	p3,NewProgram-1 									; call the NEW routine.
 	xppc 	p3
 	jmp 	__EX_Command_END 									; END program.
 
-__EX_NEW_NoMatch:												; come here if test for NEW fails, report syntax
+__EX_NEW_Syntax:												; come here if test for NEW fails, report syntax
 	ldi 	ERROR_Syntax										; error - only this command is fully decoded.
 	jmp 	__EX_ReportErrorA
 
+__EXNextCommand3:
+	jmp 	__EXNextCommand2
+
 __EX_Decode_NotN:
+	xri 	'N'!'I' 											; check for IF and IN.
+	jnz 	__EX_Decode_NotI
+	ld 		0(p1)												; look at next.
+	xri 	'N'
+	jz 		__EX_Command_IN
+
+; ****************************************************************************************************************
+;									IF <expr> [#<=] <expr> ; conditional
+; ****************************************************************************************************************
+
+__EX_Command_IF:
+	ldi 	1 													; skip over 1 character (F) and spaces
+	xppc 	p3
+	lpi 	p3,EvaluateExpression-1 							; get LHS of expression
+	xppc	p3
+	xae 														; save in E
+	csa 														; if error occured, report it.
+	jp 		__EX_ReportErrorE
+	ld 		(p1) 												; get the condition
+	xri 	'#'
+	jz 		__EX_IF_LegalTest
+	xri 	'#'!'<'
+	jz 		__EX_IF_LegalTest
+	xri 	'<'!'='
+	jnz 	__EX_NEW_Syntax 									; this reports a syntax error
+;
+;	Now we have a legal left side, and a valid comparison =,#,or <
+;
+__EX_IF_LegalTest:
+	ld 		@1(p1) 												; re-read condition and bump pointer
+	st 		@-1(p2) 											; save on stack
+	lde 														; save left hand side of comparison on stack
+	st 		@-1(p2) 	
+	lpi 	p3,EvaluateExpression-1 							; and evaluate the RHS.
+	xppc 	p3
+	xae 														; result in E
+	ld 		@2(p2) 												; fix the stack back up.
+	csa 														; check for error
+	jp 		__EX_ReportErrorE 									; we have got Left -2(p2) and operator -1(p2) and right (E)
+
+wait4:
+	jmp 	wait4
+
+; ****************************************************************************************************************
+;										IN <variable>.... ; input
+; ****************************************************************************************************************
+
+__EX_Command_IN:
+	ldi 	1 													; skip over 1 character (N) and spaces
+	xppc 	p3
+	lpi 	p3,InCommand-1 										; handled via another source file.
+	xppc 	p3
+	xae 														; save error code.
+	csa 														; check for error.
+	jp 		__EX_ReportErrorE 									; if occurred, report it.
+	jmp 	__EXNextCommand3
+
+__EX_Decode_NotI:
 wait2:	jmp 	wait2
 
 
