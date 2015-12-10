@@ -110,7 +110,7 @@ __ToASCII_Loop:
 ;					$ 	(Integer -> ASCII @p1. On start, p1 should point to the end of butter as written backwards)
 ;
 ;		Returns CS on error:
-;				Divisons			Division by zero error, no change to the stack values
+;				Divisons			Division by zero error, one stack value dropped.
 ;				ASCII->Integer 		No legal number, p1 points to 'bad' character, no change to stack.
 ;									(Note that the conversion is terminated by the first non digit, so this
 ;									 error means the first character was not a digit.)
@@ -310,7 +310,7 @@ MATH_Exit3:
 
 MATH_DivideByZero:												; come here for divide by zero.
 	scl
-	jmp 	MATH_Exit3
+	jmp 	MATH_Exit3											
 
 MATH_Divide:
 
