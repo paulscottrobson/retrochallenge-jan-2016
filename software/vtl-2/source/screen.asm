@@ -1,7 +1,7 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 ;
-;											Screen I/O, MINOL ROM
+;											Screen I/O, VTL-2 ROM
 ;											=====================
 ;
 ;	Provides Character and String Input/Output functionality.
@@ -25,13 +25,9 @@
 Print:
 	section 	Print
 
-	st 		@-1(p2) 											; save character on stack.
-	xpah 	p1
-	st 		@-1(p2) 											; save P1 on the stack.
-	xpal 	p1
-	st 		@-1(p2)
-	xae 	
-	st 		@-1(p2) 											; save E on the stack.
+	pusha														; push registers on stack
+	pushp 	p1
+	pushe
 
 	ld 		3(p2) 												; read character 
 	jnz 	__PRPrintCharacterA 								; if non zero print it on its own.
@@ -120,13 +116,9 @@ __PRExit:
 	ld 		3(p2) 												; if character was zero, loop
 	jz 		__PRPrintString 									; back as printing string at P1.
 __PRExitNoCheck:
-	ld 		@1(p2) 												; restore E
-	xae
-	ld 		@1(p2) 												; restore P1
-	xpal 	p1
-	ld 		@1(p2)
-	xpah 	p1
-	ld 		@1(p2)												; restore A
+	pulle 														; restore registers
+	pullp 	p1
+	pulla
 	xppc 	p3 													; return
 	jmp 	Print 												; make re-entrant.
 ;
@@ -244,13 +236,9 @@ __GCNotLower:
 
 GetString:
 	section GetString
-	st 		@-1(p2) 											; save length on stack.
-	xpah 	p3 													; save P3 on stack
-	st 		@-1(p2)
-	xpal 	p3
-	st 		@-1(p2)
-	lde
-	st 		@-1(p2) 											; save E on stack
+	pusha 														; save A,P3,E
+	pushp 	p3
+	pushe 
 	ldi 	0 													; set E (current position) to A.
 	xae
 __GSLoop:
@@ -291,13 +279,9 @@ __GSControlKey:
 	st 		-0x80(p1) 											; replace the CR written with NULL terminator.
 	ldi 	13 													; print CR
 	xppc 	p3
-	ld 		@1(p2) 												; pop E
-	xae
-	ld 		@1(p2) 												; pop P3
-	xpal 	p3
-	ld 		@1(p2)
-	xpah 	p3
-	ld 		@1(p2)												; pop A
+	pulle 														; restore E,P3,A
+	pullp	p3
+	pulla
 	xppc 	p3 													; return
 	jmp 	GetString 											; make re-entrant (probably unneccessary !!)
 ;

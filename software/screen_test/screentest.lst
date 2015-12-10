@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file screentest.asm - page 1 - 12/8/2015 12:35:58
+ AS V1.42 Beta [Bld 102] - source file screentest.asm - page 1 - 12/10/2015 16:48:51
 
 
        1/       0 :                     ; ****************************************************************************************************************
@@ -61,7 +61,7 @@
       46/    9019 : (MACRO)             	lpi 	p1,0xD00
       46/    9019 : C4 0D                       ldi     (0XD00) / 256
       46/    901B : 35                          xpah    P1
- AS V1.42 Beta [Bld 102] - source file screentest.asm - page 2 - 12/8/2015 12:35:58
+ AS V1.42 Beta [Bld 102] - source file screentest.asm - page 2 - 12/10/2015 16:48:51
 
 
       46/    901C : C4 00                       ldi     (0XD00) & 255
@@ -79,11 +79,11 @@
       53/    902D : 3F                  	xppc 	p3
       54/    902E : 90 E0               	jmp 	loop
       55/    9030 :                     
-      56/    9030 :                     	include screen.asm 											; screen I/O stuff.
+      56/    9030 :                     	include ..\vtl-2\source\screen.asm 							; screen I/O stuff.
 (1)    1/    9030 :                     ; ****************************************************************************************************************
 (1)    2/    9030 :                     ; ****************************************************************************************************************
 (1)    3/    9030 :                     ;
-(1)    4/    9030 :                     ;											Screen I/O, VTL-2 ROM
+(1)    4/    9030 :                     ;											Screen I/O, MINOL ROM
 (1)    5/    9030 :                     ;											=====================
 (1)    6/    9030 :                     ;
 (1)    7/    9030 :                     ;	Provides Character and String Input/Output functionality.
@@ -124,7 +124,7 @@
 (1)   42/    9042 : C2 02               	ld 		2(p2)
 (1)   43/    9044 : 35                  	xpah 	p1 													; read character at P1.
 (1)   44/    9045 : C5 01               	ld 		@1(p1)
- AS V1.42 Beta [Bld 102] - source file screentest.asm(screen.asm) - page 3 - 12/8/2015 12:35:58
+ AS V1.42 Beta [Bld 102] - source file screentest.asm(screen.asm) - page 3 - 12/10/2015 16:48:51
 
 
 (1)   45/    9047 : 01                  	xae 														; save in E.
@@ -187,7 +187,7 @@
 (1)  102/    9080 :                     ;	Scroll display
 (1)  103/    9080 :                     ;
 (1)  104/    9080 : C4 0C               	ldi 	(ScreenMirror+16) / 256 							; point P1 to 2nd line.
- AS V1.42 Beta [Bld 102] - source file screentest.asm(screen.asm) - page 4 - 12/8/2015 12:35:58
+ AS V1.42 Beta [Bld 102] - source file screentest.asm(screen.asm) - page 4 - 12/10/2015 16:48:51
 
 
 (1)  105/    9082 : 35                  	xpah 	p1
@@ -250,7 +250,7 @@
 (1)  162/    90C6 : D4 F0               	ani 	0xF0 												; start of current line
 (1)  163/    90C8 : 02                  	ccl 														; down one line
 (1)  164/    90C9 : F4 10               	adi 	0x10 	
- AS V1.42 Beta [Bld 102] - source file screentest.asm(screen.asm) - page 5 - 12/8/2015 12:35:58
+ AS V1.42 Beta [Bld 102] - source file screentest.asm(screen.asm) - page 5 - 12/10/2015 16:48:51
 
 
 (1)  165/    90CB : 31                  	xpal 	p1 													; put it back in P1.
@@ -313,7 +313,7 @@
 (1)  222/    90FF : D4 80               	ani 	0x80
 (1)  223/    9101 : 9C FA               	jnz 	__GCWaitRelease
 (1)  224/    9103 : C6 01               	ld 		@1(p2) 												; restore P1.H
- AS V1.42 Beta [Bld 102] - source file screentest.asm(screen.asm) - page 6 - 12/8/2015 12:35:58
+ AS V1.42 Beta [Bld 102] - source file screentest.asm(screen.asm) - page 6 - 12/10/2015 16:48:51
 
 
 (1)  225/    9105 : 35                  	xpah 	p1
@@ -376,7 +376,7 @@
 (1)  270/    9144 : E2 03               	xor 	3(p2) 												; reached maximum length of buffer ?
 (1)  271/    9146 : 98 DA               	jz 		__GSLoop 											; if so, ignore the key and go round again.
 (1)  272/    9148 : C1 80               	ld 		-0x80(p1) 											; get character and print it
- AS V1.42 Beta [Bld 102] - source file screentest.asm(screen.asm) - page 7 - 12/8/2015 12:35:58
+ AS V1.42 Beta [Bld 102] - source file screentest.asm(screen.asm) - page 7 - 12/10/2015 16:48:51
 
 
 (1)  273/    914A : 3F                  	xppc 	p3
@@ -426,7 +426,7 @@
 (1)  317/    917C :                     	endsection GetString
 (1)  318/    917C :                     
       57/    917C :                     
- AS V1.42 Beta [Bld 102] - source file screentest.asm - page 8 - 12/8/2015 12:35:58
+ AS V1.42 Beta [Bld 102] - source file screentest.asm - page 8 - 12/10/2015 16:48:51
 
 
   symbol table (* = unused):
@@ -434,7 +434,7 @@
 
 *ARCHITECTURE :  i386-unknown-win32 - | *BIGENDIAN :                      0 - |
 *BRANCHEXT :                      0 - | *CASESENSITIVE :                  0 - |
-*CONSTPI :        3.141592653589793 - | *DATE :                   12/8/2015 - |
+*CONSTPI :        3.141592653589793 - | *DATE :                  12/10/2015 - |
 *FALSE :                          0 - | *FULLPMMU :                       1 - |
  GETCHAR :                     90F0 C |  GETSTRING :                   9114 C |
 *HAS64 :                          1 - | *HASDSP :                         0 - |
@@ -447,7 +447,7 @@
 *NESTMAX :                      100 - | *PACKING :                        0 - |
 *PADDING :                        1 - |  PRINT :                       9030 C |
 *RELAXED :                        0 - |  SCREENCURSOR :                 C80 - |
- SCREENMIRROR :                 C00 - | *TIME :                    12:35:58 - |
+ SCREENMIRROR :                 C00 - | *TIME :                    16:48:51 - |
 *TRUE :                           1 - | *VERSION :                     142F - |
  __GCNOTLOWER [GETCHAR] :      910F C |  __GCWAITKEY [GETCHAR] :       90F5 C |
  __GCWAITRELEASE [GETCHAR] :   90FD C |  __GSBACKSPACE [GETSTRING] :   916F C |
@@ -463,7 +463,7 @@
      53 symbols
      28 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file screentest.asm - page 9 - 12/8/2015 12:35:58
+ AS V1.42 Beta [Bld 102] - source file screentest.asm - page 9 - 12/10/2015 16:48:51
 
 
   defined macros:
@@ -473,7 +473,7 @@ LPI                                   |
 
       1 macro
 
- AS V1.42 Beta [Bld 102] - source file screentest.asm - page 10 - 12/8/2015 12:35:58
+ AS V1.42 Beta [Bld 102] - source file screentest.asm - page 10 - 12/10/2015 16:48:51
 
 
   codepages:
@@ -482,7 +482,7 @@ LPI                                   |
 STANDARD (0 changed characters)
 
 
-0.01 seconds assembly time
+0.00 seconds assembly time
 
     375 lines source file
     407 lines incl. macro expansions
