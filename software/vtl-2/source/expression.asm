@@ -16,7 +16,6 @@ operation = 3													; pending operation
 resultLo = 5
 resultHi = 6
 
-	org 	0x9400
 ;
 ;	Come here when the binary operator (+,-,*,/,>,=,<) fails. There are the two values still on the stack
 ;	so drop one and exit.
