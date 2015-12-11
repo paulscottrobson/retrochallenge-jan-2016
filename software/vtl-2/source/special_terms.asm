@@ -13,9 +13,10 @@
 ;
 ;	Non standard terms are more complex than simple variable access or have side effects.
 ;
-;	Accept pointer to term in P1. Returns value on stack, : with CY/L = 0 and A != 0 	Error has occurred
-;																 CY/L = 1 and A != 0 	Successfully processed
-;																 CY/L = 1 and A == 0 	Unknown, treat as variable.
+;	Accept pointer to term 2nd char in P1, first char in A.  Returns CY/L = 0 if processed, CY/L = 1 if ignored.
+;
+;										if processed correctly, value is on stack and E = 0.
+;										if error occurred when processing, E != 0, no value on stack.
 ;	Non re-entrant:
 ;
 ;	Supported Terms are (at present) :
@@ -29,7 +30,5 @@
 ; ****************************************************************************************************************
 
 SpecialTermEvaluate:
-	ld 		@-2(p2) 											; make space for 2 byte return value on the stack.
-	ldi 	0  													; this dummy code means "I don't know any special terms"	
 	scl 														; A = 0, CY/L = 1 => last option.
 	xppc 	p3

@@ -61,3 +61,10 @@ pusha macro 													; push A on stack
 pulla macro
 	ld 		@1(p2)
 	endm
+
+setv macro var,value											; a debugging macro, to set a variable value.
+	ldi 	value & 255											; P3 points to variables
+	st 		((var & 0x3F)*2)(p3)
+	ldi 	value/256
+	st 		((var & 0x3F)*2+1)(p3)
+	endm

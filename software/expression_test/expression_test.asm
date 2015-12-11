@@ -22,6 +22,12 @@
 	st 		1(p2)
 	ldi 	testexpr&255
 	st 		0(p2)
+	lpi 	p3,Variables 										; set up variables
+	setv 	'C',1029
+	setv 	'E',42
+	setv	'A',13
+	setv 	'Z',69
+
 testLoop:
 	lpi 	p2,0xFF8 											; load pointer into P1.
 	ld 		0(p2)

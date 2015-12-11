@@ -6,8 +6,8 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-; TODO: Add variable support (not special) and test that
 ; TODO: Add special terms.
+; TODO: Write > = < code. (remember GE), requires a different test.
 
 operation = 3													; pending operation
 resultLo = 5
@@ -24,7 +24,7 @@ __EE_TermErrorAndDrop:
 ;
 __EE_TermError:
 	ccl
-	ldi 	'*'
+	ldi 	'T'													; 'T' is Term Error.
 	st 		6(p2) 												; return the term error in A register
 __EE_Exit:
 	ld 		@1(p2)												; copy result to final target
@@ -97,19 +97,21 @@ __EE_IsLibraryOperator:
 ;
 __EE_Next:
 	scl 														; successful exit.
-	ld 		@1(p1) 												; look for next operator and bump.
+	ld 		(p1) 												; look for next operator and bump.
 	jz 		__EE_Exit 											; exit okay when found \0 or ), leave P1 on it.
 	xri 	')'
 	jz 		__EE_Exit 										
-	xri 	')'!' '												; space, try next.
+	ld 		@1(p1) 												; read, but advance pointer
+	xri 	' '													; space, try next.
 	jz 		__EE_Next
-	ld 		-1(p1) 												; read it
+	ld 		-1(p1) 												; read it again.
 __EE_WriteAndLoop:
 	st 		operation+2(p2) 									; the new pending operator.
 	xri 	'/' 												; is it divide
 	jnz 	__EE_NextTerm 										; then go round again.
 	ldi 	'\\' 												; use unsigned divide, not signed divide.
 	jmp 	__EE_WriteAndLoop
+
 ;
 ;	Copy the remainder from the division into the '%' variable.
 ;	
@@ -124,12 +126,41 @@ __EE_ProcessRemainder:
 ;	Found a non-numeric term.
 ;
 __EE_Variable:	
+	ld 		@1(p1) 												; check it is in the range 32-95
+	scl
+	cai 	32
+	ani 	0xC0 												; this will be zero for 00-63
+	jnz 	__EE_GoTermError 
+	lpi 	p3,SpecialTermEvaluate-1 							; check for "specials"
+	ld 		-1(p1)												; read character
+	xppc 	p3
+	csa 														; if CY/L = 0 we have processed this
+	jp 		__EE_SpecialProcess
+	ld 		-1(p1)												; read it again
+	ccl 														; double it
+	add 	-1(p1)
+	ani 	0x7E 												; and with $3F << 1, this is an offset
+	xae 														; put in E
+	lpi 	p3,Variables+1 										; offset from variables, read high byte first
+	ld 		-0x80(p3) 											; read high byte
+	st 		@-1(p2) 											; push on stack
+	ld 		@-1(p3) 											; point to low byte
+	ld 		-0x80(p3) 											; read it
+	st 		@-1(p2) 											; push on stack.
+	jmp 	__EE_RunPendingOperation
 
-wait4:
-	jmp 	wait4
-
-
-
+;
+;	Get here. If E = 0 then okay and value on stack as normal. E != 0 then error, no value pushed.
+;
+__EE_SpecialProcess:
+	lde 														; check E
+	jz 		__EE_RunPendingOperation 							; if zero, carry on as normal.											
+;
+;	Jumping back to TERM error.
+;	
+__EE_GoTermError:												; too far to jump.
+	lpi 	p3,__EE_TermError-1
+	xppc 	p3
 
 ; op is <=>?
 ExpressionComparison:
