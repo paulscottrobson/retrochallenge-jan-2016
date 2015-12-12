@@ -26,6 +26,11 @@
 	lpi 	p1,test
 	lpi 	p3,EvaluateExpression-1
 	xppc 	p3
+	xae
+	ld 		0(p2)
+	xpal 	p3
+	ld 		1(p2)
+	xpah 	p3
 stop:jmp 	stop
 
 	include source\screen.asm 									; screen I/O stuff.
@@ -33,4 +38,4 @@ stop:jmp 	stop
 	include source\expression.asm 								; expression evaluator.
 
 test:
-	db 	"?",0
+	db 	"100*(2+(3*4))",0

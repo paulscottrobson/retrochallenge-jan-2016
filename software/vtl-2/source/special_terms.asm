@@ -92,7 +92,33 @@ __STEWasProcessed:
 	jnz 	__STEThrow
 	xppc 	p3 													; return with result still on stack.
 
-__STEArrayOrBracket
+__STEArrayOrBracket:
+	lpi 	p3,EvaluateExpression-1 							; evaluate expression
+	xppc 	p3
+	xae 														; error code in E
+	ld 		@1(p2)												; copy result
+	st 		3(p2)
+	ld 		@1(p2)
+	st 		3(p2)
+	ld 		(p1) 												; if next character NIL
+	jz 		__STETermError
+	ld 		@1(p1) 												; if next character ) then okay.
+	xri 	')'
+	jnz 	__STETermError
+;
+;	TODO: Process array if array :)
+;
+	ldi 	0
+	xae 														; E = 0
+	ccl 														; clear CY/L indicating processed.
+	jmp 	__STEExit 
+
+__STETermError:
+	ldi 	'P'													; P error
+	xae 
+	ccl
+	jmp 	__STEExit
+
 wait5:
 	jmp 	wait5
 	
