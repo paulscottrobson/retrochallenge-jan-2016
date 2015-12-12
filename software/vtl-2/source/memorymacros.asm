@@ -19,6 +19,9 @@ SystemVariables = 0xC90 										; System variables start here.
 
 Variables = SystemVariables 									; 64 x 2 byte system variables, 6 bit ASCII (@,A,B,C...)
 
+KeyboardBuffer = SystemVariables+128							; Keyboard buffer.
+KeyboardBufferSize = 80
+
 ; ****************************************************************************************************************
 ;														Macros
 ; ****************************************************************************************************************

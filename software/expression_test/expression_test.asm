@@ -76,6 +76,10 @@ ExprFail:
 	include ..\vtl-2\source\special_terms.asm 					; special terms (things like ?, $, ! a)
 	include ..\vtl-2\source\expression.asm 						; expression evaluator.
 
+GetChar:
+GetString:
+	jmp 	GetChar
+	
 testexpr:
 	include 	tests.inc	
 	db 		0
