@@ -92,10 +92,20 @@ __STEWasProcessed:
 	jnz 	__STEThrow
 	xppc 	p3 													; return with result still on stack.
 
+; ****************************************************************************************************************
+;							(<expr>), parenthesis or :<expr>), array lookup
+; ****************************************************************************************************************
+
+
 __STEArrayOrBracket:
 	lpi 	p3,EvaluateExpression-1 							; evaluate expression
 	xppc 	p3
 	xae 														; error code in E
+	csa 	
+	jp 		__STETermErrorDrop 									; error in parenthesis expression.
+
+	ld 		4(p2) 												; get first character original
+	xae 														; save in E
 	ld 		@1(p2)												; copy result
 	st 		3(p2)
 	ld 		@1(p2)
@@ -105,13 +115,41 @@ __STEArrayOrBracket:
 	ld 		@1(p1) 												; if next character ) then okay.
 	xri 	')'
 	jnz 	__STETermError
+
+	lde															; check first character to see if : or (
+	xri 	'('
+	jz 		__STENotArray
 ;
-;	TODO: Process array if array :)
+;	This section is difference between :3) and (3) - it doubles the value, adds to the value in the &
+;	variable and reads the word there.
 ;
+	lpi 	p3,Variables+('&' & 0x3F) * 2 						; point P3 to top of memory variable.
+	ld 		2(p2) 												; double value being returned (word index)
+	ccl
+	add 	2(p2)
+	xae 														; save Low Value in E
+	ld 		3(p2)
+	add 	3(p2)
+	xae 														; High value in E, Low Value in A.
+	ccl
+	add 	0(p3) 												; low address
+	xae 														; save in E, get high value.
+	add 	1(p3)  												; add high base.
+	xpah 	p3 													; put in P3.H
+	lde 														; put low address in P3.L
+	xpal 	p3
+	ld 		0(p3) 												; copy this into stack position
+	st 		2(p2)
+	ld 		1(p3)
+	st 		3(p2)
+__STENotArray:
 	ldi 	0
 	xae 														; E = 0
 	ccl 														; clear CY/L indicating processed.
 	jmp 	__STEExit 
+
+__STETermErrorDrop:
+	ld 		@2(p2)
 
 __STETermError:
 	ldi 	'P'													; P error

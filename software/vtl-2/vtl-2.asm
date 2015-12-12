@@ -38,4 +38,4 @@ stop:jmp 	stop
 	include source\expression.asm 								; expression evaluator.
 
 test:
-	db 	"100*(2+(3*4))",0
+	db 	":3)",0
