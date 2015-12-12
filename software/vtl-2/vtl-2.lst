@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 1 - 12/12/2015 16:44:57
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 1 - 12/12/2015 19:13:13
 
 
        1/       0 :                     ; ****************************************************************************************************************
@@ -61,7 +61,7 @@
 (1)   47/       0 :                     	xpah 	ptr
 (1)   48/       0 :                     	endm
 (1)   49/       0 :                     
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(memorymacros.asm) - page 2 - 12/12/2015 16:44:57
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(memorymacros.asm) - page 2 - 12/12/2015 19:13:13
 
 
 (1)   50/       0 :                     pushe macro 													; push E on stack
@@ -113,10 +113,10 @@
       23/    9011 : CB 08                       st              (('D' & 0x3F)*2)(p3)
       23/    9013 : C4 00                       ldi     15/256
       23/    9015 : CB 09                       st              (('D' & 0x3F)*2+1)(p3)
-      24/    9017 : (MACRO)             	setv 	'&',0x9002
-      24/    9017 : C4 02                       ldi     0X9002 & 255                                                                                     ; P3 points to variables
+      24/    9017 : (MACRO)             	setv 	'&',0x2F0
+      24/    9017 : C4 F0                       ldi     0X2F0 & 255                                                                                     ; P3 points to variables
       24/    9019 : CB 4C                       st              (('&' & 0x3F)*2)(p3)
-      24/    901B : C4 90                       ldi     0X9002/256
+      24/    901B : C4 02                       ldi     0X2F0/256
       24/    901D : CB 4D                       st              (('&' & 0x3F)*2+1)(p3)
       25/    901F : (MACRO)             	lpi 	p2,0xFF8											; set up stack
       25/    901F : C4 0F                       ldi     (0XFF8) / 256
@@ -124,7 +124,7 @@
       25/    9022 : C4 F8                       ldi     (0XFF8) & 255
       25/    9024 : 32                          xpal    P2
       26/    9025 : (MACRO)             	lpi 	p1,test
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 3 - 12/12/2015 16:44:57
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 3 - 12/12/2015 19:13:13
 
 
       26/    9025 : C4 93                       ldi     (TEST) / 256
@@ -187,7 +187,7 @@
 (1)   33/    9048 : 9C 12               	jnz 	__PRPrintCharacterA 								; if non zero print it on its own.
 (1)   34/    904A :                     
 (1)   35/    904A :                     __PRPrintString:
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 4 - 12/12/2015 16:44:57
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 4 - 12/12/2015 19:13:13
 
 
 (1)   36/    904A : C2 01               	ld 		1(p2) 												; restore original P1
@@ -250,7 +250,7 @@
 (1)   93/    9084 : C4 80               	ldi 	ScreenCursor & 255 
 (1)   94/    9086 : 31                  	xpal 	p1 													; after this, adjusted cursor position is in AC.
 (1)   95/    9087 : C9 00               	st 		(p1) 												; write back in cursor position
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 5 - 12/12/2015 16:44:57
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 5 - 12/12/2015 19:13:13
 
 
 (1)   96/    9089 : 94 13               	jp 		__PRExit 											; if position is off the bottom then scroll.
@@ -313,7 +313,7 @@
 (1)  146/    90CA : C4 20               	ldi 	' '													; erase in VRAM
 (1)  147/    90CC : C9 00               	st 		(p1)
 (1)  148/    90CE : 90 B1               	jmp 	__PRUpdateCursor 									; and exit
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 6 - 12/12/2015 16:44:57
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 6 - 12/12/2015 19:13:13
 
 
 (1)  149/    90D0 :                     ;
@@ -376,7 +376,7 @@
 (1)  206/    90FE : CE FF               	st 		@-1(p2)
 (1)  207/    9100 :                     __GCWaitKey: 													; wait for key press
 (1)  208/    9100 : C1 00               	ld 		0(p1)
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 7 - 12/12/2015 16:44:57
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 7 - 12/12/2015 19:13:13
 
 
 (1)  209/    9102 : 94 FC               	jp 		__GCWaitKey
@@ -439,7 +439,7 @@
 (1)  251/    913F : (MACRO)             	lpi 	p3,Print-1 											; erase the prompt with backspace.
 (1)  251/    913F : C4 90                       ldi     (PRINT-1) / 256
 (1)  251/    9141 : 37                          xpah    P3
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 8 - 12/12/2015 16:44:57
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 8 - 12/12/2015 19:13:13
 
 
 (1)  251/    9142 : C4 3A                       ldi     (PRINT-1) & 255
@@ -502,7 +502,7 @@
 (1)  300/    9187 :                     
 (1)  301/    9187 :                     	endsection GetString
 (1)  302/    9187 :                     
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 9 - 12/12/2015 16:44:57
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 9 - 12/12/2015 19:13:13
 
 
       37/    9187 :                     	include source\special_terms.asm 							; special terms (things like ?, $, ! a)
@@ -565,7 +565,7 @@
 (1)   49/    91A4 : 90 31               	jmp 	__STEExit
 (1)   50/    91A6 :                     
 (1)   51/    91A6 :                     __STE_NotKeyStroke:
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(special_terms.asm) - page 10 - 12/12/2015 16:44:57
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(special_terms.asm) - page 10 - 12/12/2015 19:13:13
 
 
 (1)   52/    91A6 : E4 1B               	xri 	'$'!'?'												; check for ? (read an expression)
@@ -628,7 +628,7 @@
 (1)   93/    91E6 : 3F                  	xppc 	p3 													; return with result still on stack.
 (1)   94/    91E7 :                     
 (1)   95/    91E7 :                     ; ****************************************************************************************************************
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(special_terms.asm) - page 11 - 12/12/2015 16:44:57
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(special_terms.asm) - page 11 - 12/12/2015 19:13:13
 
 
 (1)   96/    91E7 :                     ;							(<expr>), parenthesis or :<expr>), array lookup
@@ -661,51 +661,54 @@
 (1)  119/    9207 : 40                  	lde															; check first character to see if : or (
 (1)  120/    9208 : E4 28               	xri 	'('
 (1)  121/    920A : 98 22               	jz 		__STENotArray
-(1)  122/    920C :                     
-(1)  123/    920C : (MACRO)             	lpi 	p3,Variables+('&' & 0x3F) * 2 						; point P3 to top of memory variable.
-(1)  123/    920C : C4 0C                       ldi     (VARIABLES+('&' & 0X3F) * 2) / 256
-(1)  123/    920E : 37                          xpah    P3
-(1)  123/    920F : C4 DC                       ldi     (VARIABLES+('&' & 0X3F) * 2) & 255
-(1)  123/    9211 : 33                          xpal    P3
-(1)  124/    9212 : C2 02               	ld 		2(p2) 												; double value being returned (word index)
-(1)  125/    9214 : 02                  	ccl
-(1)  126/    9215 : F2 02               	add 	2(p2)
-(1)  127/    9217 : 01                  	xae 														; save Low Value in E
-(1)  128/    9218 : C2 03               	ld 		3(p2)
-(1)  129/    921A : F2 03               	add 	3(p2)
-(1)  130/    921C : 01                  	xae 														; High value in E, Low Value in A.
-(1)  131/    921D : 02                  	ccl
-(1)  132/    921E : F3 00               	add 	0(p3) 												; low address
-(1)  133/    9220 : 01                  	xae 														; save in E, get high value.
-(1)  134/    9221 : F3 01               	add 	1(p3)  												; add high base.
-(1)  135/    9223 : 37                  	xpah 	p3 													; put in P3.H
-(1)  136/    9224 : 40                  	lde 														; put low address in P3.L
-(1)  137/    9225 : 33                  	xpal 	p3
-(1)  138/    9226 : C3 00               	ld 		0(p3) 												; copy this into stack position
-(1)  139/    9228 : CA 02               	st 		2(p2)
-(1)  140/    922A : C3 01               	ld 		1(p3)
-(1)  141/    922C : CA 03               	st 		3(p2)
-(1)  142/    922E :                     __STENotArray:
-(1)  143/    922E : C4 00               	ldi 	0
-(1)  144/    9230 : 01                  	xae 														; E = 0
-(1)  145/    9231 : 02                  	ccl 														; clear CY/L indicating processed.
-(1)  146/    9232 : 90 A3               	jmp 	__STEExit 
-(1)  147/    9234 :                     
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(special_terms.asm) - page 12 - 12/12/2015 16:44:57
+(1)  122/    920C :                     ;
+(1)  123/    920C :                     ;	This section is difference between :3) and (3) - it doubles the value, adds to the value in the &
+(1)  124/    920C :                     ;	variable and reads the word there.
+(1)  125/    920C :                     ;
+(1)  126/    920C : (MACRO)             	lpi 	p3,Variables+('&' & 0x3F) * 2 						; point P3 to top of memory variable.
+(1)  126/    920C : C4 0C                       ldi     (VARIABLES+('&' & 0X3F) * 2) / 256
+(1)  126/    920E : 37                          xpah    P3
+(1)  126/    920F : C4 DC                       ldi     (VARIABLES+('&' & 0X3F) * 2) & 255
+(1)  126/    9211 : 33                          xpal    P3
+(1)  127/    9212 : C2 02               	ld 		2(p2) 												; double value being returned (word index)
+(1)  128/    9214 : 02                  	ccl
+(1)  129/    9215 : F2 02               	add 	2(p2)
+(1)  130/    9217 : 01                  	xae 														; save Low Value in E
+(1)  131/    9218 : C2 03               	ld 		3(p2)
+(1)  132/    921A : F2 03               	add 	3(p2)
+(1)  133/    921C : 01                  	xae 														; High value in E, Low Value in A.
+(1)  134/    921D : 02                  	ccl
+(1)  135/    921E : F3 00               	add 	0(p3) 												; low address
+(1)  136/    9220 : 01                  	xae 														; save in E, get high value.
+(1)  137/    9221 : F3 01               	add 	1(p3)  												; add high base.
+(1)  138/    9223 : 37                  	xpah 	p3 													; put in P3.H
+(1)  139/    9224 : 40                  	lde 														; put low address in P3.L
+(1)  140/    9225 : 33                  	xpal 	p3
+(1)  141/    9226 : C3 00               	ld 		0(p3) 												; copy this into stack position
+(1)  142/    9228 : CA 02               	st 		2(p2)
+(1)  143/    922A : C3 01               	ld 		1(p3)
+(1)  144/    922C : CA 03               	st 		3(p2)
+(1)  145/    922E :                     __STENotArray:
+(1)  146/    922E : C4 00               	ldi 	0
+(1)  147/    9230 : 01                  	xae 														; E = 0
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(special_terms.asm) - page 12 - 12/12/2015 19:13:13
 
 
-(1)  148/    9234 :                     __STETermErrorDrop:
-(1)  149/    9234 : C6 02               	ld 		@2(p2)
-(1)  150/    9236 :                     
-(1)  151/    9236 :                     __STETermError:
-(1)  152/    9236 : C4 50               	ldi 	'P'													; P error
-(1)  153/    9238 : 01                  	xae 
-(1)  154/    9239 : 02                  	ccl
-(1)  155/    923A : 90 9B               	jmp 	__STEExit
-(1)  156/    923C :                     
-(1)  157/    923C :                     wait5:
-(1)  158/    923C : 90 FE               	jmp 	wait5
-(1)  159/    923E :                     	
+(1)  148/    9231 : 02                  	ccl 														; clear CY/L indicating processed.
+(1)  149/    9232 : 90 A3               	jmp 	__STEExit 
+(1)  150/    9234 :                     
+(1)  151/    9234 :                     __STETermErrorDrop:
+(1)  152/    9234 : C6 02               	ld 		@2(p2)
+(1)  153/    9236 :                     
+(1)  154/    9236 :                     __STETermError:
+(1)  155/    9236 : C4 50               	ldi 	'P'													; P error
+(1)  156/    9238 : 01                  	xae 
+(1)  157/    9239 : 02                  	ccl
+(1)  158/    923A : 90 9B               	jmp 	__STEExit
+(1)  159/    923C :                     
+(1)  160/    923C :                     wait5:
+(1)  161/    923C : 90 FE               	jmp 	wait5
+(1)  162/    923E :                     	
       38/    923E :                     	include source\expression.asm 								; expression evaluator.
 (1)    1/    923E :                     ; ****************************************************************************************************************
 (1)    2/    923E :                     ; ****************************************************************************************************************
@@ -751,12 +754,12 @@
 (1)   36/    9256 : (MACRO)             	pulla 	 													; this is pending operation
 (1)   36/    9256 : C6 01                       ld              @1(p2)
 (1)   37/    9258 : (MACRO)             	pulla 	
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 13 - 12/12/2015 19:13:13
+
+
 (1)   37/    9258 : C6 01                       ld              @1(p2)
 (1)   38/    925A : 3F                  	xppc 	p3
 (1)   39/    925B :                     
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 13 - 12/12/2015 16:44:57
-
-
 (1)   40/    925B :                     EvaluateExpression:
 (1)   41/    925B : CE FE               	st 		@-2(p2)												; 2 byte final result
 (1)   42/    925D : (MACRO)             	pusha 														; save A
@@ -814,12 +817,12 @@
 (1)   79/    929A : E4 3C               	xri 	0x3C
 (1)   80/    929C : 9C 06               	jnz 	__EE_IsLibraryOperator 								; use the library routine which supports those.
 (1)   81/    929E : (MACRO)             	lpi 	p3,ExpressionComparison-1  							; instead.
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 14 - 12/12/2015 19:13:13
+
+
 (1)   81/    929E : C4 93                       ldi     (EXPRESSIONCOMPARISON-1) / 256
 (1)   81/    92A0 : 37                          xpah    P3
 (1)   81/    92A1 : C4 15                       ldi     (EXPRESSIONCOMPARISON-1) & 255
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 14 - 12/12/2015 16:44:57
-
-
 (1)   81/    92A3 : 33                          xpal    P3
 (1)   82/    92A4 :                     __EE_IsLibraryOperator:
 (1)   83/    92A4 : C2 07               	ld 		operation+4(p2)										; get the operation
@@ -877,12 +880,12 @@
 (1)  131/    92E0 : FC 20               	cai 	32
 (1)  132/    92E2 : D4 C0               	ani 	0xC0 												; this will be zero for 00-63
 (1)  133/    92E4 : 9C 29               	jnz 	__EE_GoTermError 
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 15 - 12/12/2015 19:13:13
+
+
 (1)  134/    92E6 : (MACRO)             	lpi 	p3,SpecialTermEvaluate-1 							; check for "specials"
 (1)  134/    92E6 : C4 91                       ldi     (SPECIALTERMEVALUATE-1) / 256
 (1)  134/    92E8 : 37                          xpah    P3
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 15 - 12/12/2015 16:44:57
-
-
 (1)  134/    92E9 : C4 86                       ldi     (SPECIALTERMEVALUATE-1) & 255
 (1)  134/    92EB : 33                          xpal    P3
 (1)  135/    92EC : C1 FF               	ld 		-1(p1)												; read character
@@ -929,8 +932,8 @@
 (1)  168/    9317 : 3F                  	xppc 	p3
       39/    9318 :                     
       40/    9318 :                     test:
-      41/    9318 : 3A 33 29 00         	db 	":3)",0
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 16 - 12/12/2015 16:44:57
+      41/    9318 : 3A 31 36 29 00      	db 	":16)",0
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 16 - 12/12/2015 19:13:13
 
 
   symbol table (* = unused):
@@ -957,7 +960,7 @@
  SCREENCURSOR :                 C80 - |  SCREENMIRROR :                 C00 - |
  SPECIALTERMEVALUATE :         9187 C |  STOP :                        9039 C |
  SYSTEMVARIABLES :              C90 - |  TEST :                        9318 C |
-*TIME :                    16:44:57 - | *TRUE :                           1 - |
+*TIME :                    19:13:13 - | *TRUE :                           1 - |
  VARIABLES :                    C90 - | *VERSION :                     142F - |
  WAIT5 :                       923C C |  __EE_EXIT :                   9245 C |
  __EE_GOTERMERROR :            930F C |  __EE_ISLIBRARYOPERATOR :      92A4 C |
@@ -984,7 +987,7 @@
      88 symbols
      31 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 17 - 12/12/2015 16:44:57
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 17 - 12/12/2015 19:13:13
 
 
   defined macros:
@@ -997,7 +1000,7 @@ PUSHP                                 | SETV
 
       8 macros
 
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 18 - 12/12/2015 16:44:57
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 18 - 12/12/2015 19:13:13
 
 
   codepages:
@@ -1008,8 +1011,8 @@ STANDARD (0 changed characters)
 
 0.01 seconds assembly time
 
-    744 lines source file
-    887 lines incl. macro expansions
+    747 lines source file
+    890 lines incl. macro expansions
       2 passes
       0 errors
       0 warnings

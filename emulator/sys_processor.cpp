@@ -42,7 +42,7 @@ ROMTYPE      romMemory[2048] = {													// 0x0000-0x07FF ROM Memory
 
 static BYTE8 ramMemory[RAMSIZE];													// 0x0C00-0x7FFF RAM Memory
 
-ROMTYPE      extRomMemory[0x7000] = {												// 0x9000-0x9FFF ROM Memory
+ROMTYPE      extRomMemory[] = {														// 0x9000-0x9FFF ROM Memory
 	#include "binaries/__rom_9000.h"
 };
 

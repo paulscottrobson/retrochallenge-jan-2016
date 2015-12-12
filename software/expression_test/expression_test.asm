@@ -27,6 +27,7 @@
 	setv 	'E',42
 	setv	'A',13
 	setv 	'Z',69
+	setv 	'&',0x2F0
 
 testLoop:
 	lpi 	p2,0xFF8 											; load pointer into P1.
