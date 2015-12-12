@@ -1,5 +1,5 @@
 @echo off
-python generate.py >tests.inc
+python generate2.py >tests.inc
 \mingw\bin\asw -L expression_test.asm 
 if errorlevel 1 goto exit
 \mingw\bin\p2bin -r 36864-65535 expression_test.p

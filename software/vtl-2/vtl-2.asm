@@ -38,4 +38,4 @@ stop:jmp 	stop
 	include source\expression.asm 								; expression evaluator.
 
 test:
-	db 	":16)",0
+	db 	"1 > 2",0

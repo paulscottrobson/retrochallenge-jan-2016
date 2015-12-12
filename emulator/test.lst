@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file test.asm - page 1 - 12/12/2015 20:07:31
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 1 - 12/12/2015 21:19:59
 
 
        1/       0 :                     ; ******************************************************************************************************************
@@ -19,7 +19,7 @@
       16/       2 : 08                  		nop
       17/       3 :                     
       18/       3 :                     
- AS V1.42 Beta [Bld 102] - source file test.asm - page 2 - 12/12/2015 20:07:31
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 2 - 12/12/2015 21:19:59
 
 
   symbol table (* = unused):
@@ -37,13 +37,13 @@
 *MACEXP :                         1 - | *MOMCPU :                         C - |
 *MOMCPUNAME :                 SC/MP - | *NESTMAX :                      100 - |
 *PACKING :                        0 - | *PADDING :                        1 - |
-*RELAXED :                        0 - | *TIME :                    20:07:31 - |
+*RELAXED :                        0 - | *TIME :                    21:19:59 - |
 *TRUE :                           1 - | *VERSION :                     142F - |
 
      28 symbols
      28 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file test.asm - page 3 - 12/12/2015 20:07:31
+ AS V1.42 Beta [Bld 102] - source file test.asm - page 3 - 12/12/2015 21:19:59
 
 
   codepages:

@@ -6,9 +6,6 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-; TODO: Add special terms.
-; TODO: Write > = < code. (remember GE), requires a different test.
-
 operation = 3													; pending operation
 resultLo = 5
 resultHi = 6
@@ -162,7 +159,59 @@ __EE_GoTermError:												; too far to jump.
 	lpi 	p3,__EE_TermError-1
 	xppc 	p3
 
-; op is <=>?
+; ****************************************************************************************************************
+;	Perform operation A on the top 2 values on the stack.  NOTE: this returns CY/L = 1 = error unlike
+; 	the functions here but like the functions in the maths library. Only receives < = > ? as binary operators.
+; ****************************************************************************************************************
+
 ExpressionComparison:
-	scl
+	xae															; save in E and reload.
+	lde
+	xri 	'='													; check for equals.
+	jz 		__EC_Equals
+	xri 	'='!'?'												; if it wasn't ? it must've been < or >
+	jnz 	__EC_GLCompare
+	scl 														; return with an error, as we sent in '?'
 	xppc 	p3
+;
+;	Equality test.
+;
+__EC_Equals:
+	ld 		0(p2)
+	xor 	2(p2)
+	jnz 	__EC_Fail
+	ld 		1(p2)
+	xor 	3(p2)
+	jnz 	__EC_Fail
+__EC_Succeed:
+	ldi 	1 													; return value 1
+__EC_ReturnA:
+	st 		@2(p2) 												; drop TOS (save is irrelevant)
+	st 		0(p2) 												; save in LSB
+	ldi 	0
+	st 		1(p2) 												; zero LSB
+	ccl 														; it's okay
+	xppc 	p3
+;
+__EC_Fail:
+	ldi 	0 													; same as succeed, return 0.
+	jmp 	__EC_ReturnA
+;
+;	>= or < test
+;
+__EC_GLCompare:
+	scl 														; subtract, don't care about the result.
+	ld 		2(p2)
+	cad 	0(p2)
+	ld 		3(p2)
+	cad 	1(p2)
+	lde 														; get original operator
+	xri 	'<'													; will be 0 if <, #0 if >(=)
+	jz 		__EC_IsLessThan
+	ldi 	0x80 												; now will be 0 if <, 0x80 if >(=) 	
+__EC_IsLessThan:
+	xae 														; put in E
+	csa 														; get CY/L
+	xre 														; invert CY/L if it was >(=)
+	jp 		__EC_Succeed 										; true
+	jmp 	__EC_Fail 											; false

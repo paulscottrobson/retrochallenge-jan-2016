@@ -156,7 +156,4 @@ __STETermError:
 	xae 
 	ccl
 	jmp 	__STEExit
-
-wait5:
-	jmp 	wait5
 	
