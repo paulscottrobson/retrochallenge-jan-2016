@@ -3,7 +3,7 @@
 #
 import random
 
-random.seed(42+14)
+random.seed(42)
 
 #
 #	Random spacing between tokens
@@ -27,6 +27,9 @@ def getNumber(min,max):
 			v = k[random.randrange(0,len(k))]
 			n["value"] = avars[v]
 			n["expr"] = v
+		if random.randrange(0,4) == 0:
+			n = createSum(3,5)
+			n["expr"] = "(" + spc() + n["expr"] + spc()+ ")"
 	return n
 
 #
@@ -40,7 +43,7 @@ def createSum(minTerms,maxTerms):
 	for n in range(1,items):
 		op = random.randrange(0,4)
 		if op < 2:
-			n = getNumber(0,65535)
+			n = getNumber(0,6553)
 			total = total + (n["value"] if op == 0 else -n["value"])
 			expr = expr + spc() + ("+" if op == 0 else "-") + spc() + n["expr"]
 			total = (total + 0x10000) & 0xFFFF
@@ -60,7 +63,8 @@ def createSum(minTerms,maxTerms):
 
 ptr = 0x9300
 while ptr < 0xFF00:
-	s1 = createSum(3,6)
+	s1 = createSum(3,7)
+	s1["expr"] = s1["expr"].replace(" ","")
 	print('   db "{0}",0  '.format(s1["expr"]))
 	print('   dw {0}'.format(s1["value"]))
 	ptr = ptr + len(s1["expr"]) + 3
