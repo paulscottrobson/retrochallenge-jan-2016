@@ -22,12 +22,17 @@
 	setv 	'C',1023
 	setv 	'D',15
 	setv 	'&',0x2F0
-	setv 	0x27,1
+
 	lpi 	p2,0xFF8											; set up stack
 	lpi 	p1,StartProgram
+Next:
 	lpi 	p3,ExecuteStatement-1
 	xppc 	p3
 	xae
+	csa
+	jp 		stop
+	jmp		Next
+
 stop:jmp 	stop
 
 	include source\screen.asm 									; screen I/O stuff.
@@ -36,6 +41,14 @@ stop:jmp 	stop
 	include source\statement.asm 								; statement
 
 StartProgram:
-	vtl 	100,"@=42"
+	vtl 	100,"C=30*9"
+	vtl 	110,"B=22*5+3"
+	vtl 	120,"A=C+B"
+	vtl 	130,"G=2173/1000"
+	vtl 	140,"H=%"
+	vtl 	150,"I='"
+	vtl 	160,"J='"
+	vtl 	170,"K='"
+	vtl 	180,"L='"
 	db 	0
 FreeMemory:

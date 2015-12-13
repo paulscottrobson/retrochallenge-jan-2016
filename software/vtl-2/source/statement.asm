@@ -57,8 +57,9 @@ ExecuteStatement:
 	pusha 	 													; save A,E,P3
 	pushe
 	pushp 	p3
-	ld 		@3(p1) 												; skip over length and line number.
+	ld 		(p1) 												; check if already at end.
 	jz 		__EX_ExecuteExit 									; if length was zero already at last line of memory.
+	ld 		@3(p1) 												; skip over length and line number.
 	lpi 	p3,RandomProcess-1 									; change the Random Number done every program line.
 	xppc 	p3
 __ES_SkipSpaces:
@@ -113,31 +114,53 @@ __ES_NotSpecial:
 	lpi 	p3,CheckEqualsAndEvaluate-1 						; check '=' and evaluate RHS.
 	xppc 	p3
 	xpal 	p3 													; save error code in P3.L, if there was one :)
+	ld 		@2(p2) 												; drop the result.
 	csa
 	jp 		__ES_ReturnErrorP3Low 								; if +ve (CY/L = 0) then error (in P3.L) occurred
 
 	lpi 	p3,Variables 										; E(p3) points to correct variable.
-	ld 		@1(p2) 												; unstack LSB
+	ld 		-2(p2) 												; unstack LSB
 	st 		-0x80(p3)
 	ld 		@1(p3) 												; bump P3 easier than bumping E :)
-	ld 		@1(p2) 												; unstack MSB
+	ld 		-1(p2) 												; unstack MSB
 	st 		-0x80(p3)
 	jmp 	__EX_EndLineAndExit2 								; and done :)
 
 ; ****************************************************************************************************************
 ;
 ;	Test to see if the following character is '=' and evaluate the expression following it. Returns CY/L = 0 and
-;	A = error code on error, if CY/L = 1 then value is pushed onto the stack. 
+;	A = error code on error, if CY/L = 1 . Value is always returned on stack whatever.
 ;
 ; ****************************************************************************************************************
 
-CheckEqualsAndEvaluate:											; check presence of '=' then call expression evaluate
-	scl 														; result ok
-	ldi 	1 													; fake evaluated as '57'
-	st 		@-1(p2)
-	ldi 	10
-	st 		@-1(p2)
-	xppc 	p3 													; NOTE EvaluateExpression leaves a value on Error :)
+CheckEqualsAndEvaluate:
+	st 		@-2(p2) 											; save result for answer, if any.
+__CEE_FindEquals:
+	ld 		(p1) 												; check if EOS
+	jz 		__CEEFailEquals
+	ld 		@1(p1) 												; fetch and bump.
+	xri 	' '													; keep trying if space.
+	jz 		__CEE_FindEquals
+	xri 	' ' ! '='											; okay, if equals.
+	jz 		__CEE_FoundEqual
+__CEEFailEquals:
+	ldi 	'E'													; E Error
+	ccl
+	xppc 	p3
+
+__CEE_FoundEqual:
+	pusha 														; save A and P3
+	pushp 	p3
+	lpi 	p3,EvaluateExpression-1 							; evaluate the expression.
+	xppc 	p3
+	st  	4(p2) 												; save error code overwriting A.
+	ld 		@1(p2) 												; copy result over.
+	st 		4(p2)
+	ld 		@1(p2)
+	st 		4(p2)
+	pullp 	p3 													; restore P3
+	pulla 														; restore A
+	xppc 	p3
 
 ; ****************************************************************************************************************
 ;
@@ -164,7 +187,7 @@ __RPNoInitialise:
 	rrl
 	st 		0(p3)
 	csa  														; this is the dropped bit
-	jz 		__RPNoToggle 	
+	jp 		__RPNoToggle 	
 	ld 		1(p3) 												; if it is set xor ms byte with $B4
 	xri 	0xB4
 	st 		1(p3)
@@ -172,8 +195,6 @@ __RPNoToggle:
 	pullp 	p3 													; restore P3 and exit
 	xppc 	p3
 
-; TODO: Write check '=' and evaluate code, and test run it
-; TODO: Write a testing system so we can do multiple lines of code
 ; TODO: Write and test the specials
 
 ;
