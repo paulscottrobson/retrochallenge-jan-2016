@@ -38,7 +38,8 @@ __EX_EndLineAndExit:
 __EX_ExecuteExit:
 	scl 														; Set carry Flag
 	ld 		(p1) 												; look at the instruction length byte, 0 if end.
-	jnz 	__EX_LeaveExecution 					
+	jnz 	__EX_LeaveExecution 		
+__EX_StopOnError:			
 	lpi 	p3,IsRunningProgram 								; clear the 'is running program' flag.
 	ldi 	0
 	st 		(p3)
@@ -58,7 +59,7 @@ ExecuteStatement:
 	pushe
 	pushp 	p3
 	ld 		(p1) 												; check if already at end.
-	jz 		__EX_ExecuteExit 									; if length was zero already at last line of memory.
+	jz 		__EX_ExecuteExit 									; if length was zero already at last line of memory, stop
 	ld 		@3(p1) 												; skip over length and line number.
 	lpi 	p3,RandomProcess-1 									; change the Random Number done every program line.
 	xppc 	p3
@@ -82,7 +83,7 @@ __ES_ReturnErrorP3Low:
 __ES_ReturnErrorA:
 	st 		3(p2) 												; this overrides stacked value with the returned A value.
 	ccl 														; return with error flag 
-	jmp 	__EX_LeaveExecution
+	jmp 	__EX_StopOnError
 
 __ES_LegalAssignment:
 	ld 		(p1) 												; get ASCII character code.

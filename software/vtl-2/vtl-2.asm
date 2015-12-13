@@ -16,13 +16,14 @@
 
 	org 	0x9000 												; the ROM starts here
 
-	db 		0x68												; this makes it boot straight into this ROM.
+	;db 		0x68												; this makes it boot straight into this ROM.
 
 	lpi 	p3,Variables
 	setv 	'C',1023
 	setv 	'D',15
 	setv 	'&',0x2F0
-
+	ldi 	0xFF
+	st 		-1(p3)
 	lpi 	p2,0xFF8											; set up stack
 	lpi 	p1,StartProgram
 Next:
@@ -31,7 +32,9 @@ Next:
 	xae
 	csa
 	jp 		stop
-	jmp		Next
+	lpi 	p3,IsRunningProgram
+	ld 		(p3)
+	jnz		Next
 
 stop:jmp 	stop
 
@@ -48,7 +51,7 @@ StartProgram:
 	vtl 	140,"H=%"
 	vtl 	150,"I='"
 	vtl 	160,"J='"
-	vtl 	170,"K='"
-	vtl 	180,"L='"
+	vtl 	170,"K=0-1"
+	vtl 	180,"L=K/2"
 	db 	0
 FreeMemory:
