@@ -22,6 +22,7 @@
 	setv 	'C',1023
 	setv 	'D',15
 	setv 	'&',0x2F0
+	setv 	0x27,1
 	lpi 	p2,0xFF8											; set up stack
 	lpi 	p1,test
 	lpi 	p3,ExecuteStatement-1
@@ -35,5 +36,5 @@ stop:jmp 	stop
 	include source\statement.asm 								; statement
 
 test:
-	db 	32,100,0,"#=42",0
+	db 	32,100,0,"@=42",0
 	db 	0

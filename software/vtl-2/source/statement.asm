@@ -88,17 +88,17 @@ __ES_LegalAssignment:
 	ani 	0x40 												; look at bit $40. 
 	jnz 	__ES_NotSpecial 									; if set, it is @A-Z range so can't be "special"
 	lpi 	p3,SpecialAssignment-1 								; check for "special assignments" (see above list)
-	ld 		(p1)
-	xppc 	p3					
+	ld 		(p1) 												; get the character code
+	xppc 	p3					 								; check
 	xae 														; error code in E now (if any)
 	csa 														; check return flag.
 	ani 	0x80
-	jnz 	__ES_NotSpecial 									; if returned CY/L = 1 didn't process it.
+	jnz 	__ES_NotSpecial 									; if returned CY/L = 1 didn't process it so normal var.
 
 	lde 														; processed it, check error flag.
 	jnz 	__ES_ReturnErrorA 									; if non zero return with that error code.
 __EX_EndLineAndExit2:
-	jmp 	__EX_EndLineAndExit 								; otherwise just find EOL and exit.
+	jmp 	__EX_EndLineAndExit 								; otherwise just find EOL and exit as it was okay.
 ;
 ;	"Non Special" variables - e.g. straight copy expression value into memory stuff.
 ;
@@ -123,27 +123,64 @@ __ES_NotSpecial:
 	ld 		@1(p2) 												; unstack MSB
 	st 		-0x80(p3)
 	jmp 	__EX_EndLineAndExit2 								; and done :)
-;
-;
-;
-SpecialAssignment:
-	scl 														; dummy "don't process anything"
-	ldi 	0 													; CY/L = 0 A = Error
-	xppc 	p3
 
+; ****************************************************************************************************************
 ;
+;	Test to see if the following character is '=' and evaluate the expression following it. Returns CY/L = 0 and
+;	A = error code on error, if CY/L = 1 then value is pushed onto the stack. 
 ;
-;
+; ****************************************************************************************************************
+
 CheckEqualsAndEvaluate:											; check presence of '=' then call expression evaluate
 	scl 														; result ok
 	ldi 	1 													; fake evaluated as '57'
 	st 		@-1(p2)
 	ldi 	10
 	st 		@-1(p2)
+	xppc 	p3 													; NOTE EvaluateExpression leaves a value on Error :)
+
+; ****************************************************************************************************************
+;
+;						Update the random seed, initialising if required. Galois LFSR
+;
+; ****************************************************************************************************************
+
+RandomProcess:
+	pushp 	p3 													; save P3
+	lpi 	p3,Variables+(0x27 & 0x3F) * 2 						; point P3 to random variable (' mark)
+	ld 		0(p3) 												; check to see if seed is zero.
+	or 		1(p3)
+	jnz 	__RPNoInitialise
+	ldi 	0xE1 												; initialise to $ACE1
+	st 		0(p3)
+	ldi 	0xAC
+	st 		1(p3)
+__RPNoInitialise:
+	ccl 														; rotate seed right.
+	ld 		1(p3)
+	rrl
+	st 		1(p3)
+	ld 		0(p3)
+	rrl
+	st 		0(p3)
+	csa  														; this is the dropped bit
+	jz 		__RPNoToggle 	
+	ld 		1(p3) 												; if it is set xor ms byte with $B4
+	xri 	0xB4
+	st 		1(p3)
+__RPNoToggle:
+	pullp 	p3 													; restore P3 and exit
 	xppc 	p3
+
+; TODO: Write check '=' and evaluate code, and test run it
+; TODO: Write a testing system so we can do multiple lines of code
+; TODO: Write and test the specials
 
 ;
 ;
 ;
-RandomProcess:
+SpecialAssignment:
+	scl 														; dummy "don't process anything"
+	ldi 	0 													; CY/L = 0 processed A = Error ; CY/L = 1 didn't process
 	xppc 	p3
+
