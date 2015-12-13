@@ -73,3 +73,10 @@ setv macro var,value											; a debugging macro, to set a variable value.
 	ldi 	value/256
 	st 		((var & 0x3F)*2+1)(p3)
 	endm
+
+
+vtl macro lineNo,code 											; a debugging macro, which fakes up a line of code.
+	db 		strlen(code)+4
+	dw 		lineNo
+	db 		code,0
+	endm

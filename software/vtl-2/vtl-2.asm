@@ -24,7 +24,7 @@
 	setv 	'&',0x2F0
 	setv 	0x27,1
 	lpi 	p2,0xFF8											; set up stack
-	lpi 	p1,test
+	lpi 	p1,StartProgram
 	lpi 	p3,ExecuteStatement-1
 	xppc 	p3
 	xae
@@ -35,6 +35,7 @@ stop:jmp 	stop
 	include source\expression.asm 								; expression evaluator.
 	include source\statement.asm 								; statement
 
-test:
-	db 	32,100,0,"@=42",0
+StartProgram:
+	vtl 	100,"@=42"
 	db 	0
+FreeMemory:

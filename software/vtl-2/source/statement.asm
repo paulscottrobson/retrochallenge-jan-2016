@@ -58,7 +58,7 @@ ExecuteStatement:
 	pushe
 	pushp 	p3
 	ld 		@3(p1) 												; skip over length and line number.
-	jz 		__EX_ExecuteExit 									; if length was zero already at top.
+	jz 		__EX_ExecuteExit 									; if length was zero already at last line of memory.
 	lpi 	p3,RandomProcess-1 									; change the Random Number done every program line.
 	xppc 	p3
 __ES_SkipSpaces:
