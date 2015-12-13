@@ -24,18 +24,16 @@
 	setv 	'&',0x2F0
 	lpi 	p2,0xFF8											; set up stack
 	lpi 	p1,test
-	lpi 	p3,EvaluateExpression-1
+	lpi 	p3,ExecuteStatement-1
 	xppc 	p3
 	xae
-	ld 		0(p2)
-	xpal 	p3
-	ld 		1(p2)
-	xpah 	p3
 stop:jmp 	stop
 
 	include source\screen.asm 									; screen I/O stuff.
 	include source\special_terms.asm 							; special terms (things like ?, $, ! a)
 	include source\expression.asm 								; expression evaluator.
+	include source\statement.asm 								; statement
 
 test:
-	db 	"1 > 2",0
+	db 	32,100,0,"#=42",0
+	db 	0

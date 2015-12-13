@@ -22,6 +22,8 @@ Variables = SystemVariables 									; 64 x 2 byte system variables, 6 bit ASCII
 KeyboardBuffer = SystemVariables+128							; Keyboard buffer.
 KeyboardBufferSize = 80
 
+IsRunningProgram = SystemVariables-1 							; Non zero if in 'run' mode.
+
 ; ****************************************************************************************************************
 ;														Macros
 ; ****************************************************************************************************************
