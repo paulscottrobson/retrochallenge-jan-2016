@@ -171,7 +171,7 @@ __CEE_FoundEqual:
 ;
 ; ****************************************************************************************************************
 
-; TODO : # ? & :
+; TODO # ?
 
 SpecialAssignment:
 	pusha
@@ -255,6 +255,76 @@ __SA_CO_Call:
 	pullp 	p1 													; restore P1
 	jmp 	__SA_Completed
 
+; ****************************************************************************************************************
+; 							  & = nn Set end of program pointer (actually start !)
+; ****************************************************************************************************************
+
+__SA_CO_New:
+	xppc 	p3 													; evaluate RHS
+	xae															; save error code if any
+	ld 		@2(p2) 												; drop the return value
+	csa 														; error check
+	jp 		__SA_ExpressionError 								; go here if failed.
+	lpi 	p3,Variables+('&' & 0x3F) * 2 						; point P3 to & variable.
+	ld 		-2(p2) 												; copy value into &
+	st 		0(p3)
+	ld 		-1(p2)
+	st 		1(p3)
+	lpi 	p3,NewProgram-1 									; New program routine
+	xppc 	p3
+
+__SA_Completed2:
+	jmp 	__SA_Completed
+__SA_ExpressionError2:
+	jmp 	__SA_ExpressionError
+
+; ****************************************************************************************************************
+;												:<expr>) Array Access
+; ****************************************************************************************************************
+
+__SA_CO_Array:
+	lpi 	p3,EvaluateExpression-1 							; get expression value (array index)
+	xppc 	p3 													; evaluate RHS
+	xae															; save error code if any
+	ld 		@2(p2) 												; drop the return value
+	csa 														; error check
+	jp 		__SA_ExpressionError 								; go here if failed.
+	ld 		(p1) 												; if next character not ) that's an error.
+	xri 	')'
+	jnz 	__SA_ExpressionError
+	ccl
+	ld 		@-2(p2) 											; double array index as words, and keep on stack.
+	add 	0(p2)
+	st 		0(p2)
+	ld 		1(p2)
+	add 	1(p2)
+	st 		1(p2)
+	lpi 	p3,Variables+('&' & 0x3F) * 2 						; point P3 to & variable.
+	ccl 	
+	ld 		0(p3) 												; add that variable's value to the index
+	add 	0(p2)												; this will make this stack value where the 
+	st 		0(p2)												; expression is going to be written to.
+	ld 		1(p3)
+	add 	1(p2)
+	st 		1(p2)
+	ld 		@1(p1) 												; skip over the closing bracket, already tested.
+	lpi 	p3,CheckEqualsAndEvaluate-1 						; check = nnnn and evaluate.
+	xppc	p3 													; call it
+	xae 														; save error
+	ld 		@4(p2) 												; drop address and data
+	csa 														; check CY/L
+	jp 		__SA_ExpressionError2 								; error exit.
+	ld 		-2(p2)												; load address into P3.
+	xae
+	ld 		-1(p2)
+	xpah 	p3
+	lde
+	xpal 	p3
+	ld 		-4(p2)												; write out to array memory
+	st 		0(p3)
+	ld 		-3(p2)
+	st 		1(p3)
+	jmp 	__SA_Completed2	
 
 ; ****************************************************************************************************************
 ;											Special Assignment Jump Table.
@@ -268,6 +338,8 @@ __SA_Entry macro ch,code
 __SA_Table:
 	__SA_Entry	'$',__SA_CO_Enter
 	__SA_Entry  '>',__SA_CO_Call
+	__SA_Entry 	'&',__SA_CO_New
+	__SA_Entry 	':',__SA_CO_Array
 	db 			0												; marks end of table.
 
 ; ****************************************************************************************************************
@@ -303,3 +375,26 @@ __RPNoToggle:
 	pullp 	p3 													; restore P3 and exit
 	xppc 	p3
 
+; ****************************************************************************************************************
+;
+;							Set the bottom program address to the value in variable '&'
+;
+; ****************************************************************************************************************
+
+NewProgram:
+	pushp 	p3
+	lpi 	p3,Variables 										; point P3 to & variable.
+	ldi 	0 													; reset is program running flag
+	st 		IsRunningProgram-Variables(p3)
+	ld  	('&' & 0x3F)*2(p3) 									; read low value of P3
+	st 		ProgramBase-Variables(p3) 							; copy into program base
+	xae 														; save in E
+	ld  	('&' & 0x3F)*2+1(p3) 								; read high value of P3
+	st 		ProgramBase+1-Variables(p3) 						; copy into program base
+	xpah 	p3 													; put into P3.H
+	lde 														; put low address into P3.L
+	xpal 	p3
+	ldi 	0
+	st 		(p3) 												; put a $00 there, indicating line length = 0 final line.
+	pullp 	p3
+	xppc 	p3 													; return

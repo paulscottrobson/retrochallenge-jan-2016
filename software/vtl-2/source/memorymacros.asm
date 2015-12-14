@@ -23,6 +23,7 @@ KeyboardBuffer = SystemVariables+128							; Keyboard buffer.
 KeyboardBufferSize = 80
 
 IsRunningProgram = SystemVariables-1 							; Non zero if in 'run' mode.
+ProgramBase = SystemVariables-3 								; (Low,High) Base of Program
 
 ; ****************************************************************************************************************
 ;														Macros
