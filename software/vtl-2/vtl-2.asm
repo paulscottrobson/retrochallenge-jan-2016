@@ -19,13 +19,15 @@
 	db 		0x68												; this makes it boot straight into this ROM.
 
 	lpi 	p3,Variables
-	setv 	'&',0x2F0
-	ldi 	0xFF
+	setv 	'&',0x2F0 											; set array pointer/top of memory fudge.
+	ldi 	0xFF 												; sets the running flag .
 	st 		-1(p3)
 	lpi 	p2,0xFF8											; set up stack
-	lpi 	p1,StartProgram
+	; TODO: Proper stack detection.
+	; TODO: Proper program initialisation.
+	lpi 	p1,StartProgram 									; internal code for testing
 Next:
-	lpi 	p3,ExecuteStatement-1
+	lpi 	p3,ExecuteStatement-1 								; execute a statement
 	xppc 	p3
 	xae
 	csa
@@ -37,14 +39,15 @@ Next:
 stop:jmp 	stop
 
 	include source\screen.asm 									; screen I/O stuff.
-	include source\special_terms.asm 							; special terms (things like ?, $, ! a)
-	include source\expression.asm 								; expression evaluator.
-	include source\statement.asm 								; statement
+	include source\statement.asm 								; assignment statement (e.g. LHS)
+	include source\expression.asm 								; expression evaluator (e.g. RHS)
+	include source\special_terms.asm 							; RHS special terms (things like ?, $, ! a)
 
 StartProgram:
 	vtl 	100,"$=12"
 	vtl 	110,"A=?"
 	vtl 	120,"B=A*A"
 	vtl 	130,"C='"
-	db 	0
+	vtl 	140,"D=(A<10)*20"
+	db 		0
 FreeMemory:

@@ -165,6 +165,66 @@ __CEE_FoundEqual:
 
 ; ****************************************************************************************************************
 ;
+;		Special assignment tests, e.g. those with a side effect. On entrance (p1) points to the assignment.
+;		On exit CY/L = 0 means processed and the value is on the TOS. CY/L = 1 means did not process, so should
+;		be processed as variable assignment. If processed then A contains the error code, which is zero if successful.
+;
+; ****************************************************************************************************************
+
+; TODO : # ? $ ^ : >
+
+SpecialAssignment:
+	pushp 	p3
+	lpi 	p3,__SA_Table 										; point P3 to the table of special assignments
+__SA_Find:
+	ld 		@3(p3) 												; get next table entry
+	jz 		__SA_NotFound
+	xor 	(p1) 												; is it the one we've found.
+	jnz 	__SA_Find 											; no, try again.
+
+	ld 		-2(p3) 												; get LSB of vector
+	xae
+	ld 		-1(p3) 												; get MSB of vector to P3.H
+	xpah 	p3
+	lde 														; copy LSB from E to P3.L
+	xpal 	p3
+	xppc 	p3 													; and go there.
+	jmp 	CheckEqualsAndEvaluate 								; set up so a further xppc p3 goes here immediately.
+;
+;	Nothing found in the specials table.
+;
+__SA_NotFound:
+	scl 														; set CY/L as nothing processed.
+	pullp 	p3
+	xppc 	p3 												
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; ****************************************************************************************************************
+;											Special Assignment Jump Table.
+; ****************************************************************************************************************
+
+__SA_Entry macro 	ch,code
+	db 		ch
+	dw 		code-1
+	endm
+
+__SA_Table:
+	db 			0												; marks end of table.
+
+; ****************************************************************************************************************
+;
 ;						Update the random seed, initialising if required. Galois LFSR
 ;
 ; ****************************************************************************************************************
@@ -195,18 +255,4 @@ __RPNoInitialise:
 __RPNoToggle:
 	pullp 	p3 													; restore P3 and exit
 	xppc 	p3
-
-; ****************************************************************************************************************
-;
-;		Special assignment tests, e.g. those with a side effect. On entrance (p1) points to the assignment.
-;		On exit CY/L = 0 means processed and the value is on the TOS. CY/L = 1 means did not process, so should
-;		be processed as variable assignment. If processed then A contains the error code, which is zero if successful.
-;
-; ****************************************************************************************************************
-
-; TODO : # ? $ ^ : >
-
-SpecialAssignment:
-	scl 														; dummy "don't process anything"
-	xppc 	p3 												
 
