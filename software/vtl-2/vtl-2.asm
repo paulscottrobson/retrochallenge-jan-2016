@@ -35,7 +35,6 @@ Next:
 	lpi 	p3,IsRunningProgram
 	ld 		(p3)
 	jnz		Next
-
 stop:jmp 	stop
 
 	include source\screen.asm 									; screen I/O stuff.
@@ -44,7 +43,9 @@ stop:jmp 	stop
 	include source\special_terms.asm 							; RHS special terms (things like ?, $, ! a)
 
 StartProgram:
-	vtl 	100,"$=12"
+	vtl 	100,">=11"
+	vtl 	105,"$=12"
+	vtl 	108,"$=63"
 	vtl 	110,"A=?"
 	vtl 	120,"B=A*A"
 	vtl 	130,"C='"

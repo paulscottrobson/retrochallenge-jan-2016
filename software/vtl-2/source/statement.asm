@@ -171,9 +171,10 @@ __CEE_FoundEqual:
 ;
 ; ****************************************************************************************************************
 
-; TODO : # ? $ ^ : >
+; TODO : # ? & :
 
 SpecialAssignment:
+	pusha
 	pushp 	p3
 	lpi 	p3,__SA_Table 										; point P3 to the table of special assignments
 __SA_Find:
@@ -182,6 +183,7 @@ __SA_Find:
 	xor 	(p1) 												; is it the one we've found.
 	jnz 	__SA_Find 											; no, try again.
 
+	ld 		@1(p1) 												; skip P1 over the assignment charactr.
 	ld 		-2(p3) 												; get LSB of vector
 	xae
 	ld 		-1(p3) 												; get MSB of vector to P3.H
@@ -195,32 +197,77 @@ __SA_Find:
 ;
 __SA_NotFound:
 	scl 														; set CY/L as nothing processed.
+__SA_Exit:
 	pullp 	p3
+	pulla
 	xppc 	p3 												
+;
+;	Error occurred on expression evaluation, E contains error code.
+;
+__SA_ExpressionError:
+	ccl
+	lde 														; get error code
+	st 		2(p2) 												; save error code on stack.
+	jmp 	__SA_Exit
 
+; ****************************************************************************************************************
+;								$ = nn Prints the low byte of nn as a character
+; ****************************************************************************************************************
 
+__SA_CO_Enter:													; $ right hand side.
+	xppc 	p3 													; evaluate RHS
+	xae															; save error code if any
+	ld 		@2(p2) 												; drop the return value
+	csa 														; error check
+	jp 		__SA_ExpressionError 								; go here if failed.
+	lpi 	p3,Print-1											; print character
+	ld 		-2(p2) 												; get LSB of value
+	jz 		__SA_CO_NoPrint 									; don't print if $00
+	xppc 	p3 													; print character
+__SA_CO_NoPrint:
+;
+;	Come here when special case has been completed successfully.
+;
+__SA_Completed:	
+	ldi 	0 													; clear A return value
+	st 		2(p2)
+	ccl 														; clear carry flag, processed successfully.
+	jmp 	__SA_Exit
 
+; ****************************************************************************************************************
+; 							> = nn Call routine at nn with P1 pointing to variables.
+; ****************************************************************************************************************
 
-
-
-
-
-
-
-
-
+__SA_CO_Call:
+	xppc 	p3 													; evaluate RHS
+	xae															; save error code if any
+	ld 		@2(p2) 												; drop the return value
+	csa 														; error check
+	jp 		__SA_ExpressionError 								; go here if failed.
+	ld 		-2(p2) 												; put value into P3.L
+	xpal 	p3
+	ld 		-1(p2)
+	xpah 	p3
+	ld 		@-1(p3) 											; adjust call address for preincrement
+	pushp 	p1 													; save P1 on stack
+	lpi 	p1,Variables 										; point P1 to system variables
+	xppc 	p3 													; call routine
+	pullp 	p1 													; restore P1
+	jmp 	__SA_Completed
 
 
 ; ****************************************************************************************************************
 ;											Special Assignment Jump Table.
 ; ****************************************************************************************************************
 
-__SA_Entry macro 	ch,code
+__SA_Entry macro ch,code
 	db 		ch
 	dw 		code-1
 	endm
 
 __SA_Table:
+	__SA_Entry	'$',__SA_CO_Enter
+	__SA_Entry  '>',__SA_CO_Call
 	db 			0												; marks end of table.
 
 ; ****************************************************************************************************************
