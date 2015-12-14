@@ -56,6 +56,7 @@ __STE_NotKeyStroke:
 ;										? Read Expression from Keyboard
 ; ****************************************************************************************************************
 
+	pushp 	p1 													; save P1
 	lpi 	p3,GetString-1 										; read a string
 	lpi 	p1,KeyboardBuffer 									; into keyboard buffer
 	ldi 	KeyboardBufferSize 									; max length.
@@ -63,9 +64,10 @@ __STE_NotKeyStroke:
 	lpi 	p3,EvaluateExpression-1 							; evaluate it
 	xppc 	p3
 	ld 		@1(p2)												; copy result
-	st 		3(p2)
+	st 		5(p2)
 	ld 		@1(p2)
-	st 		3(p2)
+	st 		5(p2)
+	pullp 	p1 													; restore P1
 	ldi 	0 													; and exit ignoring errors.
 	xae 	
 	ccl 	

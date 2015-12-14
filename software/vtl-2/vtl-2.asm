@@ -16,11 +16,9 @@
 
 	org 	0x9000 												; the ROM starts here
 
-	;db 		0x68												; this makes it boot straight into this ROM.
+	db 		0x68												; this makes it boot straight into this ROM.
 
 	lpi 	p3,Variables
-	setv 	'C',1023
-	setv 	'D',15
 	setv 	'&',0x2F0
 	ldi 	0xFF
 	st 		-1(p3)
@@ -44,14 +42,9 @@ stop:jmp 	stop
 	include source\statement.asm 								; statement
 
 StartProgram:
-	vtl 	100,"C=30*9"
-	vtl 	110,"B=22*5+3"
-	vtl 	120,"A=C+B"
-	vtl 	130,"G=2173/1000"
-	vtl 	140,"H=%"
-	vtl 	150,"I='"
-	vtl 	160,"J='"
-	vtl 	170,"K=0-1"
-	vtl 	180,"L=K/2"
+	vtl 	100,"$=12"
+	vtl 	110,"A=?"
+	vtl 	120,"B=A*A"
+	vtl 	130,"C='"
 	db 	0
 FreeMemory:

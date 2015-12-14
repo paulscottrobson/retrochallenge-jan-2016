@@ -196,13 +196,17 @@ __RPNoToggle:
 	pullp 	p3 													; restore P3 and exit
 	xppc 	p3
 
-; TODO: Write and test the specials
+; ****************************************************************************************************************
+;
+;		Special assignment tests, e.g. those with a side effect. On entrance (p1) points to the assignment.
+;		On exit CY/L = 0 means processed and the value is on the TOS. CY/L = 1 means did not process, so should
+;		be processed as variable assignment. If processed then A contains the error code, which is zero if successful.
+;
+; ****************************************************************************************************************
 
-;
-;
-;
+; TODO : # ? $ ^ : >
+
 SpecialAssignment:
 	scl 														; dummy "don't process anything"
-	ldi 	0 													; CY/L = 0 processed A = Error ; CY/L = 1 didn't process
-	xppc 	p3
+	xppc 	p3 												
 
