@@ -171,7 +171,7 @@ __CEE_FoundEqual:
 ;
 ; ****************************************************************************************************************
 
-; TODO # ?
+; TODO #
 
 SpecialAssignment:
 	pusha
@@ -324,7 +324,90 @@ __SA_CO_Array:
 	st 		0(p3)
 	ld 		-3(p2)
 	st 		1(p3)
+__SA_Completed3:
 	jmp 	__SA_Completed2	
+
+; ****************************************************************************************************************
+;									? Print either ?=<expr> or ?="<text>"[;]
+; ****************************************************************************************************************
+
+__SA_CO_Print:
+	ld 		(p1)												; look for =
+	jz 		__SA_PR_Error
+	ld 		@1(p1) 												; fetch and bump
+	xri 	' '
+	jz 		__SA_CO_Print
+	xri 	' '!'=' 											; if found equals, go to that code.
+	jz 		__SA_PR_FoundEquals
+__SA_PR_Error:													; report a P error
+	ldi 	'P'
+	xae
+__SA_ExpressionError3:
+	jmp 	__SA_ExpressionError2
+
+__SA_PR_FoundEquals:											; now look for a non-space character
+	ld 		(p1)
+	jz 		__SA_PR_Error
+	ld 		@1(p1)
+	xri 	' '
+	jz 		__SA_PR_FoundEquals
+	xri 	' '!'"'												; have we found a quote mark. 
+	jnz 	__SA_PR_Expression
+;
+;	?="<literal>"[;]
+;
+	lpi 	p3,Print-1 											; print character routine
+__SA_PR_Literal:
+	ld 		(p1) 												; check end of string
+	jz 		__SA_Completed3 
+	ld 		@1(p1) 												; fetch and bump.
+	xri 	'"'													; found quote mark.
+	jz 		__SA_CheckSemicolon	 								; if found check for semicolon following.
+	ld 		-1(p1) 												; fetch previous character
+	xppc 	p3 													; print the character
+	jmp 	__SA_PR_Literal										; and go back.
+;
+;	Found ending quote mark, check for semicolon and print CR if absent
+;
+__SA_CheckSemicolon:
+	ld 		(p1) 												; check EOS
+	jz 		__SA_PrintReturn
+	ld 		@1(p1) 												; fetch and bump
+	xri 	' ' 												; loop back if space
+	jz 		__SA_CheckSemicolon
+	xri 	' '!';'												; exit if semicolon
+	jz 		__SA_Completed3 
+__SA_PrintReturn:
+	ldi 	13 													; print CR 													
+	xppc 	p3
+__SA_Completed4:
+	jmp 	__SA_Completed3
+;
+;	Expression not literal
+;
+__SA_PR_Expression:
+	ld 		@-1(p1) 											; point to start of literal
+	lpi 	p3,EvaluateExpression-1 							; evaluate expression.
+	xppc 	p3 													; do it
+	xae
+	ld 		@2(p2) 												; drop value off stack
+	csa 	
+	jp 		__SA_ExpressionError3
+	ld 		-2(p2) 												; copy dropped value one level down.
+	st 		-4(p2)
+	ld 		-1(p2)
+	st 		-3(p2)
+	pushp 	p1 													; save P1 on stack.
+	ld 		@-2(p2) 											; pushes the dropped value on the stack.
+	lpi 	p1,KeyboardBuffer+8 								; temporary space for string to decode
+	lpi 	p3,OSMathLibrary-1 									; Maths library.
+	ldi 	'$'													; convert to ASCII.
+	xppc 	p3 													; go do it.
+	lpi 	p3,Print-1 											; print the string
+	ldi 	0													; at P1
+	xppc 	p3 	
+	pullp 	p1 													; restore P1.
+	jmp 	__SA_Completed4
 
 ; ****************************************************************************************************************
 ;											Special Assignment Jump Table.
@@ -340,6 +423,7 @@ __SA_Table:
 	__SA_Entry  '>',__SA_CO_Call
 	__SA_Entry 	'&',__SA_CO_New
 	__SA_Entry 	':',__SA_CO_Array
+	__SA_Entry  '?',__SA_CO_Print
 	db 			0												; marks end of table.
 
 ; ****************************************************************************************************************

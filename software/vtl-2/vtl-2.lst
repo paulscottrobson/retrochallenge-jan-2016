@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 1 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 1 - 12/14/2015 19:20:58
 
 
        1/       0 :                     ; ****************************************************************************************************************
@@ -61,7 +61,7 @@
 (1)   47/       0 :                     	ld 		@1(p2)
 (1)   48/       0 :                     	xpal 	ptr
 (1)   49/       0 :                     	ld 		@1(p2)
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(memorymacros.asm) - page 2 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(memorymacros.asm) - page 2 - 12/14/2015 19:20:58
 
 
 (1)   50/       0 :                     	xpah 	ptr
@@ -124,7 +124,7 @@
       25/    9013 : C4 0F                       ldi     (0XFF8) / 256
       25/    9015 : 36                          xpah    P2
       25/    9016 : C4 F8                       ldi     (0XFF8) & 255
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 3 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 3 - 12/14/2015 19:20:58
 
 
       25/    9018 : 32                          xpal    P2
@@ -134,7 +134,7 @@
       29/    9019 : (MACRO)             	lpi 	p1,StartProgram 									; internal code for testing
       29/    9019 : C4 95                       ldi     (STARTPROGRAM) / 256
       29/    901B : 35                          xpah    P1
-      29/    901C : C4 74                       ldi     (STARTPROGRAM) & 255
+      29/    901C : C4 FF                       ldi     (STARTPROGRAM) & 255
       29/    901E : 31                          xpal    P1
       30/    901F :                     Next:
       31/    901F : (MACRO)             	lpi 	p3,ExecuteStatement-1 								; execute a statement
@@ -187,7 +187,7 @@
 (1)   28/    9036 : CE FF                       st              @-1(p2)
 (1)   29/    9038 : (MACRO)             	pushp 	p1
 (1)   29/    9038 : 35                          xpah    P1
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 4 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 4 - 12/14/2015 19:20:58
 
 
 (1)   29/    9039 : CE FF                       st              @-1(p2)
@@ -250,7 +250,7 @@
 (1)   82/    9074 : C9 00               	st 		(p1) 												; save in shadow memory
 (1)   83/    9076 : 35                  	xpah 	p1 													; switch to VRAM, preserving A.
 (1)   84/    9077 : C4 00               	ldi 	0 													
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 5 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 5 - 12/14/2015 19:20:58
 
 
 (1)   85/    9079 : 35                  	xpah 	p1
@@ -313,7 +313,7 @@
 (1)  135/    90B8 :                     ;
 (1)  136/    90B8 :                     ;	Handle backspace (8)
 (1)  137/    90B8 :                     ;
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 6 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 6 - 12/14/2015 19:20:58
 
 
 (1)  138/    90B8 : 31                  	xpal 	p1 													; check cursor position is zero
@@ -376,7 +376,7 @@
 (1)  195/    90F6 :                     ; ****************************************************************************************************************
 (1)  196/    90F6 :                     ;
 (1)  197/    90F6 :                     ;		Input a single character into A. Case is converted to Upper. All registers preserved except A
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 7 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 7 - 12/14/2015 19:20:58
 
 
 (1)  198/    90F6 :                     ;
@@ -439,7 +439,7 @@
 (1)  245/    912B : C4 35                       ldi     (PRINT-1) & 255
 (1)  245/    912D : 33                          xpal    P3
 (1)  246/    912E : C4 9B               	ldi 	155
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 8 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 8 - 12/14/2015 19:20:58
 
 
 (1)  247/    9130 : 3F                  	xppc 	p3
@@ -502,7 +502,7 @@
 (1)  289/    9175 :                     ;
 (1)  290/    9175 :                     __GSBackspace
 (1)  291/    9175 : 40                  	lde 														; if E = 0 we can't backspace any further.
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 9 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(screen.asm) - page 9 - 12/14/2015 19:20:58
 
 
 (1)  292/    9176 : 98 B0               	jz 		__GSLoop
@@ -565,7 +565,7 @@
 (1)   43/    918E : C4 8F                       ldi     (ISRUNNINGPROGRAM) & 255
 (1)   43/    9190 : 33                          xpal    P3
 (1)   44/    9191 : C4 00               	ldi 	0
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 10 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 10 - 12/14/2015 19:20:58
 
 
 (1)   45/    9193 : CB 00               	st 		(p3)
@@ -604,7 +604,7 @@
 (1)   64/    91B2 : (MACRO)             	lpi 	p3,RandomProcess-1 									; change the Random Number done every program line.
 (1)   64/    91B2 : C4 93                       ldi     (RANDOMPROCESS-1) / 256
 (1)   64/    91B4 : 37                          xpah    P3
-(1)   64/    91B5 : C4 3F                       ldi     (RANDOMPROCESS-1) & 255
+(1)   64/    91B5 : C4 CA                       ldi     (RANDOMPROCESS-1) & 255
 (1)   64/    91B7 : 33                          xpal    P3
 (1)   65/    91B8 : 3F                  	xppc 	p3
 (1)   66/    91B9 :                     __ES_SkipSpaces:
@@ -628,7 +628,7 @@
 (1)   84/    91D2 : CA 03               	st 		3(p2) 												; this overrides stacked value with the returned A value.
 (1)   85/    91D4 : 02                  	ccl 														; return with error flag 
 (1)   86/    91D5 : 90 B4               	jmp 	__EX_StopOnError
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 11 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 11 - 12/14/2015 19:20:58
 
 
 (1)   87/    91D7 :                     
@@ -691,7 +691,7 @@
 (1)  132/    9219 :                     ;	Test to see if the following character is '=' and evaluate the expression following it. Returns CY/L = 0 and
 (1)  133/    9219 :                     ;	A = error code on error, if CY/L = 1 . Value is always returned on stack whatever.
 (1)  134/    9219 :                     ;
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 12 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 12 - 12/14/2015 19:20:58
 
 
 (1)  135/    9219 :                     ; ****************************************************************************************************************
@@ -720,9 +720,9 @@
 (1)  154/    9232 : 33                          xpal    P3
 (1)  154/    9233 : CE FF                       st              @-1(p2)
 (1)  155/    9235 : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate the expression.
-(1)  155/    9235 : C4 93                       ldi     (EVALUATEEXPRESSION-1) / 256
+(1)  155/    9235 : C4 94                       ldi     (EVALUATEEXPRESSION-1) / 256
 (1)  155/    9237 : 37                          xpah    P3
-(1)  155/    9238 : C4 B8                       ldi     (EVALUATEEXPRESSION-1) & 255
+(1)  155/    9238 : C4 43                       ldi     (EVALUATEEXPRESSION-1) & 255
 (1)  155/    923A : 33                          xpal    P3
 (1)  156/    923B : 3F                  	xppc 	p3
 (1)  157/    923C : CA 04               	st  	4(p2) 												; save error code overwriting A.
@@ -747,14 +747,14 @@
 (1)  171/    924F :                     ;
 (1)  172/    924F :                     ; ****************************************************************************************************************
 (1)  173/    924F :                     
-(1)  174/    924F :                     ; TODO # ? :
+(1)  174/    924F :                     ; TODO #
 (1)  175/    924F :                     
 (1)  176/    924F :                     SpecialAssignment:
 (1)  177/    924F : (MACRO)             	pusha
 (1)  177/    924F : CE FF                       st              @-1(p2)
 (1)  178/    9251 : (MACRO)             	pushp 	p3
 (1)  178/    9251 : 37                          xpah    P3
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 13 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 13 - 12/14/2015 19:20:58
 
 
 (1)  178/    9252 : CE FF                       st              @-1(p2)
@@ -763,7 +763,7 @@
 (1)  179/    9257 : (MACRO)             	lpi 	p3,__SA_Table 										; point P3 to the table of special assignments
 (1)  179/    9257 : C4 93                       ldi     (__SA_TABLE) / 256
 (1)  179/    9259 : 37                          xpah    P3
-(1)  179/    925A : C4 33                       ldi     (__SA_TABLE) & 255
+(1)  179/    925A : C4 BB                       ldi     (__SA_TABLE) & 255
 (1)  179/    925C : 33                          xpal    P3
 (1)  180/    925D :                     __SA_Find:
 (1)  181/    925D : C7 03               	ld 		@3(p3) 												; get next table entry
@@ -817,7 +817,7 @@
 (1)  223/    9289 : C4 90                       ldi     (PRINT-1) / 256
 (1)  223/    928B : 37                          xpah    P3
 (1)  223/    928C : C4 35                       ldi     (PRINT-1) & 255
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 14 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 14 - 12/14/2015 19:20:58
 
 
 (1)  223/    928E : 33                          xpal    P3
@@ -880,7 +880,7 @@
 (1)  268/    92C6 : (MACRO)             	lpi 	p3,Variables+('&' & 0x3F) * 2 						; point P3 to & variable.
 (1)  268/    92C6 : C4 0C                       ldi     (VARIABLES+('&' & 0X3F) * 2) / 256
 (1)  268/    92C8 : 37                          xpah    P3
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 15 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 15 - 12/14/2015 19:20:58
 
 
 (1)  268/    92C9 : C4 DC                       ldi     (VARIABLES+('&' & 0X3F) * 2) & 255
@@ -892,7 +892,7 @@
 (1)  273/    92D4 : (MACRO)             	lpi 	p3,NewProgram-1 									; New program routine
 (1)  273/    92D4 : C4 93                       ldi     (NEWPROGRAM-1) / 256
 (1)  273/    92D6 : 37                          xpah    P3
-(1)  273/    92D7 : C4 74                       ldi     (NEWPROGRAM-1) & 255
+(1)  273/    92D7 : C4 FF                       ldi     (NEWPROGRAM-1) & 255
 (1)  273/    92D9 : 33                          xpal    P3
 (1)  274/    92DA : 3F                  	xppc 	p3
 (1)  275/    92DB :                     
@@ -907,9 +907,9 @@
 (1)  284/    92DF :                     
 (1)  285/    92DF :                     __SA_CO_Array:
 (1)  286/    92DF : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; get expression value (array index)
-(1)  286/    92DF : C4 93                       ldi     (EVALUATEEXPRESSION-1) / 256
+(1)  286/    92DF : C4 94                       ldi     (EVALUATEEXPRESSION-1) / 256
 (1)  286/    92E1 : 37                          xpah    P3
-(1)  286/    92E2 : C4 B8                       ldi     (EVALUATEEXPRESSION-1) & 255
+(1)  286/    92E2 : C4 43                       ldi     (EVALUATEEXPRESSION-1) & 255
 (1)  286/    92E4 : 33                          xpal    P3
 (1)  287/    92E5 : 3F                  	xppc 	p3 													; evaluate RHS
 (1)  288/    92E6 : 01                  	xae															; save error code if any
@@ -943,7 +943,7 @@
 (1)  311/    9314 : C4 92                       ldi     (CHECKEQUALSANDEVALUATE-1) / 256
 (1)  311/    9316 : 37                          xpah    P3
 (1)  311/    9317 : C4 18                       ldi     (CHECKEQUALSANDEVALUATE-1) & 255
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 16 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 16 - 12/14/2015 19:20:58
 
 
 (1)  311/    9319 : 33                          xpal    P3
@@ -962,648 +962,777 @@
 (1)  324/    932B : CB 00               	st 		0(p3)
 (1)  325/    932D : C2 FD               	ld 		-3(p2)
 (1)  326/    932F : CB 01               	st 		1(p3)
-(1)  327/    9331 : 90 A8               	jmp 	__SA_Completed2	
-(1)  328/    9333 :                     
-(1)  329/    9333 :                     ; ****************************************************************************************************************
-(1)  330/    9333 :                     ;											Special Assignment Jump Table.
-(1)  331/    9333 :                     ; ****************************************************************************************************************
-(1)  332/    9333 :                     
-(1)  333/    9333 :                     __SA_Entry macro ch,code
-(1)  334/    9333 :                     	db 		ch
-(1)  335/    9333 :                     	dw 		code-1
-(1)  336/    9333 :                     	endm
-(1)  337/    9333 :                     
-(1)  338/    9333 :                     __SA_Table:
-(1)  339/    9333 : (MACRO)             	__SA_Entry	'$',__SA_CO_Enter
-(1)  339/    9333 : 24                          db              '$'
-(1)  339/    9334 : 81 92                       dw              __SA_CO_ENTER-1
-(1)  340/    9336 : (MACRO)             	__SA_Entry  '>',__SA_CO_Call
-(1)  340/    9336 : 3E                          db              '>'
-(1)  340/    9337 : 9A 92                       dw              __SA_CO_CALL-1
-(1)  341/    9339 : (MACRO)             	__SA_Entry 	'&',__SA_CO_New
-(1)  341/    9339 : 26                          db              '&'
-(1)  341/    933A : BE 92                       dw              __SA_CO_NEW-1
-(1)  342/    933C : (MACRO)             	__SA_Entry 	':',__SA_CO_Array
-(1)  342/    933C : 3A                          db              ':'
-(1)  342/    933D : DE 92                       dw              __SA_CO_ARRAY-1
-(1)  343/    933F : 00                  	db 			0												; marks end of table.
-(1)  344/    9340 :                     
-(1)  345/    9340 :                     ; ****************************************************************************************************************
-(1)  346/    9340 :                     ;
-(1)  347/    9340 :                     ;						Update the random seed, initialising if required. Galois LFSR
-(1)  348/    9340 :                     ;
-(1)  349/    9340 :                     ; ****************************************************************************************************************
-(1)  350/    9340 :                     
-(1)  351/    9340 :                     RandomProcess:
-(1)  352/    9340 : (MACRO)             	pushp 	p3 													; save P3
-(1)  352/    9340 : 37                          xpah    P3
-(1)  352/    9341 : CE FF                       st              @-1(p2)
-(1)  352/    9343 : 33                          xpal    P3
-(1)  352/    9344 : CE FF                       st              @-1(p2)
-(1)  353/    9346 : (MACRO)             	lpi 	p3,Variables+(0x27 & 0x3F) * 2 						; point P3 to random variable (' mark)
-(1)  353/    9346 : C4 0C                       ldi     (VARIABLES+(0X27 & 0X3F) * 2) / 256
-(1)  353/    9348 : 37                          xpah    P3
-(1)  353/    9349 : C4 DE                       ldi     (VARIABLES+(0X27 & 0X3F) * 2) & 255
-(1)  353/    934B : 33                          xpal    P3
-(1)  354/    934C : C3 00               	ld 		0(p3) 												; check to see if seed is zero.
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 17 - 12/14/2015 17:58:16
+(1)  327/    9331 :                     __SA_Completed3:
+(1)  328/    9331 : 90 A8               	jmp 	__SA_Completed2	
+(1)  329/    9333 :                     
+(1)  330/    9333 :                     ; ****************************************************************************************************************
+(1)  331/    9333 :                     ;									? Print either ?=<expr> or ?="<text>"[;]
+(1)  332/    9333 :                     ; ****************************************************************************************************************
+(1)  333/    9333 :                     
+(1)  334/    9333 :                     __SA_CO_Print:
+(1)  335/    9333 : C1 00               	ld 		(p1)												; look for =
+(1)  336/    9335 : 98 0A               	jz 		__SA_PR_Error
+(1)  337/    9337 : C5 01               	ld 		@1(p1) 												; fetch and bump
+(1)  338/    9339 : E4 20               	xri 	' '
+(1)  339/    933B : 98 F6               	jz 		__SA_CO_Print
+(1)  340/    933D : E4 1D               	xri 	' '!'=' 											; if found equals, go to that code.
+(1)  341/    933F : 98 05               	jz 		__SA_PR_FoundEquals
+(1)  342/    9341 :                     __SA_PR_Error:													; report a P error
+(1)  343/    9341 : C4 50               	ldi 	'P'
+(1)  344/    9343 : 01                  	xae
+(1)  345/    9344 :                     __SA_ExpressionError3:
+(1)  346/    9344 : 90 97               	jmp 	__SA_ExpressionError2
+(1)  347/    9346 :                     
+(1)  348/    9346 :                     __SA_PR_FoundEquals:											; now look for a non-space character
+(1)  349/    9346 : C1 00               	ld 		(p1)
+(1)  350/    9348 : 98 F7               	jz 		__SA_PR_Error
+(1)  351/    934A : C5 01               	ld 		@1(p1)
+(1)  352/    934C : E4 20               	xri 	' '
+(1)  353/    934E : 98 F6               	jz 		__SA_PR_FoundEquals
+(1)  354/    9350 : E4 02               	xri 	' '!'"'												; have we found a quote mark. 
+(1)  355/    9352 : 9C 28               	jnz 	__SA_PR_Expression
+(1)  356/    9354 :                     ;
+(1)  357/    9354 :                     ;	?="<literal>"[;]
+(1)  358/    9354 :                     ;
+(1)  359/    9354 : (MACRO)             	lpi 	p3,Print-1 											; print character routine
+(1)  359/    9354 : C4 90                       ldi     (PRINT-1) / 256
+(1)  359/    9356 : 37                          xpah    P3
+(1)  359/    9357 : C4 35                       ldi     (PRINT-1) & 255
+(1)  359/    9359 : 33                          xpal    P3
+(1)  360/    935A :                     __SA_PR_Literal:
+(1)  361/    935A : C1 00               	ld 		(p1) 												; check end of string
+(1)  362/    935C : 98 D3               	jz 		__SA_Completed3 
+(1)  363/    935E : C5 01               	ld 		@1(p1) 												; fetch and bump.
+(1)  364/    9360 : E4 22               	xri 	'"'													; found quote mark.
+(1)  365/    9362 : 98 05               	jz 		__SA_CheckSemicolon	 								; if found check for semicolon following.
+(1)  366/    9364 : C1 FF               	ld 		-1(p1) 												; fetch previous character
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 17 - 12/14/2015 19:20:58
 
 
-(1)  355/    934E : DB 01               	or 		1(p3)
-(1)  356/    9350 : 9C 08               	jnz 	__RPNoInitialise
-(1)  357/    9352 : C4 E1               	ldi 	0xE1 												; initialise to $ACE1
-(1)  358/    9354 : CB 00               	st 		0(p3)
-(1)  359/    9356 : C4 AC               	ldi 	0xAC
-(1)  360/    9358 : CB 01               	st 		1(p3)
-(1)  361/    935A :                     __RPNoInitialise:
-(1)  362/    935A : 02                  	ccl 														; rotate seed right.
-(1)  363/    935B : C3 01               	ld 		1(p3)
-(1)  364/    935D : 1F                  	rrl
-(1)  365/    935E : CB 01               	st 		1(p3)
-(1)  366/    9360 : C3 00               	ld 		0(p3)
-(1)  367/    9362 : 1F                  	rrl
-(1)  368/    9363 : CB 00               	st 		0(p3)
-(1)  369/    9365 : 06                  	csa  														; this is the dropped bit
-(1)  370/    9366 : 94 06               	jp 		__RPNoToggle 	
-(1)  371/    9368 : C3 01               	ld 		1(p3) 												; if it is set xor ms byte with $B4
-(1)  372/    936A : E4 B4               	xri 	0xB4
-(1)  373/    936C : CB 01               	st 		1(p3)
-(1)  374/    936E :                     __RPNoToggle:
-(1)  375/    936E : (MACRO)             	pullp 	p3 													; restore P3 and exit
-(1)  375/    936E : C6 01                       ld              @1(p2)
-(1)  375/    9370 : 33                          xpal    P3
-(1)  375/    9371 : C6 01                       ld              @1(p2)
-(1)  375/    9373 : 37                          xpah    P3
-(1)  376/    9374 : 3F                  	xppc 	p3
-(1)  377/    9375 :                     
-(1)  378/    9375 :                     ; ****************************************************************************************************************
-(1)  379/    9375 :                     ;
-(1)  380/    9375 :                     ;							Set the bottom program address to the value in variable '&'
-(1)  381/    9375 :                     ;
-(1)  382/    9375 :                     ; ****************************************************************************************************************
-(1)  383/    9375 :                     
-(1)  384/    9375 :                     NewProgram:
-(1)  385/    9375 : (MACRO)             	pushp 	p3
-(1)  385/    9375 : 37                          xpah    P3
-(1)  385/    9376 : CE FF                       st              @-1(p2)
-(1)  385/    9378 : 33                          xpal    P3
-(1)  385/    9379 : CE FF                       st              @-1(p2)
-(1)  386/    937B : (MACRO)             	lpi 	p3,Variables 										; point P3 to & variable.
-(1)  386/    937B : C4 0C                       ldi     (VARIABLES) / 256
-(1)  386/    937D : 37                          xpah    P3
-(1)  386/    937E : C4 90                       ldi     (VARIABLES) & 255
-(1)  386/    9380 : 33                          xpal    P3
-(1)  387/    9381 : C4 00               	ldi 	0 													; reset is program running flag
-(1)  388/    9383 : CB FF               	st 		IsRunningProgram-Variables(p3)
-(1)  389/    9385 : C3 4C               	ld  	('&' & 0x3F)*2(p3) 									; read low value of P3
-(1)  390/    9387 : CB FD               	st 		ProgramBase-Variables(p3) 							; copy into program base
-(1)  391/    9389 : 01                  	xae 														; save in E
-(1)  392/    938A : C3 4D               	ld  	('&' & 0x3F)*2+1(p3) 								; read high value of P3
-(1)  393/    938C : CB FE               	st 		ProgramBase+1-Variables(p3) 						; copy into program base
-(1)  394/    938E : 37                  	xpah 	p3 													; put into P3.H
-(1)  395/    938F : 40                  	lde 														; put low address into P3.L
-(1)  396/    9390 : 33                  	xpal 	p3
-(1)  397/    9391 : C4 00               	ldi 	0
-(1)  398/    9393 : CB 00               	st 		(p3) 												; put a $00 there, indicating line length = 0 final line.
-(1)  399/    9395 : (MACRO)             	pullp 	p3
-(1)  399/    9395 : C6 01                       ld              @1(p2)
-(1)  399/    9397 : 33                          xpal    P3
-(1)  399/    9398 : C6 01                       ld              @1(p2)
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 18 - 12/14/2015 17:58:16
+(1)  367/    9366 : 3F                  	xppc 	p3 													; print the character
+(1)  368/    9367 : 90 F1               	jmp 	__SA_PR_Literal										; and go back.
+(1)  369/    9369 :                     ;
+(1)  370/    9369 :                     ;	Found ending quote mark, check for semicolon and print CR if absent
+(1)  371/    9369 :                     ;
+(1)  372/    9369 :                     __SA_CheckSemicolon:
+(1)  373/    9369 : C1 00               	ld 		(p1) 												; check EOS
+(1)  374/    936B : 98 0A               	jz 		__SA_PrintReturn
+(1)  375/    936D : C5 01               	ld 		@1(p1) 												; fetch and bump
+(1)  376/    936F : E4 20               	xri 	' ' 												; loop back if space
+(1)  377/    9371 : 98 F6               	jz 		__SA_CheckSemicolon
+(1)  378/    9373 : E4 1B               	xri 	' '!';'												; exit if semicolon
+(1)  379/    9375 : 98 BA               	jz 		__SA_Completed3 
+(1)  380/    9377 :                     __SA_PrintReturn:
+(1)  381/    9377 : C4 0D               	ldi 	13 													; print CR 													
+(1)  382/    9379 : 3F                  	xppc 	p3
+(1)  383/    937A :                     __SA_Completed4:
+(1)  384/    937A : 90 B5               	jmp 	__SA_Completed3
+(1)  385/    937C :                     ;
+(1)  386/    937C :                     ;	Expression not literal
+(1)  387/    937C :                     ;
+(1)  388/    937C :                     __SA_PR_Expression:
+(1)  389/    937C : C5 FF               	ld 		@-1(p1) 											; point to start of literal
+(1)  390/    937E : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate expression.
+(1)  390/    937E : C4 94                       ldi     (EVALUATEEXPRESSION-1) / 256
+(1)  390/    9380 : 37                          xpah    P3
+(1)  390/    9381 : C4 43                       ldi     (EVALUATEEXPRESSION-1) & 255
+(1)  390/    9383 : 33                          xpal    P3
+(1)  391/    9384 : 3F                  	xppc 	p3 													; do it
+(1)  392/    9385 : 01                  	xae
+(1)  393/    9386 : C6 02               	ld 		@2(p2) 												; drop value off stack
+(1)  394/    9388 : 06                  	csa 	
+(1)  395/    9389 : 94 B9               	jp 		__SA_ExpressionError3
+(1)  396/    938B : C2 FE               	ld 		-2(p2) 												; copy dropped value one level down.
+(1)  397/    938D : CA FC               	st 		-4(p2)
+(1)  398/    938F : C2 FF               	ld 		-1(p2)
+(1)  399/    9391 : CA FD               	st 		-3(p2)
+(1)  400/    9393 : (MACRO)             	pushp 	p1 													; save P1 on stack.
+(1)  400/    9393 : 35                          xpah    P1
+(1)  400/    9394 : CE FF                       st              @-1(p2)
+(1)  400/    9396 : 31                          xpal    P1
+(1)  400/    9397 : CE FF                       st              @-1(p2)
+(1)  401/    9399 : C6 FE               	ld 		@-2(p2) 											; pushes the dropped value on the stack.
+(1)  402/    939B : (MACRO)             	lpi 	p1,KeyboardBuffer+8 								; temporary space for string to decode
+(1)  402/    939B : C4 0D                       ldi     (KEYBOARDBUFFER+8) / 256
+(1)  402/    939D : 35                          xpah    P1
+(1)  402/    939E : C4 18                       ldi     (KEYBOARDBUFFER+8) & 255
+(1)  402/    93A0 : 31                          xpal    P1
+(1)  403/    93A1 : (MACRO)             	lpi 	p3,OSMathLibrary-1 									; Maths library.
+(1)  403/    93A1 : C4 00                       ldi     (OSMATHLIBRARY-1) / 256
+(1)  403/    93A3 : 37                          xpah    P3
+(1)  403/    93A4 : C4 02                       ldi     (OSMATHLIBRARY-1) & 255
+(1)  403/    93A6 : 33                          xpal    P3
+(1)  404/    93A7 : C4 24               	ldi 	'$'													; convert to ASCII.
+(1)  405/    93A9 : 3F                  	xppc 	p3 													; go do it.
+(1)  406/    93AA : (MACRO)             	lpi 	p3,Print-1 											; print the string
+(1)  406/    93AA : C4 90                       ldi     (PRINT-1) / 256
+(1)  406/    93AC : 37                          xpah    P3
+(1)  406/    93AD : C4 35                       ldi     (PRINT-1) & 255
+(1)  406/    93AF : 33                          xpal    P3
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 18 - 12/14/2015 19:20:58
 
 
-(1)  399/    939A : 37                          xpah    P3
-(1)  400/    939B : 3F                  	xppc 	p3 													; return
-(1)  401/    939C :                     
-      43/    939C :                     	include source\expression.asm 								; expression evaluator (e.g. RHS)
-(1)    1/    939C :                     ; ****************************************************************************************************************
-(1)    2/    939C :                     ; ****************************************************************************************************************
-(1)    3/    939C :                     ;
-(1)    4/    939C :                     ;						Expression Evaluation. Returns CY/L = 0 on Error, A = Error Code
-(1)    5/    939C :                     ;	
-(1)    6/    939C :                     ; ****************************************************************************************************************
-(1)    7/    939C :                     ; ****************************************************************************************************************
-(1)    8/    939C :                     
-(1)    9/    939C : =0x3                operation = 3													; pending operation
-(1)   10/    939C : =0x5                resultLo = 5
-(1)   11/    939C : =0x6                resultHi = 6
-(1)   12/    939C :                     
-(1)   13/    939C :                     ;
-(1)   14/    939C :                     ;	Come here when the binary operator (+,-,*,/,>,=,<) fails. There are the two values still on the stack
-(1)   15/    939C :                     ;	so drop one and exit.
-(1)   16/    939C :                     ;
-(1)   17/    939C :                     __EE_TermErrorAndDrop:
-(1)   18/    939C : C6 02               	ld 		@2(p2) 												; reduce back to one number on the stack.
-(1)   19/    939E :                     ;
-(1)   20/    939E :                     ;	Return with a Term Error.
-(1)   21/    939E :                     ;
-(1)   22/    939E :                     __EE_TermError:
-(1)   23/    939E : 02                  	ccl
-(1)   24/    939F : C4 54               	ldi 	'T'													; 'T' is Term Error.
-(1)   25/    93A1 : CA 06               	st 		6(p2) 												; return the term error in A register
-(1)   26/    93A3 :                     __EE_Exit:
-(1)   27/    93A3 : C6 01               	ld 		@1(p2)												; copy result to final target
-(1)   28/    93A5 : CA 06               	st 		6(p2)
-(1)   29/    93A7 : C6 01               	ld 		@1(p2)
-(1)   30/    93A9 : CA 06               	st 		6(p2)
-(1)   31/    93AB : (MACRO)             	pullp 	p3													; restore registers
-(1)   31/    93AB : C6 01                       ld              @1(p2)
-(1)   31/    93AD : 33                          xpal    P3
-(1)   31/    93AE : C6 01                       ld              @1(p2)
-(1)   31/    93B0 : 37                          xpah    P3
-(1)   32/    93B1 : (MACRO)             	pulle 	
-(1)   32/    93B1 : C6 01                       ld              @1(p2)
-(1)   32/    93B3 : 01                          xae
-(1)   33/    93B4 : (MACRO)             	pulla 	 													; this is pending operation
-(1)   33/    93B4 : C6 01                       ld              @1(p2)
-(1)   34/    93B6 : (MACRO)             	pulla 	
-(1)   34/    93B6 : C6 01                       ld              @1(p2)
-(1)   35/    93B8 : 3F                  	xppc 	p3
-(1)   36/    93B9 :                     
-(1)   37/    93B9 :                     EvaluateExpression:
-(1)   38/    93B9 : CE FE               	st 		@-2(p2)												; 2 byte final result
-(1)   39/    93BB : (MACRO)             	pusha 														; save A
-(1)   39/    93BB : CE FF                       st              @-1(p2)
-(1)   40/    93BD : C4 2B               	ldi 	'+' 												; save pending operation.
-(1)   41/    93BF : CE FF               	st 		@-1(p2)
-(1)   42/    93C1 : (MACRO)             	pushe 														; save E and P3.
-(1)   42/    93C1 : 40                          lde
-(1)   42/    93C2 : CE FF                       st              @-1(p2)
-(1)   43/    93C4 : (MACRO)             	pushp 	p3
-(1)   43/    93C4 : 37                          xpah    P3
-(1)   43/    93C5 : CE FF                       st              @-1(p2)
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 19 - 12/14/2015 17:58:16
+(1)  407/    93B0 : C4 00               	ldi 	0													; at P1
+(1)  408/    93B2 : 3F                  	xppc 	p3 	
+(1)  409/    93B3 : (MACRO)             	pullp 	p1 													; restore P1.
+(1)  409/    93B3 : C6 01                       ld              @1(p2)
+(1)  409/    93B5 : 31                          xpal    P1
+(1)  409/    93B6 : C6 01                       ld              @1(p2)
+(1)  409/    93B8 : 35                          xpah    P1
+(1)  410/    93B9 : 90 BF               	jmp 	__SA_Completed4
+(1)  411/    93BB :                     
+(1)  412/    93BB :                     ; ****************************************************************************************************************
+(1)  413/    93BB :                     ;											Special Assignment Jump Table.
+(1)  414/    93BB :                     ; ****************************************************************************************************************
+(1)  415/    93BB :                     
+(1)  416/    93BB :                     __SA_Entry macro ch,code
+(1)  417/    93BB :                     	db 		ch
+(1)  418/    93BB :                     	dw 		code-1
+(1)  419/    93BB :                     	endm
+(1)  420/    93BB :                     
+(1)  421/    93BB :                     __SA_Table:
+(1)  422/    93BB : (MACRO)             	__SA_Entry	'$',__SA_CO_Enter
+(1)  422/    93BB : 24                          db              '$'
+(1)  422/    93BC : 81 92                       dw              __SA_CO_ENTER-1
+(1)  423/    93BE : (MACRO)             	__SA_Entry  '>',__SA_CO_Call
+(1)  423/    93BE : 3E                          db              '>'
+(1)  423/    93BF : 9A 92                       dw              __SA_CO_CALL-1
+(1)  424/    93C1 : (MACRO)             	__SA_Entry 	'&',__SA_CO_New
+(1)  424/    93C1 : 26                          db              '&'
+(1)  424/    93C2 : BE 92                       dw              __SA_CO_NEW-1
+(1)  425/    93C4 : (MACRO)             	__SA_Entry 	':',__SA_CO_Array
+(1)  425/    93C4 : 3A                          db              ':'
+(1)  425/    93C5 : DE 92                       dw              __SA_CO_ARRAY-1
+(1)  426/    93C7 : (MACRO)             	__SA_Entry  '?',__SA_CO_Print
+(1)  426/    93C7 : 3F                          db              '?'
+(1)  426/    93C8 : 32 93                       dw              __SA_CO_PRINT-1
+(1)  427/    93CA : 00                  	db 			0												; marks end of table.
+(1)  428/    93CB :                     
+(1)  429/    93CB :                     ; ****************************************************************************************************************
+(1)  430/    93CB :                     ;
+(1)  431/    93CB :                     ;						Update the random seed, initialising if required. Galois LFSR
+(1)  432/    93CB :                     ;
+(1)  433/    93CB :                     ; ****************************************************************************************************************
+(1)  434/    93CB :                     
+(1)  435/    93CB :                     RandomProcess:
+(1)  436/    93CB : (MACRO)             	pushp 	p3 													; save P3
+(1)  436/    93CB : 37                          xpah    P3
+(1)  436/    93CC : CE FF                       st              @-1(p2)
+(1)  436/    93CE : 33                          xpal    P3
+(1)  436/    93CF : CE FF                       st              @-1(p2)
+(1)  437/    93D1 : (MACRO)             	lpi 	p3,Variables+(0x27 & 0x3F) * 2 						; point P3 to random variable (' mark)
+(1)  437/    93D1 : C4 0C                       ldi     (VARIABLES+(0X27 & 0X3F) * 2) / 256
+(1)  437/    93D3 : 37                          xpah    P3
+(1)  437/    93D4 : C4 DE                       ldi     (VARIABLES+(0X27 & 0X3F) * 2) & 255
+(1)  437/    93D6 : 33                          xpal    P3
+(1)  438/    93D7 : C3 00               	ld 		0(p3) 												; check to see if seed is zero.
+(1)  439/    93D9 : DB 01               	or 		1(p3)
+(1)  440/    93DB : 9C 08               	jnz 	__RPNoInitialise
+(1)  441/    93DD : C4 E1               	ldi 	0xE1 												; initialise to $ACE1
+(1)  442/    93DF : CB 00               	st 		0(p3)
+(1)  443/    93E1 : C4 AC               	ldi 	0xAC
+(1)  444/    93E3 : CB 01               	st 		1(p3)
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(statement.asm) - page 19 - 12/14/2015 19:20:58
 
 
-(1)   43/    93C7 : 33                          xpal    P3
-(1)   43/    93C8 : CE FF                       st              @-1(p2)
-(1)   44/    93CA : C4 00               	ldi 	0 													; clear current value, push 0 on the stack.
-(1)   45/    93CC : CE FF               	st 		@-1(p2)
-(1)   46/    93CE : CE FF               	st		@-1(p2)
-(1)   47/    93D0 :                     ;
-(1)   48/    93D0 :                     ;	Get a new term to complete pending operation.
-(1)   49/    93D0 :                     ;
-(1)   50/    93D0 :                     __EE_NextTerm:
-(1)   51/    93D0 : C1 00               	ld 		(p1) 												; read P1
-(1)   52/    93D2 : 98 CA               	jz 		__EE_TermError 										; term not found error.
-(1)   53/    93D4 : C5 01               	ld 		@1(p1)												; fetch and skip over any spaces.
-(1)   54/    93D6 : E4 20               	xri 	' '
-(1)   55/    93D8 : 98 F6               	jz 		__EE_NextTerm
-(1)   56/    93DA :                     ;
-(1)   57/    93DA :                     ;	Check if it is a numeric constant
-(1)   58/    93DA :                     ;
-(1)   59/    93DA : C5 FF               	ld 		@-1(p1) 											; re-read first non space character.
-(1)   60/    93DC : 02                  	ccl
-(1)   61/    93DD : F4 50               	adi 	128-'0'												; will be +ve if < '0'
-(1)   62/    93DF : 94 5A               	jp 		__EE_Variable
-(1)   63/    93E1 : F4 76               	adi 	255-0x89 											; will be +ve if > '9'
-(1)   64/    93E3 : 94 56               	jp 		__EE_Variable
-(1)   65/    93E5 :                     ;
-(1)   66/    93E5 :                     ;	Using the pending operation, the old value, and the new value, do the operation. Choice of either the
-(1)   67/    93E5 :                     ;	OS built in routines or a seperate function for < = and >.
-(1)   68/    93E5 :                     ;
-(1)   69/    93E5 : (MACRO)             	lpi 	p3,OSMathLibrary-1 									; use the maths library to convert to an integer
-(1)   69/    93E5 : C4 00                       ldi     (OSMATHLIBRARY-1) / 256
-(1)   69/    93E7 : 37                          xpah    P3
-(1)   69/    93E8 : C4 02                       ldi     (OSMATHLIBRARY-1) & 255
-(1)   69/    93EA : 33                          xpal    P3
-(1)   70/    93EB : C4 3F               	ldi	 	'?' 												; this is that function.
-(1)   71/    93ED : 3F                  	xppc 	p3
-(1)   72/    93EE :                     __EE_RunPendingOperation:										; now two values on the stack that we operate on.
-(1)   73/    93EE : (MACRO)             	lpi 	p3,OSMathLibrary-1									; use the library routine.
-(1)   73/    93EE : C4 00                       ldi     (OSMATHLIBRARY-1) / 256
-(1)   73/    93F0 : 37                          xpah    P3
-(1)   73/    93F1 : C4 02                       ldi     (OSMATHLIBRARY-1) & 255
-(1)   73/    93F3 : 33                          xpal    P3
-(1)   74/    93F4 : C2 07               	ld 		operation+4(p2)										; get the operation
-(1)   75/    93F6 : D4 FC               	ani 	0xFC 												; is it 3C-3F which are < = > ?
-(1)   76/    93F8 : E4 3C               	xri 	0x3C
-(1)   77/    93FA : 9C 06               	jnz 	__EE_IsLibraryOperator 								; use the library routine which supports those.
-(1)   78/    93FC : (MACRO)             	lpi 	p3,ExpressionComparison-1  							; instead.
-(1)   78/    93FC : C4 94                       ldi     (EXPRESSIONCOMPARISON-1) / 256
-(1)   78/    93FE : 37                          xpah    P3
-(1)   78/    93FF : C4 73                       ldi     (EXPRESSIONCOMPARISON-1) & 255
-(1)   78/    9401 : 33                          xpal    P3
-(1)   79/    9402 :                     __EE_IsLibraryOperator:
-(1)   80/    9402 : C2 07               	ld 		operation+4(p2)										; get the operation
-(1)   81/    9404 : 3F                  	xppc 	p3 													; execute the operation.
-(1)   82/    9405 : 06                  	csa 														; this has Carry Set = Error.
-(1)   83/    9406 : D4 80               	ani 	0x80
-(1)   84/    9408 : 9C 92               	jnz 	__EE_TermErrorAndDrop 								; so fail on error.
-(1)   85/    940A :                     ;
-(1)   86/    940A :                     ;	If we have done division, copy the remainder to the % variable.
-(1)   87/    940A :                     ;
-(1)   88/    940A : C2 05               	ld 		operation+2(p2) 									; re-read the operation just done.
-(1)   89/    940C : E4 5C               	xri 	'\\'												; is it unsigned integer divide ?
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 20 - 12/14/2015 17:58:16
+(1)  445/    93E5 :                     __RPNoInitialise:
+(1)  446/    93E5 : 02                  	ccl 														; rotate seed right.
+(1)  447/    93E6 : C3 01               	ld 		1(p3)
+(1)  448/    93E8 : 1F                  	rrl
+(1)  449/    93E9 : CB 01               	st 		1(p3)
+(1)  450/    93EB : C3 00               	ld 		0(p3)
+(1)  451/    93ED : 1F                  	rrl
+(1)  452/    93EE : CB 00               	st 		0(p3)
+(1)  453/    93F0 : 06                  	csa  														; this is the dropped bit
+(1)  454/    93F1 : 94 06               	jp 		__RPNoToggle 	
+(1)  455/    93F3 : C3 01               	ld 		1(p3) 												; if it is set xor ms byte with $B4
+(1)  456/    93F5 : E4 B4               	xri 	0xB4
+(1)  457/    93F7 : CB 01               	st 		1(p3)
+(1)  458/    93F9 :                     __RPNoToggle:
+(1)  459/    93F9 : (MACRO)             	pullp 	p3 													; restore P3 and exit
+(1)  459/    93F9 : C6 01                       ld              @1(p2)
+(1)  459/    93FB : 33                          xpal    P3
+(1)  459/    93FC : C6 01                       ld              @1(p2)
+(1)  459/    93FE : 37                          xpah    P3
+(1)  460/    93FF : 3F                  	xppc 	p3
+(1)  461/    9400 :                     
+(1)  462/    9400 :                     ; ****************************************************************************************************************
+(1)  463/    9400 :                     ;
+(1)  464/    9400 :                     ;							Set the bottom program address to the value in variable '&'
+(1)  465/    9400 :                     ;
+(1)  466/    9400 :                     ; ****************************************************************************************************************
+(1)  467/    9400 :                     
+(1)  468/    9400 :                     NewProgram:
+(1)  469/    9400 : (MACRO)             	pushp 	p3
+(1)  469/    9400 : 37                          xpah    P3
+(1)  469/    9401 : CE FF                       st              @-1(p2)
+(1)  469/    9403 : 33                          xpal    P3
+(1)  469/    9404 : CE FF                       st              @-1(p2)
+(1)  470/    9406 : (MACRO)             	lpi 	p3,Variables 										; point P3 to & variable.
+(1)  470/    9406 : C4 0C                       ldi     (VARIABLES) / 256
+(1)  470/    9408 : 37                          xpah    P3
+(1)  470/    9409 : C4 90                       ldi     (VARIABLES) & 255
+(1)  470/    940B : 33                          xpal    P3
+(1)  471/    940C : C4 00               	ldi 	0 													; reset is program running flag
+(1)  472/    940E : CB FF               	st 		IsRunningProgram-Variables(p3)
+(1)  473/    9410 : C3 4C               	ld  	('&' & 0x3F)*2(p3) 									; read low value of P3
+(1)  474/    9412 : CB FD               	st 		ProgramBase-Variables(p3) 							; copy into program base
+(1)  475/    9414 : 01                  	xae 														; save in E
+(1)  476/    9415 : C3 4D               	ld  	('&' & 0x3F)*2+1(p3) 								; read high value of P3
+(1)  477/    9417 : CB FE               	st 		ProgramBase+1-Variables(p3) 						; copy into program base
+(1)  478/    9419 : 37                  	xpah 	p3 													; put into P3.H
+(1)  479/    941A : 40                  	lde 														; put low address into P3.L
+(1)  480/    941B : 33                  	xpal 	p3
+(1)  481/    941C : C4 00               	ldi 	0
+(1)  482/    941E : CB 00               	st 		(p3) 												; put a $00 there, indicating line length = 0 final line.
+(1)  483/    9420 : (MACRO)             	pullp 	p3
+(1)  483/    9420 : C6 01                       ld              @1(p2)
+(1)  483/    9422 : 33                          xpal    P3
+(1)  483/    9423 : C6 01                       ld              @1(p2)
+(1)  483/    9425 : 37                          xpah    P3
+(1)  484/    9426 : 3F                  	xppc 	p3 													; return
+(1)  485/    9427 :                     
+      43/    9427 :                     	include source\expression.asm 								; expression evaluator (e.g. RHS)
+(1)    1/    9427 :                     ; ****************************************************************************************************************
+(1)    2/    9427 :                     ; ****************************************************************************************************************
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 20 - 12/14/2015 19:20:58
 
 
-(1)   90/    940E : 98 1B               	jz 		__EE_ProcessRemainder 								; if so, then go copy remainder.
-(1)   91/    9410 :                     ;
-(1)   92/    9410 :                     ;	Get the next operator, ending if we find the end of the string or a closing bracket. At the outer parenthesis
-(1)   93/    9410 :                     ;	level, this is a comment.
-(1)   94/    9410 :                     ;
-(1)   95/    9410 :                     __EE_Next:
-(1)   96/    9410 : 03                  	scl 														; successful exit.
-(1)   97/    9411 : C1 00               	ld 		(p1) 												; look for next operator and bump.
-(1)   98/    9413 : 98 8E               	jz 		__EE_Exit 											; exit okay when found \0 or ), leave P1 on it.
-(1)   99/    9415 : E4 29               	xri 	')'
-(1)  100/    9417 : 98 8A               	jz 		__EE_Exit 										
-(1)  101/    9419 : C5 01               	ld 		@1(p1) 												; read, but advance pointer
-(1)  102/    941B : E4 20               	xri 	' '													; space, try next.
-(1)  103/    941D : 98 F1               	jz 		__EE_Next
-(1)  104/    941F : C1 FF               	ld 		-1(p1) 												; read it again.
-(1)  105/    9421 :                     __EE_WriteAndLoop:
-(1)  106/    9421 : CA 05               	st 		operation+2(p2) 									; the new pending operator.
-(1)  107/    9423 : E4 2F               	xri 	'/' 												; is it divide
-(1)  108/    9425 : 9C A9               	jnz 	__EE_NextTerm 										; then go round again.
-(1)  109/    9427 : C4 5C               	ldi 	'\\' 												; use unsigned divide, not signed divide.
-(1)  110/    9429 : 90 F6               	jmp 	__EE_WriteAndLoop
-(1)  111/    942B :                     
-(1)  112/    942B :                     ;
-(1)  113/    942B :                     ;	Copy the remainder from the division into the '%' variable.
-(1)  114/    942B :                     ;	
-(1)  115/    942B :                     __EE_ProcessRemainder:
-(1)  116/    942B : (MACRO)             	lpi 	p3,Variables+('%' & 0x3F) * 2 						; point P3 to remainder variable
-(1)  116/    942B : C4 0C                       ldi     (VARIABLES+('%' & 0X3F) * 2) / 256
-(1)  116/    942D : 37                          xpah    P3
-(1)  116/    942E : C4 DA                       ldi     (VARIABLES+('%' & 0X3F) * 2) & 255
-(1)  116/    9430 : 33                          xpal    P3
-(1)  117/    9431 : C2 FE               	ld 		-2(p2)												; copy remainder value into remainder variable.
-(1)  118/    9433 : CB 00               	st 		0(p3)
-(1)  119/    9435 : C2 FF               	ld 		-1(p2)
-(1)  120/    9437 : CB 01               	st 		1(p3)
-(1)  121/    9439 : 90 D5               	jmp 	__EE_Next 											; get next operator.
-(1)  122/    943B :                     ;
-(1)  123/    943B :                     ;	Found a non-numeric term.
-(1)  124/    943B :                     ;
-(1)  125/    943B :                     __EE_Variable:	
-(1)  126/    943B : C5 01               	ld 		@1(p1) 												; check it is in the range 32-95
-(1)  127/    943D : 03                  	scl
-(1)  128/    943E : FC 20               	cai 	32
-(1)  129/    9440 : D4 C0               	ani 	0xC0 												; this will be zero for 00-63
-(1)  130/    9442 : 9C 29               	jnz 	__EE_GoTermError 
-(1)  131/    9444 : (MACRO)             	lpi 	p3,SpecialTermEvaluate-1 							; check for "specials"
-(1)  131/    9444 : C4 94                       ldi     (SPECIALTERMEVALUATE-1) / 256
-(1)  131/    9446 : 37                          xpah    P3
-(1)  131/    9447 : C4 B2                       ldi     (SPECIALTERMEVALUATE-1) & 255
-(1)  131/    9449 : 33                          xpal    P3
-(1)  132/    944A : C1 FF               	ld 		-1(p1)												; read character
-(1)  133/    944C : 3F                  	xppc 	p3
-(1)  134/    944D : 06                  	csa 														; if CY/L = 0 we have processed this
-(1)  135/    944E : 94 1A               	jp 		__EE_SpecialProcess
-(1)  136/    9450 : C1 FF               	ld 		-1(p1)												; read it again
-(1)  137/    9452 : 02                  	ccl 														; double it
-(1)  138/    9453 : F1 FF               	add 	-1(p1)
-(1)  139/    9455 : D4 7E               	ani 	0x7E 												; and with $3F << 1, this is an offset
-(1)  140/    9457 : 01                  	xae 														; put in E
-(1)  141/    9458 : (MACRO)             	lpi 	p3,Variables+1 										; offset from variables, read high byte first
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 21 - 12/14/2015 17:58:16
+(1)    3/    9427 :                     ;
+(1)    4/    9427 :                     ;						Expression Evaluation. Returns CY/L = 0 on Error, A = Error Code
+(1)    5/    9427 :                     ;	
+(1)    6/    9427 :                     ; ****************************************************************************************************************
+(1)    7/    9427 :                     ; ****************************************************************************************************************
+(1)    8/    9427 :                     
+(1)    9/    9427 : =0x3                operation = 3													; pending operation
+(1)   10/    9427 : =0x5                resultLo = 5
+(1)   11/    9427 : =0x6                resultHi = 6
+(1)   12/    9427 :                     
+(1)   13/    9427 :                     ;
+(1)   14/    9427 :                     ;	Come here when the binary operator (+,-,*,/,>,=,<) fails. There are the two values still on the stack
+(1)   15/    9427 :                     ;	so drop one and exit.
+(1)   16/    9427 :                     ;
+(1)   17/    9427 :                     __EE_TermErrorAndDrop:
+(1)   18/    9427 : C6 02               	ld 		@2(p2) 												; reduce back to one number on the stack.
+(1)   19/    9429 :                     ;
+(1)   20/    9429 :                     ;	Return with a Term Error.
+(1)   21/    9429 :                     ;
+(1)   22/    9429 :                     __EE_TermError:
+(1)   23/    9429 : 02                  	ccl
+(1)   24/    942A : C4 54               	ldi 	'T'													; 'T' is Term Error.
+(1)   25/    942C : CA 06               	st 		6(p2) 												; return the term error in A register
+(1)   26/    942E :                     __EE_Exit:
+(1)   27/    942E : C6 01               	ld 		@1(p2)												; copy result to final target
+(1)   28/    9430 : CA 06               	st 		6(p2)
+(1)   29/    9432 : C6 01               	ld 		@1(p2)
+(1)   30/    9434 : CA 06               	st 		6(p2)
+(1)   31/    9436 : (MACRO)             	pullp 	p3													; restore registers
+(1)   31/    9436 : C6 01                       ld              @1(p2)
+(1)   31/    9438 : 33                          xpal    P3
+(1)   31/    9439 : C6 01                       ld              @1(p2)
+(1)   31/    943B : 37                          xpah    P3
+(1)   32/    943C : (MACRO)             	pulle 	
+(1)   32/    943C : C6 01                       ld              @1(p2)
+(1)   32/    943E : 01                          xae
+(1)   33/    943F : (MACRO)             	pulla 	 													; this is pending operation
+(1)   33/    943F : C6 01                       ld              @1(p2)
+(1)   34/    9441 : (MACRO)             	pulla 	
+(1)   34/    9441 : C6 01                       ld              @1(p2)
+(1)   35/    9443 : 3F                  	xppc 	p3
+(1)   36/    9444 :                     
+(1)   37/    9444 :                     EvaluateExpression:
+(1)   38/    9444 : CE FE               	st 		@-2(p2)												; 2 byte final result
+(1)   39/    9446 : (MACRO)             	pusha 														; save A
+(1)   39/    9446 : CE FF                       st              @-1(p2)
+(1)   40/    9448 : C4 2B               	ldi 	'+' 												; save pending operation.
+(1)   41/    944A : CE FF               	st 		@-1(p2)
+(1)   42/    944C : (MACRO)             	pushe 														; save E and P3.
+(1)   42/    944C : 40                          lde
+(1)   42/    944D : CE FF                       st              @-1(p2)
+(1)   43/    944F : (MACRO)             	pushp 	p3
+(1)   43/    944F : 37                          xpah    P3
+(1)   43/    9450 : CE FF                       st              @-1(p2)
+(1)   43/    9452 : 33                          xpal    P3
+(1)   43/    9453 : CE FF                       st              @-1(p2)
+(1)   44/    9455 : C4 00               	ldi 	0 													; clear current value, push 0 on the stack.
+(1)   45/    9457 : CE FF               	st 		@-1(p2)
+(1)   46/    9459 : CE FF               	st		@-1(p2)
+(1)   47/    945B :                     ;
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 21 - 12/14/2015 19:20:58
 
 
-(1)  141/    9458 : C4 0C                       ldi     (VARIABLES+1) / 256
-(1)  141/    945A : 37                          xpah    P3
-(1)  141/    945B : C4 91                       ldi     (VARIABLES+1) & 255
-(1)  141/    945D : 33                          xpal    P3
-(1)  142/    945E : C3 80               	ld 		-0x80(p3) 											; read high byte
-(1)  143/    9460 : CE FF               	st 		@-1(p2) 											; push on stack
-(1)  144/    9462 : C7 FF               	ld 		@-1(p3) 											; point to low byte
-(1)  145/    9464 : C3 80               	ld 		-0x80(p3) 											; read it
-(1)  146/    9466 : CE FF               	st 		@-1(p2) 											; push on stack.
-(1)  147/    9468 : 90 84               	jmp 	__EE_RunPendingOperation
-(1)  148/    946A :                     
-(1)  149/    946A :                     ;
-(1)  150/    946A :                     ;	Get here. If E = 0 then okay and value on stack as normal. E != 0 then error, no value pushed.
-(1)  151/    946A :                     ;
-(1)  152/    946A :                     __EE_SpecialProcess:
-(1)  153/    946A : 40                  	lde 														; check E
-(1)  154/    946B : 98 81               	jz 		__EE_RunPendingOperation 							; if zero, carry on as normal.											
-(1)  155/    946D :                     ;
-(1)  156/    946D :                     ;	Jumping back to TERM error.
-(1)  157/    946D :                     ;	
-(1)  158/    946D :                     __EE_GoTermError:												; too far to jump.
-(1)  159/    946D : (MACRO)             	lpi 	p3,__EE_TermError-1
-(1)  159/    946D : C4 93                       ldi     (__EE_TERMERROR-1) / 256
-(1)  159/    946F : 37                          xpah    P3
-(1)  159/    9470 : C4 9D                       ldi     (__EE_TERMERROR-1) & 255
-(1)  159/    9472 : 33                          xpal    P3
-(1)  160/    9473 : 3F                  	xppc 	p3
-(1)  161/    9474 :                     
-(1)  162/    9474 :                     ; ****************************************************************************************************************
-(1)  163/    9474 :                     ;	Perform operation A on the top 2 values on the stack.  NOTE: this returns CY/L = 1 = error unlike
-(1)  164/    9474 :                     ; 	the functions here but like the functions in the maths library. Only receives < = > ? as binary operators.
-(1)  165/    9474 :                     ; ****************************************************************************************************************
-(1)  166/    9474 :                     
-(1)  167/    9474 :                     ExpressionComparison:
-(1)  168/    9474 : 01                  	xae															; save in E and reload.
-(1)  169/    9475 : 40                  	lde
-(1)  170/    9476 : E4 3D               	xri 	'='													; check for equals.
-(1)  171/    9478 : 98 06               	jz 		__EC_Equals
-(1)  172/    947A : E4 02               	xri 	'='!'?'												; if it wasn't ? it must've been < or >
-(1)  173/    947C : 9C 1E               	jnz 	__EC_GLCompare
-(1)  174/    947E : 03                  	scl 														; return with an error, as we sent in '?'
-(1)  175/    947F : 3F                  	xppc 	p3
-(1)  176/    9480 :                     ;
-(1)  177/    9480 :                     ;	Equality test.
-(1)  178/    9480 :                     ;
-(1)  179/    9480 :                     __EC_Equals:
-(1)  180/    9480 : C2 00               	ld 		0(p2)
-(1)  181/    9482 : E2 02               	xor 	2(p2)
-(1)  182/    9484 : 9C 12               	jnz 	__EC_Fail
-(1)  183/    9486 : C2 01               	ld 		1(p2)
-(1)  184/    9488 : E2 03               	xor 	3(p2)
-(1)  185/    948A : 9C 0C               	jnz 	__EC_Fail
-(1)  186/    948C :                     __EC_Succeed:
-(1)  187/    948C : C4 01               	ldi 	1 													; return value 1
-(1)  188/    948E :                     __EC_ReturnA:
-(1)  189/    948E : CE 02               	st 		@2(p2) 												; drop TOS (save is irrelevant)
-(1)  190/    9490 : CA 00               	st 		0(p2) 												; save in LSB
-(1)  191/    9492 : C4 00               	ldi 	0
-(1)  192/    9494 : CA 01               	st 		1(p2) 												; zero LSB
-(1)  193/    9496 : 02                  	ccl 														; it's okay
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 22 - 12/14/2015 17:58:16
+(1)   48/    945B :                     ;	Get a new term to complete pending operation.
+(1)   49/    945B :                     ;
+(1)   50/    945B :                     __EE_NextTerm:
+(1)   51/    945B : C1 00               	ld 		(p1) 												; read P1
+(1)   52/    945D : 98 CA               	jz 		__EE_TermError 										; term not found error.
+(1)   53/    945F : C5 01               	ld 		@1(p1)												; fetch and skip over any spaces.
+(1)   54/    9461 : E4 20               	xri 	' '
+(1)   55/    9463 : 98 F6               	jz 		__EE_NextTerm
+(1)   56/    9465 :                     ;
+(1)   57/    9465 :                     ;	Check if it is a numeric constant
+(1)   58/    9465 :                     ;
+(1)   59/    9465 : C5 FF               	ld 		@-1(p1) 											; re-read first non space character.
+(1)   60/    9467 : 02                  	ccl
+(1)   61/    9468 : F4 50               	adi 	128-'0'												; will be +ve if < '0'
+(1)   62/    946A : 94 5A               	jp 		__EE_Variable
+(1)   63/    946C : F4 76               	adi 	255-0x89 											; will be +ve if > '9'
+(1)   64/    946E : 94 56               	jp 		__EE_Variable
+(1)   65/    9470 :                     ;
+(1)   66/    9470 :                     ;	Using the pending operation, the old value, and the new value, do the operation. Choice of either the
+(1)   67/    9470 :                     ;	OS built in routines or a seperate function for < = and >.
+(1)   68/    9470 :                     ;
+(1)   69/    9470 : (MACRO)             	lpi 	p3,OSMathLibrary-1 									; use the maths library to convert to an integer
+(1)   69/    9470 : C4 00                       ldi     (OSMATHLIBRARY-1) / 256
+(1)   69/    9472 : 37                          xpah    P3
+(1)   69/    9473 : C4 02                       ldi     (OSMATHLIBRARY-1) & 255
+(1)   69/    9475 : 33                          xpal    P3
+(1)   70/    9476 : C4 3F               	ldi	 	'?' 												; this is that function.
+(1)   71/    9478 : 3F                  	xppc 	p3
+(1)   72/    9479 :                     __EE_RunPendingOperation:										; now two values on the stack that we operate on.
+(1)   73/    9479 : (MACRO)             	lpi 	p3,OSMathLibrary-1									; use the library routine.
+(1)   73/    9479 : C4 00                       ldi     (OSMATHLIBRARY-1) / 256
+(1)   73/    947B : 37                          xpah    P3
+(1)   73/    947C : C4 02                       ldi     (OSMATHLIBRARY-1) & 255
+(1)   73/    947E : 33                          xpal    P3
+(1)   74/    947F : C2 07               	ld 		operation+4(p2)										; get the operation
+(1)   75/    9481 : D4 FC               	ani 	0xFC 												; is it 3C-3F which are < = > ?
+(1)   76/    9483 : E4 3C               	xri 	0x3C
+(1)   77/    9485 : 9C 06               	jnz 	__EE_IsLibraryOperator 								; use the library routine which supports those.
+(1)   78/    9487 : (MACRO)             	lpi 	p3,ExpressionComparison-1  							; instead.
+(1)   78/    9487 : C4 94                       ldi     (EXPRESSIONCOMPARISON-1) / 256
+(1)   78/    9489 : 37                          xpah    P3
+(1)   78/    948A : C4 FE                       ldi     (EXPRESSIONCOMPARISON-1) & 255
+(1)   78/    948C : 33                          xpal    P3
+(1)   79/    948D :                     __EE_IsLibraryOperator:
+(1)   80/    948D : C2 07               	ld 		operation+4(p2)										; get the operation
+(1)   81/    948F : 3F                  	xppc 	p3 													; execute the operation.
+(1)   82/    9490 : 06                  	csa 														; this has Carry Set = Error.
+(1)   83/    9491 : D4 80               	ani 	0x80
+(1)   84/    9493 : 9C 92               	jnz 	__EE_TermErrorAndDrop 								; so fail on error.
+(1)   85/    9495 :                     ;
+(1)   86/    9495 :                     ;	If we have done division, copy the remainder to the % variable.
+(1)   87/    9495 :                     ;
+(1)   88/    9495 : C2 05               	ld 		operation+2(p2) 									; re-read the operation just done.
+(1)   89/    9497 : E4 5C               	xri 	'\\'												; is it unsigned integer divide ?
+(1)   90/    9499 : 98 1B               	jz 		__EE_ProcessRemainder 								; if so, then go copy remainder.
+(1)   91/    949B :                     ;
+(1)   92/    949B :                     ;	Get the next operator, ending if we find the end of the string or a closing bracket. At the outer parenthesis
+(1)   93/    949B :                     ;	level, this is a comment.
+(1)   94/    949B :                     ;
+(1)   95/    949B :                     __EE_Next:
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 22 - 12/14/2015 19:20:58
 
 
-(1)  194/    9497 : 3F                  	xppc 	p3
-(1)  195/    9498 :                     ;
-(1)  196/    9498 :                     __EC_Fail:
-(1)  197/    9498 : C4 00               	ldi 	0 													; same as succeed, return 0.
-(1)  198/    949A : 90 F2               	jmp 	__EC_ReturnA
-(1)  199/    949C :                     ;
-(1)  200/    949C :                     ;	>= or < test
-(1)  201/    949C :                     ;
-(1)  202/    949C :                     __EC_GLCompare:
-(1)  203/    949C : 03                  	scl 														; subtract, don't care about the result.
-(1)  204/    949D : C2 02               	ld 		2(p2)
-(1)  205/    949F : FA 00               	cad 	0(p2)
-(1)  206/    94A1 : C2 03               	ld 		3(p2)
-(1)  207/    94A3 : FA 01               	cad 	1(p2)
-(1)  208/    94A5 : 40                  	lde 														; get original operator
-(1)  209/    94A6 : E4 3C               	xri 	'<'													; will be 0 if <, #0 if >(=)
-(1)  210/    94A8 : 98 02               	jz 		__EC_IsLessThan
-(1)  211/    94AA : C4 80               	ldi 	0x80 												; now will be 0 if <, 0x80 if >(=) 	
-(1)  212/    94AC :                     __EC_IsLessThan:
-(1)  213/    94AC : 01                  	xae 														; put in E
-(1)  214/    94AD : 06                  	csa 														; get CY/L
-(1)  215/    94AE : 60                  	xre 														; invert CY/L if it was >(=)
-(1)  216/    94AF : 94 DB               	jp 		__EC_Succeed 										; true
-(1)  217/    94B1 : 90 E5               	jmp 	__EC_Fail 											; false
-(1)  218/    94B3 :                     
-      44/    94B3 :                     	include source\special_terms.asm 							; RHS special terms (things like ?, $, ! a)
-(1)    1/    94B3 :                     ; ****************************************************************************************************************
-(1)    2/    94B3 :                     ; ****************************************************************************************************************
-(1)    3/    94B3 :                     ;
-(1)    4/    94B3 :                     ;										Special Term Evaluation
-(1)    5/    94B3 :                     ;	
-(1)    6/    94B3 :                     ; ****************************************************************************************************************
-(1)    7/    94B3 :                     ; ****************************************************************************************************************
-(1)    8/    94B3 :                     
-(1)    9/    94B3 :                     ; ****************************************************************************************************************
-(1)   10/    94B3 :                     ; ****************************************************************************************************************
-(1)   11/    94B3 :                     ;
-(1)   12/    94B3 :                     ;			Handle Special Non-Standard Terms. Standard terms are numeric constants and variables. 
-(1)   13/    94B3 :                     ;
-(1)   14/    94B3 :                     ;	Non standard terms are more complex than simple variable access or have side effects.
-(1)   15/    94B3 :                     ;
-(1)   16/    94B3 :                     ;	Accept pointer to term 2nd char in P1, first char in A.  Returns CY/L = 0 if processed, CY/L = 1 if ignored.
-(1)   17/    94B3 :                     ;
-(1)   18/    94B3 :                     ;										if processed correctly, value is on stack and E = 0.
-(1)   19/    94B3 :                     ;										if error occurred when processing, E != 0, no value on stack.
-(1)   20/    94B3 :                     ;	Non re-entrant:
-(1)   21/    94B3 :                     ;
-(1)   22/    94B3 :                     ;	Supported Terms are (at present) :
-(1)   23/    94B3 :                     ;
-(1)   24/    94B3 :                     ;		$ 			Read a single keystroke from keyboard, return ASCII value		(Not implemented)
-(1)   25/    94B3 :                     ;		?			Read a string from the keyboard, evaluate as expression			(Not implemented)
-(1)   26/    94B3 :                     ;		:<exp>)		Array access.													(Not implemented)
-(1)   27/    94B3 :                     ;		(<exp>)		Parenthesised expression.										(Not implemented)
-(1)   28/    94B3 :                     ;
-(1)   29/    94B3 :                     ; ****************************************************************************************************************
-(1)   30/    94B3 :                     ; ****************************************************************************************************************
-(1)   31/    94B3 :                     
-(1)   32/    94B3 :                     SpecialTermEvaluate:
-(1)   33/    94B3 : CE FE               	st 		@-2(p2) 											; save A allocating space for result.
-(1)   34/    94B5 : (MACRO)             	pushp 	p3													; save P3
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(special_terms.asm) - page 23 - 12/14/2015 17:58:16
+(1)   96/    949B : 03                  	scl 														; successful exit.
+(1)   97/    949C : C1 00               	ld 		(p1) 												; look for next operator and bump.
+(1)   98/    949E : 98 8E               	jz 		__EE_Exit 											; exit okay when found \0 or ), leave P1 on it.
+(1)   99/    94A0 : E4 29               	xri 	')'
+(1)  100/    94A2 : 98 8A               	jz 		__EE_Exit 										
+(1)  101/    94A4 : C5 01               	ld 		@1(p1) 												; read, but advance pointer
+(1)  102/    94A6 : E4 20               	xri 	' '													; space, try next.
+(1)  103/    94A8 : 98 F1               	jz 		__EE_Next
+(1)  104/    94AA : C1 FF               	ld 		-1(p1) 												; read it again.
+(1)  105/    94AC :                     __EE_WriteAndLoop:
+(1)  106/    94AC : CA 05               	st 		operation+2(p2) 									; the new pending operator.
+(1)  107/    94AE : E4 2F               	xri 	'/' 												; is it divide
+(1)  108/    94B0 : 9C A9               	jnz 	__EE_NextTerm 										; then go round again.
+(1)  109/    94B2 : C4 5C               	ldi 	'\\' 												; use unsigned divide, not signed divide.
+(1)  110/    94B4 : 90 F6               	jmp 	__EE_WriteAndLoop
+(1)  111/    94B6 :                     
+(1)  112/    94B6 :                     ;
+(1)  113/    94B6 :                     ;	Copy the remainder from the division into the '%' variable.
+(1)  114/    94B6 :                     ;	
+(1)  115/    94B6 :                     __EE_ProcessRemainder:
+(1)  116/    94B6 : (MACRO)             	lpi 	p3,Variables+('%' & 0x3F) * 2 						; point P3 to remainder variable
+(1)  116/    94B6 : C4 0C                       ldi     (VARIABLES+('%' & 0X3F) * 2) / 256
+(1)  116/    94B8 : 37                          xpah    P3
+(1)  116/    94B9 : C4 DA                       ldi     (VARIABLES+('%' & 0X3F) * 2) & 255
+(1)  116/    94BB : 33                          xpal    P3
+(1)  117/    94BC : C2 FE               	ld 		-2(p2)												; copy remainder value into remainder variable.
+(1)  118/    94BE : CB 00               	st 		0(p3)
+(1)  119/    94C0 : C2 FF               	ld 		-1(p2)
+(1)  120/    94C2 : CB 01               	st 		1(p3)
+(1)  121/    94C4 : 90 D5               	jmp 	__EE_Next 											; get next operator.
+(1)  122/    94C6 :                     ;
+(1)  123/    94C6 :                     ;	Found a non-numeric term.
+(1)  124/    94C6 :                     ;
+(1)  125/    94C6 :                     __EE_Variable:	
+(1)  126/    94C6 : C5 01               	ld 		@1(p1) 												; check it is in the range 32-95
+(1)  127/    94C8 : 03                  	scl
+(1)  128/    94C9 : FC 20               	cai 	32
+(1)  129/    94CB : D4 C0               	ani 	0xC0 												; this will be zero for 00-63
+(1)  130/    94CD : 9C 29               	jnz 	__EE_GoTermError 
+(1)  131/    94CF : (MACRO)             	lpi 	p3,SpecialTermEvaluate-1 							; check for "specials"
+(1)  131/    94CF : C4 95                       ldi     (SPECIALTERMEVALUATE-1) / 256
+(1)  131/    94D1 : 37                          xpah    P3
+(1)  131/    94D2 : C4 3D                       ldi     (SPECIALTERMEVALUATE-1) & 255
+(1)  131/    94D4 : 33                          xpal    P3
+(1)  132/    94D5 : C1 FF               	ld 		-1(p1)												; read character
+(1)  133/    94D7 : 3F                  	xppc 	p3
+(1)  134/    94D8 : 06                  	csa 														; if CY/L = 0 we have processed this
+(1)  135/    94D9 : 94 1A               	jp 		__EE_SpecialProcess
+(1)  136/    94DB : C1 FF               	ld 		-1(p1)												; read it again
+(1)  137/    94DD : 02                  	ccl 														; double it
+(1)  138/    94DE : F1 FF               	add 	-1(p1)
+(1)  139/    94E0 : D4 7E               	ani 	0x7E 												; and with $3F << 1, this is an offset
+(1)  140/    94E2 : 01                  	xae 														; put in E
+(1)  141/    94E3 : (MACRO)             	lpi 	p3,Variables+1 										; offset from variables, read high byte first
+(1)  141/    94E3 : C4 0C                       ldi     (VARIABLES+1) / 256
+(1)  141/    94E5 : 37                          xpah    P3
+(1)  141/    94E6 : C4 91                       ldi     (VARIABLES+1) & 255
+(1)  141/    94E8 : 33                          xpal    P3
+(1)  142/    94E9 : C3 80               	ld 		-0x80(p3) 											; read high byte
+(1)  143/    94EB : CE FF               	st 		@-1(p2) 											; push on stack
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 23 - 12/14/2015 19:20:58
 
 
-(1)   34/    94B5 : 37                          xpah    P3
-(1)   34/    94B6 : CE FF                       st              @-1(p2)
-(1)   34/    94B8 : 33                          xpal    P3
-(1)   34/    94B9 : CE FF                       st              @-1(p2)
-(1)   35/    94BB : C2 02               	ld 		2(p2) 												; get original A
-(1)   36/    94BD : E4 24               	xri 	'$'													; check for $ (get a key stroke.)
-(1)   37/    94BF : 9C 11               	jnz 	__STE_NotKeyStroke
-(1)   38/    94C1 :                     
-(1)   39/    94C1 :                     ; ****************************************************************************************************************
-(1)   40/    94C1 :                     ;										$ Read Character from keyboard
-(1)   41/    94C1 :                     ; ****************************************************************************************************************
-(1)   42/    94C1 : (MACRO)             	lpi 	p3,GetChar-1 										; read a keystroke.
-(1)   42/    94C1 : C4 90                       ldi     (GETCHAR-1) / 256
-(1)   42/    94C3 : 37                          xpah    P3
-(1)   42/    94C4 : C4 F5                       ldi     (GETCHAR-1) & 255
-(1)   42/    94C6 : 33                          xpal    P3
-(1)   43/    94C7 : 3F                  	xppc 	p3 													; call it
-(1)   44/    94C8 : CA 02               	st 		2(p2) 												; save result in LSB
-(1)   45/    94CA : C4 00               	ldi 	0
-(1)   46/    94CC : CA 03               	st 		3(p2) 												; save zero in MSB
-(1)   47/    94CE : 01                  	xae 														; E = 0
-(1)   48/    94CF : 02                  	ccl 														; CY/L = 1 => processed
-(1)   49/    94D0 : 90 3D               	jmp 	__STEExit
-(1)   50/    94D2 :                     
-(1)   51/    94D2 :                     __STE_NotKeyStroke:
-(1)   52/    94D2 : E4 1B               	xri 	'$'!'?'												; check for ? (read an expression)
-(1)   53/    94D4 : 9C 30               	jnz 	__STENotExpression
-(1)   54/    94D6 :                     
-(1)   55/    94D6 :                     ; ****************************************************************************************************************
-(1)   56/    94D6 :                     ;										? Read Expression from Keyboard
-(1)   57/    94D6 :                     ; ****************************************************************************************************************
-(1)   58/    94D6 :                     
-(1)   59/    94D6 : (MACRO)             	pushp 	p1 													; save P1
-(1)   59/    94D6 : 35                          xpah    P1
-(1)   59/    94D7 : CE FF                       st              @-1(p2)
-(1)   59/    94D9 : 31                          xpal    P1
-(1)   59/    94DA : CE FF                       st              @-1(p2)
-(1)   60/    94DC : (MACRO)             	lpi 	p3,GetString-1 										; read a string
-(1)   60/    94DC : C4 91                       ldi     (GETSTRING-1) / 256
-(1)   60/    94DE : 37                          xpah    P3
-(1)   60/    94DF : C4 19                       ldi     (GETSTRING-1) & 255
-(1)   60/    94E1 : 33                          xpal    P3
-(1)   61/    94E2 : (MACRO)             	lpi 	p1,KeyboardBuffer 									; into keyboard buffer
-(1)   61/    94E2 : C4 0D                       ldi     (KEYBOARDBUFFER) / 256
-(1)   61/    94E4 : 35                          xpah    P1
-(1)   61/    94E5 : C4 10                       ldi     (KEYBOARDBUFFER) & 255
-(1)   61/    94E7 : 31                          xpal    P1
-(1)   62/    94E8 : C4 50               	ldi 	KeyboardBufferSize 									; max length.
-(1)   63/    94EA : 3F                  	xppc 	p3
-(1)   64/    94EB : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate it
-(1)   64/    94EB : C4 93                       ldi     (EVALUATEEXPRESSION-1) / 256
-(1)   64/    94ED : 37                          xpah    P3
-(1)   64/    94EE : C4 B8                       ldi     (EVALUATEEXPRESSION-1) & 255
-(1)   64/    94F0 : 33                          xpal    P3
-(1)   65/    94F1 : 3F                  	xppc 	p3
-(1)   66/    94F2 : C6 01               	ld 		@1(p2)												; copy result
-(1)   67/    94F4 : CA 05               	st 		5(p2)
-(1)   68/    94F6 : C6 01               	ld 		@1(p2)
-(1)   69/    94F8 : CA 05               	st 		5(p2)
-(1)   70/    94FA : (MACRO)             	pullp 	p1 													; restore P1
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(special_terms.asm) - page 24 - 12/14/2015 17:58:16
+(1)  144/    94ED : C7 FF               	ld 		@-1(p3) 											; point to low byte
+(1)  145/    94EF : C3 80               	ld 		-0x80(p3) 											; read it
+(1)  146/    94F1 : CE FF               	st 		@-1(p2) 											; push on stack.
+(1)  147/    94F3 : 90 84               	jmp 	__EE_RunPendingOperation
+(1)  148/    94F5 :                     
+(1)  149/    94F5 :                     ;
+(1)  150/    94F5 :                     ;	Get here. If E = 0 then okay and value on stack as normal. E != 0 then error, no value pushed.
+(1)  151/    94F5 :                     ;
+(1)  152/    94F5 :                     __EE_SpecialProcess:
+(1)  153/    94F5 : 40                  	lde 														; check E
+(1)  154/    94F6 : 98 81               	jz 		__EE_RunPendingOperation 							; if zero, carry on as normal.											
+(1)  155/    94F8 :                     ;
+(1)  156/    94F8 :                     ;	Jumping back to TERM error.
+(1)  157/    94F8 :                     ;	
+(1)  158/    94F8 :                     __EE_GoTermError:												; too far to jump.
+(1)  159/    94F8 : (MACRO)             	lpi 	p3,__EE_TermError-1
+(1)  159/    94F8 : C4 94                       ldi     (__EE_TERMERROR-1) / 256
+(1)  159/    94FA : 37                          xpah    P3
+(1)  159/    94FB : C4 28                       ldi     (__EE_TERMERROR-1) & 255
+(1)  159/    94FD : 33                          xpal    P3
+(1)  160/    94FE : 3F                  	xppc 	p3
+(1)  161/    94FF :                     
+(1)  162/    94FF :                     ; ****************************************************************************************************************
+(1)  163/    94FF :                     ;	Perform operation A on the top 2 values on the stack.  NOTE: this returns CY/L = 1 = error unlike
+(1)  164/    94FF :                     ; 	the functions here but like the functions in the maths library. Only receives < = > ? as binary operators.
+(1)  165/    94FF :                     ; ****************************************************************************************************************
+(1)  166/    94FF :                     
+(1)  167/    94FF :                     ExpressionComparison:
+(1)  168/    94FF : 01                  	xae															; save in E and reload.
+(1)  169/    9500 : 40                  	lde
+(1)  170/    9501 : E4 3D               	xri 	'='													; check for equals.
+(1)  171/    9503 : 98 06               	jz 		__EC_Equals
+(1)  172/    9505 : E4 02               	xri 	'='!'?'												; if it wasn't ? it must've been < or >
+(1)  173/    9507 : 9C 1E               	jnz 	__EC_GLCompare
+(1)  174/    9509 : 03                  	scl 														; return with an error, as we sent in '?'
+(1)  175/    950A : 3F                  	xppc 	p3
+(1)  176/    950B :                     ;
+(1)  177/    950B :                     ;	Equality test.
+(1)  178/    950B :                     ;
+(1)  179/    950B :                     __EC_Equals:
+(1)  180/    950B : C2 00               	ld 		0(p2)
+(1)  181/    950D : E2 02               	xor 	2(p2)
+(1)  182/    950F : 9C 12               	jnz 	__EC_Fail
+(1)  183/    9511 : C2 01               	ld 		1(p2)
+(1)  184/    9513 : E2 03               	xor 	3(p2)
+(1)  185/    9515 : 9C 0C               	jnz 	__EC_Fail
+(1)  186/    9517 :                     __EC_Succeed:
+(1)  187/    9517 : C4 01               	ldi 	1 													; return value 1
+(1)  188/    9519 :                     __EC_ReturnA:
+(1)  189/    9519 : CE 02               	st 		@2(p2) 												; drop TOS (save is irrelevant)
+(1)  190/    951B : CA 00               	st 		0(p2) 												; save in LSB
+(1)  191/    951D : C4 00               	ldi 	0
+(1)  192/    951F : CA 01               	st 		1(p2) 												; zero LSB
+(1)  193/    9521 : 02                  	ccl 														; it's okay
+(1)  194/    9522 : 3F                  	xppc 	p3
+(1)  195/    9523 :                     ;
+(1)  196/    9523 :                     __EC_Fail:
+(1)  197/    9523 : C4 00               	ldi 	0 													; same as succeed, return 0.
+(1)  198/    9525 : 90 F2               	jmp 	__EC_ReturnA
+(1)  199/    9527 :                     ;
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(expression.asm) - page 24 - 12/14/2015 19:20:58
 
 
-(1)   70/    94FA : C6 01                       ld              @1(p2)
-(1)   70/    94FC : 31                          xpal    P1
-(1)   70/    94FD : C6 01                       ld              @1(p2)
-(1)   70/    94FF : 35                          xpah    P1
-(1)   71/    9500 : C4 00               	ldi 	0 													; and exit ignoring errors.
-(1)   72/    9502 : 01                  	xae 	
-(1)   73/    9503 : 02                  	ccl 	
-(1)   74/    9504 : 90 09               	jmp 	__STEExit
-(1)   75/    9506 :                     
-(1)   76/    9506 :                     __STENotExpression:
-(1)   77/    9506 : E4 05               	xri 	'?'!':'												; check if it is array or parenthesis
-(1)   78/    9508 : 98 15               	jz 		__STEArrayOrBracket
-(1)   79/    950A : E4 12               	xri 	':'!'('
-(1)   80/    950C : 98 11               	jz 		__STEArrayOrBracket
-(1)   81/    950E :                     
-(1)   82/    950E :                     __STEIgnore:
-(1)   83/    950E : 03                  	scl 														; A = 0, CY/L = 1 => last option.
-(1)   84/    950F :                     __STEExit:
-(1)   85/    950F : (MACRO)             	pullp 	p3
-(1)   85/    950F : C6 01                       ld              @1(p2)
-(1)   85/    9511 : 33                          xpal    P3
-(1)   85/    9512 : C6 01                       ld              @1(p2)
-(1)   85/    9514 : 37                          xpah    P3
-(1)   86/    9515 : 06                  	csa 														; if CY/L = 0,
-(1)   87/    9516 : 94 03               	jp 		__STEWasProcessed 									; then maybe keep result
-(1)   88/    9518 :                     __STEThrow:
-(1)   89/    9518 : C6 02               	ld 		@2(p2) 												; remove result off stack.
-(1)   90/    951A : 3F                  	xppc 	p3
-(1)   91/    951B :                     
-(1)   92/    951B :                     __STEWasProcessed:
-(1)   93/    951B : 40                  	lde 														; if E != 0, throw result.
-(1)   94/    951C : 9C FA               	jnz 	__STEThrow
-(1)   95/    951E : 3F                  	xppc 	p3 													; return with result still on stack.
-(1)   96/    951F :                     
-(1)   97/    951F :                     ; ****************************************************************************************************************
-(1)   98/    951F :                     ;							(<expr>), parenthesis or :<expr>), array lookup
-(1)   99/    951F :                     ; ****************************************************************************************************************
-(1)  100/    951F :                     
-(1)  101/    951F :                     
-(1)  102/    951F :                     __STEArrayOrBracket:
-(1)  103/    951F : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate expression
-(1)  103/    951F : C4 93                       ldi     (EVALUATEEXPRESSION-1) / 256
-(1)  103/    9521 : 37                          xpah    P3
-(1)  103/    9522 : C4 B8                       ldi     (EVALUATEEXPRESSION-1) & 255
-(1)  103/    9524 : 33                          xpal    P3
-(1)  104/    9525 : 3F                  	xppc 	p3
-(1)  105/    9526 : 01                  	xae 														; error code in E
-(1)  106/    9527 : 06                  	csa 	
-(1)  107/    9528 : 94 42               	jp 		__STETermErrorDrop 									; error in parenthesis expression.
-(1)  108/    952A :                     
-(1)  109/    952A : C2 04               	ld 		4(p2) 												; get first character original
-(1)  110/    952C : 01                  	xae 														; save in E
-(1)  111/    952D : C6 01               	ld 		@1(p2)												; copy result
-(1)  112/    952F : CA 03               	st 		3(p2)
-(1)  113/    9531 : C6 01               	ld 		@1(p2)
-(1)  114/    9533 : CA 03               	st 		3(p2)
-(1)  115/    9535 : C1 00               	ld 		(p1) 												; if next character NIL
-(1)  116/    9537 : 98 35               	jz 		__STETermError
-(1)  117/    9539 : C5 01               	ld 		@1(p1) 												; if next character ) then okay.
-(1)  118/    953B : E4 29               	xri 	')'
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm(special_terms.asm) - page 25 - 12/14/2015 17:58:16
+(1)  200/    9527 :                     ;	>= or < test
+(1)  201/    9527 :                     ;
+(1)  202/    9527 :                     __EC_GLCompare:
+(1)  203/    9527 : 03                  	scl 														; subtract, don't care about the result.
+(1)  204/    9528 : C2 02               	ld 		2(p2)
+(1)  205/    952A : FA 00               	cad 	0(p2)
+(1)  206/    952C : C2 03               	ld 		3(p2)
+(1)  207/    952E : FA 01               	cad 	1(p2)
+(1)  208/    9530 : 40                  	lde 														; get original operator
+(1)  209/    9531 : E4 3C               	xri 	'<'													; will be 0 if <, #0 if >(=)
+(1)  210/    9533 : 98 02               	jz 		__EC_IsLessThan
+(1)  211/    9535 : C4 80               	ldi 	0x80 												; now will be 0 if <, 0x80 if >(=) 	
+(1)  212/    9537 :                     __EC_IsLessThan:
+(1)  213/    9537 : 01                  	xae 														; put in E
+(1)  214/    9538 : 06                  	csa 														; get CY/L
+(1)  215/    9539 : 60                  	xre 														; invert CY/L if it was >(=)
+(1)  216/    953A : 94 DB               	jp 		__EC_Succeed 										; true
+(1)  217/    953C : 90 E5               	jmp 	__EC_Fail 											; false
+(1)  218/    953E :                     
+      44/    953E :                     	include source\special_terms.asm 							; RHS special terms (things like ?, $, ! a)
+(1)    1/    953E :                     ; ****************************************************************************************************************
+(1)    2/    953E :                     ; ****************************************************************************************************************
+(1)    3/    953E :                     ;
+(1)    4/    953E :                     ;										Special Term Evaluation
+(1)    5/    953E :                     ;	
+(1)    6/    953E :                     ; ****************************************************************************************************************
+(1)    7/    953E :                     ; ****************************************************************************************************************
+(1)    8/    953E :                     
+(1)    9/    953E :                     ; ****************************************************************************************************************
+(1)   10/    953E :                     ; ****************************************************************************************************************
+(1)   11/    953E :                     ;
+(1)   12/    953E :                     ;			Handle Special Non-Standard Terms. Standard terms are numeric constants and variables. 
+(1)   13/    953E :                     ;
+(1)   14/    953E :                     ;	Non standard terms are more complex than simple variable access or have side effects.
+(1)   15/    953E :                     ;
+(1)   16/    953E :                     ;	Accept pointer to term 2nd char in P1, first char in A.  Returns CY/L = 0 if processed, CY/L = 1 if ignored.
+(1)   17/    953E :                     ;
+(1)   18/    953E :                     ;										if processed correctly, value is on stack and E = 0.
+(1)   19/    953E :                     ;										if error occurred when processing, E != 0, no value on stack.
+(1)   20/    953E :                     ;	Non re-entrant:
+(1)   21/    953E :                     ;
+(1)   22/    953E :                     ;	Supported Terms are (at present) :
+(1)   23/    953E :                     ;
+(1)   24/    953E :                     ;		$ 			Read a single keystroke from keyboard, return ASCII value		(Not implemented)
+(1)   25/    953E :                     ;		?			Read a string from the keyboard, evaluate as expression			(Not implemented)
+(1)   26/    953E :                     ;		:<exp>)		Array access.													(Not implemented)
+(1)   27/    953E :                     ;		(<exp>)		Parenthesised expression.										(Not implemented)
+(1)   28/    953E :                     ;
+(1)   29/    953E :                     ; ****************************************************************************************************************
+(1)   30/    953E :                     ; ****************************************************************************************************************
+(1)   31/    953E :                     
+(1)   32/    953E :                     SpecialTermEvaluate:
+(1)   33/    953E : CE FE               	st 		@-2(p2) 											; save A allocating space for result.
+(1)   34/    9540 : (MACRO)             	pushp 	p3													; save P3
+(1)   34/    9540 : 37                          xpah    P3
+(1)   34/    9541 : CE FF                       st              @-1(p2)
+(1)   34/    9543 : 33                          xpal    P3
+(1)   34/    9544 : CE FF                       st              @-1(p2)
+(1)   35/    9546 : C2 02               	ld 		2(p2) 												; get original A
+(1)   36/    9548 : E4 24               	xri 	'$'													; check for $ (get a key stroke.)
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(special_terms.asm) - page 25 - 12/14/2015 19:20:58
 
 
-(1)  119/    953D : 9C 2F               	jnz 	__STETermError
-(1)  120/    953F :                     
-(1)  121/    953F : 40                  	lde															; check first character to see if : or (
-(1)  122/    9540 : E4 28               	xri 	'('
-(1)  123/    9542 : 98 22               	jz 		__STENotArray
-(1)  124/    9544 :                     ;
-(1)  125/    9544 :                     ;	This section is difference between :3) and (3) - it doubles the value, adds to the value in the &
-(1)  126/    9544 :                     ;	variable and reads the word there.
-(1)  127/    9544 :                     ;
-(1)  128/    9544 : (MACRO)             	lpi 	p3,Variables+('&' & 0x3F) * 2 						; point P3 to top of memory variable.
-(1)  128/    9544 : C4 0C                       ldi     (VARIABLES+('&' & 0X3F) * 2) / 256
-(1)  128/    9546 : 37                          xpah    P3
-(1)  128/    9547 : C4 DC                       ldi     (VARIABLES+('&' & 0X3F) * 2) & 255
-(1)  128/    9549 : 33                          xpal    P3
-(1)  129/    954A : C2 02               	ld 		2(p2) 												; double value being returned (word index)
-(1)  130/    954C : 02                  	ccl
-(1)  131/    954D : F2 02               	add 	2(p2)
-(1)  132/    954F : 01                  	xae 														; save Low Value in E
-(1)  133/    9550 : C2 03               	ld 		3(p2)
-(1)  134/    9552 : F2 03               	add 	3(p2)
-(1)  135/    9554 : 01                  	xae 														; High value in E, Low Value in A.
-(1)  136/    9555 : 02                  	ccl
-(1)  137/    9556 : F3 00               	add 	0(p3) 												; low address
-(1)  138/    9558 : 01                  	xae 														; save in E, get high value.
-(1)  139/    9559 : F3 01               	add 	1(p3)  												; add high base.
-(1)  140/    955B : 37                  	xpah 	p3 													; put in P3.H
-(1)  141/    955C : 40                  	lde 														; put low address in P3.L
-(1)  142/    955D : 33                  	xpal 	p3
-(1)  143/    955E : C3 00               	ld 		0(p3) 												; copy this into stack position
-(1)  144/    9560 : CA 02               	st 		2(p2)
-(1)  145/    9562 : C3 01               	ld 		1(p3)
-(1)  146/    9564 : CA 03               	st 		3(p2)
-(1)  147/    9566 :                     __STENotArray:
-(1)  148/    9566 : C4 00               	ldi 	0
-(1)  149/    9568 : 01                  	xae 														; E = 0
-(1)  150/    9569 : 02                  	ccl 														; clear CY/L indicating processed.
-(1)  151/    956A : 90 A3               	jmp 	__STEExit 
-(1)  152/    956C :                     
-(1)  153/    956C :                     __STETermErrorDrop:
-(1)  154/    956C : C6 02               	ld 		@2(p2)
-(1)  155/    956E :                     
-(1)  156/    956E :                     __STETermError:
-(1)  157/    956E : C4 50               	ldi 	'P'													; P error
-(1)  158/    9570 : 01                  	xae 
-(1)  159/    9571 : 02                  	ccl
-(1)  160/    9572 : 90 9B               	jmp 	__STEExit
-(1)  161/    9574 :                     	
-      45/    9574 :                     
-      46/    9574 :                     StartProgram:
-      47/    9574 : (MACRO)             	vtl 	100,":3)=11*11"
-      47/    9574 : 0D                          db              strlen(":3)=11*11")+4
-      47/    9575 : 64 00                       dw              100
-      47/    9577 : 3A 33 29 3D 31 31           db              ":3)=11*11",0
-                    2A 31 31 00 
-      48/    9581 : (MACRO)             	vtl 	102,":2)=:3)+256"
-      48/    9581 : 0F                          db              strlen(":2)=:3)+256")+4
-      48/    9582 : 66 00                       dw              102
-      48/    9584 : 3A 32 29 3D 3A 33           db              ":2)=:3)+256",0
-                    29 2B 32 35 36 00 
-      49/    9590 : (MACRO)             	vtl 	105,"$=12"
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 26 - 12/14/2015 17:58:16
+(1)   37/    954A : 9C 11               	jnz 	__STE_NotKeyStroke
+(1)   38/    954C :                     
+(1)   39/    954C :                     ; ****************************************************************************************************************
+(1)   40/    954C :                     ;										$ Read Character from keyboard
+(1)   41/    954C :                     ; ****************************************************************************************************************
+(1)   42/    954C : (MACRO)             	lpi 	p3,GetChar-1 										; read a keystroke.
+(1)   42/    954C : C4 90                       ldi     (GETCHAR-1) / 256
+(1)   42/    954E : 37                          xpah    P3
+(1)   42/    954F : C4 F5                       ldi     (GETCHAR-1) & 255
+(1)   42/    9551 : 33                          xpal    P3
+(1)   43/    9552 : 3F                  	xppc 	p3 													; call it
+(1)   44/    9553 : CA 02               	st 		2(p2) 												; save result in LSB
+(1)   45/    9555 : C4 00               	ldi 	0
+(1)   46/    9557 : CA 03               	st 		3(p2) 												; save zero in MSB
+(1)   47/    9559 : 01                  	xae 														; E = 0
+(1)   48/    955A : 02                  	ccl 														; CY/L = 1 => processed
+(1)   49/    955B : 90 3D               	jmp 	__STEExit
+(1)   50/    955D :                     
+(1)   51/    955D :                     __STE_NotKeyStroke:
+(1)   52/    955D : E4 1B               	xri 	'$'!'?'												; check for ? (read an expression)
+(1)   53/    955F : 9C 30               	jnz 	__STENotExpression
+(1)   54/    9561 :                     
+(1)   55/    9561 :                     ; ****************************************************************************************************************
+(1)   56/    9561 :                     ;										? Read Expression from Keyboard
+(1)   57/    9561 :                     ; ****************************************************************************************************************
+(1)   58/    9561 :                     
+(1)   59/    9561 : (MACRO)             	pushp 	p1 													; save P1
+(1)   59/    9561 : 35                          xpah    P1
+(1)   59/    9562 : CE FF                       st              @-1(p2)
+(1)   59/    9564 : 31                          xpal    P1
+(1)   59/    9565 : CE FF                       st              @-1(p2)
+(1)   60/    9567 : (MACRO)             	lpi 	p3,GetString-1 										; read a string
+(1)   60/    9567 : C4 91                       ldi     (GETSTRING-1) / 256
+(1)   60/    9569 : 37                          xpah    P3
+(1)   60/    956A : C4 19                       ldi     (GETSTRING-1) & 255
+(1)   60/    956C : 33                          xpal    P3
+(1)   61/    956D : (MACRO)             	lpi 	p1,KeyboardBuffer 									; into keyboard buffer
+(1)   61/    956D : C4 0D                       ldi     (KEYBOARDBUFFER) / 256
+(1)   61/    956F : 35                          xpah    P1
+(1)   61/    9570 : C4 10                       ldi     (KEYBOARDBUFFER) & 255
+(1)   61/    9572 : 31                          xpal    P1
+(1)   62/    9573 : C4 50               	ldi 	KeyboardBufferSize 									; max length.
+(1)   63/    9575 : 3F                  	xppc 	p3
+(1)   64/    9576 : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate it
+(1)   64/    9576 : C4 94                       ldi     (EVALUATEEXPRESSION-1) / 256
+(1)   64/    9578 : 37                          xpah    P3
+(1)   64/    9579 : C4 43                       ldi     (EVALUATEEXPRESSION-1) & 255
+(1)   64/    957B : 33                          xpal    P3
+(1)   65/    957C : 3F                  	xppc 	p3
+(1)   66/    957D : C6 01               	ld 		@1(p2)												; copy result
+(1)   67/    957F : CA 05               	st 		5(p2)
+(1)   68/    9581 : C6 01               	ld 		@1(p2)
+(1)   69/    9583 : CA 05               	st 		5(p2)
+(1)   70/    9585 : (MACRO)             	pullp 	p1 													; restore P1
+(1)   70/    9585 : C6 01                       ld              @1(p2)
+(1)   70/    9587 : 31                          xpal    P1
+(1)   70/    9588 : C6 01                       ld              @1(p2)
+(1)   70/    958A : 35                          xpah    P1
+(1)   71/    958B : C4 00               	ldi 	0 													; and exit ignoring errors.
+(1)   72/    958D : 01                  	xae 	
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(special_terms.asm) - page 26 - 12/14/2015 19:20:58
 
 
-      49/    9590 : 08                          db              strlen("$=12")+4
-      49/    9591 : 69 00                       dw              105
-      49/    9593 : 24 3D 31 32 00              db              "$=12",0
-      50/    9598 : (MACRO)             	vtl 	108,"$=63"
-      50/    9598 : 08                          db              strlen("$=63")+4
-      50/    9599 : 6C 00                       dw              108
-      50/    959B : 24 3D 36 33 00              db              "$=63",0
-      51/    95A0 : (MACRO)             	vtl 	110,"A=?"
-      51/    95A0 : 07                          db              strlen("A=?")+4
-      51/    95A1 : 6E 00                       dw              110
-      51/    95A3 : 41 3D 3F 00                 db              "A=?",0
-      52/    95A7 : (MACRO)             	vtl 	120,"B=A*A"
-      52/    95A7 : 09                          db              strlen("B=A*A")+4
-      52/    95A8 : 78 00                       dw              120
-      52/    95AA : 42 3D 41 2A 41 00           db              "B=A*A",0
-      53/    95B0 : (MACRO)             	vtl 	130,"C='"
-      53/    95B0 : 07                          db              strlen("C='")+4
-      53/    95B1 : 82 00                       dw              130
-      53/    95B3 : 43 3D 27 00                 db              "C='",0
-      54/    95B7 : (MACRO)             	vtl 	140,"D=(A<10)*20"
-      54/    95B7 : 0F                          db              strlen("D=(A<10)*20")+4
-      54/    95B8 : 8C 00                       dw              140
-      54/    95BA : 44 3D 28 41 3C 31           db              "D=(A<10)*20",0
-                    30 29 2A 32 30 00 
-      55/    95C6 :                     EndProgram:
-      56/    95C6 : 00                  	db 		0
-      57/    95C7 :                     
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 27 - 12/14/2015 17:58:16
+(1)   73/    958E : 02                  	ccl 	
+(1)   74/    958F : 90 09               	jmp 	__STEExit
+(1)   75/    9591 :                     
+(1)   76/    9591 :                     __STENotExpression:
+(1)   77/    9591 : E4 05               	xri 	'?'!':'												; check if it is array or parenthesis
+(1)   78/    9593 : 98 15               	jz 		__STEArrayOrBracket
+(1)   79/    9595 : E4 12               	xri 	':'!'('
+(1)   80/    9597 : 98 11               	jz 		__STEArrayOrBracket
+(1)   81/    9599 :                     
+(1)   82/    9599 :                     __STEIgnore:
+(1)   83/    9599 : 03                  	scl 														; A = 0, CY/L = 1 => last option.
+(1)   84/    959A :                     __STEExit:
+(1)   85/    959A : (MACRO)             	pullp 	p3
+(1)   85/    959A : C6 01                       ld              @1(p2)
+(1)   85/    959C : 33                          xpal    P3
+(1)   85/    959D : C6 01                       ld              @1(p2)
+(1)   85/    959F : 37                          xpah    P3
+(1)   86/    95A0 : 06                  	csa 														; if CY/L = 0,
+(1)   87/    95A1 : 94 03               	jp 		__STEWasProcessed 									; then maybe keep result
+(1)   88/    95A3 :                     __STEThrow:
+(1)   89/    95A3 : C6 02               	ld 		@2(p2) 												; remove result off stack.
+(1)   90/    95A5 : 3F                  	xppc 	p3
+(1)   91/    95A6 :                     
+(1)   92/    95A6 :                     __STEWasProcessed:
+(1)   93/    95A6 : 40                  	lde 														; if E != 0, throw result.
+(1)   94/    95A7 : 9C FA               	jnz 	__STEThrow
+(1)   95/    95A9 : 3F                  	xppc 	p3 													; return with result still on stack.
+(1)   96/    95AA :                     
+(1)   97/    95AA :                     ; ****************************************************************************************************************
+(1)   98/    95AA :                     ;							(<expr>), parenthesis or :<expr>), array lookup
+(1)   99/    95AA :                     ; ****************************************************************************************************************
+(1)  100/    95AA :                     
+(1)  101/    95AA :                     
+(1)  102/    95AA :                     __STEArrayOrBracket:
+(1)  103/    95AA : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate expression
+(1)  103/    95AA : C4 94                       ldi     (EVALUATEEXPRESSION-1) / 256
+(1)  103/    95AC : 37                          xpah    P3
+(1)  103/    95AD : C4 43                       ldi     (EVALUATEEXPRESSION-1) & 255
+(1)  103/    95AF : 33                          xpal    P3
+(1)  104/    95B0 : 3F                  	xppc 	p3
+(1)  105/    95B1 : 01                  	xae 														; error code in E
+(1)  106/    95B2 : 06                  	csa 	
+(1)  107/    95B3 : 94 42               	jp 		__STETermErrorDrop 									; error in parenthesis expression.
+(1)  108/    95B5 :                     
+(1)  109/    95B5 : C2 04               	ld 		4(p2) 												; get first character original
+(1)  110/    95B7 : 01                  	xae 														; save in E
+(1)  111/    95B8 : C6 01               	ld 		@1(p2)												; copy result
+(1)  112/    95BA : CA 03               	st 		3(p2)
+(1)  113/    95BC : C6 01               	ld 		@1(p2)
+(1)  114/    95BE : CA 03               	st 		3(p2)
+(1)  115/    95C0 : C1 00               	ld 		(p1) 												; if next character NIL
+(1)  116/    95C2 : 98 35               	jz 		__STETermError
+(1)  117/    95C4 : C5 01               	ld 		@1(p1) 												; if next character ) then okay.
+(1)  118/    95C6 : E4 29               	xri 	')'
+(1)  119/    95C8 : 9C 2F               	jnz 	__STETermError
+(1)  120/    95CA :                     
+(1)  121/    95CA : 40                  	lde															; check first character to see if : or (
+(1)  122/    95CB : E4 28               	xri 	'('
+(1)  123/    95CD : 98 22               	jz 		__STENotArray
+(1)  124/    95CF :                     ;
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm(special_terms.asm) - page 27 - 12/14/2015 19:20:58
+
+
+(1)  125/    95CF :                     ;	This section is difference between :3) and (3) - it doubles the value, adds to the value in the &
+(1)  126/    95CF :                     ;	variable and reads the word there.
+(1)  127/    95CF :                     ;
+(1)  128/    95CF : (MACRO)             	lpi 	p3,Variables+('&' & 0x3F) * 2 						; point P3 to top of memory variable.
+(1)  128/    95CF : C4 0C                       ldi     (VARIABLES+('&' & 0X3F) * 2) / 256
+(1)  128/    95D1 : 37                          xpah    P3
+(1)  128/    95D2 : C4 DC                       ldi     (VARIABLES+('&' & 0X3F) * 2) & 255
+(1)  128/    95D4 : 33                          xpal    P3
+(1)  129/    95D5 : C2 02               	ld 		2(p2) 												; double value being returned (word index)
+(1)  130/    95D7 : 02                  	ccl
+(1)  131/    95D8 : F2 02               	add 	2(p2)
+(1)  132/    95DA : 01                  	xae 														; save Low Value in E
+(1)  133/    95DB : C2 03               	ld 		3(p2)
+(1)  134/    95DD : F2 03               	add 	3(p2)
+(1)  135/    95DF : 01                  	xae 														; High value in E, Low Value in A.
+(1)  136/    95E0 : 02                  	ccl
+(1)  137/    95E1 : F3 00               	add 	0(p3) 												; low address
+(1)  138/    95E3 : 01                  	xae 														; save in E, get high value.
+(1)  139/    95E4 : F3 01               	add 	1(p3)  												; add high base.
+(1)  140/    95E6 : 37                  	xpah 	p3 													; put in P3.H
+(1)  141/    95E7 : 40                  	lde 														; put low address in P3.L
+(1)  142/    95E8 : 33                  	xpal 	p3
+(1)  143/    95E9 : C3 00               	ld 		0(p3) 												; copy this into stack position
+(1)  144/    95EB : CA 02               	st 		2(p2)
+(1)  145/    95ED : C3 01               	ld 		1(p3)
+(1)  146/    95EF : CA 03               	st 		3(p2)
+(1)  147/    95F1 :                     __STENotArray:
+(1)  148/    95F1 : C4 00               	ldi 	0
+(1)  149/    95F3 : 01                  	xae 														; E = 0
+(1)  150/    95F4 : 02                  	ccl 														; clear CY/L indicating processed.
+(1)  151/    95F5 : 90 A3               	jmp 	__STEExit 
+(1)  152/    95F7 :                     
+(1)  153/    95F7 :                     __STETermErrorDrop:
+(1)  154/    95F7 : C6 02               	ld 		@2(p2)
+(1)  155/    95F9 :                     
+(1)  156/    95F9 :                     __STETermError:
+(1)  157/    95F9 : C4 50               	ldi 	'P'													; P error
+(1)  158/    95FB : 01                  	xae 
+(1)  159/    95FC : 02                  	ccl
+(1)  160/    95FD : 90 9B               	jmp 	__STEExit
+(1)  161/    95FF :                     	
+      45/    95FF :                     
+      46/    95FF :                     StartProgram:
+      47/    95FF : (MACRO)             	vtl 	105,"$=12"
+      47/    95FF : 08                          db              strlen("$=12")+4
+      47/    9600 : 69 00                       dw              105
+      47/    9602 : 24 3D 31 32 00              db              "$=12",0
+      48/    9607 : (MACRO)             	vtl 	108,"?=\"HELLO WORLD\""
+      48/    9607 : 13                          db              strlen("?=\"HELLO WORLD\"")+4
+      48/    9608 : 6C 00                       dw              108
+      48/    960A : 3F 3D 22 48 45 4C           db              "?=\"HELLO WORLD\"",0
+                    4C 4F 20 57 4F 52 
+                    4C 44 22 00 
+      49/    961A : (MACRO)             	vtl 	110,"A=?"
+      49/    961A : 07                          db              strlen("A=?")+4
+      49/    961B : 6E 00                       dw              110
+      49/    961D : 41 3D 3F 00                 db              "A=?",0
+      50/    9621 : (MACRO)             	vtl 	120,"B=A*A"
+      50/    9621 : 09                          db              strlen("B=A*A")+4
+      50/    9622 : 78 00                       dw              120
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 28 - 12/14/2015 19:20:58
+
+
+      50/    9624 : 42 3D 41 2A 41 00           db              "B=A*A",0
+      51/    962A : (MACRO)             	vtl 	125,"?=B"
+      51/    962A : 07                          db              strlen("?=B")+4
+      51/    962B : 7D 00                       dw              125
+      51/    962D : 3F 3D 42 00                 db              "?=B",0
+      52/    9631 : (MACRO)             	vtl 	130,"C='"
+      52/    9631 : 07                          db              strlen("C='")+4
+      52/    9632 : 82 00                       dw              130
+      52/    9634 : 43 3D 27 00                 db              "C='",0
+      53/    9638 : (MACRO)             	vtl 	140,"?=\"\""
+      53/    9638 : 08                          db              strlen("?=\"\"")+4
+      53/    9639 : 8C 00                       dw              140
+      53/    963B : 3F 3D 22 22 00              db              "?=\"\"",0
+      54/    9640 : (MACRO)             	vtl 	145,"?=C"
+      54/    9640 : 07                          db              strlen("?=C")+4
+      54/    9641 : 91 00                       dw              145
+      54/    9643 : 3F 3D 43 00                 db              "?=C",0
+      55/    9647 : (MACRO)             	vtl 	150,"?=\"\""
+      55/    9647 : 08                          db              strlen("?=\"\"")+4
+      55/    9648 : 96 00                       dw              150
+      55/    964A : 3F 3D 22 22 00              db              "?=\"\"",0
+      56/    964F : (MACRO)             	vtl 	160,"?=\"WORKING!\""
+      56/    964F : 10                          db              strlen("?=\"WORKING!\"")+4
+      56/    9650 : A0 00                       dw              160
+      56/    9652 : 3F 3D 22 57 4F 52           db              "?=\"WORKING!\"",0
+                    4B 49 4E 47 21 22 
+                    00 
+      57/    965F :                     EndProgram:
+      58/    965F : 00                  	db 		0
+      59/    9660 :                     
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 29 - 12/14/2015 19:20:58
 
 
   symbol table (* = unused):
@@ -1612,9 +1741,9 @@
 *ARCHITECTURE :  i386-unknown-win32 - | *BIGENDIAN :                      0 - |
 *BRANCHEXT :                      0 - | *CASESENSITIVE :                  0 - |
  CHECKEQUALSANDEVALUATE :      9219 C | *CONSTPI :        3.141592653589793 - |
-*DATE :                  12/14/2015 - | *ENDPROGRAM :                  95C6 C |
- EVALUATEEXPRESSION :          93B9 C |  EXECUTESTATEMENT :            91A1 C |
- EXPRESSIONCOMPARISON :        9474 C | *FALSE :                          0 - |
+*DATE :                  12/14/2015 - | *ENDPROGRAM :                  965F C |
+ EVALUATEEXPRESSION :          9444 C |  EXECUTESTATEMENT :            91A1 C |
+ EXPRESSIONCOMPARISON :        94FF C | *FALSE :                          0 - |
 *FULLPMMU :                       1 - |  GETCHAR :                     90F6 C |
  GETSTRING :                   911A C | *HAS64 :                          1 - |
 *HASDSP :                         0 - | *HASFPU :                         0 - |
@@ -1625,28 +1754,28 @@
  KEYBOARDBUFFERSIZE :            50 - | *LISTON :                         1 - |
 *MACEXP :                         1 - | *MOMCPU :                         C - |
 *MOMCPUNAME :                 SC/MP - | *NESTMAX :                      100 - |
- NEWPROGRAM :                  9375 C |  NEXT :                        901F C |
+ NEWPROGRAM :                  9400 C |  NEXT :                        901F C |
  OPERATION :                      3 - |  OSMATHLIBRARY :                  3 - |
 *PACKING :                        0 - | *PADDING :                        1 - |
  PRINT :                       9036 C |  PROGRAMBASE :                  C8D - |
- RANDOMPROCESS :               9340 C | *RELAXED :                        0 - |
+ RANDOMPROCESS :               93CB C | *RELAXED :                        0 - |
 *RESULTHI :                       6 - | *RESULTLO :                       5 - |
  SCREENCURSOR :                 C80 - |  SCREENMIRROR :                 C00 - |
- SPECIALASSIGNMENT :           924F C |  SPECIALTERMEVALUATE :         94B3 C |
- STARTPROGRAM :                9574 C |  STOP :                        9034 C |
- SYSTEMVARIABLES :              C90 - | *TIME :                    17:58:16 - |
+ SPECIALASSIGNMENT :           924F C |  SPECIALTERMEVALUATE :         953E C |
+ STARTPROGRAM :                95FF C |  STOP :                        9034 C |
+ SYSTEMVARIABLES :              C90 - | *TIME :                    19:20:58 - |
 *TRUE :                           1 - |  VARIABLES :                    C90 - |
 *VERSION :                     142F - |  __CEEFAILEQUALS :             9229 C |
  __CEE_FINDEQUALS :            921B C |  __CEE_FOUNDEQUAL :            922D C |
- __EC_EQUALS :                 9480 C |  __EC_FAIL :                   9498 C |
- __EC_GLCOMPARE :              949C C |  __EC_ISLESSTHAN :             94AC C |
- __EC_RETURNA :                948E C |  __EC_SUCCEED :                948C C |
- __EE_EXIT :                   93A3 C |  __EE_GOTERMERROR :            946D C |
- __EE_ISLIBRARYOPERATOR :      9402 C |  __EE_NEXT :                   9410 C |
- __EE_NEXTTERM :               93D0 C |  __EE_PROCESSREMAINDER :       942B C |
- __EE_RUNPENDINGOPERATION :    93EE C |  __EE_SPECIALPROCESS :         946A C |
- __EE_TERMERROR :              939E C |  __EE_TERMERRORANDDROP :       939C C |
- __EE_VARIABLE :               943B C |  __EE_WRITEANDLOOP :           9421 C |
+ __EC_EQUALS :                 950B C |  __EC_FAIL :                   9523 C |
+ __EC_GLCOMPARE :              9527 C |  __EC_ISLESSTHAN :             9537 C |
+ __EC_RETURNA :                9519 C |  __EC_SUCCEED :                9517 C |
+ __EE_EXIT :                   942E C |  __EE_GOTERMERROR :            94F8 C |
+ __EE_ISLIBRARYOPERATOR :      948D C |  __EE_NEXT :                   949B C |
+ __EE_NEXTTERM :               945B C |  __EE_PROCESSREMAINDER :       94B6 C |
+ __EE_RUNPENDINGOPERATION :    9479 C |  __EE_SPECIALPROCESS :         94F5 C |
+ __EE_TERMERROR :              9429 C |  __EE_TERMERRORANDDROP :       9427 C |
+ __EE_VARIABLE :               94C6 C |  __EE_WRITEANDLOOP :           94AC C |
  __ES_LEGALASSIGNMENT :        91D7 C |  __ES_NOTSPECIAL :             91F1 C |
  __ES_RETURNERRORA :           91D2 C |  __ES_RETURNERRORP3LOW :       91D1 C |
  __ES_SKIPSPACES :             91B9 C |  __EX_ENDLINEANDEXIT :         9182 C |
@@ -1661,27 +1790,32 @@
  __PRISCONTROLCHAR [PRINT] :   90AB C |  __PRISRETURN [PRINT] :        90CB C |
  __PRNOTASCII [PRINT] :        9073 C |  __PRPRINTCHARACTERA [PRINT] : 9057 C |
  __PRPRINTSTRING [PRINT] :     9045 C |  __PRSCROLLLOOP [PRINT] :      908B C |
- __PRUPDATECURSOR [PRINT] :    907C C |  __RPNOINITIALISE :            935A C |
- __RPNOTOGGLE :                936E C |  __SA_COMPLETED :              9294 C |
- __SA_COMPLETED2 :             92DB C |  __SA_CO_ARRAY :               92DF C |
- __SA_CO_CALL :                929B C |  __SA_CO_ENTER :               9282 C |
- __SA_CO_NEW :                 92BF C |  __SA_CO_NOPRINT :             9294 C |
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 28 - 12/14/2015 17:58:16
+ __PRUPDATECURSOR [PRINT] :    907C C |  __RPNOINITIALISE :            93E5 C |
+ __RPNOTOGGLE :                93F9 C |  __SA_CHECKSEMICOLON :         9369 C |
+ __SA_COMPLETED :              9294 C |  __SA_COMPLETED2 :             92DB C |
+ __SA_COMPLETED3 :             9331 C |  __SA_COMPLETED4 :             937A C |
+ __SA_CO_ARRAY :               92DF C |  __SA_CO_CALL :                929B C |
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 30 - 12/14/2015 19:20:58
 
 
+ __SA_CO_ENTER :               9282 C |  __SA_CO_NEW :                 92BF C |
+ __SA_CO_NOPRINT :             9294 C |  __SA_CO_PRINT :               9333 C |
  __SA_EXIT :                   9273 C |  __SA_EXPRESSIONERROR :        927C C |
- __SA_EXPRESSIONERROR2 :       92DD C |  __SA_FIND :                   925D C |
- __SA_NOTFOUND :               9272 C |  __SA_TABLE :                  9333 C |
- __STEARRAYORBRACKET :         951F C |  __STEEXIT :                   950F C |
-*__STEIGNORE :                 950E C |  __STENOTARRAY :               9566 C |
- __STENOTEXPRESSION :          9506 C |  __STETERMERROR :              956E C |
- __STETERMERRORDROP :          956C C |  __STETHROW :                  9518 C |
- __STEWASPROCESSED :           951B C |  __STE_NOTKEYSTROKE :          94D2 C |
+ __SA_EXPRESSIONERROR2 :       92DD C |  __SA_EXPRESSIONERROR3 :       9344 C |
+ __SA_FIND :                   925D C |  __SA_NOTFOUND :               9272 C |
+ __SA_PRINTRETURN :            9377 C |  __SA_PR_ERROR :               9341 C |
+ __SA_PR_EXPRESSION :          937C C |  __SA_PR_FOUNDEQUALS :         9346 C |
+ __SA_PR_LITERAL :             935A C |  __SA_TABLE :                  93BB C |
+ __STEARRAYORBRACKET :         95AA C |  __STEEXIT :                   959A C |
+*__STEIGNORE :                 9599 C |  __STENOTARRAY :               95F1 C |
+ __STENOTEXPRESSION :          9591 C |  __STETERMERROR :              95F9 C |
+ __STETERMERRORDROP :          95F7 C |  __STETHROW :                  95A3 C |
+ __STEWASPROCESSED :           95A6 C |  __STE_NOTKEYSTROKE :          955D C |
 
-    130 symbols
+    140 symbols
      32 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 29 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 31 - 12/14/2015 19:20:58
 
 
   defined macros:
@@ -1695,7 +1829,7 @@ VTL                                   | __SA_ENTRY
 
      10 macros
 
- AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 30 - 12/14/2015 17:58:16
+ AS V1.42 Beta [Bld 102] - source file vtl-2.asm - page 32 - 12/14/2015 19:20:58
 
 
   codepages:
@@ -1706,8 +1840,8 @@ STANDARD (0 changed characters)
 
 0.02 seconds assembly time
 
-   1223 lines source file
-   1524 lines incl. macro expansions
+   1309 lines source file
+   1646 lines incl. macro expansions
       2 passes
       0 errors
       0 warnings
