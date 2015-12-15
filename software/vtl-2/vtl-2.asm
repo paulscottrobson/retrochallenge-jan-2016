@@ -49,11 +49,15 @@ stop:jmp 	stop
 	include source\special_terms.asm 							; RHS special terms (things like ?, $, ! a)
 
 StartProgram:
-	vtl 	10,"$=12"
-	vtl 	100,"?=\"STARTED\""
-	vtl 	110,"A = 0"
-	vtl 	120,"A = A + 1"
-	vtl 	130,"#=(A < 1000)*120"
-	vtl 	140,"?=\"FINISHED\""
+	vtl 	5,"$=12"
+	vtl 	10,"A=0"
+	vtl 	20,"B=1"
+	vtl 	30,"?=A"
+	vtl 	40,"?=\"! \";"
+	vtl 	50,"?=B"
+	vtl 	60,"?=\"\""
+	vtl 	70,"A=A+1"
+	vtl 	80,"B=B*A"
+	vtl 	90,"#=A<9*30"
 EndProgram:
 	db 		0
