@@ -60,6 +60,11 @@ ExecuteStatement:
 	pushp 	p3
 	ld 		(p1) 												; check if already at end.
 	jz 		__EX_ExecuteExit 									; if length was zero already at last line of memory, stop
+	lpi 	p3,('#' & 0x3F)*2+Variables 						; update # variable with current line number
+	ld 		1(p1)
+	st 		0(p3)
+	ld 		2(p1)
+	st 		1(p3)
 	ld 		@3(p1) 												; skip over length and line number.
 	lpi 	p3,RandomProcess-1 									; change the Random Number done every program line.
 	xppc 	p3
@@ -170,8 +175,6 @@ __CEE_FoundEqual:
 ;		be processed as variable assignment. If processed then A contains the error code, which is zero if successful.
 ;
 ; ****************************************************************************************************************
-
-; TODO #
 
 SpecialAssignment:
 	pusha
@@ -410,6 +413,65 @@ __SA_PR_Expression:
 	jmp 	__SA_Completed4
 
 ; ****************************************************************************************************************
+;												# = <expr> GOTO
+; ****************************************************************************************************************
+
+__SA_CO_Goto:
+	xppc 	p3 													; evaluate RHS
+	xae															; save error code if any
+	ld 		@2(p2) 												; drop the return value
+	csa 														; error check
+	jp 		__SA_ExpressionError3 								; go here if failed.
+	ld 		-2(p2) 												; check if expression was zero
+	or 		-1(p2)
+	jz 		__SA_Completed4 									; if so, don't do anything at all.
+	lpi 	p3,Variables 										; access variables.
+	ld 		('#' & 0x3F)*2(p3)									; get old line number, add one, store in '!'
+	ccl 														; this is the return address.
+	adi 	1
+	st 		('!' & 0x3F)*2(p3)
+	ld 		('#' & 0x3F)*2+1(p3)								; do the MSB
+	adi 	0
+	st 		('!' & 0x3F)*2+1(p3)
+	ld 		-2(p2) 												; copy evaluated expression to '#' variable.
+	st 		('#' & 0x3F)*2(p3)
+	ld 		-1(p2)
+	st 		('#' & 0x3F)*2+1(p3)
+	ldi 	0  													; stop running - start again if we find the line.
+	st 		IsRunningProgram-Variables(p3) 					
+
+	ld 		ProgramBase-Variables(p3) 							; now load the program base into P1 to line search
+	xpal 	p1
+	ld 		ProgramBase-Variables+1(p3)
+	xpah 	p1
+__SA_GO_FindLine:
+	ld 		(p1) 												; if length byte = 0 then didn't find line.
+	jz 		__SA_Completed4 									; so the command ends with the program stopped.
+	ld 		1(p1) 												; calculate current line# - search line #
+	scl 														; (result doesn't matter.)
+	cad 	-2(p2)
+	ld 		2(p1)
+	cad 	-1(p2)
+	csa
+	jp 		__SA_GO_NextLine 									; if CY/L = 0 then < search line, go to next.
+
+	ldi 	1 													; set the running flag.
+	st 		IsRunningProgram-Variables(p3) 					
+	ld 		@3(p2) 												; we have to jump out here rather than return because
+																; the normal exit does EOL scan. Drop stack values
+	lpi 	p3,__EX_ExecuteExit-1 								; and jump out.
+	xppc 	p3
+
+__SA_GO_NextLine:
+	ld 		(p1) 												; length byte in E
+	xae
+	ld 		@-0x80(p1) 											; add that length byte to go to next instruction.
+	jmp 	__SA_GO_FindLine 									; and keep searching.
+	
+wait4:
+	jmp 	wait4
+
+; ****************************************************************************************************************
 ;											Special Assignment Jump Table.
 ; ****************************************************************************************************************
 
@@ -419,6 +481,7 @@ __SA_Entry macro ch,code
 	endm
 
 __SA_Table:
+	__SA_Entry	'#',__SA_CO_Goto
 	__SA_Entry	'$',__SA_CO_Enter
 	__SA_Entry  '>',__SA_CO_Call
 	__SA_Entry 	'&',__SA_CO_New
