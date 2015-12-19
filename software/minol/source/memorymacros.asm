@@ -18,6 +18,7 @@ ScreenCursor = ScreenMirror+0x80  								; Position on that screen (00..7F)
 SystemVariables = 0xC90 										; System variables start here.
 
 Variables = SystemVariables 									; 26 Variables A-Z
+RandomSeed = SystemVariables+26 								; 2 byte random seed.
 
 KeyboardBuffer = SystemVariables+32								; Keyboard buffer.
 KeyboardBufferSize = 80
@@ -63,4 +64,9 @@ pusha macro 													; push A on stack
 
 pulla macro
 	ld 		@1(p2)
+	endm
+
+setv macro ch,value
+	ldi 	value
+	st 		(ch-'A')(p3)
 	endm

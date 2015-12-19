@@ -8,13 +8,12 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-; TODO: Check variables
 ; TODO: Write testing code in Python.
-; TODO: Write $(H,L) and ! code
-; TODO: Expand test to test $(H,L)
+; TODO: Write (H,L)
+; TODO: Expand Python Test to test (H,L)
 
 TestExpr:
-	db 	"11*7+21/0",0
+	db 	"(1,2)",0
 
 EvaluateExpression:
 	pushp 	p3 													; save P3 on stack
@@ -28,7 +27,6 @@ EvaluateExpression:
 ; ****************************************************************************************************************
 
 __EE_NextTerm:
-	lpi 	p3,Variables 										; point P3 to variables.
 __EE_SkipSpace:
 	ld 		(p1) 												; check end of string
 	jz 		__EE_TermError
@@ -83,8 +81,10 @@ __EE_ConstantEnd:
 
 __EE_IsVariable:
 	xae 														; variable number 0-25 in E
-	ld 		(p3) 												; read variable into E
+	lpi 	p3,Variables 										; point P3 to variables.
+	ld 		-0x80(p3) 											; read variable into E offset E
 	xae
+	ld 		@1(p1)												; skip over variable.
 	jmp 	__EE_HaveTerm
 
 __EvaluateExpression2:
@@ -95,10 +95,10 @@ __EvaluateExpression2:
 ; ****************************************************************************************************************
 
 __EE_CheckPuncTerms:
-	ld 		@1(p1) 												; check for $
-	xri 	'$'
-	jz 		__EE_DollarRead
-	xri 	'$'!'!' 											; check for random
+	ld 		@1(p1) 												; check for (
+	xri 	'('
+	jz 		__EE_MemoryRead
+	xri 	'!'!'(' 											; check for random (!)
 	jz 		__EE_Random
 	xri 	'!'!0x27 											; check for 'x'
 	jnz 	__EE_TermError
@@ -121,10 +121,11 @@ __EE_Random:
 	lpi 	p3,Random-1 
 	jmp 	__EE_CallAndCheck
 ;
-;	$(H,L) read memory.
+;	(H,L) read memory.
 ;
-__EE_DollarRead:
-	lpi 	p3,EvaluateHL-1 									; evaluate HL and read it.
+__EE_MemoryRead:
+	ld 		@-1(p1) 											; point back to the first bracket
+	lpi 	p3,EvaluateHL-1 									; evaluate (H,L) and read it.
 __EE_CallAndCheck:
 	xppc 	p3 													; call routine
 	jp 		__EE_TermError 										; if CY/L = 0, error
@@ -300,6 +301,42 @@ __EE_Divide_Temp_Positive:
 	jmp 	__EE_Divide_Loop
 
 ; ****************************************************************************************************************
+;					Get a random number from the seed, return in E, CY/L = 1 okay S=>A
+; ****************************************************************************************************************
+
+Random:
+	pushp	p3
+	lpi 	p3,RandomSeed 										; point P3 to random seed.
+	ld 		0(p3)												; does it need initialising.
+	or 		1(p3)
+	jnz 	__RA_NoInitialise
+	ldi 	0xE1 												; set to $E1AC
+	st 		1(p3)
+	ldi 	0xAC
+	st 		0(p3)
+__RA_NoInitialise:
+	ccl 														; shift seed right
+	ld 		1(p3)
+	rrl
+	st 		1(p3)
+	ld 		0(p3)
+	rrl
+	st 		0(p3)
+	csa 														; get status
+	jp 		__RA_Exit
+	ld 		1(p3)
+	xri 	0xB4
+	st 		1(p3)
+__RA_Exit:
+	ld 		0(p3) 												; get the number
+	add 	1(p3)
+	xae
+	pullp 	p3 													; restore P3
+	scl															; no error
+	csa
+	xppc	p3
+
+; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
 ; evaluate $(HL) leave address accessible, return same as expr
@@ -309,12 +346,3 @@ EvaluateHL:
 	ldi 	0x80
 	xppc 	p3
 
-; ****************************************************************************************************************
-; ****************************************************************************************************************
-
-; next random, return same as expr
-Random:
-	ldi 	0x47
-	xae
-	ldi 	0x80
-	xppc	p3
