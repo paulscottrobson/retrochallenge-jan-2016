@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 1 - 12/19/2015 11:39:31
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 1 - 12/19/2015 22:10:15
 
 
        1/       0 :                     ; ****************************************************************************************************************
@@ -61,7 +61,7 @@
 (1)   47/       0 :                     	ld 		@1(p2)
 (1)   48/       0 :                     	xpah 	ptr
 (1)   49/       0 :                     	endm
- AS V1.42 Beta [Bld 102] - source file minol.asm(memorymacros.asm) - page 2 - 12/19/2015 11:39:31
+ AS V1.42 Beta [Bld 102] - source file minol.asm(memorymacros.asm) - page 2 - 12/19/2015 22:10:15
 
 
 (1)   50/       0 :                     
@@ -122,9 +122,9 @@
       26/    901F : (MACRO)             	lpi 	p3,EvaluateExpression-1
       26/    901F : C4 91                       ldi     (EVALUATEEXPRESSION-1) / 256
       26/    9021 : 37                          xpah    P3
-      26/    9022 : C4 79                       ldi     (EVALUATEEXPRESSION-1) & 255
+      26/    9022 : C4 7C                       ldi     (EVALUATEEXPRESSION-1) & 255
       26/    9024 : 33                          xpal    P3
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 3 - 12/19/2015 11:39:31
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 3 - 12/19/2015 22:10:15
 
 
       27/    9025 : 3F                  	xppc 	p3
@@ -187,7 +187,7 @@
 (1)   47/    9047 : 98 46               	jz 		__PRExitNoCheck 									; exit without loop check.
 (1)   48/    9049 :                     ;
 (1)   49/    9049 :                     ;	Print character in A now ; throughout it is stored in E.
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 4 - 12/19/2015 11:39:31
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 4 - 12/19/2015 22:10:15
 
 
 (1)   50/    9049 :                     ;
@@ -250,7 +250,7 @@
 (1)  107/    9082 : C5 01               	ld 		@1(p1) 												; bump pointer.
 (1)  108/    9084 : 31                  	xpal 	p1
 (1)  109/    9085 : 94 F6               	jp 		__PRScrollLoop
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 5 - 12/19/2015 11:39:31
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 5 - 12/19/2015 22:10:15
 
 
 (1)  110/    9087 : C4 70               	ldi 	128-16 												; clear from and move to last line
@@ -313,7 +313,7 @@
 (1)  160/    90C6 :                     ;	Handle clear screen (12)
 (1)  161/    90C6 :                     ;
 (1)  162/    90C6 :                     __PRClearScreen:
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 6 - 12/19/2015 11:39:31
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 6 - 12/19/2015 22:10:15
 
 
 (1)  163/    90C6 : C4 00               	ldi 	0 													; clear shadow memory from here.
@@ -376,7 +376,7 @@
 (1)  220/    9101 : F4 20               	adi 	0x20												; will make lower case -ve
 (1)  221/    9103 : 94 02               	jp 		__GCNotLower
 (1)  222/    9105 : FC 20               	cai 	0x20 												; capitalise
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 7 - 12/19/2015 11:39:31
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 7 - 12/19/2015 22:10:15
 
 
 (1)  223/    9107 :                     __GCNotLower:
@@ -439,7 +439,7 @@
 (1)  261/    9142 : 3F                  	xppc 	p3
 (1)  262/    9143 : C4 01               	ldi 	1 													; increment E
 (1)  263/    9145 : 02                  	ccl
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 8 - 12/19/2015 11:39:31
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 8 - 12/19/2015 22:10:15
 
 
 (1)  264/    9146 : 70                  	ade
@@ -502,7 +502,7 @@
       32/    9174 :                     	include source\expression.asm 								; expression evaluator (e.g. RHS)
 (1)    1/    9174 :                     ; ****************************************************************************************************************
 (1)    2/    9174 :                     ; ****************************************************************************************************************
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 9 - 12/19/2015 11:39:31
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 9 - 12/19/2015 22:10:15
 
 
 (1)    3/    9174 :                     ;
@@ -513,403 +513,455 @@
 (1)    8/    9174 :                     ; ****************************************************************************************************************
 (1)    9/    9174 :                     ; ****************************************************************************************************************
 (1)   10/    9174 :                     
-(1)   11/    9174 :                     ; TODO: Write testing code in Python.
-(1)   12/    9174 :                     ; TODO: Write (H,L)
-(1)   13/    9174 :                     ; TODO: Expand Python Test to test (H,L)
-(1)   14/    9174 :                     
-(1)   15/    9174 :                     TestExpr:
-(1)   16/    9174 : 28 30 2C 30 29 00   	db 	"(0,0)",0
-(1)   17/    917A :                     
-(1)   18/    917A :                     EvaluateExpression:
-(1)   19/    917A : (MACRO)             	pushp 	p3 													; save P3 on stack
-(1)   19/    917A : 37                          xpah    P3
-(1)   19/    917B : CE FF                       st              @-1(p2)
-(1)   19/    917D : 33                          xpal    P3
-(1)   19/    917E : CE FF                       st              @-1(p2)
-(1)   20/    9180 : C4 00               	ldi 	0 													; push 0 onto stack (current value) will be restored
-(1)   21/    9182 : CE FF               	st 		@-1(p2) 											; to E on exit.
-(1)   22/    9184 : C4 2B               	ldi 	'+' 												; push pending operation onto stack - this means we
-(1)   23/    9186 : CE FF               	st 		@-1(p2) 											; have 'faked' a 0+ to start the expression.
-(1)   24/    9188 :                     
-(1)   25/    9188 :                     ; ****************************************************************************************************************
-(1)   26/    9188 :                     ;													Get a new term 
-(1)   27/    9188 :                     ; ****************************************************************************************************************
-(1)   28/    9188 :                     
-(1)   29/    9188 :                     __EE_NextTerm:
-(1)   30/    9188 :                     __EE_SkipSpace:
-(1)   31/    9188 : C1 00               	ld 		(p1) 												; check end of string
-(1)   32/    918A : 98 7D               	jz 		__EE_TermError
-(1)   33/    918C : C5 01               	ld 		@1(p1) 												; fetch and skip
-(1)   34/    918E : E4 20               	xri 	' ' 												; if space, keep going.
-(1)   35/    9190 : 98 F6               	jz 		__EE_SkipSpace
-(1)   36/    9192 :                     
-(1)   37/    9192 : C5 FF               	ld 		@-1(p1) 											; backtrack and reload
-(1)   38/    9194 : 02                  	ccl
-(1)   39/    9195 : F4 A5               	adi 	255-'Z'												; will be +ve if >= 'Z'
-(1)   40/    9197 : 94 70               	jp 		__EE_TermError 										; which is an error ($,!,',0-9,A-Z)
-(1)   41/    9199 : F4 1A               	adi 	26 													; will be +ve if >= 'A'
-(1)   42/    919B : 94 28               	jp 		__EE_IsVariable 									; will contain 0-25, conveniently the offset.
-(1)   43/    919D : F4 07               	adi 	7
-(1)   44/    919F : 94 68               	jp 		__EE_TermError 										; will be +ve if between 9 and A, error.
-(1)   45/    91A1 : F4 0A               	adi 	10 				
-(1)   46/    91A3 : D4 80               	ani 	0x80
-(1)   47/    91A5 : 9C 2E               	jnz 	__EE_CheckPuncTerms 								; if -ve check for punctuation terms (! and 'x')
-(1)   48/    91A7 :                     
-(1)   49/    91A7 :                     ; ****************************************************************************************************************
-(1)   50/    91A7 :                     ;										Constant term. P1 points to first digit
-(1)   51/    91A7 :                     ; ****************************************************************************************************************
-(1)   52/    91A7 :                     
-(1)   53/    91A7 : 01                  	xae 														; zero E, the result.
-(1)   54/    91A8 :                     __EE_ConstantTerm:
-(1)   55/    91A8 : 02                  	ccl
-(1)   56/    91A9 : 40                  	lde
-(1)   57/    91AA : 70                  	ade 														; x 2
-(1)   58/    91AB : 70                  	ade															; x 3
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 10 - 12/19/2015 11:39:31
+(1)   11/    9174 :                     TestExpr:
+(1)   12/    9174 : 28 31 2C 32 29 2D   	db 	"(1,2)-11",0
+                    31 31 00 
+(1)   13/    917D :                     
+(1)   14/    917D :                     EvaluateExpression:
+(1)   15/    917D : (MACRO)             	pushp 	p3 													; save P3 on stack
+(1)   15/    917D : 37                          xpah    P3
+(1)   15/    917E : CE FF                       st              @-1(p2)
+(1)   15/    9180 : 33                          xpal    P3
+(1)   15/    9181 : CE FF                       st              @-1(p2)
+(1)   16/    9183 : C4 00               	ldi 	0 													; push 0 onto stack (current value) will be restored
+(1)   17/    9185 : CE FF               	st 		@-1(p2) 											; to E on exit.
+(1)   18/    9187 : C4 2B               	ldi 	'+' 												; push pending operation onto stack - this means we
+(1)   19/    9189 : CE FF               	st 		@-1(p2) 											; have 'faked' a 0+ to start the expression.
+(1)   20/    918B :                     
+(1)   21/    918B :                     ; ****************************************************************************************************************
+(1)   22/    918B :                     ;													Get a new term 
+(1)   23/    918B :                     ; ****************************************************************************************************************
+(1)   24/    918B :                     
+(1)   25/    918B :                     __EE_NextTerm:
+(1)   26/    918B :                     __EE_SkipSpace:
+(1)   27/    918B : C1 00               	ld 		(p1) 												; check end of string
+(1)   28/    918D : 98 7D               	jz 		__EE_TermError
+(1)   29/    918F : C5 01               	ld 		@1(p1) 												; fetch and skip
+(1)   30/    9191 : E4 20               	xri 	' ' 												; if space, keep going.
+(1)   31/    9193 : 98 F6               	jz 		__EE_SkipSpace
+(1)   32/    9195 :                     
+(1)   33/    9195 : C5 FF               	ld 		@-1(p1) 											; backtrack and reload
+(1)   34/    9197 : 02                  	ccl
+(1)   35/    9198 : F4 A5               	adi 	255-'Z'												; will be +ve if >= 'Z'
+(1)   36/    919A : 94 70               	jp 		__EE_TermError 										; which is an error ($,!,',0-9,A-Z)
+(1)   37/    919C : F4 1A               	adi 	26 													; will be +ve if >= 'A'
+(1)   38/    919E : 94 28               	jp 		__EE_IsVariable 									; will contain 0-25, conveniently the offset.
+(1)   39/    91A0 : F4 07               	adi 	7
+(1)   40/    91A2 : 94 68               	jp 		__EE_TermError 										; will be +ve if between 9 and A, error.
+(1)   41/    91A4 : F4 0A               	adi 	10 				
+(1)   42/    91A6 : D4 80               	ani 	0x80
+(1)   43/    91A8 : 9C 2E               	jnz 	__EE_CheckPuncTerms 								; if -ve check for punctuation terms (! and 'x')
+(1)   44/    91AA :                     
+(1)   45/    91AA :                     ; ****************************************************************************************************************
+(1)   46/    91AA :                     ;										Constant term. P1 points to first digit
+(1)   47/    91AA :                     ; ****************************************************************************************************************
+(1)   48/    91AA :                     
+(1)   49/    91AA : 01                  	xae 														; zero E, the result.
+(1)   50/    91AB :                     __EE_ConstantTerm:
+(1)   51/    91AB : 02                  	ccl
+(1)   52/    91AC : 40                  	lde
+(1)   53/    91AD : 70                  	ade 														; x 2
+(1)   54/    91AE : 70                  	ade															; x 3
+(1)   55/    91AF : 70                  	ade															; x 4
+(1)   56/    91B0 : 70                  	ade															; x 5
+(1)   57/    91B1 : 01                  	xae 														; put x 5 in E
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 10 - 12/19/2015 22:10:15
 
 
-(1)   59/    91AC : 70                  	ade															; x 4
-(1)   60/    91AD : 70                  	ade															; x 5
-(1)   61/    91AE : 01                  	xae 														; put x 5 in E
-(1)   62/    91AF : 40                  	lde 														; double it
-(1)   63/    91B0 : 70                  	ade
-(1)   64/    91B1 : 01                  	xae 														; back in E
-(1)   65/    91B2 : C5 01               	ld 		@1(p1) 												; read digit, known okay, and bump
-(1)   66/    91B4 : D4 0F               	ani 	0x0F 												; convert to decimal value
-(1)   67/    91B6 : 70                  	ade 														; add to E 	
-(1)   68/    91B7 : 01                  	xae 														; put back in E
-(1)   69/    91B8 : C1 00               	ld 		(p1) 												; get next.
-(1)   70/    91BA : 02                  	ccl
-(1)   71/    91BB : F4 C6               	adi 	255-'9'												; check out of range
-(1)   72/    91BD : 94 04               	jp 		__EE_ConstantEnd
-(1)   73/    91BF : F4 0A               	adi 	10
-(1)   74/    91C1 : 94 E5               	jp 		__EE_ConstantTerm
-(1)   75/    91C3 :                     __EE_ConstantEnd:
-(1)   76/    91C3 : 90 54               	jmp 	__EE_HaveTerm 										; term is fetched.
-(1)   77/    91C5 :                     
-(1)   78/    91C5 :                     ; ****************************************************************************************************************
-(1)   79/    91C5 :                     ;							Have a variable, in A, value 0-25 representing A-Z.
-(1)   80/    91C5 :                     ; ****************************************************************************************************************
-(1)   81/    91C5 :                     
-(1)   82/    91C5 :                     __EE_IsVariable:
-(1)   83/    91C5 : 01                  	xae 														; variable number 0-25 in E
-(1)   84/    91C6 : (MACRO)             	lpi 	p3,Variables 										; point P3 to variables.
-(1)   84/    91C6 : C4 0C                       ldi     (VARIABLES) / 256
-(1)   84/    91C8 : 37                          xpah    P3
-(1)   84/    91C9 : C4 90                       ldi     (VARIABLES) & 255
-(1)   84/    91CB : 33                          xpal    P3
-(1)   85/    91CC : C3 80               	ld 		-0x80(p3) 											; read variable into E offset E
-(1)   86/    91CE : 01                  	xae
-(1)   87/    91CF : C5 01               	ld 		@1(p1)												; skip over variable.
-(1)   88/    91D1 : 90 46               	jmp 	__EE_HaveTerm
-(1)   89/    91D3 :                     
-(1)   90/    91D3 :                     __EvaluateExpression2:
-(1)   91/    91D3 : 90 A5               	jmp 	EvaluateExpression
-(1)   92/    91D5 :                     
-(1)   93/    91D5 :                     ; ****************************************************************************************************************
-(1)   94/    91D5 :                     ;			Check for punctuation terms, random number ! and character constant 'x' and $(H,L)
-(1)   95/    91D5 :                     ; ****************************************************************************************************************
-(1)   96/    91D5 :                     
-(1)   97/    91D5 :                     __EE_CheckPuncTerms:
-(1)   98/    91D5 : C5 01               	ld 		@1(p1) 												; check for (
-(1)   99/    91D7 : E4 28               	xri 	'('
-(1)  100/    91D9 : 98 21               	jz 		__EE_MemoryRead
-(1)  101/    91DB : E4 09               	xri 	'!'!'(' 											; check for random (!)
-(1)  102/    91DD : 98 15               	jz 		__EE_Random
-(1)  103/    91DF : E4 06               	xri 	'!'!0x27 											; check for 'x'
-(1)  104/    91E1 : 9C 26               	jnz 	__EE_TermError
-(1)  105/    91E3 :                     ;
-(1)  106/    91E3 :                     ;	'<char>' constant
-(1)  107/    91E3 :                     ;
-(1)  108/    91E3 : C1 00               	ld 		(p1) 												; check second is not EOL
-(1)  109/    91E5 : 98 22               	jz 		__EE_TermError
-(1)  110/    91E7 : C1 01               	ld 		1(p1)
-(1)  111/    91E9 : E4 27               	xri 	0x27 												; check third is quote mark.
-(1)  112/    91EB : 9C 1C               	jnz 	__EE_TermError
-(1)  113/    91ED : C5 02               	ld 		@2(p1) 												; skip over character and quote
-(1)  114/    91EF : C1 FE               	ld 		-2(p1) 												; read character into E
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 11 - 12/19/2015 11:39:31
+(1)   58/    91B2 : 40                  	lde 														; double it
+(1)   59/    91B3 : 70                  	ade
+(1)   60/    91B4 : 01                  	xae 														; back in E
+(1)   61/    91B5 : C5 01               	ld 		@1(p1) 												; read digit, known okay, and bump
+(1)   62/    91B7 : D4 0F               	ani 	0x0F 												; convert to decimal value
+(1)   63/    91B9 : 70                  	ade 														; add to E 	
+(1)   64/    91BA : 01                  	xae 														; put back in E
+(1)   65/    91BB : C1 00               	ld 		(p1) 												; get next.
+(1)   66/    91BD : 02                  	ccl
+(1)   67/    91BE : F4 C6               	adi 	255-'9'												; check out of range
+(1)   68/    91C0 : 94 04               	jp 		__EE_ConstantEnd
+(1)   69/    91C2 : F4 0A               	adi 	10
+(1)   70/    91C4 : 94 E5               	jp 		__EE_ConstantTerm
+(1)   71/    91C6 :                     __EE_ConstantEnd:
+(1)   72/    91C6 : 90 54               	jmp 	__EE_HaveTerm 										; term is fetched.
+(1)   73/    91C8 :                     
+(1)   74/    91C8 :                     ; ****************************************************************************************************************
+(1)   75/    91C8 :                     ;							Have a variable, in A, value 0-25 representing A-Z.
+(1)   76/    91C8 :                     ; ****************************************************************************************************************
+(1)   77/    91C8 :                     
+(1)   78/    91C8 :                     __EE_IsVariable:
+(1)   79/    91C8 : 01                  	xae 														; variable number 0-25 in E
+(1)   80/    91C9 : (MACRO)             	lpi 	p3,Variables 										; point P3 to variables.
+(1)   80/    91C9 : C4 0C                       ldi     (VARIABLES) / 256
+(1)   80/    91CB : 37                          xpah    P3
+(1)   80/    91CC : C4 90                       ldi     (VARIABLES) & 255
+(1)   80/    91CE : 33                          xpal    P3
+(1)   81/    91CF : C3 80               	ld 		-0x80(p3) 											; read variable into E offset E
+(1)   82/    91D1 : 01                  	xae
+(1)   83/    91D2 : C5 01               	ld 		@1(p1)												; skip over variable.
+(1)   84/    91D4 : 90 46               	jmp 	__EE_HaveTerm
+(1)   85/    91D6 :                     
+(1)   86/    91D6 :                     __EvaluateExpression2:
+(1)   87/    91D6 : 90 A5               	jmp 	EvaluateExpression
+(1)   88/    91D8 :                     
+(1)   89/    91D8 :                     ; ****************************************************************************************************************
+(1)   90/    91D8 :                     ;			Check for punctuation terms, random number ! and character constant 'x' and $(H,L)
+(1)   91/    91D8 :                     ; ****************************************************************************************************************
+(1)   92/    91D8 :                     
+(1)   93/    91D8 :                     __EE_CheckPuncTerms:
+(1)   94/    91D8 : C5 01               	ld 		@1(p1) 												; check for (
+(1)   95/    91DA : E4 28               	xri 	'('
+(1)   96/    91DC : 98 21               	jz 		__EE_MemoryRead
+(1)   97/    91DE : E4 09               	xri 	'!'!'(' 											; check for random (!)
+(1)   98/    91E0 : 98 15               	jz 		__EE_Random
+(1)   99/    91E2 : E4 06               	xri 	'!'!0x27 											; check for 'x'
+(1)  100/    91E4 : 9C 26               	jnz 	__EE_TermError
+(1)  101/    91E6 :                     ;
+(1)  102/    91E6 :                     ;	'<char>' constant
+(1)  103/    91E6 :                     ;
+(1)  104/    91E6 : C1 00               	ld 		(p1) 												; check second is not EOL
+(1)  105/    91E8 : 98 22               	jz 		__EE_TermError
+(1)  106/    91EA : C1 01               	ld 		1(p1)
+(1)  107/    91EC : E4 27               	xri 	0x27 												; check third is quote mark.
+(1)  108/    91EE : 9C 1C               	jnz 	__EE_TermError
+(1)  109/    91F0 : C5 02               	ld 		@2(p1) 												; skip over character and quote
+(1)  110/    91F2 : C1 FE               	ld 		-2(p1) 												; read character into E
+(1)  111/    91F4 : 01                  	xae
+(1)  112/    91F5 : 90 25               	jmp 	__EE_HaveTerm 										; have a legitimate term.
+(1)  113/    91F7 :                     ;
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 11 - 12/19/2015 22:10:15
 
 
-(1)  115/    91F1 : 01                  	xae
-(1)  116/    91F2 : 90 25               	jmp 	__EE_HaveTerm 										; have a legitimate term.
-(1)  117/    91F4 :                     ;
-(1)  118/    91F4 :                     ;	! random number
-(1)  119/    91F4 :                     ;
-(1)  120/    91F4 :                     __EE_Random:
-(1)  121/    91F4 : (MACRO)             	lpi 	p3,Random-1 
-(1)  121/    91F4 : C4 92                       ldi     (RANDOM-1) / 256
-(1)  121/    91F6 : 37                          xpah    P3
-(1)  121/    91F7 : C4 CE                       ldi     (RANDOM-1) & 255
-(1)  121/    91F9 : 33                          xpal    P3
-(1)  122/    91FA : 90 08               	jmp 	__EE_CallAndCheck
-(1)  123/    91FC :                     ;
-(1)  124/    91FC :                     ;	(H,L) read memory.
-(1)  125/    91FC :                     ;
-(1)  126/    91FC :                     __EE_MemoryRead:
-(1)  127/    91FC : C5 FF               	ld 		@-1(p1) 											; point back to the first bracket
-(1)  128/    91FE : (MACRO)             	lpi 	p3,EvaluateHL-1 									; evaluate (H,L) and read it.
-(1)  128/    91FE : C4 93                       ldi     (EVALUATEHL-1) / 256
-(1)  128/    9200 : 37                          xpah    P3
-(1)  128/    9201 : C4 0A                       ldi     (EVALUATEHL-1) & 255
-(1)  128/    9203 : 33                          xpal    P3
-(1)  129/    9204 :                     __EE_CallAndCheck:
-(1)  130/    9204 : 3F                  	xppc 	p3 													; call routine
-(1)  131/    9205 : 94 02               	jp 		__EE_TermError 										; if CY/L = 0, error
-(1)  132/    9207 : 90 10               	jmp 	__EE_HaveTerm 										; otherwise fine.
-(1)  133/    9209 :                     
-(1)  134/    9209 :                     ; ****************************************************************************************************************
-(1)  135/    9209 :                     ;												TERM Error here.
-(1)  136/    9209 :                     ; ****************************************************************************************************************
-(1)  137/    9209 :                     	
-(1)  138/    9209 :                     __EE_TermError:
-(1)  139/    9209 : C4 04               	ldi 	ERROR_Term 											; put error-term in E
-(1)  140/    920B :                     __EE_ErrorA:
-(1)  141/    920B : 02                  	ccl 														; clear carry flag => error
-(1)  142/    920C : 01                  	xae 														; value in E
-(1)  143/    920D : C6 02               	ld 		@2(p2) 												; drop pending operation and result
-(1)  144/    920F :                     __EE_Exit:
-(1)  145/    920F : (MACRO)             	pullp 	p3 													; restore P3
-(1)  145/    920F : C6 01                       ld              @1(p2)
-(1)  145/    9211 : 33                          xpal    P3
-(1)  145/    9212 : C6 01                       ld              @1(p2)
-(1)  145/    9214 : 37                          xpah    P3
-(1)  146/    9215 : 06                  	csa 														; S->A
-(1)  147/    9216 : 3F                  	xppc 	p3 													; and exit.
-(1)  148/    9217 : 90 BA               	jmp 	__EvaluateExpression2
-(1)  149/    9219 :                     
-(1)  150/    9219 :                     ; ****************************************************************************************************************
-(1)  151/    9219 :                     ;										 Have a new legitimate term in E
-(1)  152/    9219 :                     ; ****************************************************************************************************************
-(1)  153/    9219 :                     
-(1)  154/    9219 :                     __EE_HaveTerm:
-(1)  155/    9219 : C2 00               	ld 		0(p2) 												; read pending value
-(1)  156/    921B : E4 2B               	xri 	'+'
-(1)  157/    921D : 9C 08               	jnz 	__EE_NotAdd
-(1)  158/    921F :                     
-(1)  159/    921F :                     ; ****************************************************************************************************************
-(1)  160/    921F :                     ;													  Add
-(1)  161/    921F :                     ; ****************************************************************************************************************
-(1)  162/    921F :                     
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 12 - 12/19/2015 11:39:31
+(1)  114/    91F7 :                     ;	! random number
+(1)  115/    91F7 :                     ;
+(1)  116/    91F7 :                     __EE_Random:
+(1)  117/    91F7 : (MACRO)             	lpi 	p3,Random-1 
+(1)  117/    91F7 : C4 92                       ldi     (RANDOM-1) / 256
+(1)  117/    91F9 : 37                          xpah    P3
+(1)  117/    91FA : C4 D1                       ldi     (RANDOM-1) & 255
+(1)  117/    91FC : 33                          xpal    P3
+(1)  118/    91FD : 90 08               	jmp 	__EE_CallAndCheck
+(1)  119/    91FF :                     ;
+(1)  120/    91FF :                     ;	(H,L) read memory.
+(1)  121/    91FF :                     ;
+(1)  122/    91FF :                     __EE_MemoryRead:
+(1)  123/    91FF : C5 FF               	ld 		@-1(p1) 											; point back to the first bracket
+(1)  124/    9201 : (MACRO)             	lpi 	p3,EvaluateHL-1 									; evaluate (H,L) and read it.
+(1)  124/    9201 : C4 93                       ldi     (EVALUATEHL-1) / 256
+(1)  124/    9203 : 37                          xpah    P3
+(1)  124/    9204 : C4 0D                       ldi     (EVALUATEHL-1) & 255
+(1)  124/    9206 : 33                          xpal    P3
+(1)  125/    9207 :                     __EE_CallAndCheck:
+(1)  126/    9207 : 3F                  	xppc 	p3 													; call routine
+(1)  127/    9208 : 94 02               	jp 		__EE_TermError 										; if CY/L = 0, error
+(1)  128/    920A : 90 10               	jmp 	__EE_HaveTerm 										; otherwise fine.
+(1)  129/    920C :                     
+(1)  130/    920C :                     ; ****************************************************************************************************************
+(1)  131/    920C :                     ;												TERM Error here.
+(1)  132/    920C :                     ; ****************************************************************************************************************
+(1)  133/    920C :                     	
+(1)  134/    920C :                     __EE_TermError:
+(1)  135/    920C : C4 04               	ldi 	ERROR_Term 											; put error-term in E
+(1)  136/    920E :                     __EE_ErrorA:
+(1)  137/    920E : 02                  	ccl 														; clear carry flag => error
+(1)  138/    920F : 01                  	xae 														; value in E
+(1)  139/    9210 : C6 02               	ld 		@2(p2) 												; drop pending operation and result
+(1)  140/    9212 :                     __EE_Exit:
+(1)  141/    9212 : (MACRO)             	pullp 	p3 													; restore P3
+(1)  141/    9212 : C6 01                       ld              @1(p2)
+(1)  141/    9214 : 33                          xpal    P3
+(1)  141/    9215 : C6 01                       ld              @1(p2)
+(1)  141/    9217 : 37                          xpah    P3
+(1)  142/    9218 : 06                  	csa 														; S->A
+(1)  143/    9219 : 3F                  	xppc 	p3 													; and exit.
+(1)  144/    921A : 90 BA               	jmp 	__EvaluateExpression2
+(1)  145/    921C :                     
+(1)  146/    921C :                     ; ****************************************************************************************************************
+(1)  147/    921C :                     ;										 Have a new legitimate term in E
+(1)  148/    921C :                     ; ****************************************************************************************************************
+(1)  149/    921C :                     
+(1)  150/    921C :                     __EE_HaveTerm:
+(1)  151/    921C : C2 00               	ld 		0(p2) 												; read pending value
+(1)  152/    921E : E4 2B               	xri 	'+'
+(1)  153/    9220 : 9C 08               	jnz 	__EE_NotAdd
+(1)  154/    9222 :                     
+(1)  155/    9222 :                     ; ****************************************************************************************************************
+(1)  156/    9222 :                     ;													  Add
+(1)  157/    9222 :                     ; ****************************************************************************************************************
+(1)  158/    9222 :                     
+(1)  159/    9222 : 02                  	ccl 														; add
+(1)  160/    9223 : C2 01               	ld 		1(p2)
+(1)  161/    9225 : 70                  	ade
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 12 - 12/19/2015 22:10:15
 
 
-(1)  163/    921F : 02                  	ccl 														; add
-(1)  164/    9220 : C2 01               	ld 		1(p2)
-(1)  165/    9222 : 70                  	ade
-(1)  166/    9223 : CA 01               	st 		1(p2)
-(1)  167/    9225 : 90 36               	jmp 	__EE_NextOperation
-(1)  168/    9227 :                     
-(1)  169/    9227 :                     __EE_NotAdd:
-(1)  170/    9227 : E4 06               	xri 	'+'!'-'
-(1)  171/    9229 : 9C 0C               	jnz 	__EE_NotSubtract
-(1)  172/    922B :                     
-(1)  173/    922B :                     ; ****************************************************************************************************************
-(1)  174/    922B :                     ;	 											    Subtract
-(1)  175/    922B :                     ; ****************************************************************************************************************
-(1)  176/    922B :                     
-(1)  177/    922B : 03                  	scl 														; subtract
-(1)  178/    922C : C2 01               	ld 		1(p2)
-(1)  179/    922E : 78                  	cae 
-(1)  180/    922F : CA 01               	st 		1(p2)
-(1)  181/    9231 : 90 2A               	jmp 	__EE_NextOperation
-(1)  182/    9233 :                     
-(1)  183/    9233 :                     __EE_Divide_Zero
-(1)  184/    9233 : C4 07               	ldi 	ERROR_DivideZero
-(1)  185/    9235 : 90 D4               	jmp 	__EE_ErrorA
-(1)  186/    9237 :                     
-(1)  187/    9237 :                     __EE_NotSubtract:	
-(1)  188/    9237 : E4 07               	xri 	'-'!'*'
-(1)  189/    9239 : 9C 51               	jnz 	__EE_NotMultiply
-(1)  190/    923B :                     
-(1)  191/    923B :                     ; ****************************************************************************************************************
-(1)  192/    923B :                     ;													 Multiply
-(1)  193/    923B :                     ; ****************************************************************************************************************
-(1)  194/    923B :                     
-(1)  195/    923B : C2 01               	ld 		1(p2) 												; a = 0(p2)
-(1)  196/    923D : CA 00               	st 		0(p2)
-(1)  197/    923F : C4 00               	ldi 	0													; res = 1(p2)
-(1)  198/    9241 : CA 01               	st 		1(p2) 												; clear it.
-(1)  199/    9243 :                     __EE_MultiplyLoop:
-(1)  200/    9243 : 40                  	lde  														; if B == 0 then we are done.
-(1)  201/    9244 : 98 17               	jz 		__EE_NextOperation
-(1)  202/    9246 : D4 01               	ani 	1 													; if B LSB is non zero.
-(1)  203/    9248 : 98 07               	jz 		__EE_Multiply_B0IsZero
-(1)  204/    924A : C2 00               	ld 		0(p2) 												; add A to Result
-(1)  205/    924C : 02                  	ccl
-(1)  206/    924D : F2 01               	add 	1(p2)
-(1)  207/    924F : CA 01               	st 		1(p2)
-(1)  208/    9251 :                     __EE_Multiply_B0IsZero:
-(1)  209/    9251 : 40                  	lde 														; shift B right
-(1)  210/    9252 : 1C                  	sr
-(1)  211/    9253 : 01                  	xae
-(1)  212/    9254 : C2 00               	ld 		0(p2) 												; shift A left
-(1)  213/    9256 : 02                  	ccl
-(1)  214/    9257 : F2 00               	add 	0(p2)
-(1)  215/    9259 : CA 00               	st 		0(p2)
-(1)  216/    925B : 90 E6               	jmp 	__EE_MultiplyLoop
-(1)  217/    925D :                     
-(1)  218/    925D :                     ; ****************************************************************************************************************
-(1)  219/    925D :                     ;	     Come here when arithmetic finished, looking for the next operator, + - * / keep going else exit
-(1)  220/    925D :                     ; ****************************************************************************************************************
-(1)  221/    925D :                     
-(1)  222/    925D :                     __EE_NextOperation:
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 13 - 12/19/2015 11:39:31
+(1)  162/    9226 : CA 01               	st 		1(p2)
+(1)  163/    9228 : 90 36               	jmp 	__EE_NextOperation
+(1)  164/    922A :                     
+(1)  165/    922A :                     __EE_NotAdd:
+(1)  166/    922A : E4 06               	xri 	'+'!'-'
+(1)  167/    922C : 9C 0C               	jnz 	__EE_NotSubtract
+(1)  168/    922E :                     
+(1)  169/    922E :                     ; ****************************************************************************************************************
+(1)  170/    922E :                     ;	 											    Subtract
+(1)  171/    922E :                     ; ****************************************************************************************************************
+(1)  172/    922E :                     
+(1)  173/    922E : 03                  	scl 														; subtract
+(1)  174/    922F : C2 01               	ld 		1(p2)
+(1)  175/    9231 : 78                  	cae 
+(1)  176/    9232 : CA 01               	st 		1(p2)
+(1)  177/    9234 : 90 2A               	jmp 	__EE_NextOperation
+(1)  178/    9236 :                     
+(1)  179/    9236 :                     __EE_Divide_Zero
+(1)  180/    9236 : C4 07               	ldi 	ERROR_DivideZero
+(1)  181/    9238 : 90 D4               	jmp 	__EE_ErrorA
+(1)  182/    923A :                     
+(1)  183/    923A :                     __EE_NotSubtract:	
+(1)  184/    923A : E4 07               	xri 	'-'!'*'
+(1)  185/    923C : 9C 51               	jnz 	__EE_NotMultiply
+(1)  186/    923E :                     
+(1)  187/    923E :                     ; ****************************************************************************************************************
+(1)  188/    923E :                     ;													 Multiply
+(1)  189/    923E :                     ; ****************************************************************************************************************
+(1)  190/    923E :                     
+(1)  191/    923E : C2 01               	ld 		1(p2) 												; a = 0(p2)
+(1)  192/    9240 : CA 00               	st 		0(p2)
+(1)  193/    9242 : C4 00               	ldi 	0													; res = 1(p2)
+(1)  194/    9244 : CA 01               	st 		1(p2) 												; clear it.
+(1)  195/    9246 :                     __EE_MultiplyLoop:
+(1)  196/    9246 : 40                  	lde  														; if B == 0 then we are done.
+(1)  197/    9247 : 98 17               	jz 		__EE_NextOperation
+(1)  198/    9249 : D4 01               	ani 	1 													; if B LSB is non zero.
+(1)  199/    924B : 98 07               	jz 		__EE_Multiply_B0IsZero
+(1)  200/    924D : C2 00               	ld 		0(p2) 												; add A to Result
+(1)  201/    924F : 02                  	ccl
+(1)  202/    9250 : F2 01               	add 	1(p2)
+(1)  203/    9252 : CA 01               	st 		1(p2)
+(1)  204/    9254 :                     __EE_Multiply_B0IsZero:
+(1)  205/    9254 : 40                  	lde 														; shift B right
+(1)  206/    9255 : 1C                  	sr
+(1)  207/    9256 : 01                  	xae
+(1)  208/    9257 : C2 00               	ld 		0(p2) 												; shift A left
+(1)  209/    9259 : 02                  	ccl
+(1)  210/    925A : F2 00               	add 	0(p2)
+(1)  211/    925C : CA 00               	st 		0(p2)
+(1)  212/    925E : 90 E6               	jmp 	__EE_MultiplyLoop
+(1)  213/    9260 :                     
+(1)  214/    9260 :                     ; ****************************************************************************************************************
+(1)  215/    9260 :                     ;	     Come here when arithmetic finished, looking for the next operator, + - * / keep going else exit
+(1)  216/    9260 :                     ; ****************************************************************************************************************
+(1)  217/    9260 :                     
+(1)  218/    9260 :                     __EE_NextOperation:
+(1)  219/    9260 : C1 00               	ld 		(p1) 												; get next character
+(1)  220/    9262 : 98 18               	jz 		__EE_ExitOkay										; exit if EOS.
+(1)  221/    9264 : C5 01               	ld 		@1(p1) 												; get and bump
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 13 - 12/19/2015 22:10:15
 
 
-(1)  223/    925D : C1 00               	ld 		(p1) 												; get next character
-(1)  224/    925F : 98 18               	jz 		__EE_ExitOkay										; exit if EOS.
-(1)  225/    9261 : C5 01               	ld 		@1(p1) 												; get and bump
-(1)  226/    9263 : E4 20               	xri 	' ' 												; skip over space 
-(1)  227/    9265 : 98 F6               	jz 		__EE_NextOperation
-(1)  228/    9267 : E4 0B               	xri 	'+'!' ' 											; continue if +,-,*,/ found
-(1)  229/    9269 : 98 16               	jz 		__EE_FoundOperator
-(1)  230/    926B : E4 06               	xri 	'+'!'-'
-(1)  231/    926D : 98 12               	jz 		__EE_FoundOperator
-(1)  232/    926F : E4 07               	xri 	'-'!'*'
-(1)  233/    9271 : 98 0E               	jz 		__EE_FoundOperator
-(1)  234/    9273 : E4 05               	xri 	'*'!'/'
-(1)  235/    9275 : 98 0A               	jz 		__EE_FoundOperator
-(1)  236/    9277 : C5 FF               	ld 		@-1(p1) 											; undo the get so points to next char
-(1)  237/    9279 :                     
-(1)  238/    9279 :                     __EE_ExitOkay:
-(1)  239/    9279 : C6 01               	ld 		@1(p2) 												; drop pending operation
-(1)  240/    927B : C6 01               	ld 		@1(p2) 												; get result
-(1)  241/    927D : 01                  	xae 														; put in E
-(1)  242/    927E : 03                  	scl 														; set carry link
-(1)  243/    927F : 90 8E               	jmp 	__EE_Exit
-(1)  244/    9281 :                     
-(1)  245/    9281 :                     __EE_FoundOperator:
-(1)  246/    9281 : C1 FF               	ld 		-1(p1) 												; get the operator
-(1)  247/    9283 : CA 00               	st 		0(p2)												; save in pending operator
-(1)  248/    9285 : (MACRO)             	lpi 	p3,__EE_NextTerm-1									; long jump back to near the start.
-(1)  248/    9285 : C4 91                       ldi     (__EE_NEXTTERM-1) / 256
-(1)  248/    9287 : 37                          xpah    P3
-(1)  248/    9288 : C4 87                       ldi     (__EE_NEXTTERM-1) & 255
-(1)  248/    928A : 33                          xpal    P3
-(1)  249/    928B : 3F                  	xppc 	p3	
-(1)  250/    928C :                     
-(1)  251/    928C :                     ; ****************************************************************************************************************
-(1)  252/    928C :                     ;													Divide
-(1)  253/    928C :                     ; ****************************************************************************************************************
-(1)  254/    928C :                     
-(1)  255/    928C :                     __EE_NotMultiply:												; must be divide, as only + - * / allowed.
-(1)  256/    928C : 40                  	lde 														; if denominator zero, error 2.
-(1)  257/    928D : 98 A4               	jz 		__EE_Divide_Zero
-(1)  258/    928F : C2 01               	ld 		1(p2) 												; numerator into 0(p2)
-(1)  259/    9291 : CA 00               	st 		0(p2) 												; denominator is in E
-(1)  260/    9293 : C4 00               	ldi 	0
-(1)  261/    9295 : CA 01               	st 		1(p2)												; quotient in 1(p2)
-(1)  262/    9297 : CA FF               	st 		-1(p2) 												; remainder in -1(p2)
-(1)  263/    9299 : C4 80               	ldi 	0x80 									
-(1)  264/    929B : CA FE               	st 		-2(p2) 												; bit in -2(p2)
-(1)  265/    929D :                     
-(1)  266/    929D :                     __EE_Divide_Loop:
-(1)  267/    929D : C2 FE               	ld 		-2(p2) 												; exit if bit = 0,we've finished.
-(1)  268/    929F : 98 BC               	jz 		__EE_NextOperation
-(1)  269/    92A1 :                     
-(1)  270/    92A1 : 02                  	ccl 	 													; shift remainder left.
-(1)  271/    92A2 : C2 FF               	ld 		-1(p2)
-(1)  272/    92A4 : F2 FF               	add 	-1(p2)
-(1)  273/    92A6 : CA FF               	st 		-1(p2)
-(1)  274/    92A8 :                     
-(1)  275/    92A8 : C2 00               	ld 		0(p2)												; get numerator.
-(1)  276/    92AA : 94 02               	jp 		__EE_Divide_Numerator_Positive
-(1)  277/    92AC : AA FF               	ild 	-1(p2)  											; if numerator -ve, increment remainder.
-(1)  278/    92AE :                     __EE_Divide_Numerator_Positive:
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 14 - 12/19/2015 11:39:31
+(1)  222/    9266 : E4 20               	xri 	' ' 												; skip over space 
+(1)  223/    9268 : 98 F6               	jz 		__EE_NextOperation
+(1)  224/    926A : E4 0B               	xri 	'+'!' ' 											; continue if +,-,*,/ found
+(1)  225/    926C : 98 16               	jz 		__EE_FoundOperator
+(1)  226/    926E : E4 06               	xri 	'+'!'-'
+(1)  227/    9270 : 98 12               	jz 		__EE_FoundOperator
+(1)  228/    9272 : E4 07               	xri 	'-'!'*'
+(1)  229/    9274 : 98 0E               	jz 		__EE_FoundOperator
+(1)  230/    9276 : E4 05               	xri 	'*'!'/'
+(1)  231/    9278 : 98 0A               	jz 		__EE_FoundOperator
+(1)  232/    927A : C5 FF               	ld 		@-1(p1) 											; undo the get so points to next char
+(1)  233/    927C :                     
+(1)  234/    927C :                     __EE_ExitOkay:
+(1)  235/    927C : C6 01               	ld 		@1(p2) 												; drop pending operation
+(1)  236/    927E : C6 01               	ld 		@1(p2) 												; get result
+(1)  237/    9280 : 01                  	xae 														; put in E
+(1)  238/    9281 : 03                  	scl 														; set carry link
+(1)  239/    9282 : 90 8E               	jmp 	__EE_Exit
+(1)  240/    9284 :                     
+(1)  241/    9284 :                     __EE_FoundOperator:
+(1)  242/    9284 : C1 FF               	ld 		-1(p1) 												; get the operator
+(1)  243/    9286 : CA 00               	st 		0(p2)												; save in pending operator
+(1)  244/    9288 : (MACRO)             	lpi 	p3,__EE_NextTerm-1									; long jump back to near the start.
+(1)  244/    9288 : C4 91                       ldi     (__EE_NEXTTERM-1) / 256
+(1)  244/    928A : 37                          xpah    P3
+(1)  244/    928B : C4 8A                       ldi     (__EE_NEXTTERM-1) & 255
+(1)  244/    928D : 33                          xpal    P3
+(1)  245/    928E : 3F                  	xppc 	p3	
+(1)  246/    928F :                     
+(1)  247/    928F :                     ; ****************************************************************************************************************
+(1)  248/    928F :                     ;													Divide
+(1)  249/    928F :                     ; ****************************************************************************************************************
+(1)  250/    928F :                     
+(1)  251/    928F :                     __EE_NotMultiply:												; must be divide, as only + - * / allowed.
+(1)  252/    928F : 40                  	lde 														; if denominator zero, error 2.
+(1)  253/    9290 : 98 A4               	jz 		__EE_Divide_Zero
+(1)  254/    9292 : C2 01               	ld 		1(p2) 												; numerator into 0(p2)
+(1)  255/    9294 : CA 00               	st 		0(p2) 												; denominator is in E
+(1)  256/    9296 : C4 00               	ldi 	0
+(1)  257/    9298 : CA 01               	st 		1(p2)												; quotient in 1(p2)
+(1)  258/    929A : CA FF               	st 		-1(p2) 												; remainder in -1(p2)
+(1)  259/    929C : C4 80               	ldi 	0x80 									
+(1)  260/    929E : CA FE               	st 		-2(p2) 												; bit in -2(p2)
+(1)  261/    92A0 :                     
+(1)  262/    92A0 :                     __EE_Divide_Loop:
+(1)  263/    92A0 : C2 FE               	ld 		-2(p2) 												; exit if bit = 0,we've finished.
+(1)  264/    92A2 : 98 BC               	jz 		__EE_NextOperation
+(1)  265/    92A4 :                     
+(1)  266/    92A4 : 02                  	ccl 	 													; shift remainder left.
+(1)  267/    92A5 : C2 FF               	ld 		-1(p2)
+(1)  268/    92A7 : F2 FF               	add 	-1(p2)
+(1)  269/    92A9 : CA FF               	st 		-1(p2)
+(1)  270/    92AB :                     
+(1)  271/    92AB : C2 00               	ld 		0(p2)												; get numerator.
+(1)  272/    92AD : 94 02               	jp 		__EE_Divide_Numerator_Positive
+(1)  273/    92AF : AA FF               	ild 	-1(p2)  											; if numerator -ve, increment remainder.
+(1)  274/    92B1 :                     __EE_Divide_Numerator_Positive:
+(1)  275/    92B1 :                     
+(1)  276/    92B1 : C2 FF               	ld 		-1(p2) 												; calculate remainder - denominator
+(1)  277/    92B3 : 03                  	scl
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 14 - 12/19/2015 22:10:15
 
 
-(1)  279/    92AE :                     
-(1)  280/    92AE : C2 FF               	ld 		-1(p2) 												; calculate remainder - denominator
-(1)  281/    92B0 : 03                  	scl
-(1)  282/    92B1 : 78                  	cae 
-(1)  283/    92B2 : CA FD               	st 		-3(p2) 												; save in temp -3(p2)
-(1)  284/    92B4 : 06                  	csa 														; if temp >= 0, CY/L is set
-(1)  285/    92B5 : 94 0A               	jp 		__EE_Divide_Temp_Positive
-(1)  286/    92B7 :                     
-(1)  287/    92B7 : C2 FD               	ld 		-3(p2) 												; copy temp to remainder
-(1)  288/    92B9 : CA FF               	st 		-1(p2)
-(1)  289/    92BB : C2 FE               	ld 		-2(p2) 												; or bit into quotient
-(1)  290/    92BD : DA 01               	or 		1(p2)
-(1)  291/    92BF : CA 01               	st 		1(p2)
-(1)  292/    92C1 :                     __EE_Divide_Temp_Positive:
-(1)  293/    92C1 : C2 FE               	ld 		-2(p2) 												; shift bit right
-(1)  294/    92C3 : 1C                  	sr
-(1)  295/    92C4 : CA FE               	st 		-2(p2)
-(1)  296/    92C6 :                     
-(1)  297/    92C6 : C2 00               	ld 		0(p2)												; shift numerator positive
-(1)  298/    92C8 : 02                  	ccl
-(1)  299/    92C9 : F2 00               	add 	0(p2)
-(1)  300/    92CB : CA 00               	st 		0(p2)
-(1)  301/    92CD : 90 CE               	jmp 	__EE_Divide_Loop
-(1)  302/    92CF :                     
-(1)  303/    92CF :                     ; ****************************************************************************************************************
-(1)  304/    92CF :                     ;					Get a random number from the seed, return in E, CY/L = 1 okay S=>A
-(1)  305/    92CF :                     ; ****************************************************************************************************************
-(1)  306/    92CF :                     
-(1)  307/    92CF :                     Random:
-(1)  308/    92CF : (MACRO)             	pushp	p3
-(1)  308/    92CF : 37                          xpah    P3
-(1)  308/    92D0 : CE FF                       st              @-1(p2)
-(1)  308/    92D2 : 33                          xpal    P3
-(1)  308/    92D3 : CE FF                       st              @-1(p2)
-(1)  309/    92D5 : (MACRO)             	lpi 	p3,RandomSeed 										; point P3 to random seed.
-(1)  309/    92D5 : C4 0C                       ldi     (RANDOMSEED) / 256
-(1)  309/    92D7 : 37                          xpah    P3
-(1)  309/    92D8 : C4 AA                       ldi     (RANDOMSEED) & 255
-(1)  309/    92DA : 33                          xpal    P3
-(1)  310/    92DB : C3 00               	ld 		0(p3)												; does it need initialising.
-(1)  311/    92DD : DB 01               	or 		1(p3)
-(1)  312/    92DF : 9C 08               	jnz 	__RA_NoInitialise
-(1)  313/    92E1 : C4 E1               	ldi 	0xE1 												; set to $E1AC
-(1)  314/    92E3 : CB 01               	st 		1(p3)
-(1)  315/    92E5 : C4 AC               	ldi 	0xAC
-(1)  316/    92E7 : CB 00               	st 		0(p3)
-(1)  317/    92E9 :                     __RA_NoInitialise:
-(1)  318/    92E9 : 02                  	ccl 														; shift seed right
-(1)  319/    92EA : C3 01               	ld 		1(p3)
-(1)  320/    92EC : 1F                  	rrl
-(1)  321/    92ED : CB 01               	st 		1(p3)
-(1)  322/    92EF : C3 00               	ld 		0(p3)
-(1)  323/    92F1 : 1F                  	rrl
-(1)  324/    92F2 : CB 00               	st 		0(p3)
-(1)  325/    92F4 : 06                  	csa 														; get status
-(1)  326/    92F5 : 94 06               	jp 		__RA_Exit
-(1)  327/    92F7 : C3 01               	ld 		1(p3)
-(1)  328/    92F9 : E4 B4               	xri 	0xB4
-(1)  329/    92FB : CB 01               	st 		1(p3)
-(1)  330/    92FD :                     __RA_Exit:
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 15 - 12/19/2015 11:39:31
+(1)  278/    92B4 : 78                  	cae 
+(1)  279/    92B5 : CA FD               	st 		-3(p2) 												; save in temp -3(p2)
+(1)  280/    92B7 : 06                  	csa 														; if temp >= 0, CY/L is set
+(1)  281/    92B8 : 94 0A               	jp 		__EE_Divide_Temp_Positive
+(1)  282/    92BA :                     
+(1)  283/    92BA : C2 FD               	ld 		-3(p2) 												; copy temp to remainder
+(1)  284/    92BC : CA FF               	st 		-1(p2)
+(1)  285/    92BE : C2 FE               	ld 		-2(p2) 												; or bit into quotient
+(1)  286/    92C0 : DA 01               	or 		1(p2)
+(1)  287/    92C2 : CA 01               	st 		1(p2)
+(1)  288/    92C4 :                     __EE_Divide_Temp_Positive:
+(1)  289/    92C4 : C2 FE               	ld 		-2(p2) 												; shift bit right
+(1)  290/    92C6 : 1C                  	sr
+(1)  291/    92C7 : CA FE               	st 		-2(p2)
+(1)  292/    92C9 :                     
+(1)  293/    92C9 : C2 00               	ld 		0(p2)												; shift numerator positive
+(1)  294/    92CB : 02                  	ccl
+(1)  295/    92CC : F2 00               	add 	0(p2)
+(1)  296/    92CE : CA 00               	st 		0(p2)
+(1)  297/    92D0 : 90 CE               	jmp 	__EE_Divide_Loop
+(1)  298/    92D2 :                     
+(1)  299/    92D2 :                     ; ****************************************************************************************************************
+(1)  300/    92D2 :                     ;					Get a random number from the seed, return in E, CY/L = 1 okay S=>A
+(1)  301/    92D2 :                     ; ****************************************************************************************************************
+(1)  302/    92D2 :                     
+(1)  303/    92D2 :                     Random:
+(1)  304/    92D2 : (MACRO)             	pushp	p3
+(1)  304/    92D2 : 37                          xpah    P3
+(1)  304/    92D3 : CE FF                       st              @-1(p2)
+(1)  304/    92D5 : 33                          xpal    P3
+(1)  304/    92D6 : CE FF                       st              @-1(p2)
+(1)  305/    92D8 : (MACRO)             	lpi 	p3,RandomSeed 										; point P3 to random seed.
+(1)  305/    92D8 : C4 0C                       ldi     (RANDOMSEED) / 256
+(1)  305/    92DA : 37                          xpah    P3
+(1)  305/    92DB : C4 AA                       ldi     (RANDOMSEED) & 255
+(1)  305/    92DD : 33                          xpal    P3
+(1)  306/    92DE : C3 00               	ld 		0(p3)												; does it need initialising.
+(1)  307/    92E0 : DB 01               	or 		1(p3)
+(1)  308/    92E2 : 9C 08               	jnz 	__RA_NoInitialise
+(1)  309/    92E4 : C4 E1               	ldi 	0xE1 												; set to $E1AC
+(1)  310/    92E6 : CB 01               	st 		1(p3)
+(1)  311/    92E8 : C4 AC               	ldi 	0xAC
+(1)  312/    92EA : CB 00               	st 		0(p3)
+(1)  313/    92EC :                     __RA_NoInitialise:
+(1)  314/    92EC : 02                  	ccl 														; shift seed right
+(1)  315/    92ED : C3 01               	ld 		1(p3)
+(1)  316/    92EF : 1F                  	rrl
+(1)  317/    92F0 : CB 01               	st 		1(p3)
+(1)  318/    92F2 : C3 00               	ld 		0(p3)
+(1)  319/    92F4 : 1F                  	rrl
+(1)  320/    92F5 : CB 00               	st 		0(p3)
+(1)  321/    92F7 : 06                  	csa 														; get status
+(1)  322/    92F8 : 94 06               	jp 		__RA_Exit
+(1)  323/    92FA : C3 01               	ld 		1(p3)
+(1)  324/    92FC : E4 B4               	xri 	0xB4
+(1)  325/    92FE : CB 01               	st 		1(p3)
+(1)  326/    9300 :                     __RA_Exit:
+(1)  327/    9300 : C3 00               	ld 		0(p3) 												; get the number
+(1)  328/    9302 : F3 01               	add 	1(p3)
+(1)  329/    9304 : 01                  	xae
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 15 - 12/19/2015 22:10:15
 
 
-(1)  331/    92FD : C3 00               	ld 		0(p3) 												; get the number
-(1)  332/    92FF : F3 01               	add 	1(p3)
-(1)  333/    9301 : 01                  	xae
-(1)  334/    9302 : (MACRO)             	pullp 	p3 													; restore P3
-(1)  334/    9302 : C6 01                       ld              @1(p2)
-(1)  334/    9304 : 33                          xpal    P3
-(1)  334/    9305 : C6 01                       ld              @1(p2)
-(1)  334/    9307 : 37                          xpah    P3
-(1)  335/    9308 : 03                  	scl															; no error
-(1)  336/    9309 : 06                  	csa
-(1)  337/    930A : 3F                  	xppc	p3
-(1)  338/    930B :                     
-(1)  339/    930B :                     ; ****************************************************************************************************************
-(1)  340/    930B :                     ; ****************************************************************************************************************
-(1)  341/    930B :                     
-(1)  342/    930B :                     ; evaluate $(HL) leave address accessible, return same as expr
-(1)  343/    930B :                     EvaluateHL:
-(1)  344/    930B : C4 74               	ldi 	0x74
-(1)  345/    930D : 01                  	xae
-(1)  346/    930E : C4 80               	ldi 	0x80
-(1)  347/    9310 : 3F                  	xppc 	p3
-(1)  348/    9311 :                     
-(1)  349/    9311 :                     
-      33/    9311 :                     
-      34/    9311 :                     
-      35/    9311 :                     
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 16 - 12/19/2015 11:39:31
+(1)  330/    9305 : (MACRO)             	pullp 	p3 													; restore P3
+(1)  330/    9305 : C6 01                       ld              @1(p2)
+(1)  330/    9307 : 33                          xpal    P3
+(1)  330/    9308 : C6 01                       ld              @1(p2)
+(1)  330/    930A : 37                          xpah    P3
+(1)  331/    930B : 03                  	scl															; no error
+(1)  332/    930C : 06                  	csa
+(1)  333/    930D : 3F                  	xppc	p3
+(1)  334/    930E :                     
+(1)  335/    930E :                     ; ****************************************************************************************************************
+(1)  336/    930E :                     ;
+(1)  337/    930E :                     ;		P1 points to ( of (<expr>,<expr>), evaluate and return in E with CY/L = 1 if ok, A = S. -1(P2) should 
+(1)  338/    930E :                     ;		be H and -2(P2) should be L, but stack should be at same depth as on entry, with those values 
+(1)  339/    930E :                     ;		accessible transiently until next stack operation.
+(1)  340/    930E :                     ;
+(1)  341/    930E :                     ; ****************************************************************************************************************
+(1)  342/    930E :                     
+(1)  343/    930E :                     EvaluateHL:
+(1)  344/    930E : C6 FE               	ld 		@-2(p2) 											; make space for H,L result
+(1)  345/    9310 : (MACRO)             	pushp 	p3 													; save P3 on the stack.
+(1)  345/    9310 : 37                          xpah    P3
+(1)  345/    9311 : CE FF                       st              @-1(p2)
+(1)  345/    9313 : 33                          xpal    P3
+(1)  345/    9314 : CE FF                       st              @-1(p2)
+(1)  346/    9316 : C5 01               	ld 		@1(p1) 												; get character
+(1)  347/    9318 : E4 28               	xri 	'('													; must be (
+(1)  348/    931A : 9C 29               	jnz 	__EHL_BackFail
+(1)  349/    931C : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate the H part of HL
+(1)  349/    931C : C4 91                       ldi     (EVALUATEEXPRESSION-1) / 256
+(1)  349/    931E : 37                          xpah    P3
+(1)  349/    931F : C4 7C                       ldi     (EVALUATEEXPRESSION-1) & 255
+(1)  349/    9321 : 33                          xpal    P3
+(1)  350/    9322 : 3F                  	xppc 	p3
+(1)  351/    9323 : 94 20               	jp 		__EHL_BackFail
+(1)  352/    9325 : 40                  	lde 														; copy to H slot
+(1)  353/    9326 : CA 03               	st 		3(p2)
+(1)  354/    9328 : C5 01               	ld 		@1(p1) 												; get character
+(1)  355/    932A : E4 2C               	xri 	',' 												; must be comma
+(1)  356/    932C : 9C 17               	jnz 	__EHL_BackFail
+(1)  357/    932E : 3F                  	xppc 	p3 													; evaluate the L part of HL
+(1)  358/    932F : 94 14               	jp 		__EHL_BackFail
+(1)  359/    9331 : 40                  	lde 														; copy to L slot
+(1)  360/    9332 : CA 02               	st 		2(p2)
+(1)  361/    9334 : C5 01               	ld 		@1(p1) 												; check for the closing )
+(1)  362/    9336 : E4 29               	xri 	')'
+(1)  363/    9338 : 9C 0B               	jnz 	__EHL_BackFail
+(1)  364/    933A : 40                  	lde 														; get L again
+(1)  365/    933B : 33                  	xpal 	p3 													; put in P3.L
+(1)  366/    933C : C2 03               	ld 		3(p2) 												; get H into P3.H
+(1)  367/    933E : 37                  	xpah 	p3
+(1)  368/    933F : C3 00               	ld 		(p3) 												; read byte there
+(1)  369/    9341 : 01                  	xae 														; put into E
+(1)  370/    9342 : 03                  	scl 														; set carry as successful.
+(1)  371/    9343 : 90 06               	jmp 	__EHL_Exit 											; and exit
+(1)  372/    9345 :                     
+(1)  373/    9345 :                     __EHL_BackFail:
+(1)  374/    9345 : C5 FF               	ld 		@-1(p1) 											; go back one in text.
+(1)  375/    9347 : C4 04               	ldi 	ERROR_Term											; set E to error term.
+(1)  376/    9349 : 01                  	xae
+(1)  377/    934A : 02                  	ccl 														; return with carry clear.
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 16 - 12/19/2015 22:10:15
+
+
+(1)  378/    934B :                     __EHL_Exit:
+(1)  379/    934B : (MACRO)             	pullp 	p3 													; restore P3
+(1)  379/    934B : C6 01                       ld              @1(p2)
+(1)  379/    934D : 33                          xpal    P3
+(1)  379/    934E : C6 01                       ld              @1(p2)
+(1)  379/    9350 : 37                          xpah    P3
+(1)  380/    9351 : C6 02               	ld 		@2(p2) 												; drop the H,L space.
+(1)  381/    9353 : 06                  	csa 														; S->A
+(1)  382/    9354 : 3F                  	xppc 	p3 													; and return.
+(1)  383/    9355 :                     
+(1)  384/    9355 : 90 B7               	jmp 	EvaluateHL
+(1)  385/    9357 :                     
+      33/    9357 :                     
+      34/    9357 :                     
+      35/    9357 :                     
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 17 - 12/19/2015 22:10:15
 
 
   symbol table (* = unused):
@@ -919,7 +971,7 @@
 *BRANCHEXT :                      0 - | *CASESENSITIVE :                  0 - |
 *CONSTPI :        3.141592653589793 - | *DATE :                  12/19/2015 - |
  ERROR_DIVIDEZERO :               7 - |  ERROR_TERM :                     4 - |
- EVALUATEEXPRESSION :          917A C |  EVALUATEHL :                  930B C |
+ EVALUATEEXPRESSION :          917D C |  EVALUATEHL :                  930E C |
 *FALSE :                          0 - | *FULLPMMU :                       1 - |
  GETCHAR :                     90E8 C |  GETSTRING :                   910C C |
 *HAS64 :                          1 - | *HASDSP :                         0 - |
@@ -932,26 +984,27 @@
 *MOMCPUNAME :                 SC/MP - | *NESTMAX :                      100 - |
 *OSMATHLIBRARY :                  3 - | *PACKING :                        0 - |
 *PADDING :                        1 - |  PRINT :                       9028 C |
- RANDOM :                      92CF C |  RANDOMSEED :                   CAA - |
+ RANDOM :                      92D2 C |  RANDOMSEED :                   CAA - |
 *RELAXED :                        0 - |  SCREENCURSOR :                 C80 - |
  SCREENMIRROR :                 C00 - |  STOP :                        9026 C |
  SYSTEMVARIABLES :              C90 - |  TESTEXPR :                    9174 C |
-*TIME :                    11:39:31 - | *TRUE :                           1 - |
+*TIME :                    22:10:15 - | *TRUE :                           1 - |
  VARIABLES :                    C90 - | *VERSION :                     142F - |
- __EE_CALLANDCHECK :           9204 C |  __EE_CHECKPUNCTERMS :         91D5 C |
- __EE_CONSTANTEND :            91C3 C |  __EE_CONSTANTTERM :           91A8 C |
- __EE_DIVIDE_LOOP :            929D C |
- __EE_DIVIDE_NUMERATOR_POSITIVE :                                      92AE C |
- __EE_DIVIDE_TEMP_POSITIVE :   92C1 C |  __EE_DIVIDE_ZERO :            9233 C |
- __EE_ERRORA :                 920B C |  __EE_EXIT :                   920F C |
- __EE_EXITOKAY :               9279 C |  __EE_FOUNDOPERATOR :          9281 C |
- __EE_HAVETERM :               9219 C |  __EE_ISVARIABLE :             91C5 C |
- __EE_MEMORYREAD :             91FC C |  __EE_MULTIPLYLOOP :           9243 C |
- __EE_MULTIPLY_B0ISZERO :      9251 C |  __EE_NEXTOPERATION :          925D C |
- __EE_NEXTTERM :               9188 C |  __EE_NOTADD :                 9227 C |
- __EE_NOTMULTIPLY :            928C C |  __EE_NOTSUBTRACT :            9237 C |
- __EE_RANDOM :                 91F4 C |  __EE_SKIPSPACE :              9188 C |
- __EE_TERMERROR :              9209 C |  __EVALUATEEXPRESSION2 :       91D3 C |
+ __EE_CALLANDCHECK :           9207 C |  __EE_CHECKPUNCTERMS :         91D8 C |
+ __EE_CONSTANTEND :            91C6 C |  __EE_CONSTANTTERM :           91AB C |
+ __EE_DIVIDE_LOOP :            92A0 C |
+ __EE_DIVIDE_NUMERATOR_POSITIVE :                                      92B1 C |
+ __EE_DIVIDE_TEMP_POSITIVE :   92C4 C |  __EE_DIVIDE_ZERO :            9236 C |
+ __EE_ERRORA :                 920E C |  __EE_EXIT :                   9212 C |
+ __EE_EXITOKAY :               927C C |  __EE_FOUNDOPERATOR :          9284 C |
+ __EE_HAVETERM :               921C C |  __EE_ISVARIABLE :             91C8 C |
+ __EE_MEMORYREAD :             91FF C |  __EE_MULTIPLYLOOP :           9246 C |
+ __EE_MULTIPLY_B0ISZERO :      9254 C |  __EE_NEXTOPERATION :          9260 C |
+ __EE_NEXTTERM :               918B C |  __EE_NOTADD :                 922A C |
+ __EE_NOTMULTIPLY :            928F C |  __EE_NOTSUBTRACT :            923A C |
+ __EE_RANDOM :                 91F7 C |  __EE_SKIPSPACE :              918B C |
+ __EE_TERMERROR :              920C C |  __EHL_BACKFAIL :              9345 C |
+ __EHL_EXIT :                  934B C |  __EVALUATEEXPRESSION2 :       91D6 C |
  __GCNOTLOWER [GETCHAR] :      9107 C |  __GCWAITKEY [GETCHAR] :       90ED C |
  __GCWAITRELEASE [GETCHAR] :   90F5 C |  __GSBACKSPACE [GETSTRING] :   9167 C |
  __GSCONTROLKEY [GETSTRING] :  914A C |  __GSLOOP [GETSTRING] :        911A C |
@@ -961,13 +1014,13 @@
  __PRISCONTROLCHAR [PRINT] :   909D C |  __PRISRETURN [PRINT] :        90BD C |
  __PRNOTASCII [PRINT] :        9065 C |  __PRPRINTCHARACTERA [PRINT] : 9049 C |
  __PRPRINTSTRING [PRINT] :     9037 C |  __PRSCROLLLOOP [PRINT] :      907D C |
- __PRUPDATECURSOR [PRINT] :    906E C |  __RA_EXIT :                   92FD C |
- __RA_NOINITIALISE :           92E9 C |
+ __PRUPDATECURSOR [PRINT] :    906E C |  __RA_EXIT :                   9300 C |
+ __RA_NOINITIALISE :           92EC C |
 
-     93 symbols
+     95 symbols
      31 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 17 - 12/19/2015 11:39:31
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 18 - 12/19/2015 22:10:15
 
 
   defined macros:
@@ -980,7 +1033,7 @@ PUSHP                                 | SETV
 
       8 macros
 
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 18 - 12/19/2015 11:39:31
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 19 - 12/19/2015 22:10:15
 
 
   codepages:
@@ -991,8 +1044,8 @@ STANDARD (0 changed characters)
 
 0.01 seconds assembly time
 
-    768 lines source file
-    866 lines incl. macro expansions
+    804 lines source file
+    914 lines incl. macro expansions
       2 passes
       0 errors
       0 warnings

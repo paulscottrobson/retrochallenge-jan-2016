@@ -8,11 +8,8 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-; TODO: Write (H,L)
-; TODO: Expand Python Test to test (H,L)
-
 TestExpr:
-	db 	"(1,2)",0
+	db 	"(1,2)-11",0
 
 EvaluateExpression:
 	pushp 	p3 													; save P3 on stack
@@ -26,6 +23,7 @@ EvaluateExpression:
 ; ****************************************************************************************************************
 
 __EE_NextTerm:
+
 __EE_SkipSpace:
 	ld 		(p1) 												; check end of string
 	jz 		__EE_TermError
@@ -336,12 +334,52 @@ __RA_Exit:
 	xppc	p3
 
 ; ****************************************************************************************************************
+;
+;		P1 points to ( of (<expr>,<expr>), evaluate and return in E with CY/L = 1 if ok, A = S. -1(P2) should 
+;		be H and -2(P2) should be L, but stack should be at same depth as on entry, with those values 
+;		accessible transiently until next stack operation.
+;
 ; ****************************************************************************************************************
 
-; evaluate $(HL) leave address accessible, return same as expr
 EvaluateHL:
-	ldi 	0x74
-	xae
-	ldi 	0x80
+	ld 		@-2(p2) 											; make space for H,L result
+	pushp 	p3 													; save P3 on the stack.
+	ld 		@1(p1) 												; get character
+	xri 	'('													; must be (
+	jnz 	__EHL_BackFail
+	lpi 	p3,EvaluateExpression-1 							; evaluate the H part of HL
 	xppc 	p3
+	jp 		__EHL_BackFail
+	lde 														; copy to H slot
+	st 		3(p2)
+	ld 		@1(p1) 												; get character
+	xri 	',' 												; must be comma
+	jnz 	__EHL_BackFail
+	xppc 	p3 													; evaluate the L part of HL
+	jp 		__EHL_BackFail
+	lde 														; copy to L slot
+	st 		2(p2)
+	ld 		@1(p1) 												; check for the closing )
+	xri 	')'
+	jnz 	__EHL_BackFail
+	lde 														; get L again
+	xpal 	p3 													; put in P3.L
+	ld 		3(p2) 												; get H into P3.H
+	xpah 	p3
+	ld 		(p3) 												; read byte there
+	xae 														; put into E
+	scl 														; set carry as successful.
+	jmp 	__EHL_Exit 											; and exit
 
+__EHL_BackFail:
+	ld 		@-1(p1) 											; go back one in text.
+	ldi 	ERROR_Term											; set E to error term.
+	xae
+	ccl 														; return with carry clear.
+__EHL_Exit:
+	pullp 	p3 													; restore P3
+	ld 		@2(p2) 												; drop the H,L space.
+	csa 														; S->A
+	xppc 	p3 													; and return.
+
+	jmp 	EvaluateHL

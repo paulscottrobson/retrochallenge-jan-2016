@@ -3,7 +3,9 @@
 #
 import random
 
-random.seed(242)
+random.seed(42)
+
+monitor = [ord(x) for x in open("..\monitor_rom\monitor.bin","rb").read(-1)]
 
 def rnd(maxval):
 	n = maxval+1
@@ -16,6 +18,14 @@ def rnd(maxval):
 			term = "'"+chr(n)+"'"
 			if n==34 or n == 0x27 or n == ord("\\"):
 				n = maxval+1
+		if random.randrange(0,5) == 0:
+			h = random.randrange(0,8)
+			h = [h,str(h)]
+			if random.randrange(0,8) == 0:
+				h = rnd(8)
+			l = rnd(256)
+			n = monitor[h[0]*256+l[0]]
+			term = "({0},{1})".format(h[1],l[1])
 	return [n,term]
 
 ptr = 0x9300
@@ -42,3 +52,5 @@ while ptr < 0xFF00:
 
 	print('    db     "{0}",0,{1}'.format(expr,result))
 	ptr = ptr + len(expr)+2
+
+
