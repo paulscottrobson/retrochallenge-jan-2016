@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 1 - 12/19/2015 22:10:15
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 1 - 12/21/2015 22:25:18
 
 
        1/       0 :                     ; ****************************************************************************************************************
@@ -33,60 +33,73 @@
 (1)   19/       0 :                     
 (1)   20/       0 : =0xC90              Variables = SystemVariables 									; 26 Variables A-Z
 (1)   21/       0 : =0xCAA              RandomSeed = SystemVariables+26 								; 2 byte random seed.
-(1)   22/       0 :                     
-(1)   23/       0 : =0xCB0              KeyboardBuffer = SystemVariables+32								; Keyboard buffer.
-(1)   24/       0 : =0x50               KeyboardBufferSize = 80
-(1)   25/       0 :                     
-(1)   26/       0 :                     ; ****************************************************************************************************************
-(1)   27/       0 :                     ;														Macros
-(1)   28/       0 :                     ; ****************************************************************************************************************
-(1)   29/       0 :                     
-(1)   30/       0 :                     lpi	macro	ptr,addr											; load pointer register with constant
-(1)   31/       0 :                     	ldi 	(addr) / 256
-(1)   32/       0 :                     	xpah 	ptr
-(1)   33/       0 :                     	ldi 	(addr) & 255
-(1)   34/       0 :                     	xpal 	ptr
-(1)   35/       0 :                     	endm
-(1)   36/       0 :                     
-(1)   37/       0 :                     pushp macro ptr 												; push pointer register on stack
+(1)   22/       0 : =0xCAC              ProgramBase = SystemVariables+28 								; Base address of program (Low, High)
+(1)   23/       0 :                     
+(1)   24/       0 : =0xCAE              IsRunning = SystemVariables+30 									; If nonzero, runs till end of program, if zero runs
+(1)   25/       0 :                     																; till end of current line (e.g. NULL character)
+(1)   26/       0 :                     
+(1)   27/       0 : =0xCAF              CurrentLine = SystemVariables+31 								; Current Line Number #
+(1)   28/       0 :                     
+(1)   29/       0 : =0xCB0              KeyboardBuffer = SystemVariables+32								; Keyboard buffer.
+(1)   30/       0 : =0x50               KeyboardBufferSize = 80
+(1)   31/       0 :                     
+(1)   32/       0 :                     ; ****************************************************************************************************************
+(1)   33/       0 :                     ;														Macros
+(1)   34/       0 :                     ; ****************************************************************************************************************
+(1)   35/       0 :                     
+(1)   36/       0 :                     lpi	macro	ptr,addr											; load pointer register with constant
+(1)   37/       0 :                     	ldi 	(addr) / 256
 (1)   38/       0 :                     	xpah 	ptr
-(1)   39/       0 :                     	st 		@-1(p2)
+(1)   39/       0 :                     	ldi 	(addr) & 255
 (1)   40/       0 :                     	xpal 	ptr
-(1)   41/       0 :                     	st 		@-1(p2)
-(1)   42/       0 :                     	endm
-(1)   43/       0 :                     
-(1)   44/       0 :                     pullp macro ptr 												; pull pointer register off stack
-(1)   45/       0 :                     	ld 		@1(p2)
+(1)   41/       0 :                     	endm
+(1)   42/       0 :                     
+(1)   43/       0 :                     pushp macro ptr 												; push pointer register on stack
+(1)   44/       0 :                     	xpah 	ptr
+(1)   45/       0 :                     	st 		@-1(p2)
 (1)   46/       0 :                     	xpal 	ptr
-(1)   47/       0 :                     	ld 		@1(p2)
-(1)   48/       0 :                     	xpah 	ptr
-(1)   49/       0 :                     	endm
- AS V1.42 Beta [Bld 102] - source file minol.asm(memorymacros.asm) - page 2 - 12/19/2015 22:10:15
+(1)   47/       0 :                     	st 		@-1(p2)
+(1)   48/       0 :                     	endm
+(1)   49/       0 :                     
+ AS V1.42 Beta [Bld 102] - source file minol.asm(memorymacros.asm) - page 2 - 12/21/2015 22:25:18
 
 
-(1)   50/       0 :                     
-(1)   51/       0 :                     pushe macro 													; push E on stack
-(1)   52/       0 :                     	lde
-(1)   53/       0 :                     	st 		@-1(p2)
-(1)   54/       0 :                     	endm
-(1)   55/       0 :                     
-(1)   56/       0 :                     pulle macro 													; pull E off stack
-(1)   57/       0 :                     	ld 		@1(p2)
-(1)   58/       0 :                     	xae
-(1)   59/       0 :                     	endm
-(1)   60/       0 :                     
-(1)   61/       0 :                     pusha macro 													; push A on stack
-(1)   62/       0 :                     	st 		@-1(p2)
-(1)   63/       0 :                     	endm
-(1)   64/       0 :                     
-(1)   65/       0 :                     pulla macro
-(1)   66/       0 :                     	ld 		@1(p2)
-(1)   67/       0 :                     	endm
-(1)   68/       0 :                     
-(1)   69/       0 :                     setv macro ch,value
-(1)   70/       0 :                     	ldi 	value
-(1)   71/       0 :                     	st 		(ch-'A')(p3)
-(1)   72/       0 :                     	endm
+(1)   50/       0 :                     pullp macro ptr 												; pull pointer register off stack
+(1)   51/       0 :                     	ld 		@1(p2)
+(1)   52/       0 :                     	xpal 	ptr
+(1)   53/       0 :                     	ld 		@1(p2)
+(1)   54/       0 :                     	xpah 	ptr
+(1)   55/       0 :                     	endm
+(1)   56/       0 :                     
+(1)   57/       0 :                     pushe macro 													; push E on stack
+(1)   58/       0 :                     	lde
+(1)   59/       0 :                     	st 		@-1(p2)
+(1)   60/       0 :                     	endm
+(1)   61/       0 :                     
+(1)   62/       0 :                     pulle macro 													; pull E off stack
+(1)   63/       0 :                     	ld 		@1(p2)
+(1)   64/       0 :                     	xae
+(1)   65/       0 :                     	endm
+(1)   66/       0 :                     
+(1)   67/       0 :                     pusha macro 													; push A on stack
+(1)   68/       0 :                     	st 		@-1(p2)
+(1)   69/       0 :                     	endm
+(1)   70/       0 :                     
+(1)   71/       0 :                     pulla macro
+(1)   72/       0 :                     	ld 		@1(p2)
+(1)   73/       0 :                     	endm
+(1)   74/       0 :                     
+(1)   75/       0 :                     setv macro ch,value 											; sets a variable to a value, assumes P3 = Variables.
+(1)   76/       0 :                     	ldi 	value
+(1)   77/       0 :                     	st 		(ch-'A')(p3)
+(1)   78/       0 :                     	endm
+(1)   79/       0 :                     
+(1)   80/       0 :                     code macro lineNo,code 											; a debugging macro, which fakes up a line of code.
+(1)   81/       0 :                     	db 		strlen(code)+3 										; one byte offset to next
+(1)   82/       0 :                     	db 		lineNo 												; one byte line number
+(1)   83/       0 :                     	db 		code,0 												; ASCIIZ string
+(1)   84/       0 :                     	endm
+(1)   85/       0 :                     
       12/       0 :                     
       13/       0 :                     ; ****************************************************************************************************************
       14/       0 :                     ;													Main Program
@@ -95,873 +108,1050 @@
       17/    9000 :                     	org 	0x9000 												; the ROM starts here
       18/    9000 :                     
       19/    9000 : 68                  	db 		0x68												; this makes it boot straight into this ROM.
-      20/    9001 : (MACRO)             	lpi 	p3,Variables
-      20/    9001 : C4 0C                       ldi     (VARIABLES) / 256
-      20/    9003 : 37                          xpah    P3
-      20/    9004 : C4 90                       ldi     (VARIABLES) & 255
-      20/    9006 : 33                          xpal    P3
-      21/    9007 : (MACRO)             	setv 	'C',10
-      21/    9007 : C4 0A                       ldi     10
-      21/    9009 : CB 02                       st              ('C'-'A')(p3)
-      22/    900B : (MACRO)             	setv 	'D',20
-      22/    900B : C4 14                       ldi     20
-      22/    900D : CB 03                       st              ('D'-'A')(p3)
-      23/    900F : (MACRO)             	setv 	'Z',33
-      23/    900F : C4 21                       ldi     33
-      23/    9011 : CB 19                       st              ('Z'-'A')(p3)
-      24/    9013 : (MACRO)             	lpi 	p2,0xFF8											; set up stack default value
-      24/    9013 : C4 0F                       ldi     (0XFF8) / 256
-      24/    9015 : 36                          xpah    P2
-      24/    9016 : C4 F8                       ldi     (0XFF8) & 255
-      24/    9018 : 32                          xpal    P2
-      25/    9019 : (MACRO)             	lpi 	p1,TestExpr
-      25/    9019 : C4 91                       ldi     (TESTEXPR) / 256
-      25/    901B : 35                          xpah    P1
-      25/    901C : C4 74                       ldi     (TESTEXPR) & 255
-      25/    901E : 31                          xpal    P1
-      26/    901F : (MACRO)             	lpi 	p3,EvaluateExpression-1
-      26/    901F : C4 91                       ldi     (EVALUATEEXPRESSION-1) / 256
-      26/    9021 : 37                          xpah    P3
-      26/    9022 : C4 7C                       ldi     (EVALUATEEXPRESSION-1) & 255
-      26/    9024 : 33                          xpal    P3
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 3 - 12/19/2015 22:10:15
+      20/    9001 : (MACRO)             	lpi 	p2,0xFF8											; set up stack default value
+      20/    9001 : C4 0F                       ldi     (0XFF8) / 256
+      20/    9003 : 36                          xpah    P2
+      20/    9004 : C4 F8                       ldi     (0XFF8) & 255
+      20/    9006 : 32                          xpal    P2
+      21/    9007 :                     
+      22/    9007 : (MACRO)             	lpi 	p3,Print-1 											; clear screen
+      22/    9007 : C4 90                       ldi     (PRINT-1) / 256
+      22/    9009 : 37                          xpah    P3
+      22/    900A : C4 3C                       ldi     (PRINT-1) & 255
+      22/    900C : 33                          xpal    P3
+      23/    900D : C4 0C               	ldi 	12
+      24/    900F : 3F                  	xppc 	p3
+      25/    9010 : (MACRO)             	lpi 	p3,Variables
+      25/    9010 : C4 0C                       ldi     (VARIABLES) / 256
+      25/    9012 : 37                          xpah    P3
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 3 - 12/21/2015 22:25:18
 
 
-      27/    9025 : 3F                  	xppc 	p3
-      28/    9026 : 90 FE               stop:jmp 	stop
-      29/    9028 :                     
-      30/    9028 :                     	include source\screen.asm 									; screen I/O stuff.
-(1)    1/    9028 :                     ; ****************************************************************************************************************
-(1)    2/    9028 :                     ; ****************************************************************************************************************
-(1)    3/    9028 :                     ;
-(1)    4/    9028 :                     ;											Screen I/O, VTL-2 ROM
-(1)    5/    9028 :                     ;											=====================
-(1)    6/    9028 :                     ;
-(1)    7/    9028 :                     ;	Provides Character and String Input/Output functionality.
-(1)    8/    9028 :                     ;
-(1)    9/    9028 :                     ; ****************************************************************************************************************
-(1)   10/    9028 :                     ; ****************************************************************************************************************
-(1)   11/    9028 :                     
-(1)   12/    9028 :                     ; ****************************************************************************************************************
-(1)   13/    9028 :                     ; ****************************************************************************************************************
-(1)   14/    9028 :                     ;
-(1)   15/    9028 :                     ;	Print routine. Prints either character in A, or ASCIIZ string at P1 (if A is zero). Preserves all registers
-(1)   16/    9028 :                     ;	except if printing string, P1 points to the character after the NULL terminator.
-(1)   17/    9028 :                     ;
-(1)   18/    9028 :                     ;	Scrolls automatically. Understands character codes 32-255, 8 (Backspace) 12 (Clear Screen) 13 (Carriage
-(1)   19/    9028 :                     ;	Return). Others are currently ignored (except 0, see above). Note L/C values (97....) display those characters
-(1)   20/    9028 :                     ;	in the ROM font *not* lower case :)
-(1)   21/    9028 :                     ;
-(1)   22/    9028 :                     ; ****************************************************************************************************************
-(1)   23/    9028 :                     ; ****************************************************************************************************************
-(1)   24/    9028 :                     
-(1)   25/    9028 :                     Print:
-(1)   26/    9028 :                     	section 	Print
-(1)   27/    9028 :                     
-(1)   28/    9028 : (MACRO)             	pusha														; push registers on stack
-(1)   28/    9028 : CE FF                       st              @-1(p2)
-(1)   29/    902A : (MACRO)             	pushp 	p1
-(1)   29/    902A : 35                          xpah    P1
-(1)   29/    902B : CE FF                       st              @-1(p2)
-(1)   29/    902D : 31                          xpal    P1
-(1)   29/    902E : CE FF                       st              @-1(p2)
-(1)   30/    9030 : (MACRO)             	pushe
-(1)   30/    9030 : 40                          lde
-(1)   30/    9031 : CE FF                       st              @-1(p2)
-(1)   31/    9033 :                     
-(1)   32/    9033 : C2 03               	ld 		3(p2) 												; read character 
-(1)   33/    9035 : 9C 12               	jnz 	__PRPrintCharacterA 								; if non zero print it on its own.
-(1)   34/    9037 :                     
-(1)   35/    9037 :                     __PRPrintString:
-(1)   36/    9037 : C2 01               	ld 		1(p2) 												; restore original P1
-(1)   37/    9039 : 31                  	xpal 	p1
-(1)   38/    903A : C2 02               	ld 		2(p2)
-(1)   39/    903C : 35                  	xpah 	p1 													; read character at P1.
-(1)   40/    903D : C5 01               	ld 		@1(p1)
-(1)   41/    903F : 01                  	xae 														; save in E.
-(1)   42/    9040 : 35                  	xpah 	p1 													; write P1 back.
-(1)   43/    9041 : CA 02               	st 		2(p2)
-(1)   44/    9043 : 31                  	xpal 	p1
-(1)   45/    9044 : CA 01               	st 		1(p2)
-(1)   46/    9046 : 40                  	lde 														; get character from E
-(1)   47/    9047 : 98 46               	jz 		__PRExitNoCheck 									; exit without loop check.
-(1)   48/    9049 :                     ;
-(1)   49/    9049 :                     ;	Print character in A now ; throughout it is stored in E.
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 4 - 12/19/2015 22:10:15
+      25/    9013 : C4 90                       ldi     (VARIABLES) & 255
+      25/    9015 : 33                          xpal    P3
+      26/    9016 : C4 6C               	ldi 	codeStart & 255										; set where the program code is.
+      27/    9018 : CB 1C               	st 		ProgramBase-Variables(p3)
+      28/    901A : C4 93               	ldi 	codeStart / 256
+      29/    901C : CB 1D               	st 		ProgramBase+1-Variables(p3)
+      30/    901E : C4 00               	ldi 	0 													; not running a program
+      31/    9020 : CB 1E               	st 		IsRunning-Variables(p3)
+      32/    9022 :                     		
+      33/    9022 : (MACRO)             	setv 	'C',10 												; give some variables default values.
+      33/    9022 : C4 0A                       ldi     10
+      33/    9024 : CB 02                       st              ('C'-'A')(p3)
+      34/    9026 : (MACRO)             	setv 	'D',20
+      34/    9026 : C4 14                       ldi     20
+      34/    9028 : CB 03                       st              ('D'-'A')(p3)
+      35/    902A : (MACRO)             	setv 	'Z',33
+      35/    902A : C4 21                       ldi     33
+      35/    902C : CB 19                       st              ('Z'-'A')(p3)
+      36/    902E :                     
+      37/    902E : (MACRO)             	lpi 	p1,CodeStart+2 										; first actual code.
+      37/    902E : C4 93                       ldi     (CODESTART+2) / 256
+      37/    9030 : 35                          xpah    P1
+      37/    9031 : C4 6E                       ldi     (CODESTART+2) & 255
+      37/    9033 : 31                          xpal    P1
+      38/    9034 : (MACRO)             	lpi 	p3,ExecuteStatement-1
+      38/    9034 : C4 93                       ldi     (EXECUTESTATEMENT-1) / 256
+      38/    9036 : 37                          xpah    P3
+      38/    9037 : C4 74                       ldi     (EXECUTESTATEMENT-1) & 255
+      38/    9039 : 33                          xpal    P3
+      39/    903A : 3F                  	xppc 	p3
+      40/    903B :                     
+      41/    903B : 90 FE               stop:jmp 	stop
+      42/    903D :                     
+      43/    903D :                     	include source\screen.asm 									; screen I/O stuff.
+(1)    1/    903D :                     ; ****************************************************************************************************************
+(1)    2/    903D :                     ; ****************************************************************************************************************
+(1)    3/    903D :                     ;
+(1)    4/    903D :                     ;											Screen I/O, VTL-2 ROM
+(1)    5/    903D :                     ;											=====================
+(1)    6/    903D :                     ;
+(1)    7/    903D :                     ;	Provides Character and String Input/Output functionality.
+(1)    8/    903D :                     ;
+(1)    9/    903D :                     ; ****************************************************************************************************************
+(1)   10/    903D :                     ; ****************************************************************************************************************
+(1)   11/    903D :                     
+(1)   12/    903D :                     ; ****************************************************************************************************************
+(1)   13/    903D :                     ; ****************************************************************************************************************
+(1)   14/    903D :                     ;
+(1)   15/    903D :                     ;	Print routine. Prints either character in A, or ASCIIZ string at P1 (if A is zero). Preserves all registers
+(1)   16/    903D :                     ;	except if printing string, P1 points to the character after the NULL terminator.
+(1)   17/    903D :                     ;
+(1)   18/    903D :                     ;	Scrolls automatically. Understands character codes 32-255, 8 (Backspace) 12 (Clear Screen) 13 (Carriage
+(1)   19/    903D :                     ;	Return). Others are currently ignored (except 0, see above). Note L/C values (97....) display those characters
+(1)   20/    903D :                     ;	in the ROM font *not* lower case :)
+(1)   21/    903D :                     ;
+(1)   22/    903D :                     ; ****************************************************************************************************************
+(1)   23/    903D :                     ; ****************************************************************************************************************
+(1)   24/    903D :                     
+(1)   25/    903D :                     Print:
+(1)   26/    903D :                     	section 	Print
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 4 - 12/21/2015 22:25:18
 
 
-(1)   50/    9049 :                     ;
-(1)   51/    9049 :                     __PRPrintCharacterA:
-(1)   52/    9049 : 01                  	xae 														; save character in E.
-(1)   53/    904A :                     ;
-(1)   54/    904A :                     ;	Read cursor and set P1 to that address
-(1)   55/    904A :                     ;
-(1)   56/    904A : C4 0C               	ldi 	ScreenCursor/256 									; set P1 to point to screen cursor
-(1)   57/    904C : 35                  	xpah 	p1
-(1)   58/    904D : C4 80               	ldi 	ScreenCursor&255
-(1)   59/    904F : 31                  	xpal 	p1
-(1)   60/    9050 : C1 00               	ld 		0(p1) 												; put cursor position in P1.L
-(1)   61/    9052 : 31                  	xpal 	p1
-(1)   62/    9053 :                     ;
-(1)   63/    9053 :                     ;	Check for control
-(1)   64/    9053 :                     ;
-(1)   65/    9053 : 40                  	lde 														; look at character
-(1)   66/    9054 : D4 E0               	ani 	0xE0 												; is it code 0-31
-(1)   67/    9056 : 98 45               	jz 		__PRIsControlChar
-(1)   68/    9058 :                     ;
-(1)   69/    9058 :                     ;	Print non-control
-(1)   70/    9058 :                     ;
-(1)   71/    9058 : 40                  	lde 														; read character
-(1)   72/    9059 : 03                  	scl 														; CY/L clear if < 96
-(1)   73/    905A : FC 60               	cai 	96 
-(1)   74/    905C : 06                  	csa 	 	 												; skip if carry set
-(1)   75/    905D : E4 80               	xri 	0x80													
-(1)   76/    905F : 94 04               	jp 		__PRNotASCII
-(1)   77/    9061 : 40                  	lde 														; if ASCII make 6 bit.
-(1)   78/    9062 : D4 3F               	ani 	0x3F
-(1)   79/    9064 : 01                  	xae
-(1)   80/    9065 :                     __PRNotASCII:
-(1)   81/    9065 : 40                  	lde 														; get character.
-(1)   82/    9066 : C9 00               	st 		(p1) 												; save in shadow memory
-(1)   83/    9068 : 35                  	xpah 	p1 													; switch to VRAM, preserving A.
-(1)   84/    9069 : C4 00               	ldi 	0 													
-(1)   85/    906B : 35                  	xpah 	p1
-(1)   86/    906C : CD 01               	st 		@1(p1) 												; save in screen memory, advance write position.
-(1)   87/    906E :                     ;
-(1)   88/    906E :                     ;	Write cursor position back from P1.L
-(1)   89/    906E :                     ;
-(1)   90/    906E :                     __PRUpdateCursor:
-(1)   91/    906E : C4 0C               	ldi		ScreenCursor / 256 									; set P1 to point to screen cursor, restore position to P1
-(1)   92/    9070 : 35                  	xpah 	p1
-(1)   93/    9071 : C4 80               	ldi 	ScreenCursor & 255 
-(1)   94/    9073 : 31                  	xpal 	p1 													; after this, adjusted cursor position is in AC.
-(1)   95/    9074 : C9 00               	st 		(p1) 												; write back in cursor position
-(1)   96/    9076 : 94 13               	jp 		__PRExit 											; if position is off the bottom then scroll.
-(1)   97/    9078 :                     ;
-(1)   98/    9078 :                     ;	Scroll display
-(1)   99/    9078 :                     ;
-(1)  100/    9078 : C4 0C               	ldi 	(ScreenMirror+16) / 256 							; point P1 to 2nd line.
-(1)  101/    907A : 35                  	xpah 	p1
-(1)  102/    907B : C4 10               	ldi 	(ScreenMirror+16) & 255
-(1)  103/    907D :                     __PRScrollLoop:
-(1)  104/    907D : 31                  	xpal 	p1
-(1)  105/    907E : C1 00               	ld 		0(p1) 												; copy char to previous line
-(1)  106/    9080 : C9 F0               	st 		-16(p1)
-(1)  107/    9082 : C5 01               	ld 		@1(p1) 												; bump pointer.
-(1)  108/    9084 : 31                  	xpal 	p1
-(1)  109/    9085 : 94 F6               	jp 		__PRScrollLoop
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 5 - 12/19/2015 22:10:15
+(1)   27/    903D :                     
+(1)   28/    903D : (MACRO)             	pusha														; push registers on stack
+(1)   28/    903D : CE FF                       st              @-1(p2)
+(1)   29/    903F : (MACRO)             	pushp 	p1
+(1)   29/    903F : 35                          xpah    P1
+(1)   29/    9040 : CE FF                       st              @-1(p2)
+(1)   29/    9042 : 31                          xpal    P1
+(1)   29/    9043 : CE FF                       st              @-1(p2)
+(1)   30/    9045 : (MACRO)             	pushe
+(1)   30/    9045 : 40                          lde
+(1)   30/    9046 : CE FF                       st              @-1(p2)
+(1)   31/    9048 :                     
+(1)   32/    9048 : C2 03               	ld 		3(p2) 												; read character 
+(1)   33/    904A : 9C 12               	jnz 	__PRPrintCharacterA 								; if non zero print it on its own.
+(1)   34/    904C :                     
+(1)   35/    904C :                     __PRPrintString:
+(1)   36/    904C : C2 01               	ld 		1(p2) 												; restore original P1
+(1)   37/    904E : 31                  	xpal 	p1
+(1)   38/    904F : C2 02               	ld 		2(p2)
+(1)   39/    9051 : 35                  	xpah 	p1 													; read character at P1.
+(1)   40/    9052 : C5 01               	ld 		@1(p1)
+(1)   41/    9054 : 01                  	xae 														; save in E.
+(1)   42/    9055 : 35                  	xpah 	p1 													; write P1 back.
+(1)   43/    9056 : CA 02               	st 		2(p2)
+(1)   44/    9058 : 31                  	xpal 	p1
+(1)   45/    9059 : CA 01               	st 		1(p2)
+(1)   46/    905B : 40                  	lde 														; get character from E
+(1)   47/    905C : 98 46               	jz 		__PRExitNoCheck 									; exit without loop check.
+(1)   48/    905E :                     ;
+(1)   49/    905E :                     ;	Print character in A now ; throughout it is stored in E.
+(1)   50/    905E :                     ;
+(1)   51/    905E :                     __PRPrintCharacterA:
+(1)   52/    905E : 01                  	xae 														; save character in E.
+(1)   53/    905F :                     ;
+(1)   54/    905F :                     ;	Read cursor and set P1 to that address
+(1)   55/    905F :                     ;
+(1)   56/    905F : C4 0C               	ldi 	ScreenCursor/256 									; set P1 to point to screen cursor
+(1)   57/    9061 : 35                  	xpah 	p1
+(1)   58/    9062 : C4 80               	ldi 	ScreenCursor&255
+(1)   59/    9064 : 31                  	xpal 	p1
+(1)   60/    9065 : C1 00               	ld 		0(p1) 												; put cursor position in P1.L
+(1)   61/    9067 : 31                  	xpal 	p1
+(1)   62/    9068 :                     ;
+(1)   63/    9068 :                     ;	Check for control
+(1)   64/    9068 :                     ;
+(1)   65/    9068 : 40                  	lde 														; look at character
+(1)   66/    9069 : D4 E0               	ani 	0xE0 												; is it code 0-31
+(1)   67/    906B : 98 45               	jz 		__PRIsControlChar
+(1)   68/    906D :                     ;
+(1)   69/    906D :                     ;	Print non-control
+(1)   70/    906D :                     ;
+(1)   71/    906D : 40                  	lde 														; read character
+(1)   72/    906E : 03                  	scl 														; CY/L clear if < 96
+(1)   73/    906F : FC 60               	cai 	96 
+(1)   74/    9071 : 06                  	csa 	 	 												; skip if carry set
+(1)   75/    9072 : E4 80               	xri 	0x80													
+(1)   76/    9074 : 94 04               	jp 		__PRNotASCII
+(1)   77/    9076 : 40                  	lde 														; if ASCII make 6 bit.
+(1)   78/    9077 : D4 3F               	ani 	0x3F
+(1)   79/    9079 : 01                  	xae
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 5 - 12/21/2015 22:25:18
 
 
-(1)  110/    9087 : C4 70               	ldi 	128-16 												; clear from and move to last line
-(1)  111/    9089 : 90 3D               	jmp 	__PRClearFromMoveTo
-(1)  112/    908B :                     ;
-(1)  113/    908B :                     ;	Exit screen drawing routine.
-(1)  114/    908B :                     ;
-(1)  115/    908B :                     __PRExit:
-(1)  116/    908B : C2 03               	ld 		3(p2) 												; if character was zero, loop
-(1)  117/    908D : 98 A8               	jz 		__PRPrintString 									; back as printing string at P1.
-(1)  118/    908F :                     __PRExitNoCheck:
-(1)  119/    908F : (MACRO)             	pulle 														; restore registers
-(1)  119/    908F : C6 01                       ld              @1(p2)
-(1)  119/    9091 : 01                          xae
-(1)  120/    9092 : (MACRO)             	pullp 	p1
-(1)  120/    9092 : C6 01                       ld              @1(p2)
-(1)  120/    9094 : 31                          xpal    P1
-(1)  120/    9095 : C6 01                       ld              @1(p2)
-(1)  120/    9097 : 35                          xpah    P1
-(1)  121/    9098 : (MACRO)             	pulla
-(1)  121/    9098 : C6 01                       ld              @1(p2)
-(1)  122/    909A : 3F                  	xppc 	p3 													; return
-(1)  123/    909B : 90 8B               	jmp 	Print 												; make re-entrant.
-(1)  124/    909D :                     ;
-(1)  125/    909D :                     ;	Check for supported control characters 8 (Backspace) 12 (Clear) 13 (Carriage Return)
-(1)  126/    909D :                     ;
-(1)  127/    909D :                     __PRIsControlChar:
-(1)  128/    909D : 40                  	lde 														; restore character.
-(1)  129/    909E : E4 0D               	xri 	13 													; carriage return ? (13)
-(1)  130/    90A0 : 98 1B               	jz 		__PRIsReturn
-(1)  131/    90A2 : E4 01               	xri 	13!12 												; form feed ? (12)
-(1)  132/    90A4 : 98 20               	jz 		__PRClearScreen
-(1)  133/    90A6 : E4 04               	xri 	12!8 												; backspace ? (8)
-(1)  134/    90A8 : 9C E1               	jnz 	__PRExit 
-(1)  135/    90AA :                     ;
-(1)  136/    90AA :                     ;	Handle backspace (8)
-(1)  137/    90AA :                     ;
-(1)  138/    90AA : 31                  	xpal 	p1 													; check cursor position is zero
-(1)  139/    90AB : 98 DE               	jz 		__PRExit 											; if it is, cannot backspace so exit.
-(1)  140/    90AD : 31                  	xpal 	p1  												; put it back
-(1)  141/    90AE : C5 FF               	ld 		@-1(p1)												; move it back one
-(1)  142/    90B0 : C4 20               	ldi 	' '	 												; erase in shadow
-(1)  143/    90B2 : C9 00               	st 		(p1)
-(1)  144/    90B4 : C4 00               	ldi 	0 													; point P1 to VRAM
-(1)  145/    90B6 : 35                  	xpah 	p1
-(1)  146/    90B7 : C4 20               	ldi 	' '													; erase in VRAM
-(1)  147/    90B9 : C9 00               	st 		(p1)
-(1)  148/    90BB : 90 B1               	jmp 	__PRUpdateCursor 									; and exit
-(1)  149/    90BD :                     ;
-(1)  150/    90BD :                     ;	Handle carriage return (13)
-(1)  151/    90BD :                     ;
-(1)  152/    90BD :                     __PRIsReturn:
-(1)  153/    90BD : 31                  	xpal 	p1 													; cursor position in A
-(1)  154/    90BE : D4 F0               	ani 	0xF0 												; start of current line
-(1)  155/    90C0 : 02                  	ccl 														; down one line
-(1)  156/    90C1 : F4 10               	adi 	0x10 	
-(1)  157/    90C3 : 31                  	xpal 	p1 													; put it back in P1.
-(1)  158/    90C4 : 90 A8               	jmp 	__PRUpdateCursor
-(1)  159/    90C6 :                     ;
-(1)  160/    90C6 :                     ;	Handle clear screen (12)
-(1)  161/    90C6 :                     ;
-(1)  162/    90C6 :                     __PRClearScreen:
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 6 - 12/19/2015 22:10:15
+(1)   80/    907A :                     __PRNotASCII:
+(1)   81/    907A : 40                  	lde 														; get character.
+(1)   82/    907B : C9 00               	st 		(p1) 												; save in shadow memory
+(1)   83/    907D : 35                  	xpah 	p1 													; switch to VRAM, preserving A.
+(1)   84/    907E : C4 00               	ldi 	0 													
+(1)   85/    9080 : 35                  	xpah 	p1
+(1)   86/    9081 : CD 01               	st 		@1(p1) 												; save in screen memory, advance write position.
+(1)   87/    9083 :                     ;
+(1)   88/    9083 :                     ;	Write cursor position back from P1.L
+(1)   89/    9083 :                     ;
+(1)   90/    9083 :                     __PRUpdateCursor:
+(1)   91/    9083 : C4 0C               	ldi		ScreenCursor / 256 									; set P1 to point to screen cursor, restore position to P1
+(1)   92/    9085 : 35                  	xpah 	p1
+(1)   93/    9086 : C4 80               	ldi 	ScreenCursor & 255 
+(1)   94/    9088 : 31                  	xpal 	p1 													; after this, adjusted cursor position is in AC.
+(1)   95/    9089 : C9 00               	st 		(p1) 												; write back in cursor position
+(1)   96/    908B : 94 13               	jp 		__PRExit 											; if position is off the bottom then scroll.
+(1)   97/    908D :                     ;
+(1)   98/    908D :                     ;	Scroll display
+(1)   99/    908D :                     ;
+(1)  100/    908D : C4 0C               	ldi 	(ScreenMirror+16) / 256 							; point P1 to 2nd line.
+(1)  101/    908F : 35                  	xpah 	p1
+(1)  102/    9090 : C4 10               	ldi 	(ScreenMirror+16) & 255
+(1)  103/    9092 :                     __PRScrollLoop:
+(1)  104/    9092 : 31                  	xpal 	p1
+(1)  105/    9093 : C1 00               	ld 		0(p1) 												; copy char to previous line
+(1)  106/    9095 : C9 F0               	st 		-16(p1)
+(1)  107/    9097 : C5 01               	ld 		@1(p1) 												; bump pointer.
+(1)  108/    9099 : 31                  	xpal 	p1
+(1)  109/    909A : 94 F6               	jp 		__PRScrollLoop
+(1)  110/    909C : C4 70               	ldi 	128-16 												; clear from and move to last line
+(1)  111/    909E : 90 3D               	jmp 	__PRClearFromMoveTo
+(1)  112/    90A0 :                     ;
+(1)  113/    90A0 :                     ;	Exit screen drawing routine.
+(1)  114/    90A0 :                     ;
+(1)  115/    90A0 :                     __PRExit:
+(1)  116/    90A0 : C2 03               	ld 		3(p2) 												; if character was zero, loop
+(1)  117/    90A2 : 98 A8               	jz 		__PRPrintString 									; back as printing string at P1.
+(1)  118/    90A4 :                     __PRExitNoCheck:
+(1)  119/    90A4 : (MACRO)             	pulle 														; restore registers
+(1)  119/    90A4 : C6 01                       ld              @1(p2)
+(1)  119/    90A6 : 01                          xae
+(1)  120/    90A7 : (MACRO)             	pullp 	p1
+(1)  120/    90A7 : C6 01                       ld              @1(p2)
+(1)  120/    90A9 : 31                          xpal    P1
+(1)  120/    90AA : C6 01                       ld              @1(p2)
+(1)  120/    90AC : 35                          xpah    P1
+(1)  121/    90AD : (MACRO)             	pulla
+(1)  121/    90AD : C6 01                       ld              @1(p2)
+(1)  122/    90AF : 3F                  	xppc 	p3 													; return
+(1)  123/    90B0 : 90 8B               	jmp 	Print 												; make re-entrant.
+(1)  124/    90B2 :                     ;
+(1)  125/    90B2 :                     ;	Check for supported control characters 8 (Backspace) 12 (Clear) 13 (Carriage Return)
+(1)  126/    90B2 :                     ;
+(1)  127/    90B2 :                     __PRIsControlChar:
+(1)  128/    90B2 : 40                  	lde 														; restore character.
+(1)  129/    90B3 : E4 0D               	xri 	13 													; carriage return ? (13)
+(1)  130/    90B5 : 98 1B               	jz 		__PRIsReturn
+(1)  131/    90B7 : E4 01               	xri 	13!12 												; form feed ? (12)
+(1)  132/    90B9 : 98 20               	jz 		__PRClearScreen
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 6 - 12/21/2015 22:25:18
 
 
-(1)  163/    90C6 : C4 00               	ldi 	0 													; clear shadow memory from here.
-(1)  164/    90C8 :                     ;
-(1)  165/    90C8 :                     ;	From position A, clear the memory in the shadow screen to the end, copy the shadow screen to VRAM
-(1)  166/    90C8 :                     ;	then use position A as the new cursor position.
-(1)  167/    90C8 :                     ;
-(1)  168/    90C8 :                     __PRClearFromMoveTo:
-(1)  169/    90C8 : CE FF               	st 		@-1(p2) 											; save this position, the cursor goes here.
-(1)  170/    90CA :                     __PRClearLoop:
-(1)  171/    90CA : 31                  	xpal 	p1 													; save position in P1.
-(1)  172/    90CB : C4 20               	ldi 	' '													; write space there.
-(1)  173/    90CD : CD 01               	st 		@1(p1)
-(1)  174/    90CF : 31                  	xpal 	p1
-(1)  175/    90D0 : 94 F8               	jp 		__PRClearLoop 										; until reached shadow memory start.
-(1)  176/    90D2 : C4 00               	ldi 	0 													; now copy shadow memory to screen memory.
-(1)  177/    90D4 :                     __PRCopy:
-(1)  178/    90D4 : 31                  	xpal 	p1 													; set up P1.L
-(1)  179/    90D5 : C4 0C               	ldi 	ScreenMirror/256 									; point to shadow memory.
-(1)  180/    90D7 : 35                  	xpah 	p1 													
-(1)  181/    90D8 : C1 00               	ld 		(p1) 												; read shadow memory
-(1)  182/    90DA : 35                  	xpah 	p1 													; zero P1.H preserving A
-(1)  183/    90DB : C4 00               	ldi 	0
-(1)  184/    90DD : 35                  	xpah 	p1
-(1)  185/    90DE : CD 01               	st 		@1(p1) 												; save and increment p1
-(1)  186/    90E0 : 31                  	xpal 	p1 
-(1)  187/    90E1 : 94 F1               	jp 		__PRCopy 											; keep doing till all copied.
-(1)  188/    90E3 : C6 01               	ld 		@1(p2) 												; read cursor position
-(1)  189/    90E5 : 31                  	xpal 	p1 													; put in P1.L
-(1)  190/    90E6 : 90 86               	jmp 	__PRUpdateCursor
-(1)  191/    90E8 :                     
-(1)  192/    90E8 :                     	endsection 	Print
-(1)  193/    90E8 :                     
-(1)  194/    90E8 :                     ; ****************************************************************************************************************
-(1)  195/    90E8 :                     ; ****************************************************************************************************************
-(1)  196/    90E8 :                     ;
-(1)  197/    90E8 :                     ;		Input a single character into A. Case is converted to Upper. All registers preserved except A
-(1)  198/    90E8 :                     ;
-(1)  199/    90E8 :                     ; ****************************************************************************************************************
-(1)  200/    90E8 :                     ; ****************************************************************************************************************
-(1)  201/    90E8 :                     
-(1)  202/    90E8 :                     GetChar:
-(1)  203/    90E8 :                     	section 	GetChar
-(1)  204/    90E8 : C4 08               	ldi 	0x8 												; set P1 to $8xx, and save P1.H
-(1)  205/    90EA : 35                  	xpah 	p1
-(1)  206/    90EB : CE FF               	st 		@-1(p2)
-(1)  207/    90ED :                     __GCWaitKey: 													; wait for key press
-(1)  208/    90ED : C1 00               	ld 		0(p1)
-(1)  209/    90EF : 94 FC               	jp 		__GCWaitKey
-(1)  210/    90F1 : D4 7F               	ani	 	0x7F 												; throw away the upper bit.
-(1)  211/    90F3 : CA FF               	st 		-1(p2) 												; save it below stack
-(1)  212/    90F5 :                     __GCWaitRelease:
-(1)  213/    90F5 : C1 00               	ld 		0(p1) 												; wait for release
-(1)  214/    90F7 : D4 80               	ani 	0x80
-(1)  215/    90F9 : 9C FA               	jnz 	__GCWaitRelease
-(1)  216/    90FB : C6 01               	ld 		@1(p2) 												; restore P1.H
-(1)  217/    90FD : 35                  	xpah 	p1
-(1)  218/    90FE : C2 FE               	ld 		-2(p2) 												; restore saved value
-(1)  219/    9100 : 02                  	ccl
-(1)  220/    9101 : F4 20               	adi 	0x20												; will make lower case -ve
-(1)  221/    9103 : 94 02               	jp 		__GCNotLower
-(1)  222/    9105 : FC 20               	cai 	0x20 												; capitalise
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 7 - 12/19/2015 22:10:15
+(1)  133/    90BB : E4 04               	xri 	12!8 												; backspace ? (8)
+(1)  134/    90BD : 9C E1               	jnz 	__PRExit 
+(1)  135/    90BF :                     ;
+(1)  136/    90BF :                     ;	Handle backspace (8)
+(1)  137/    90BF :                     ;
+(1)  138/    90BF : 31                  	xpal 	p1 													; check cursor position is zero
+(1)  139/    90C0 : 98 DE               	jz 		__PRExit 											; if it is, cannot backspace so exit.
+(1)  140/    90C2 : 31                  	xpal 	p1  												; put it back
+(1)  141/    90C3 : C5 FF               	ld 		@-1(p1)												; move it back one
+(1)  142/    90C5 : C4 20               	ldi 	' '	 												; erase in shadow
+(1)  143/    90C7 : C9 00               	st 		(p1)
+(1)  144/    90C9 : C4 00               	ldi 	0 													; point P1 to VRAM
+(1)  145/    90CB : 35                  	xpah 	p1
+(1)  146/    90CC : C4 20               	ldi 	' '													; erase in VRAM
+(1)  147/    90CE : C9 00               	st 		(p1)
+(1)  148/    90D0 : 90 B1               	jmp 	__PRUpdateCursor 									; and exit
+(1)  149/    90D2 :                     ;
+(1)  150/    90D2 :                     ;	Handle carriage return (13)
+(1)  151/    90D2 :                     ;
+(1)  152/    90D2 :                     __PRIsReturn:
+(1)  153/    90D2 : 31                  	xpal 	p1 													; cursor position in A
+(1)  154/    90D3 : D4 F0               	ani 	0xF0 												; start of current line
+(1)  155/    90D5 : 02                  	ccl 														; down one line
+(1)  156/    90D6 : F4 10               	adi 	0x10 	
+(1)  157/    90D8 : 31                  	xpal 	p1 													; put it back in P1.
+(1)  158/    90D9 : 90 A8               	jmp 	__PRUpdateCursor
+(1)  159/    90DB :                     ;
+(1)  160/    90DB :                     ;	Handle clear screen (12)
+(1)  161/    90DB :                     ;
+(1)  162/    90DB :                     __PRClearScreen:
+(1)  163/    90DB : C4 00               	ldi 	0 													; clear shadow memory from here.
+(1)  164/    90DD :                     ;
+(1)  165/    90DD :                     ;	From position A, clear the memory in the shadow screen to the end, copy the shadow screen to VRAM
+(1)  166/    90DD :                     ;	then use position A as the new cursor position.
+(1)  167/    90DD :                     ;
+(1)  168/    90DD :                     __PRClearFromMoveTo:
+(1)  169/    90DD : CE FF               	st 		@-1(p2) 											; save this position, the cursor goes here.
+(1)  170/    90DF :                     __PRClearLoop:
+(1)  171/    90DF : 31                  	xpal 	p1 													; save position in P1.
+(1)  172/    90E0 : C4 20               	ldi 	' '													; write space there.
+(1)  173/    90E2 : CD 01               	st 		@1(p1)
+(1)  174/    90E4 : 31                  	xpal 	p1
+(1)  175/    90E5 : 94 F8               	jp 		__PRClearLoop 										; until reached shadow memory start.
+(1)  176/    90E7 : C4 00               	ldi 	0 													; now copy shadow memory to screen memory.
+(1)  177/    90E9 :                     __PRCopy:
+(1)  178/    90E9 : 31                  	xpal 	p1 													; set up P1.L
+(1)  179/    90EA : C4 0C               	ldi 	ScreenMirror/256 									; point to shadow memory.
+(1)  180/    90EC : 35                  	xpah 	p1 													
+(1)  181/    90ED : C1 00               	ld 		(p1) 												; read shadow memory
+(1)  182/    90EF : 35                  	xpah 	p1 													; zero P1.H preserving A
+(1)  183/    90F0 : C4 00               	ldi 	0
+(1)  184/    90F2 : 35                  	xpah 	p1
+(1)  185/    90F3 : CD 01               	st 		@1(p1) 												; save and increment p1
+(1)  186/    90F5 : 31                  	xpal 	p1 
+(1)  187/    90F6 : 94 F1               	jp 		__PRCopy 											; keep doing till all copied.
+(1)  188/    90F8 : C6 01               	ld 		@1(p2) 												; read cursor position
+(1)  189/    90FA : 31                  	xpal 	p1 													; put in P1.L
+(1)  190/    90FB : 90 86               	jmp 	__PRUpdateCursor
+(1)  191/    90FD :                     
+(1)  192/    90FD :                     	endsection 	Print
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 7 - 12/21/2015 22:25:18
 
 
-(1)  223/    9107 :                     __GCNotLower:
-(1)  224/    9107 : F4 E0               	adi 	0xE0 												; fix up.
-(1)  225/    9109 : 3F                  	xppc 	p3 													; return
-(1)  226/    910A : 90 DC               	jmp 	GetChar 											; make re-entrant
-(1)  227/    910C :                     	endsection 	GetChar
-(1)  228/    910C :                     
-(1)  229/    910C :                     ; ****************************************************************************************************************
-(1)  230/    910C :                     ; ****************************************************************************************************************
-(1)  231/    910C :                     ;
-(1)  232/    910C :                     ;			Read an ASCIIZ string from keyboard into P1 of length A maximum (excludes NULL terminator)
-(1)  233/    910C :                     ;
-(1)  234/    910C :                     ; ****************************************************************************************************************
-(1)  235/    910C :                     ; ****************************************************************************************************************
-(1)  236/    910C :                     
-(1)  237/    910C :                     GetString:
-(1)  238/    910C :                     	section GetString
-(1)  239/    910C : (MACRO)             	pusha 														; save A,P3,E
-(1)  239/    910C : CE FF                       st              @-1(p2)
-(1)  240/    910E : (MACRO)             	pushp 	p3
-(1)  240/    910E : 37                          xpah    P3
-(1)  240/    910F : CE FF                       st              @-1(p2)
-(1)  240/    9111 : 33                          xpal    P3
-(1)  240/    9112 : CE FF                       st              @-1(p2)
-(1)  241/    9114 : (MACRO)             	pushe 
-(1)  241/    9114 : 40                          lde
-(1)  241/    9115 : CE FF                       st              @-1(p2)
-(1)  242/    9117 : C4 00               	ldi 	0 													; set E (current position) to A.
-(1)  243/    9119 : 01                  	xae
-(1)  244/    911A :                     __GSLoop:
-(1)  245/    911A : (MACRO)             	lpi 	p3,Print-1 											; print the prompt (half coloured square)
-(1)  245/    911A : C4 90                       ldi     (PRINT-1) / 256
-(1)  245/    911C : 37                          xpah    P3
-(1)  245/    911D : C4 27                       ldi     (PRINT-1) & 255
-(1)  245/    911F : 33                          xpal    P3
-(1)  246/    9120 : C4 9B               	ldi 	155
-(1)  247/    9122 : 3F                  	xppc 	p3
-(1)  248/    9123 : (MACRO)             	lpi 	p3,GetChar-1 										; get a character
-(1)  248/    9123 : C4 90                       ldi     (GETCHAR-1) / 256
-(1)  248/    9125 : 37                          xpah    P3
-(1)  248/    9126 : C4 E7                       ldi     (GETCHAR-1) & 255
-(1)  248/    9128 : 33                          xpal    P3
-(1)  249/    9129 : 3F                  	xppc 	p3
-(1)  250/    912A : C9 80               	st 		-0x80(p1) 											; save it in the current position.
-(1)  251/    912C : (MACRO)             	lpi 	p3,Print-1 											; erase the prompt with backspace.
-(1)  251/    912C : C4 90                       ldi     (PRINT-1) / 256
-(1)  251/    912E : 37                          xpah    P3
-(1)  251/    912F : C4 27                       ldi     (PRINT-1) & 255
-(1)  251/    9131 : 33                          xpal    P3
-(1)  252/    9132 : C4 08               	ldi 	8
-(1)  253/    9134 : 3F                  	xppc 	p3
-(1)  254/    9135 : C1 80               	ld 		-0x80(p1) 											; re-read character
-(1)  255/    9137 : D4 E0               	ani 	0xE0 												; check if control key.
-(1)  256/    9139 : 98 0F               	jz 		__GSControlKey 
-(1)  257/    913B : 40                  	lde 														; get current position.
-(1)  258/    913C : E2 03               	xor 	3(p2) 												; reached maximum length of buffer ?
-(1)  259/    913E : 98 DA               	jz 		__GSLoop 											; if so, ignore the key and go round again.
-(1)  260/    9140 : C1 80               	ld 		-0x80(p1) 											; get character and print it
-(1)  261/    9142 : 3F                  	xppc 	p3
-(1)  262/    9143 : C4 01               	ldi 	1 													; increment E
-(1)  263/    9145 : 02                  	ccl
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 8 - 12/19/2015 22:10:15
+(1)  193/    90FD :                     
+(1)  194/    90FD :                     ; ****************************************************************************************************************
+(1)  195/    90FD :                     ; ****************************************************************************************************************
+(1)  196/    90FD :                     ;
+(1)  197/    90FD :                     ;		Input a single character into A. Case is converted to Upper. All registers preserved except A
+(1)  198/    90FD :                     ;
+(1)  199/    90FD :                     ; ****************************************************************************************************************
+(1)  200/    90FD :                     ; ****************************************************************************************************************
+(1)  201/    90FD :                     
+(1)  202/    90FD :                     GetChar:
+(1)  203/    90FD :                     	section 	GetChar
+(1)  204/    90FD : C4 08               	ldi 	0x8 												; set P1 to $8xx, and save P1.H
+(1)  205/    90FF : 35                  	xpah 	p1
+(1)  206/    9100 : CE FF               	st 		@-1(p2)
+(1)  207/    9102 :                     __GCWaitKey: 													; wait for key press
+(1)  208/    9102 : C1 00               	ld 		0(p1)
+(1)  209/    9104 : 94 FC               	jp 		__GCWaitKey
+(1)  210/    9106 : D4 7F               	ani	 	0x7F 												; throw away the upper bit.
+(1)  211/    9108 : CA FF               	st 		-1(p2) 												; save it below stack
+(1)  212/    910A :                     __GCWaitRelease:
+(1)  213/    910A : C1 00               	ld 		0(p1) 												; wait for release
+(1)  214/    910C : D4 80               	ani 	0x80
+(1)  215/    910E : 9C FA               	jnz 	__GCWaitRelease
+(1)  216/    9110 : C6 01               	ld 		@1(p2) 												; restore P1.H
+(1)  217/    9112 : 35                  	xpah 	p1
+(1)  218/    9113 : C2 FE               	ld 		-2(p2) 												; restore saved value
+(1)  219/    9115 : 02                  	ccl
+(1)  220/    9116 : F4 20               	adi 	0x20												; will make lower case -ve
+(1)  221/    9118 : 94 02               	jp 		__GCNotLower
+(1)  222/    911A : FC 20               	cai 	0x20 												; capitalise
+(1)  223/    911C :                     __GCNotLower:
+(1)  224/    911C : F4 E0               	adi 	0xE0 												; fix up.
+(1)  225/    911E : 3F                  	xppc 	p3 													; return
+(1)  226/    911F : 90 DC               	jmp 	GetChar 											; make re-entrant
+(1)  227/    9121 :                     	endsection 	GetChar
+(1)  228/    9121 :                     
+(1)  229/    9121 :                     ; ****************************************************************************************************************
+(1)  230/    9121 :                     ; ****************************************************************************************************************
+(1)  231/    9121 :                     ;
+(1)  232/    9121 :                     ;			Read an ASCIIZ string from keyboard into P1 of length A maximum (excludes NULL terminator)
+(1)  233/    9121 :                     ;
+(1)  234/    9121 :                     ; ****************************************************************************************************************
+(1)  235/    9121 :                     ; ****************************************************************************************************************
+(1)  236/    9121 :                     
+(1)  237/    9121 :                     GetString:
+(1)  238/    9121 :                     	section GetString
+(1)  239/    9121 : (MACRO)             	pusha 														; save A,P3,E
+(1)  239/    9121 : CE FF                       st              @-1(p2)
+(1)  240/    9123 : (MACRO)             	pushp 	p3
+(1)  240/    9123 : 37                          xpah    P3
+(1)  240/    9124 : CE FF                       st              @-1(p2)
+(1)  240/    9126 : 33                          xpal    P3
+(1)  240/    9127 : CE FF                       st              @-1(p2)
+(1)  241/    9129 : (MACRO)             	pushe 
+(1)  241/    9129 : 40                          lde
+(1)  241/    912A : CE FF                       st              @-1(p2)
+(1)  242/    912C : C4 00               	ldi 	0 													; set E (current position) to A.
+(1)  243/    912E : 01                  	xae
+(1)  244/    912F :                     __GSLoop:
+(1)  245/    912F : (MACRO)             	lpi 	p3,Print-1 											; print the prompt (half coloured square)
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 8 - 12/21/2015 22:25:18
 
 
-(1)  264/    9146 : 70                  	ade
-(1)  265/    9147 : 01                  	xae
-(1)  266/    9148 : 90 D0               	jmp 	__GSLoop 											; and go round again.
-(1)  267/    914A :                     ;
-(1)  268/    914A :                     ;	Handle control keys (0x00-0x1F)
-(1)  269/    914A :                     ;
-(1)  270/    914A :                     __GSControlKey:
-(1)  271/    914A : C1 80               	ld 		-0x80(p1) 											; get typed in key
-(1)  272/    914C : E4 08               	xri 	8 													; check for backspace.
-(1)  273/    914E : 98 17               	jz 		__GSBackspace 			
-(1)  274/    9150 : E4 05               	xri 	8!13 												; check for CR
-(1)  275/    9152 : 9C C6               	jnz 	__GSLoop 											; if not, ignore the key.
-(1)  276/    9154 :                     ;
-(1)  277/    9154 :                     ;	Carriage Return, ending input.
-(1)  278/    9154 :                     ;
-(1)  279/    9154 : C9 80               	st 		-0x80(p1) 											; replace the CR written with NULL terminator.
-(1)  280/    9156 : C4 0D               	ldi 	13 													; print CR
-(1)  281/    9158 : 3F                  	xppc 	p3
-(1)  282/    9159 : (MACRO)             	pulle 														; restore E,P3,A
-(1)  282/    9159 : C6 01                       ld              @1(p2)
-(1)  282/    915B : 01                          xae
-(1)  283/    915C : (MACRO)             	pullp	p3
-(1)  283/    915C : C6 01                       ld              @1(p2)
-(1)  283/    915E : 33                          xpal    P3
-(1)  283/    915F : C6 01                       ld              @1(p2)
-(1)  283/    9161 : 37                          xpah    P3
-(1)  284/    9162 : (MACRO)             	pulla
-(1)  284/    9162 : C6 01                       ld              @1(p2)
-(1)  285/    9164 : 3F                  	xppc 	p3 													; return
-(1)  286/    9165 : 90 A5               	jmp 	GetString 											; make re-entrant (probably unneccessary !!)
-(1)  287/    9167 :                     ;
-(1)  288/    9167 :                     ;	Backspace entered
-(1)  289/    9167 :                     ;
-(1)  290/    9167 :                     __GSBackspace
-(1)  291/    9167 : 40                  	lde 														; if E = 0 we can't backspace any further.
-(1)  292/    9168 : 98 B0               	jz 		__GSLoop
-(1)  293/    916A : C4 08               	ldi 	8 													; backspace on screen
-(1)  294/    916C : 3F                  	xppc 	p3
-(1)  295/    916D : C4 FF               	ldi 	0xFF 												; decrement E
-(1)  296/    916F : 02                  	ccl
-(1)  297/    9170 : 70                  	ade
-(1)  298/    9171 : 01                  	xae
-(1)  299/    9172 : 90 A6               	jmp 	__GSLoop 											; and go round again.
-(1)  300/    9174 :                     
-(1)  301/    9174 :                     	endsection GetString
-(1)  302/    9174 :                     
-      31/    9174 :                     	include source\errors.asm 									; errors
-(1)    1/    9174 :                     ; ****************************************************************************************************************
-(1)    2/    9174 :                     ; ****************************************************************************************************************
-(1)    3/    9174 :                     ;
-(1)    4/    9174 :                     ;												Errors
-(1)    5/    9174 :                     ;	
-(1)    6/    9174 :                     ; ****************************************************************************************************************
-(1)    7/    9174 :                     ; ****************************************************************************************************************
-(1)    8/    9174 :                     
-(1)    9/    9174 : =0x4                ERROR_Term = 4 												; Error in a term.
-(1)   10/    9174 : =0x7                ERROR_DivideZero = 7 										; Division by zero
-      32/    9174 :                     	include source\expression.asm 								; expression evaluator (e.g. RHS)
-(1)    1/    9174 :                     ; ****************************************************************************************************************
-(1)    2/    9174 :                     ; ****************************************************************************************************************
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 9 - 12/19/2015 22:10:15
+(1)  245/    912F : C4 90                       ldi     (PRINT-1) / 256
+(1)  245/    9131 : 37                          xpah    P3
+(1)  245/    9132 : C4 3C                       ldi     (PRINT-1) & 255
+(1)  245/    9134 : 33                          xpal    P3
+(1)  246/    9135 : C4 9B               	ldi 	155
+(1)  247/    9137 : 3F                  	xppc 	p3
+(1)  248/    9138 : (MACRO)             	lpi 	p3,GetChar-1 										; get a character
+(1)  248/    9138 : C4 90                       ldi     (GETCHAR-1) / 256
+(1)  248/    913A : 37                          xpah    P3
+(1)  248/    913B : C4 FC                       ldi     (GETCHAR-1) & 255
+(1)  248/    913D : 33                          xpal    P3
+(1)  249/    913E : 3F                  	xppc 	p3
+(1)  250/    913F : C9 80               	st 		-0x80(p1) 											; save it in the current position.
+(1)  251/    9141 : (MACRO)             	lpi 	p3,Print-1 											; erase the prompt with backspace.
+(1)  251/    9141 : C4 90                       ldi     (PRINT-1) / 256
+(1)  251/    9143 : 37                          xpah    P3
+(1)  251/    9144 : C4 3C                       ldi     (PRINT-1) & 255
+(1)  251/    9146 : 33                          xpal    P3
+(1)  252/    9147 : C4 08               	ldi 	8
+(1)  253/    9149 : 3F                  	xppc 	p3
+(1)  254/    914A : C1 80               	ld 		-0x80(p1) 											; re-read character
+(1)  255/    914C : D4 E0               	ani 	0xE0 												; check if control key.
+(1)  256/    914E : 98 0F               	jz 		__GSControlKey 
+(1)  257/    9150 : 40                  	lde 														; get current position.
+(1)  258/    9151 : E2 03               	xor 	3(p2) 												; reached maximum length of buffer ?
+(1)  259/    9153 : 98 DA               	jz 		__GSLoop 											; if so, ignore the key and go round again.
+(1)  260/    9155 : C1 80               	ld 		-0x80(p1) 											; get character and print it
+(1)  261/    9157 : 3F                  	xppc 	p3
+(1)  262/    9158 : C4 01               	ldi 	1 													; increment E
+(1)  263/    915A : 02                  	ccl
+(1)  264/    915B : 70                  	ade
+(1)  265/    915C : 01                  	xae
+(1)  266/    915D : 90 D0               	jmp 	__GSLoop 											; and go round again.
+(1)  267/    915F :                     ;
+(1)  268/    915F :                     ;	Handle control keys (0x00-0x1F)
+(1)  269/    915F :                     ;
+(1)  270/    915F :                     __GSControlKey:
+(1)  271/    915F : C1 80               	ld 		-0x80(p1) 											; get typed in key
+(1)  272/    9161 : E4 08               	xri 	8 													; check for backspace.
+(1)  273/    9163 : 98 17               	jz 		__GSBackspace 			
+(1)  274/    9165 : E4 05               	xri 	8!13 												; check for CR
+(1)  275/    9167 : 9C C6               	jnz 	__GSLoop 											; if not, ignore the key.
+(1)  276/    9169 :                     ;
+(1)  277/    9169 :                     ;	Carriage Return, ending input.
+(1)  278/    9169 :                     ;
+(1)  279/    9169 : C9 80               	st 		-0x80(p1) 											; replace the CR written with NULL terminator.
+(1)  280/    916B : C4 0D               	ldi 	13 													; print CR
+(1)  281/    916D : 3F                  	xppc 	p3
+(1)  282/    916E : (MACRO)             	pulle 														; restore E,P3,A
+(1)  282/    916E : C6 01                       ld              @1(p2)
+(1)  282/    9170 : 01                          xae
+(1)  283/    9171 : (MACRO)             	pullp	p3
+(1)  283/    9171 : C6 01                       ld              @1(p2)
+(1)  283/    9173 : 33                          xpal    P3
+(1)  283/    9174 : C6 01                       ld              @1(p2)
+(1)  283/    9176 : 37                          xpah    P3
+(1)  284/    9177 : (MACRO)             	pulla
+(1)  284/    9177 : C6 01                       ld              @1(p2)
+(1)  285/    9179 : 3F                  	xppc 	p3 													; return
+(1)  286/    917A : 90 A5               	jmp 	GetString 											; make re-entrant (probably unneccessary !!)
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 9 - 12/21/2015 22:25:18
 
 
-(1)    3/    9174 :                     ;
-(1)    4/    9174 :                     ;	  Evaluate expression at P1. On exit either CY/L = 0, E = Error code, or CY/L = 1, E = Result ; A = S
-(1)    5/    9174 :                     ;
-(1)    6/    9174 :                     ;	Re-entrant
-(1)    7/    9174 :                     ;	
-(1)    8/    9174 :                     ; ****************************************************************************************************************
-(1)    9/    9174 :                     ; ****************************************************************************************************************
-(1)   10/    9174 :                     
-(1)   11/    9174 :                     TestExpr:
-(1)   12/    9174 : 28 31 2C 32 29 2D   	db 	"(1,2)-11",0
+(1)  287/    917C :                     ;
+(1)  288/    917C :                     ;	Backspace entered
+(1)  289/    917C :                     ;
+(1)  290/    917C :                     __GSBackspace
+(1)  291/    917C : 40                  	lde 														; if E = 0 we can't backspace any further.
+(1)  292/    917D : 98 B0               	jz 		__GSLoop
+(1)  293/    917F : C4 08               	ldi 	8 													; backspace on screen
+(1)  294/    9181 : 3F                  	xppc 	p3
+(1)  295/    9182 : C4 FF               	ldi 	0xFF 												; decrement E
+(1)  296/    9184 : 02                  	ccl
+(1)  297/    9185 : 70                  	ade
+(1)  298/    9186 : 01                  	xae
+(1)  299/    9187 : 90 A6               	jmp 	__GSLoop 											; and go round again.
+(1)  300/    9189 :                     
+(1)  301/    9189 :                     	endsection GetString
+(1)  302/    9189 :                     
+      44/    9189 :                     	include source\errors.asm 									; errors
+(1)    1/    9189 :                     ; ****************************************************************************************************************
+(1)    2/    9189 :                     ; ****************************************************************************************************************
+(1)    3/    9189 :                     ;
+(1)    4/    9189 :                     ;												Errors
+(1)    5/    9189 :                     ;	
+(1)    6/    9189 :                     ; ****************************************************************************************************************
+(1)    7/    9189 :                     ; ****************************************************************************************************************
+(1)    8/    9189 :                     
+(1)    9/    9189 : =0x4                ERROR_Term = 4 												; Error in a term.
+(1)   10/    9189 : =0x7                ERROR_DivideZero = 7 										; Division by zero
+      45/    9189 :                     	include source\expression.asm 								; expression evaluator (e.g. RHS)
+(1)    1/    9189 :                     ; ****************************************************************************************************************
+(1)    2/    9189 :                     ; ****************************************************************************************************************
+(1)    3/    9189 :                     ;
+(1)    4/    9189 :                     ;	  Evaluate expression at P1. On exit either CY/L = 0, E = Error code, or CY/L = 1, E = Result ; A = S
+(1)    5/    9189 :                     ;
+(1)    6/    9189 :                     ;	Re-entrant
+(1)    7/    9189 :                     ;	
+(1)    8/    9189 :                     ; ****************************************************************************************************************
+(1)    9/    9189 :                     ; ****************************************************************************************************************
+(1)   10/    9189 :                     
+(1)   11/    9189 :                     TestExpr:
+(1)   12/    9189 : 28 31 2C 32 29 2D   	db 	"(1,2)-11",0
                     31 31 00 
-(1)   13/    917D :                     
-(1)   14/    917D :                     EvaluateExpression:
-(1)   15/    917D : (MACRO)             	pushp 	p3 													; save P3 on stack
-(1)   15/    917D : 37                          xpah    P3
-(1)   15/    917E : CE FF                       st              @-1(p2)
-(1)   15/    9180 : 33                          xpal    P3
-(1)   15/    9181 : CE FF                       st              @-1(p2)
-(1)   16/    9183 : C4 00               	ldi 	0 													; push 0 onto stack (current value) will be restored
-(1)   17/    9185 : CE FF               	st 		@-1(p2) 											; to E on exit.
-(1)   18/    9187 : C4 2B               	ldi 	'+' 												; push pending operation onto stack - this means we
-(1)   19/    9189 : CE FF               	st 		@-1(p2) 											; have 'faked' a 0+ to start the expression.
-(1)   20/    918B :                     
-(1)   21/    918B :                     ; ****************************************************************************************************************
-(1)   22/    918B :                     ;													Get a new term 
-(1)   23/    918B :                     ; ****************************************************************************************************************
-(1)   24/    918B :                     
-(1)   25/    918B :                     __EE_NextTerm:
-(1)   26/    918B :                     __EE_SkipSpace:
-(1)   27/    918B : C1 00               	ld 		(p1) 												; check end of string
-(1)   28/    918D : 98 7D               	jz 		__EE_TermError
-(1)   29/    918F : C5 01               	ld 		@1(p1) 												; fetch and skip
-(1)   30/    9191 : E4 20               	xri 	' ' 												; if space, keep going.
-(1)   31/    9193 : 98 F6               	jz 		__EE_SkipSpace
-(1)   32/    9195 :                     
-(1)   33/    9195 : C5 FF               	ld 		@-1(p1) 											; backtrack and reload
-(1)   34/    9197 : 02                  	ccl
-(1)   35/    9198 : F4 A5               	adi 	255-'Z'												; will be +ve if >= 'Z'
-(1)   36/    919A : 94 70               	jp 		__EE_TermError 										; which is an error ($,!,',0-9,A-Z)
-(1)   37/    919C : F4 1A               	adi 	26 													; will be +ve if >= 'A'
-(1)   38/    919E : 94 28               	jp 		__EE_IsVariable 									; will contain 0-25, conveniently the offset.
-(1)   39/    91A0 : F4 07               	adi 	7
-(1)   40/    91A2 : 94 68               	jp 		__EE_TermError 										; will be +ve if between 9 and A, error.
-(1)   41/    91A4 : F4 0A               	adi 	10 				
-(1)   42/    91A6 : D4 80               	ani 	0x80
-(1)   43/    91A8 : 9C 2E               	jnz 	__EE_CheckPuncTerms 								; if -ve check for punctuation terms (! and 'x')
-(1)   44/    91AA :                     
-(1)   45/    91AA :                     ; ****************************************************************************************************************
-(1)   46/    91AA :                     ;										Constant term. P1 points to first digit
-(1)   47/    91AA :                     ; ****************************************************************************************************************
-(1)   48/    91AA :                     
-(1)   49/    91AA : 01                  	xae 														; zero E, the result.
-(1)   50/    91AB :                     __EE_ConstantTerm:
-(1)   51/    91AB : 02                  	ccl
-(1)   52/    91AC : 40                  	lde
-(1)   53/    91AD : 70                  	ade 														; x 2
-(1)   54/    91AE : 70                  	ade															; x 3
-(1)   55/    91AF : 70                  	ade															; x 4
-(1)   56/    91B0 : 70                  	ade															; x 5
-(1)   57/    91B1 : 01                  	xae 														; put x 5 in E
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 10 - 12/19/2015 22:10:15
+(1)   13/    9192 :                     
+(1)   14/    9192 :                     EvaluateExpression:
+(1)   15/    9192 : (MACRO)             	pushp 	p3 													; save P3 on stack
+(1)   15/    9192 : 37                          xpah    P3
+(1)   15/    9193 : CE FF                       st              @-1(p2)
+(1)   15/    9195 : 33                          xpal    P3
+(1)   15/    9196 : CE FF                       st              @-1(p2)
+(1)   16/    9198 : C4 00               	ldi 	0 													; push 0 onto stack (current value) will be restored
+(1)   17/    919A : CE FF               	st 		@-1(p2) 											; to E on exit.
+(1)   18/    919C : C4 2B               	ldi 	'+' 												; push pending operation onto stack - this means we
+(1)   19/    919E : CE FF               	st 		@-1(p2) 											; have 'faked' a 0+ to start the expression.
+(1)   20/    91A0 :                     
+(1)   21/    91A0 :                     ; ****************************************************************************************************************
+(1)   22/    91A0 :                     ;													Get a new term 
+(1)   23/    91A0 :                     ; ****************************************************************************************************************
+(1)   24/    91A0 :                     
+(1)   25/    91A0 :                     __EE_NextTerm:
+(1)   26/    91A0 :                     
+(1)   27/    91A0 :                     __EE_SkipSpace:
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 10 - 12/21/2015 22:25:18
 
 
-(1)   58/    91B2 : 40                  	lde 														; double it
-(1)   59/    91B3 : 70                  	ade
-(1)   60/    91B4 : 01                  	xae 														; back in E
-(1)   61/    91B5 : C5 01               	ld 		@1(p1) 												; read digit, known okay, and bump
-(1)   62/    91B7 : D4 0F               	ani 	0x0F 												; convert to decimal value
-(1)   63/    91B9 : 70                  	ade 														; add to E 	
-(1)   64/    91BA : 01                  	xae 														; put back in E
-(1)   65/    91BB : C1 00               	ld 		(p1) 												; get next.
-(1)   66/    91BD : 02                  	ccl
-(1)   67/    91BE : F4 C6               	adi 	255-'9'												; check out of range
-(1)   68/    91C0 : 94 04               	jp 		__EE_ConstantEnd
-(1)   69/    91C2 : F4 0A               	adi 	10
-(1)   70/    91C4 : 94 E5               	jp 		__EE_ConstantTerm
-(1)   71/    91C6 :                     __EE_ConstantEnd:
-(1)   72/    91C6 : 90 54               	jmp 	__EE_HaveTerm 										; term is fetched.
-(1)   73/    91C8 :                     
-(1)   74/    91C8 :                     ; ****************************************************************************************************************
-(1)   75/    91C8 :                     ;							Have a variable, in A, value 0-25 representing A-Z.
-(1)   76/    91C8 :                     ; ****************************************************************************************************************
-(1)   77/    91C8 :                     
-(1)   78/    91C8 :                     __EE_IsVariable:
-(1)   79/    91C8 : 01                  	xae 														; variable number 0-25 in E
-(1)   80/    91C9 : (MACRO)             	lpi 	p3,Variables 										; point P3 to variables.
-(1)   80/    91C9 : C4 0C                       ldi     (VARIABLES) / 256
-(1)   80/    91CB : 37                          xpah    P3
-(1)   80/    91CC : C4 90                       ldi     (VARIABLES) & 255
-(1)   80/    91CE : 33                          xpal    P3
-(1)   81/    91CF : C3 80               	ld 		-0x80(p3) 											; read variable into E offset E
-(1)   82/    91D1 : 01                  	xae
-(1)   83/    91D2 : C5 01               	ld 		@1(p1)												; skip over variable.
-(1)   84/    91D4 : 90 46               	jmp 	__EE_HaveTerm
-(1)   85/    91D6 :                     
-(1)   86/    91D6 :                     __EvaluateExpression2:
-(1)   87/    91D6 : 90 A5               	jmp 	EvaluateExpression
-(1)   88/    91D8 :                     
-(1)   89/    91D8 :                     ; ****************************************************************************************************************
-(1)   90/    91D8 :                     ;			Check for punctuation terms, random number ! and character constant 'x' and $(H,L)
-(1)   91/    91D8 :                     ; ****************************************************************************************************************
-(1)   92/    91D8 :                     
-(1)   93/    91D8 :                     __EE_CheckPuncTerms:
-(1)   94/    91D8 : C5 01               	ld 		@1(p1) 												; check for (
-(1)   95/    91DA : E4 28               	xri 	'('
-(1)   96/    91DC : 98 21               	jz 		__EE_MemoryRead
-(1)   97/    91DE : E4 09               	xri 	'!'!'(' 											; check for random (!)
-(1)   98/    91E0 : 98 15               	jz 		__EE_Random
-(1)   99/    91E2 : E4 06               	xri 	'!'!0x27 											; check for 'x'
-(1)  100/    91E4 : 9C 26               	jnz 	__EE_TermError
-(1)  101/    91E6 :                     ;
-(1)  102/    91E6 :                     ;	'<char>' constant
-(1)  103/    91E6 :                     ;
-(1)  104/    91E6 : C1 00               	ld 		(p1) 												; check second is not EOL
-(1)  105/    91E8 : 98 22               	jz 		__EE_TermError
-(1)  106/    91EA : C1 01               	ld 		1(p1)
-(1)  107/    91EC : E4 27               	xri 	0x27 												; check third is quote mark.
-(1)  108/    91EE : 9C 1C               	jnz 	__EE_TermError
-(1)  109/    91F0 : C5 02               	ld 		@2(p1) 												; skip over character and quote
-(1)  110/    91F2 : C1 FE               	ld 		-2(p1) 												; read character into E
-(1)  111/    91F4 : 01                  	xae
-(1)  112/    91F5 : 90 25               	jmp 	__EE_HaveTerm 										; have a legitimate term.
-(1)  113/    91F7 :                     ;
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 11 - 12/19/2015 22:10:15
+(1)   28/    91A0 : C1 00               	ld 		(p1) 												; check end of string
+(1)   29/    91A2 : 98 7D               	jz 		__EE_TermError
+(1)   30/    91A4 : C5 01               	ld 		@1(p1) 												; fetch and skip
+(1)   31/    91A6 : E4 20               	xri 	' ' 												; if space, keep going.
+(1)   32/    91A8 : 98 F6               	jz 		__EE_SkipSpace
+(1)   33/    91AA :                     
+(1)   34/    91AA : C5 FF               	ld 		@-1(p1) 											; backtrack and reload
+(1)   35/    91AC : 02                  	ccl
+(1)   36/    91AD : F4 A5               	adi 	255-'Z'												; will be +ve if >= 'Z'
+(1)   37/    91AF : 94 70               	jp 		__EE_TermError 										; which is an error ($,!,',0-9,A-Z)
+(1)   38/    91B1 : F4 1A               	adi 	26 													; will be +ve if >= 'A'
+(1)   39/    91B3 : 94 28               	jp 		__EE_IsVariable 									; will contain 0-25, conveniently the offset.
+(1)   40/    91B5 : F4 07               	adi 	7
+(1)   41/    91B7 : 94 68               	jp 		__EE_TermError 										; will be +ve if between 9 and A, error.
+(1)   42/    91B9 : F4 0A               	adi 	10 				
+(1)   43/    91BB : D4 80               	ani 	0x80
+(1)   44/    91BD : 9C 2E               	jnz 	__EE_CheckPuncTerms 								; if -ve check for punctuation terms (! and 'x')
+(1)   45/    91BF :                     
+(1)   46/    91BF :                     ; ****************************************************************************************************************
+(1)   47/    91BF :                     ;										Constant term. P1 points to first digit
+(1)   48/    91BF :                     ; ****************************************************************************************************************
+(1)   49/    91BF :                     
+(1)   50/    91BF : 01                  	xae 														; zero E, the result.
+(1)   51/    91C0 :                     __EE_ConstantTerm:
+(1)   52/    91C0 : 02                  	ccl
+(1)   53/    91C1 : 40                  	lde
+(1)   54/    91C2 : 70                  	ade 														; x 2
+(1)   55/    91C3 : 70                  	ade															; x 3
+(1)   56/    91C4 : 70                  	ade															; x 4
+(1)   57/    91C5 : 70                  	ade															; x 5
+(1)   58/    91C6 : 01                  	xae 														; put x 5 in E
+(1)   59/    91C7 : 40                  	lde 														; double it
+(1)   60/    91C8 : 70                  	ade
+(1)   61/    91C9 : 01                  	xae 														; back in E
+(1)   62/    91CA : C5 01               	ld 		@1(p1) 												; read digit, known okay, and bump
+(1)   63/    91CC : D4 0F               	ani 	0x0F 												; convert to decimal value
+(1)   64/    91CE : 70                  	ade 														; add to E 	
+(1)   65/    91CF : 01                  	xae 														; put back in E
+(1)   66/    91D0 : C1 00               	ld 		(p1) 												; get next.
+(1)   67/    91D2 : 02                  	ccl
+(1)   68/    91D3 : F4 C6               	adi 	255-'9'												; check out of range
+(1)   69/    91D5 : 94 04               	jp 		__EE_ConstantEnd
+(1)   70/    91D7 : F4 0A               	adi 	10
+(1)   71/    91D9 : 94 E5               	jp 		__EE_ConstantTerm
+(1)   72/    91DB :                     __EE_ConstantEnd:
+(1)   73/    91DB : 90 54               	jmp 	__EE_HaveTerm 										; term is fetched.
+(1)   74/    91DD :                     
+(1)   75/    91DD :                     ; ****************************************************************************************************************
+(1)   76/    91DD :                     ;							Have a variable, in A, value 0-25 representing A-Z.
+(1)   77/    91DD :                     ; ****************************************************************************************************************
+(1)   78/    91DD :                     
+(1)   79/    91DD :                     __EE_IsVariable:
+(1)   80/    91DD : 01                  	xae 														; variable number 0-25 in E
+(1)   81/    91DE : (MACRO)             	lpi 	p3,Variables 										; point P3 to variables.
+(1)   81/    91DE : C4 0C                       ldi     (VARIABLES) / 256
+(1)   81/    91E0 : 37                          xpah    P3
+(1)   81/    91E1 : C4 90                       ldi     (VARIABLES) & 255
+(1)   81/    91E3 : 33                          xpal    P3
+(1)   82/    91E4 : C3 80               	ld 		-0x80(p3) 											; read variable into E offset E
+(1)   83/    91E6 : 01                  	xae
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 11 - 12/21/2015 22:25:18
 
 
-(1)  114/    91F7 :                     ;	! random number
-(1)  115/    91F7 :                     ;
-(1)  116/    91F7 :                     __EE_Random:
-(1)  117/    91F7 : (MACRO)             	lpi 	p3,Random-1 
-(1)  117/    91F7 : C4 92                       ldi     (RANDOM-1) / 256
-(1)  117/    91F9 : 37                          xpah    P3
-(1)  117/    91FA : C4 D1                       ldi     (RANDOM-1) & 255
-(1)  117/    91FC : 33                          xpal    P3
-(1)  118/    91FD : 90 08               	jmp 	__EE_CallAndCheck
-(1)  119/    91FF :                     ;
-(1)  120/    91FF :                     ;	(H,L) read memory.
-(1)  121/    91FF :                     ;
-(1)  122/    91FF :                     __EE_MemoryRead:
-(1)  123/    91FF : C5 FF               	ld 		@-1(p1) 											; point back to the first bracket
-(1)  124/    9201 : (MACRO)             	lpi 	p3,EvaluateHL-1 									; evaluate (H,L) and read it.
-(1)  124/    9201 : C4 93                       ldi     (EVALUATEHL-1) / 256
-(1)  124/    9203 : 37                          xpah    P3
-(1)  124/    9204 : C4 0D                       ldi     (EVALUATEHL-1) & 255
-(1)  124/    9206 : 33                          xpal    P3
-(1)  125/    9207 :                     __EE_CallAndCheck:
-(1)  126/    9207 : 3F                  	xppc 	p3 													; call routine
-(1)  127/    9208 : 94 02               	jp 		__EE_TermError 										; if CY/L = 0, error
-(1)  128/    920A : 90 10               	jmp 	__EE_HaveTerm 										; otherwise fine.
-(1)  129/    920C :                     
-(1)  130/    920C :                     ; ****************************************************************************************************************
-(1)  131/    920C :                     ;												TERM Error here.
-(1)  132/    920C :                     ; ****************************************************************************************************************
-(1)  133/    920C :                     	
-(1)  134/    920C :                     __EE_TermError:
-(1)  135/    920C : C4 04               	ldi 	ERROR_Term 											; put error-term in E
-(1)  136/    920E :                     __EE_ErrorA:
-(1)  137/    920E : 02                  	ccl 														; clear carry flag => error
-(1)  138/    920F : 01                  	xae 														; value in E
-(1)  139/    9210 : C6 02               	ld 		@2(p2) 												; drop pending operation and result
-(1)  140/    9212 :                     __EE_Exit:
-(1)  141/    9212 : (MACRO)             	pullp 	p3 													; restore P3
-(1)  141/    9212 : C6 01                       ld              @1(p2)
-(1)  141/    9214 : 33                          xpal    P3
-(1)  141/    9215 : C6 01                       ld              @1(p2)
-(1)  141/    9217 : 37                          xpah    P3
-(1)  142/    9218 : 06                  	csa 														; S->A
-(1)  143/    9219 : 3F                  	xppc 	p3 													; and exit.
-(1)  144/    921A : 90 BA               	jmp 	__EvaluateExpression2
-(1)  145/    921C :                     
-(1)  146/    921C :                     ; ****************************************************************************************************************
-(1)  147/    921C :                     ;										 Have a new legitimate term in E
-(1)  148/    921C :                     ; ****************************************************************************************************************
-(1)  149/    921C :                     
-(1)  150/    921C :                     __EE_HaveTerm:
-(1)  151/    921C : C2 00               	ld 		0(p2) 												; read pending value
-(1)  152/    921E : E4 2B               	xri 	'+'
-(1)  153/    9220 : 9C 08               	jnz 	__EE_NotAdd
-(1)  154/    9222 :                     
-(1)  155/    9222 :                     ; ****************************************************************************************************************
-(1)  156/    9222 :                     ;													  Add
-(1)  157/    9222 :                     ; ****************************************************************************************************************
-(1)  158/    9222 :                     
-(1)  159/    9222 : 02                  	ccl 														; add
-(1)  160/    9223 : C2 01               	ld 		1(p2)
-(1)  161/    9225 : 70                  	ade
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 12 - 12/19/2015 22:10:15
+(1)   84/    91E7 : C5 01               	ld 		@1(p1)												; skip over variable.
+(1)   85/    91E9 : 90 46               	jmp 	__EE_HaveTerm
+(1)   86/    91EB :                     
+(1)   87/    91EB :                     __EvaluateExpression2:
+(1)   88/    91EB : 90 A5               	jmp 	EvaluateExpression
+(1)   89/    91ED :                     
+(1)   90/    91ED :                     ; ****************************************************************************************************************
+(1)   91/    91ED :                     ;			Check for punctuation terms, random number ! and character constant 'x' and $(H,L)
+(1)   92/    91ED :                     ; ****************************************************************************************************************
+(1)   93/    91ED :                     
+(1)   94/    91ED :                     __EE_CheckPuncTerms:
+(1)   95/    91ED : C5 01               	ld 		@1(p1) 												; check for (
+(1)   96/    91EF : E4 28               	xri 	'('
+(1)   97/    91F1 : 98 21               	jz 		__EE_MemoryRead
+(1)   98/    91F3 : E4 09               	xri 	'!'!'(' 											; check for random (!)
+(1)   99/    91F5 : 98 15               	jz 		__EE_Random
+(1)  100/    91F7 : E4 06               	xri 	'!'!0x27 											; check for 'x'
+(1)  101/    91F9 : 9C 26               	jnz 	__EE_TermError
+(1)  102/    91FB :                     ;
+(1)  103/    91FB :                     ;	'<char>' constant
+(1)  104/    91FB :                     ;
+(1)  105/    91FB : C1 00               	ld 		(p1) 												; check second is not EOL
+(1)  106/    91FD : 98 22               	jz 		__EE_TermError
+(1)  107/    91FF : C1 01               	ld 		1(p1)
+(1)  108/    9201 : E4 27               	xri 	0x27 												; check third is quote mark.
+(1)  109/    9203 : 9C 1C               	jnz 	__EE_TermError
+(1)  110/    9205 : C5 02               	ld 		@2(p1) 												; skip over character and quote
+(1)  111/    9207 : C1 FE               	ld 		-2(p1) 												; read character into E
+(1)  112/    9209 : 01                  	xae
+(1)  113/    920A : 90 25               	jmp 	__EE_HaveTerm 										; have a legitimate term.
+(1)  114/    920C :                     ;
+(1)  115/    920C :                     ;	! random number
+(1)  116/    920C :                     ;
+(1)  117/    920C :                     __EE_Random:
+(1)  118/    920C : (MACRO)             	lpi 	p3,Random-1 
+(1)  118/    920C : C4 92                       ldi     (RANDOM-1) / 256
+(1)  118/    920E : 37                          xpah    P3
+(1)  118/    920F : C4 E6                       ldi     (RANDOM-1) & 255
+(1)  118/    9211 : 33                          xpal    P3
+(1)  119/    9212 : 90 08               	jmp 	__EE_CallAndCheck
+(1)  120/    9214 :                     ;
+(1)  121/    9214 :                     ;	(H,L) read memory.
+(1)  122/    9214 :                     ;
+(1)  123/    9214 :                     __EE_MemoryRead:
+(1)  124/    9214 : C5 FF               	ld 		@-1(p1) 											; point back to the first bracket
+(1)  125/    9216 : (MACRO)             	lpi 	p3,EvaluateHL-1 									; evaluate (H,L) and read it.
+(1)  125/    9216 : C4 93                       ldi     (EVALUATEHL-1) / 256
+(1)  125/    9218 : 37                          xpah    P3
+(1)  125/    9219 : C4 22                       ldi     (EVALUATEHL-1) & 255
+(1)  125/    921B : 33                          xpal    P3
+(1)  126/    921C :                     __EE_CallAndCheck:
+(1)  127/    921C : 3F                  	xppc 	p3 													; call routine
+(1)  128/    921D : 94 02               	jp 		__EE_TermError 										; if CY/L = 0, error
+(1)  129/    921F : 90 10               	jmp 	__EE_HaveTerm 										; otherwise fine.
+(1)  130/    9221 :                     
+(1)  131/    9221 :                     ; ****************************************************************************************************************
+(1)  132/    9221 :                     ;												TERM Error here.
+(1)  133/    9221 :                     ; ****************************************************************************************************************
+(1)  134/    9221 :                     	
+(1)  135/    9221 :                     __EE_TermError:
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 12 - 12/21/2015 22:25:18
 
 
-(1)  162/    9226 : CA 01               	st 		1(p2)
-(1)  163/    9228 : 90 36               	jmp 	__EE_NextOperation
-(1)  164/    922A :                     
-(1)  165/    922A :                     __EE_NotAdd:
-(1)  166/    922A : E4 06               	xri 	'+'!'-'
-(1)  167/    922C : 9C 0C               	jnz 	__EE_NotSubtract
-(1)  168/    922E :                     
-(1)  169/    922E :                     ; ****************************************************************************************************************
-(1)  170/    922E :                     ;	 											    Subtract
-(1)  171/    922E :                     ; ****************************************************************************************************************
-(1)  172/    922E :                     
-(1)  173/    922E : 03                  	scl 														; subtract
-(1)  174/    922F : C2 01               	ld 		1(p2)
-(1)  175/    9231 : 78                  	cae 
-(1)  176/    9232 : CA 01               	st 		1(p2)
-(1)  177/    9234 : 90 2A               	jmp 	__EE_NextOperation
-(1)  178/    9236 :                     
-(1)  179/    9236 :                     __EE_Divide_Zero
-(1)  180/    9236 : C4 07               	ldi 	ERROR_DivideZero
-(1)  181/    9238 : 90 D4               	jmp 	__EE_ErrorA
-(1)  182/    923A :                     
-(1)  183/    923A :                     __EE_NotSubtract:	
-(1)  184/    923A : E4 07               	xri 	'-'!'*'
-(1)  185/    923C : 9C 51               	jnz 	__EE_NotMultiply
-(1)  186/    923E :                     
-(1)  187/    923E :                     ; ****************************************************************************************************************
-(1)  188/    923E :                     ;													 Multiply
-(1)  189/    923E :                     ; ****************************************************************************************************************
-(1)  190/    923E :                     
-(1)  191/    923E : C2 01               	ld 		1(p2) 												; a = 0(p2)
-(1)  192/    9240 : CA 00               	st 		0(p2)
-(1)  193/    9242 : C4 00               	ldi 	0													; res = 1(p2)
-(1)  194/    9244 : CA 01               	st 		1(p2) 												; clear it.
-(1)  195/    9246 :                     __EE_MultiplyLoop:
-(1)  196/    9246 : 40                  	lde  														; if B == 0 then we are done.
-(1)  197/    9247 : 98 17               	jz 		__EE_NextOperation
-(1)  198/    9249 : D4 01               	ani 	1 													; if B LSB is non zero.
-(1)  199/    924B : 98 07               	jz 		__EE_Multiply_B0IsZero
-(1)  200/    924D : C2 00               	ld 		0(p2) 												; add A to Result
-(1)  201/    924F : 02                  	ccl
-(1)  202/    9250 : F2 01               	add 	1(p2)
-(1)  203/    9252 : CA 01               	st 		1(p2)
-(1)  204/    9254 :                     __EE_Multiply_B0IsZero:
-(1)  205/    9254 : 40                  	lde 														; shift B right
-(1)  206/    9255 : 1C                  	sr
-(1)  207/    9256 : 01                  	xae
-(1)  208/    9257 : C2 00               	ld 		0(p2) 												; shift A left
-(1)  209/    9259 : 02                  	ccl
-(1)  210/    925A : F2 00               	add 	0(p2)
-(1)  211/    925C : CA 00               	st 		0(p2)
-(1)  212/    925E : 90 E6               	jmp 	__EE_MultiplyLoop
-(1)  213/    9260 :                     
-(1)  214/    9260 :                     ; ****************************************************************************************************************
-(1)  215/    9260 :                     ;	     Come here when arithmetic finished, looking for the next operator, + - * / keep going else exit
-(1)  216/    9260 :                     ; ****************************************************************************************************************
-(1)  217/    9260 :                     
-(1)  218/    9260 :                     __EE_NextOperation:
-(1)  219/    9260 : C1 00               	ld 		(p1) 												; get next character
-(1)  220/    9262 : 98 18               	jz 		__EE_ExitOkay										; exit if EOS.
-(1)  221/    9264 : C5 01               	ld 		@1(p1) 												; get and bump
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 13 - 12/19/2015 22:10:15
+(1)  136/    9221 : C4 04               	ldi 	ERROR_Term 											; put error-term in E
+(1)  137/    9223 :                     __EE_ErrorA:
+(1)  138/    9223 : 02                  	ccl 														; clear carry flag => error
+(1)  139/    9224 : 01                  	xae 														; value in E
+(1)  140/    9225 : C6 02               	ld 		@2(p2) 												; drop pending operation and result
+(1)  141/    9227 :                     __EE_Exit:
+(1)  142/    9227 : (MACRO)             	pullp 	p3 													; restore P3
+(1)  142/    9227 : C6 01                       ld              @1(p2)
+(1)  142/    9229 : 33                          xpal    P3
+(1)  142/    922A : C6 01                       ld              @1(p2)
+(1)  142/    922C : 37                          xpah    P3
+(1)  143/    922D : 06                  	csa 														; S->A
+(1)  144/    922E : 3F                  	xppc 	p3 													; and exit.
+(1)  145/    922F : 90 BA               	jmp 	__EvaluateExpression2
+(1)  146/    9231 :                     
+(1)  147/    9231 :                     ; ****************************************************************************************************************
+(1)  148/    9231 :                     ;										 Have a new legitimate term in E
+(1)  149/    9231 :                     ; ****************************************************************************************************************
+(1)  150/    9231 :                     
+(1)  151/    9231 :                     __EE_HaveTerm:
+(1)  152/    9231 : C2 00               	ld 		0(p2) 												; read pending value
+(1)  153/    9233 : E4 2B               	xri 	'+'
+(1)  154/    9235 : 9C 08               	jnz 	__EE_NotAdd
+(1)  155/    9237 :                     
+(1)  156/    9237 :                     ; ****************************************************************************************************************
+(1)  157/    9237 :                     ;													  Add
+(1)  158/    9237 :                     ; ****************************************************************************************************************
+(1)  159/    9237 :                     
+(1)  160/    9237 : 02                  	ccl 														; add
+(1)  161/    9238 : C2 01               	ld 		1(p2)
+(1)  162/    923A : 70                  	ade
+(1)  163/    923B : CA 01               	st 		1(p2)
+(1)  164/    923D : 90 36               	jmp 	__EE_NextOperation
+(1)  165/    923F :                     
+(1)  166/    923F :                     __EE_NotAdd:
+(1)  167/    923F : E4 06               	xri 	'+'!'-'
+(1)  168/    9241 : 9C 0C               	jnz 	__EE_NotSubtract
+(1)  169/    9243 :                     
+(1)  170/    9243 :                     ; ****************************************************************************************************************
+(1)  171/    9243 :                     ;	 											    Subtract
+(1)  172/    9243 :                     ; ****************************************************************************************************************
+(1)  173/    9243 :                     
+(1)  174/    9243 : 03                  	scl 														; subtract
+(1)  175/    9244 : C2 01               	ld 		1(p2)
+(1)  176/    9246 : 78                  	cae 
+(1)  177/    9247 : CA 01               	st 		1(p2)
+(1)  178/    9249 : 90 2A               	jmp 	__EE_NextOperation
+(1)  179/    924B :                     
+(1)  180/    924B :                     __EE_Divide_Zero
+(1)  181/    924B : C4 07               	ldi 	ERROR_DivideZero
+(1)  182/    924D : 90 D4               	jmp 	__EE_ErrorA
+(1)  183/    924F :                     
+(1)  184/    924F :                     __EE_NotSubtract:	
+(1)  185/    924F : E4 07               	xri 	'-'!'*'
+(1)  186/    9251 : 9C 51               	jnz 	__EE_NotMultiply
+(1)  187/    9253 :                     
+(1)  188/    9253 :                     ; ****************************************************************************************************************
+(1)  189/    9253 :                     ;													 Multiply
+(1)  190/    9253 :                     ; ****************************************************************************************************************
+(1)  191/    9253 :                     
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 13 - 12/21/2015 22:25:18
 
 
-(1)  222/    9266 : E4 20               	xri 	' ' 												; skip over space 
-(1)  223/    9268 : 98 F6               	jz 		__EE_NextOperation
-(1)  224/    926A : E4 0B               	xri 	'+'!' ' 											; continue if +,-,*,/ found
-(1)  225/    926C : 98 16               	jz 		__EE_FoundOperator
-(1)  226/    926E : E4 06               	xri 	'+'!'-'
-(1)  227/    9270 : 98 12               	jz 		__EE_FoundOperator
-(1)  228/    9272 : E4 07               	xri 	'-'!'*'
-(1)  229/    9274 : 98 0E               	jz 		__EE_FoundOperator
-(1)  230/    9276 : E4 05               	xri 	'*'!'/'
-(1)  231/    9278 : 98 0A               	jz 		__EE_FoundOperator
-(1)  232/    927A : C5 FF               	ld 		@-1(p1) 											; undo the get so points to next char
-(1)  233/    927C :                     
-(1)  234/    927C :                     __EE_ExitOkay:
-(1)  235/    927C : C6 01               	ld 		@1(p2) 												; drop pending operation
-(1)  236/    927E : C6 01               	ld 		@1(p2) 												; get result
-(1)  237/    9280 : 01                  	xae 														; put in E
-(1)  238/    9281 : 03                  	scl 														; set carry link
-(1)  239/    9282 : 90 8E               	jmp 	__EE_Exit
-(1)  240/    9284 :                     
-(1)  241/    9284 :                     __EE_FoundOperator:
-(1)  242/    9284 : C1 FF               	ld 		-1(p1) 												; get the operator
-(1)  243/    9286 : CA 00               	st 		0(p2)												; save in pending operator
-(1)  244/    9288 : (MACRO)             	lpi 	p3,__EE_NextTerm-1									; long jump back to near the start.
-(1)  244/    9288 : C4 91                       ldi     (__EE_NEXTTERM-1) / 256
-(1)  244/    928A : 37                          xpah    P3
-(1)  244/    928B : C4 8A                       ldi     (__EE_NEXTTERM-1) & 255
-(1)  244/    928D : 33                          xpal    P3
-(1)  245/    928E : 3F                  	xppc 	p3	
-(1)  246/    928F :                     
-(1)  247/    928F :                     ; ****************************************************************************************************************
-(1)  248/    928F :                     ;													Divide
-(1)  249/    928F :                     ; ****************************************************************************************************************
-(1)  250/    928F :                     
-(1)  251/    928F :                     __EE_NotMultiply:												; must be divide, as only + - * / allowed.
-(1)  252/    928F : 40                  	lde 														; if denominator zero, error 2.
-(1)  253/    9290 : 98 A4               	jz 		__EE_Divide_Zero
-(1)  254/    9292 : C2 01               	ld 		1(p2) 												; numerator into 0(p2)
-(1)  255/    9294 : CA 00               	st 		0(p2) 												; denominator is in E
-(1)  256/    9296 : C4 00               	ldi 	0
-(1)  257/    9298 : CA 01               	st 		1(p2)												; quotient in 1(p2)
-(1)  258/    929A : CA FF               	st 		-1(p2) 												; remainder in -1(p2)
-(1)  259/    929C : C4 80               	ldi 	0x80 									
-(1)  260/    929E : CA FE               	st 		-2(p2) 												; bit in -2(p2)
-(1)  261/    92A0 :                     
-(1)  262/    92A0 :                     __EE_Divide_Loop:
-(1)  263/    92A0 : C2 FE               	ld 		-2(p2) 												; exit if bit = 0,we've finished.
-(1)  264/    92A2 : 98 BC               	jz 		__EE_NextOperation
-(1)  265/    92A4 :                     
-(1)  266/    92A4 : 02                  	ccl 	 													; shift remainder left.
-(1)  267/    92A5 : C2 FF               	ld 		-1(p2)
-(1)  268/    92A7 : F2 FF               	add 	-1(p2)
-(1)  269/    92A9 : CA FF               	st 		-1(p2)
-(1)  270/    92AB :                     
-(1)  271/    92AB : C2 00               	ld 		0(p2)												; get numerator.
-(1)  272/    92AD : 94 02               	jp 		__EE_Divide_Numerator_Positive
-(1)  273/    92AF : AA FF               	ild 	-1(p2)  											; if numerator -ve, increment remainder.
-(1)  274/    92B1 :                     __EE_Divide_Numerator_Positive:
-(1)  275/    92B1 :                     
-(1)  276/    92B1 : C2 FF               	ld 		-1(p2) 												; calculate remainder - denominator
-(1)  277/    92B3 : 03                  	scl
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 14 - 12/19/2015 22:10:15
+(1)  192/    9253 : C2 01               	ld 		1(p2) 												; a = 0(p2)
+(1)  193/    9255 : CA 00               	st 		0(p2)
+(1)  194/    9257 : C4 00               	ldi 	0													; res = 1(p2)
+(1)  195/    9259 : CA 01               	st 		1(p2) 												; clear it.
+(1)  196/    925B :                     __EE_MultiplyLoop:
+(1)  197/    925B : 40                  	lde  														; if B == 0 then we are done.
+(1)  198/    925C : 98 17               	jz 		__EE_NextOperation
+(1)  199/    925E : D4 01               	ani 	1 													; if B LSB is non zero.
+(1)  200/    9260 : 98 07               	jz 		__EE_Multiply_B0IsZero
+(1)  201/    9262 : C2 00               	ld 		0(p2) 												; add A to Result
+(1)  202/    9264 : 02                  	ccl
+(1)  203/    9265 : F2 01               	add 	1(p2)
+(1)  204/    9267 : CA 01               	st 		1(p2)
+(1)  205/    9269 :                     __EE_Multiply_B0IsZero:
+(1)  206/    9269 : 40                  	lde 														; shift B right
+(1)  207/    926A : 1C                  	sr
+(1)  208/    926B : 01                  	xae
+(1)  209/    926C : C2 00               	ld 		0(p2) 												; shift A left
+(1)  210/    926E : 02                  	ccl
+(1)  211/    926F : F2 00               	add 	0(p2)
+(1)  212/    9271 : CA 00               	st 		0(p2)
+(1)  213/    9273 : 90 E6               	jmp 	__EE_MultiplyLoop
+(1)  214/    9275 :                     
+(1)  215/    9275 :                     ; ****************************************************************************************************************
+(1)  216/    9275 :                     ;	     Come here when arithmetic finished, looking for the next operator, + - * / keep going else exit
+(1)  217/    9275 :                     ; ****************************************************************************************************************
+(1)  218/    9275 :                     
+(1)  219/    9275 :                     __EE_NextOperation:
+(1)  220/    9275 : C1 00               	ld 		(p1) 												; get next character
+(1)  221/    9277 : 98 18               	jz 		__EE_ExitOkay										; exit if EOS.
+(1)  222/    9279 : C5 01               	ld 		@1(p1) 												; get and bump
+(1)  223/    927B : E4 20               	xri 	' ' 												; skip over space 
+(1)  224/    927D : 98 F6               	jz 		__EE_NextOperation
+(1)  225/    927F : E4 0B               	xri 	'+'!' ' 											; continue if +,-,*,/ found
+(1)  226/    9281 : 98 16               	jz 		__EE_FoundOperator
+(1)  227/    9283 : E4 06               	xri 	'+'!'-'
+(1)  228/    9285 : 98 12               	jz 		__EE_FoundOperator
+(1)  229/    9287 : E4 07               	xri 	'-'!'*'
+(1)  230/    9289 : 98 0E               	jz 		__EE_FoundOperator
+(1)  231/    928B : E4 05               	xri 	'*'!'/'
+(1)  232/    928D : 98 0A               	jz 		__EE_FoundOperator
+(1)  233/    928F : C5 FF               	ld 		@-1(p1) 											; undo the get so points to next char
+(1)  234/    9291 :                     
+(1)  235/    9291 :                     __EE_ExitOkay:
+(1)  236/    9291 : C6 01               	ld 		@1(p2) 												; drop pending operation
+(1)  237/    9293 : C6 01               	ld 		@1(p2) 												; get result
+(1)  238/    9295 : 01                  	xae 														; put in E
+(1)  239/    9296 : 03                  	scl 														; set carry link
+(1)  240/    9297 : 90 8E               	jmp 	__EE_Exit
+(1)  241/    9299 :                     
+(1)  242/    9299 :                     __EE_FoundOperator:
+(1)  243/    9299 : C1 FF               	ld 		-1(p1) 												; get the operator
+(1)  244/    929B : CA 00               	st 		0(p2)												; save in pending operator
+(1)  245/    929D : (MACRO)             	lpi 	p3,__EE_NextTerm-1									; long jump back to near the start.
+(1)  245/    929D : C4 91                       ldi     (__EE_NEXTTERM-1) / 256
+(1)  245/    929F : 37                          xpah    P3
+(1)  245/    92A0 : C4 9F                       ldi     (__EE_NEXTTERM-1) & 255
+(1)  245/    92A2 : 33                          xpal    P3
+(1)  246/    92A3 : 3F                  	xppc 	p3	
+(1)  247/    92A4 :                     
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 14 - 12/21/2015 22:25:18
 
 
-(1)  278/    92B4 : 78                  	cae 
-(1)  279/    92B5 : CA FD               	st 		-3(p2) 												; save in temp -3(p2)
-(1)  280/    92B7 : 06                  	csa 														; if temp >= 0, CY/L is set
-(1)  281/    92B8 : 94 0A               	jp 		__EE_Divide_Temp_Positive
-(1)  282/    92BA :                     
-(1)  283/    92BA : C2 FD               	ld 		-3(p2) 												; copy temp to remainder
-(1)  284/    92BC : CA FF               	st 		-1(p2)
-(1)  285/    92BE : C2 FE               	ld 		-2(p2) 												; or bit into quotient
-(1)  286/    92C0 : DA 01               	or 		1(p2)
-(1)  287/    92C2 : CA 01               	st 		1(p2)
-(1)  288/    92C4 :                     __EE_Divide_Temp_Positive:
-(1)  289/    92C4 : C2 FE               	ld 		-2(p2) 												; shift bit right
-(1)  290/    92C6 : 1C                  	sr
-(1)  291/    92C7 : CA FE               	st 		-2(p2)
-(1)  292/    92C9 :                     
-(1)  293/    92C9 : C2 00               	ld 		0(p2)												; shift numerator positive
-(1)  294/    92CB : 02                  	ccl
-(1)  295/    92CC : F2 00               	add 	0(p2)
-(1)  296/    92CE : CA 00               	st 		0(p2)
-(1)  297/    92D0 : 90 CE               	jmp 	__EE_Divide_Loop
-(1)  298/    92D2 :                     
-(1)  299/    92D2 :                     ; ****************************************************************************************************************
-(1)  300/    92D2 :                     ;					Get a random number from the seed, return in E, CY/L = 1 okay S=>A
-(1)  301/    92D2 :                     ; ****************************************************************************************************************
-(1)  302/    92D2 :                     
-(1)  303/    92D2 :                     Random:
-(1)  304/    92D2 : (MACRO)             	pushp	p3
-(1)  304/    92D2 : 37                          xpah    P3
-(1)  304/    92D3 : CE FF                       st              @-1(p2)
-(1)  304/    92D5 : 33                          xpal    P3
-(1)  304/    92D6 : CE FF                       st              @-1(p2)
-(1)  305/    92D8 : (MACRO)             	lpi 	p3,RandomSeed 										; point P3 to random seed.
-(1)  305/    92D8 : C4 0C                       ldi     (RANDOMSEED) / 256
-(1)  305/    92DA : 37                          xpah    P3
-(1)  305/    92DB : C4 AA                       ldi     (RANDOMSEED) & 255
-(1)  305/    92DD : 33                          xpal    P3
-(1)  306/    92DE : C3 00               	ld 		0(p3)												; does it need initialising.
-(1)  307/    92E0 : DB 01               	or 		1(p3)
-(1)  308/    92E2 : 9C 08               	jnz 	__RA_NoInitialise
-(1)  309/    92E4 : C4 E1               	ldi 	0xE1 												; set to $E1AC
-(1)  310/    92E6 : CB 01               	st 		1(p3)
-(1)  311/    92E8 : C4 AC               	ldi 	0xAC
-(1)  312/    92EA : CB 00               	st 		0(p3)
-(1)  313/    92EC :                     __RA_NoInitialise:
-(1)  314/    92EC : 02                  	ccl 														; shift seed right
-(1)  315/    92ED : C3 01               	ld 		1(p3)
-(1)  316/    92EF : 1F                  	rrl
-(1)  317/    92F0 : CB 01               	st 		1(p3)
-(1)  318/    92F2 : C3 00               	ld 		0(p3)
-(1)  319/    92F4 : 1F                  	rrl
-(1)  320/    92F5 : CB 00               	st 		0(p3)
-(1)  321/    92F7 : 06                  	csa 														; get status
-(1)  322/    92F8 : 94 06               	jp 		__RA_Exit
-(1)  323/    92FA : C3 01               	ld 		1(p3)
-(1)  324/    92FC : E4 B4               	xri 	0xB4
-(1)  325/    92FE : CB 01               	st 		1(p3)
-(1)  326/    9300 :                     __RA_Exit:
-(1)  327/    9300 : C3 00               	ld 		0(p3) 												; get the number
-(1)  328/    9302 : F3 01               	add 	1(p3)
-(1)  329/    9304 : 01                  	xae
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 15 - 12/19/2015 22:10:15
+(1)  248/    92A4 :                     ; ****************************************************************************************************************
+(1)  249/    92A4 :                     ;													Divide
+(1)  250/    92A4 :                     ; ****************************************************************************************************************
+(1)  251/    92A4 :                     
+(1)  252/    92A4 :                     __EE_NotMultiply:												; must be divide, as only + - * / allowed.
+(1)  253/    92A4 : 40                  	lde 														; if denominator zero, error 2.
+(1)  254/    92A5 : 98 A4               	jz 		__EE_Divide_Zero
+(1)  255/    92A7 : C2 01               	ld 		1(p2) 												; numerator into 0(p2)
+(1)  256/    92A9 : CA 00               	st 		0(p2) 												; denominator is in E
+(1)  257/    92AB : C4 00               	ldi 	0
+(1)  258/    92AD : CA 01               	st 		1(p2)												; quotient in 1(p2)
+(1)  259/    92AF : CA FF               	st 		-1(p2) 												; remainder in -1(p2)
+(1)  260/    92B1 : C4 80               	ldi 	0x80 									
+(1)  261/    92B3 : CA FE               	st 		-2(p2) 												; bit in -2(p2)
+(1)  262/    92B5 :                     
+(1)  263/    92B5 :                     __EE_Divide_Loop:
+(1)  264/    92B5 : C2 FE               	ld 		-2(p2) 												; exit if bit = 0,we've finished.
+(1)  265/    92B7 : 98 BC               	jz 		__EE_NextOperation
+(1)  266/    92B9 :                     
+(1)  267/    92B9 : 02                  	ccl 	 													; shift remainder left.
+(1)  268/    92BA : C2 FF               	ld 		-1(p2)
+(1)  269/    92BC : F2 FF               	add 	-1(p2)
+(1)  270/    92BE : CA FF               	st 		-1(p2)
+(1)  271/    92C0 :                     
+(1)  272/    92C0 : C2 00               	ld 		0(p2)												; get numerator.
+(1)  273/    92C2 : 94 02               	jp 		__EE_Divide_Numerator_Positive
+(1)  274/    92C4 : AA FF               	ild 	-1(p2)  											; if numerator -ve, increment remainder.
+(1)  275/    92C6 :                     __EE_Divide_Numerator_Positive:
+(1)  276/    92C6 :                     
+(1)  277/    92C6 : C2 FF               	ld 		-1(p2) 												; calculate remainder - denominator
+(1)  278/    92C8 : 03                  	scl
+(1)  279/    92C9 : 78                  	cae 
+(1)  280/    92CA : CA FD               	st 		-3(p2) 												; save in temp -3(p2)
+(1)  281/    92CC : 06                  	csa 														; if temp >= 0, CY/L is set
+(1)  282/    92CD : 94 0A               	jp 		__EE_Divide_Temp_Positive
+(1)  283/    92CF :                     
+(1)  284/    92CF : C2 FD               	ld 		-3(p2) 												; copy temp to remainder
+(1)  285/    92D1 : CA FF               	st 		-1(p2)
+(1)  286/    92D3 : C2 FE               	ld 		-2(p2) 												; or bit into quotient
+(1)  287/    92D5 : DA 01               	or 		1(p2)
+(1)  288/    92D7 : CA 01               	st 		1(p2)
+(1)  289/    92D9 :                     __EE_Divide_Temp_Positive:
+(1)  290/    92D9 : C2 FE               	ld 		-2(p2) 												; shift bit right
+(1)  291/    92DB : 1C                  	sr
+(1)  292/    92DC : CA FE               	st 		-2(p2)
+(1)  293/    92DE :                     
+(1)  294/    92DE : C2 00               	ld 		0(p2)												; shift numerator positive
+(1)  295/    92E0 : 02                  	ccl
+(1)  296/    92E1 : F2 00               	add 	0(p2)
+(1)  297/    92E3 : CA 00               	st 		0(p2)
+(1)  298/    92E5 : 90 CE               	jmp 	__EE_Divide_Loop
+(1)  299/    92E7 :                     
+(1)  300/    92E7 :                     ; ****************************************************************************************************************
+(1)  301/    92E7 :                     ;					Get a random number from the seed, return in E, CY/L = 1 okay S=>A
+(1)  302/    92E7 :                     ; ****************************************************************************************************************
+(1)  303/    92E7 :                     
+(1)  304/    92E7 :                     Random:
+(1)  305/    92E7 : (MACRO)             	pushp	p3
+(1)  305/    92E7 : 37                          xpah    P3
+(1)  305/    92E8 : CE FF                       st              @-1(p2)
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 15 - 12/21/2015 22:25:18
 
 
-(1)  330/    9305 : (MACRO)             	pullp 	p3 													; restore P3
-(1)  330/    9305 : C6 01                       ld              @1(p2)
-(1)  330/    9307 : 33                          xpal    P3
-(1)  330/    9308 : C6 01                       ld              @1(p2)
-(1)  330/    930A : 37                          xpah    P3
-(1)  331/    930B : 03                  	scl															; no error
-(1)  332/    930C : 06                  	csa
-(1)  333/    930D : 3F                  	xppc	p3
-(1)  334/    930E :                     
-(1)  335/    930E :                     ; ****************************************************************************************************************
-(1)  336/    930E :                     ;
-(1)  337/    930E :                     ;		P1 points to ( of (<expr>,<expr>), evaluate and return in E with CY/L = 1 if ok, A = S. -1(P2) should 
-(1)  338/    930E :                     ;		be H and -2(P2) should be L, but stack should be at same depth as on entry, with those values 
-(1)  339/    930E :                     ;		accessible transiently until next stack operation.
-(1)  340/    930E :                     ;
-(1)  341/    930E :                     ; ****************************************************************************************************************
-(1)  342/    930E :                     
-(1)  343/    930E :                     EvaluateHL:
-(1)  344/    930E : C6 FE               	ld 		@-2(p2) 											; make space for H,L result
-(1)  345/    9310 : (MACRO)             	pushp 	p3 													; save P3 on the stack.
-(1)  345/    9310 : 37                          xpah    P3
-(1)  345/    9311 : CE FF                       st              @-1(p2)
-(1)  345/    9313 : 33                          xpal    P3
-(1)  345/    9314 : CE FF                       st              @-1(p2)
-(1)  346/    9316 : C5 01               	ld 		@1(p1) 												; get character
-(1)  347/    9318 : E4 28               	xri 	'('													; must be (
-(1)  348/    931A : 9C 29               	jnz 	__EHL_BackFail
-(1)  349/    931C : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate the H part of HL
-(1)  349/    931C : C4 91                       ldi     (EVALUATEEXPRESSION-1) / 256
-(1)  349/    931E : 37                          xpah    P3
-(1)  349/    931F : C4 7C                       ldi     (EVALUATEEXPRESSION-1) & 255
-(1)  349/    9321 : 33                          xpal    P3
-(1)  350/    9322 : 3F                  	xppc 	p3
-(1)  351/    9323 : 94 20               	jp 		__EHL_BackFail
-(1)  352/    9325 : 40                  	lde 														; copy to H slot
-(1)  353/    9326 : CA 03               	st 		3(p2)
-(1)  354/    9328 : C5 01               	ld 		@1(p1) 												; get character
-(1)  355/    932A : E4 2C               	xri 	',' 												; must be comma
-(1)  356/    932C : 9C 17               	jnz 	__EHL_BackFail
-(1)  357/    932E : 3F                  	xppc 	p3 													; evaluate the L part of HL
-(1)  358/    932F : 94 14               	jp 		__EHL_BackFail
-(1)  359/    9331 : 40                  	lde 														; copy to L slot
-(1)  360/    9332 : CA 02               	st 		2(p2)
-(1)  361/    9334 : C5 01               	ld 		@1(p1) 												; check for the closing )
-(1)  362/    9336 : E4 29               	xri 	')'
-(1)  363/    9338 : 9C 0B               	jnz 	__EHL_BackFail
-(1)  364/    933A : 40                  	lde 														; get L again
-(1)  365/    933B : 33                  	xpal 	p3 													; put in P3.L
-(1)  366/    933C : C2 03               	ld 		3(p2) 												; get H into P3.H
-(1)  367/    933E : 37                  	xpah 	p3
-(1)  368/    933F : C3 00               	ld 		(p3) 												; read byte there
-(1)  369/    9341 : 01                  	xae 														; put into E
-(1)  370/    9342 : 03                  	scl 														; set carry as successful.
-(1)  371/    9343 : 90 06               	jmp 	__EHL_Exit 											; and exit
-(1)  372/    9345 :                     
-(1)  373/    9345 :                     __EHL_BackFail:
-(1)  374/    9345 : C5 FF               	ld 		@-1(p1) 											; go back one in text.
-(1)  375/    9347 : C4 04               	ldi 	ERROR_Term											; set E to error term.
-(1)  376/    9349 : 01                  	xae
-(1)  377/    934A : 02                  	ccl 														; return with carry clear.
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 16 - 12/19/2015 22:10:15
+(1)  305/    92EA : 33                          xpal    P3
+(1)  305/    92EB : CE FF                       st              @-1(p2)
+(1)  306/    92ED : (MACRO)             	lpi 	p3,RandomSeed 										; point P3 to random seed.
+(1)  306/    92ED : C4 0C                       ldi     (RANDOMSEED) / 256
+(1)  306/    92EF : 37                          xpah    P3
+(1)  306/    92F0 : C4 AA                       ldi     (RANDOMSEED) & 255
+(1)  306/    92F2 : 33                          xpal    P3
+(1)  307/    92F3 : C3 00               	ld 		0(p3)												; does it need initialising.
+(1)  308/    92F5 : DB 01               	or 		1(p3)
+(1)  309/    92F7 : 9C 08               	jnz 	__RA_NoInitialise
+(1)  310/    92F9 : C4 E1               	ldi 	0xE1 												; set to $E1AC
+(1)  311/    92FB : CB 01               	st 		1(p3)
+(1)  312/    92FD : C4 AC               	ldi 	0xAC
+(1)  313/    92FF : CB 00               	st 		0(p3)
+(1)  314/    9301 :                     __RA_NoInitialise:
+(1)  315/    9301 : 02                  	ccl 														; shift seed right
+(1)  316/    9302 : C3 01               	ld 		1(p3)
+(1)  317/    9304 : 1F                  	rrl
+(1)  318/    9305 : CB 01               	st 		1(p3)
+(1)  319/    9307 : C3 00               	ld 		0(p3)
+(1)  320/    9309 : 1F                  	rrl
+(1)  321/    930A : CB 00               	st 		0(p3)
+(1)  322/    930C : 06                  	csa 														; get status
+(1)  323/    930D : 94 06               	jp 		__RA_Exit
+(1)  324/    930F : C3 01               	ld 		1(p3)
+(1)  325/    9311 : E4 B4               	xri 	0xB4
+(1)  326/    9313 : CB 01               	st 		1(p3)
+(1)  327/    9315 :                     __RA_Exit:
+(1)  328/    9315 : C3 00               	ld 		0(p3) 												; get the number
+(1)  329/    9317 : F3 01               	add 	1(p3)
+(1)  330/    9319 : 01                  	xae
+(1)  331/    931A : (MACRO)             	pullp 	p3 													; restore P3
+(1)  331/    931A : C6 01                       ld              @1(p2)
+(1)  331/    931C : 33                          xpal    P3
+(1)  331/    931D : C6 01                       ld              @1(p2)
+(1)  331/    931F : 37                          xpah    P3
+(1)  332/    9320 : 03                  	scl															; no error
+(1)  333/    9321 : 06                  	csa
+(1)  334/    9322 : 3F                  	xppc	p3
+(1)  335/    9323 :                     
+(1)  336/    9323 :                     ; ****************************************************************************************************************
+(1)  337/    9323 :                     ;
+(1)  338/    9323 :                     ;		P1 points to ( of (<expr>,<expr>), evaluate and return in E with CY/L = 1 if ok, A = S. -1(P2) should 
+(1)  339/    9323 :                     ;		be H and -2(P2) should be L, but stack should be at same depth as on entry, with those values 
+(1)  340/    9323 :                     ;		accessible transiently until next stack operation.
+(1)  341/    9323 :                     ;
+(1)  342/    9323 :                     ; ****************************************************************************************************************
+(1)  343/    9323 :                     
+(1)  344/    9323 :                     EvaluateHL:
+(1)  345/    9323 : C6 FE               	ld 		@-2(p2) 											; make space for H,L result
+(1)  346/    9325 : (MACRO)             	pushp 	p3 													; save P3 on the stack.
+(1)  346/    9325 : 37                          xpah    P3
+(1)  346/    9326 : CE FF                       st              @-1(p2)
+(1)  346/    9328 : 33                          xpal    P3
+(1)  346/    9329 : CE FF                       st              @-1(p2)
+(1)  347/    932B : C5 01               	ld 		@1(p1) 												; get character
+(1)  348/    932D : E4 28               	xri 	'('													; must be (
+(1)  349/    932F : 9C 29               	jnz 	__EHL_BackFail
+(1)  350/    9331 : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate the H part of HL
+(1)  350/    9331 : C4 91                       ldi     (EVALUATEEXPRESSION-1) / 256
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 16 - 12/21/2015 22:25:18
 
 
-(1)  378/    934B :                     __EHL_Exit:
-(1)  379/    934B : (MACRO)             	pullp 	p3 													; restore P3
-(1)  379/    934B : C6 01                       ld              @1(p2)
-(1)  379/    934D : 33                          xpal    P3
-(1)  379/    934E : C6 01                       ld              @1(p2)
-(1)  379/    9350 : 37                          xpah    P3
-(1)  380/    9351 : C6 02               	ld 		@2(p2) 												; drop the H,L space.
-(1)  381/    9353 : 06                  	csa 														; S->A
-(1)  382/    9354 : 3F                  	xppc 	p3 													; and return.
-(1)  383/    9355 :                     
-(1)  384/    9355 : 90 B7               	jmp 	EvaluateHL
-(1)  385/    9357 :                     
-      33/    9357 :                     
-      34/    9357 :                     
-      35/    9357 :                     
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 17 - 12/19/2015 22:10:15
+(1)  350/    9333 : 37                          xpah    P3
+(1)  350/    9334 : C4 91                       ldi     (EVALUATEEXPRESSION-1) & 255
+(1)  350/    9336 : 33                          xpal    P3
+(1)  351/    9337 : 3F                  	xppc 	p3
+(1)  352/    9338 : 94 20               	jp 		__EHL_BackFail
+(1)  353/    933A : 40                  	lde 														; copy to H slot
+(1)  354/    933B : CA 03               	st 		3(p2)
+(1)  355/    933D : C5 01               	ld 		@1(p1) 												; get character
+(1)  356/    933F : E4 2C               	xri 	',' 												; must be comma
+(1)  357/    9341 : 9C 17               	jnz 	__EHL_BackFail
+(1)  358/    9343 : 3F                  	xppc 	p3 													; evaluate the L part of HL
+(1)  359/    9344 : 94 14               	jp 		__EHL_BackFail
+(1)  360/    9346 : 40                  	lde 														; copy to L slot
+(1)  361/    9347 : CA 02               	st 		2(p2)
+(1)  362/    9349 : C5 01               	ld 		@1(p1) 												; check for the closing )
+(1)  363/    934B : E4 29               	xri 	')'
+(1)  364/    934D : 9C 0B               	jnz 	__EHL_BackFail
+(1)  365/    934F : 40                  	lde 														; get L again
+(1)  366/    9350 : 33                  	xpal 	p3 													; put in P3.L
+(1)  367/    9351 : C2 03               	ld 		3(p2) 												; get H into P3.H
+(1)  368/    9353 : 37                  	xpah 	p3
+(1)  369/    9354 : C3 00               	ld 		(p3) 												; read byte there
+(1)  370/    9356 : 01                  	xae 														; put into E
+(1)  371/    9357 : 03                  	scl 														; set carry as successful.
+(1)  372/    9358 : 90 06               	jmp 	__EHL_Exit 											; and exit
+(1)  373/    935A :                     
+(1)  374/    935A :                     __EHL_BackFail:
+(1)  375/    935A : C5 FF               	ld 		@-1(p1) 											; go back one in text.
+(1)  376/    935C : C4 04               	ldi 	ERROR_Term											; set E to error term.
+(1)  377/    935E : 01                  	xae
+(1)  378/    935F : 02                  	ccl 														; return with carry clear.
+(1)  379/    9360 :                     __EHL_Exit:
+(1)  380/    9360 : (MACRO)             	pullp 	p3 													; restore P3
+(1)  380/    9360 : C6 01                       ld              @1(p2)
+(1)  380/    9362 : 33                          xpal    P3
+(1)  380/    9363 : C6 01                       ld              @1(p2)
+(1)  380/    9365 : 37                          xpah    P3
+(1)  381/    9366 : C6 02               	ld 		@2(p2) 												; drop the H,L space.
+(1)  382/    9368 : 06                  	csa 														; S->A
+(1)  383/    9369 : 3F                  	xppc 	p3 													; and return.
+(1)  384/    936A :                     
+(1)  385/    936A : 90 B7               	jmp 	EvaluateHL
+(1)  386/    936C :                     
+      46/    936C :                     
+      47/    936C :                     	include source\statement.asm 								; statement executor.
+(1)    1/    936C :                     ; ****************************************************************************************************************
+(1)    2/    936C :                     ; ****************************************************************************************************************
+(1)    3/    936C :                     ;
+(1)    4/    936C :                     ;										Statement Execution
+(1)    5/    936C :                     ;	
+(1)    6/    936C :                     ; ****************************************************************************************************************
+(1)    7/    936C :                     ; ****************************************************************************************************************
+(1)    8/    936C :                     
+(1)    9/    936C :                     codeStart:
+(1)   10/    936C : (MACRO)             	code 	10,"CLEAR"
+(1)   10/    936C : 08                          db              strlen("CLEAR")+3                                                                          ; one byte offset to next
+(1)   10/    936D : 0A                          db              10                                                                                          ; one byte line number
+(1)   10/    936E : 43 4C 45 41 52 00           db              "CLEAR",0                                                                                          ; ASCIIZ string
+(1)   11/    9374 : 00                  	db 		0 													; 0 length means end of program.	
+(1)   12/    9375 :                     
+ AS V1.42 Beta [Bld 102] - source file minol.asm(statement.asm) - page 17 - 12/21/2015 22:25:18
+
+
+(1)   13/    9375 :                     ; ****************************************************************************************************************
+(1)   14/    9375 :                     ;
+(1)   15/    9375 :                     ;											Execute statement at P1.
+(1)   16/    9375 :                     ;
+(1)   17/    9375 :                     ; ****************************************************************************************************************
+(1)   18/    9375 :                     
+(1)   19/    9375 :                     ExecuteStatement:
+(1)   20/    9375 : C5 01               	ld 		@1(p1) 												; look at character at P1 and bump
+(1)   21/    9377 : 98 0A               	jz 		__ES_EndOfLine 										; end of line.
+(1)   22/    9379 : E4 3A               	xri 	':'													; skip over ':'
+(1)   23/    937B : 98 F8               	jz 		ExecuteStatement
+(1)   24/    937D : E4 1A               	xri 	':'!' '												; skip over space.
+(1)   25/    937F : 98 F4               	jz 		ExecuteStatement
+(1)   26/    9381 : 90 68               	jmp 	__ES_LookUpCommand 									; and go figure out what to do.
+(1)   27/    9383 :                     ;
+(1)   28/    9383 :                     ;	We have reached the end of the line - if running, go to next line, stopping if we have reached the 
+(1)   29/    9383 :                     ; 	end of the code.
+(1)   30/    9383 :                     ;
+(1)   31/    9383 :                     __ES_EndOfLine:
+(1)   32/    9383 : (MACRO)             	lpi 	p3,IsRunning 										; reached end of line
+(1)   32/    9383 : C4 0C                       ldi     (ISRUNNING) / 256
+(1)   32/    9385 : 37                          xpah    P3
+(1)   32/    9386 : C4 AE                       ldi     (ISRUNNING) & 255
+(1)   32/    9388 : 33                          xpal    P3
+(1)   33/    9389 : C3 00               	ld 		(p3)												; read the "is running" flag
+(1)   34/    938B : 98 0C               	jz 		__ES_GoCommandLine 									; if not running, go to the command line.
+(1)   35/    938D : C1 00               	ld 		(p1) 												; look at next byte
+(1)   36/    938F : 98 08               	jz 		__ES_GoCommandLine 									; if zero, end of program code, so stop.
+(1)   37/    9391 : C1 01               	ld 		1(p1) 												; read the line number
+(1)   38/    9393 : CB 01               	st 		CurrentLine-IsRunning(p3) 							; save it in current line variable
+(1)   39/    9395 : C5 02               	ld 		@2(p1) 												; skip over length and current line
+(1)   40/    9397 : 90 DC               	jmp 	ExecuteStatement 									; and execute the statement.
+(1)   41/    9399 :                     ;
+(1)   42/    9399 :                     ;	Program has stopped, so go to the command line.
+(1)   43/    9399 :                     ;
+(1)   44/    9399 :                     __ES_GoCommandLine:
+(1)   45/    9399 : (MACRO)             	lpi 	p3,IsRunning
+(1)   45/    9399 : C4 0C                       ldi     (ISRUNNING) / 256
+(1)   45/    939B : 37                          xpah    P3
+(1)   45/    939C : C4 AE                       ldi     (ISRUNNING) & 255
+(1)   45/    939E : 33                          xpal    P3
+(1)   46/    939F : C4 00               	ldi 	0 													; clear the "Is Running" flag to zero.
+(1)   47/    93A1 : CB 00               	st 		(p3)
+(1)   48/    93A3 : CB 01               	st 		CurrentLine-IsRunning(p3) 							; clear the current line to zero.
+(1)   49/    93A5 : (MACRO)             	lpi 	p3,__ES_GoCommandLine-1								; and go to the command line input routine.
+(1)   49/    93A5 : C4 93                       ldi     (__ES_GOCOMMANDLINE-1) / 256
+(1)   49/    93A7 : 37                          xpah    P3
+(1)   49/    93A8 : C4 98                       ldi     (__ES_GOCOMMANDLINE-1) & 255
+(1)   49/    93AA : 33                          xpal    P3
+(1)   50/    93AB : 3F                  	xppc 	p3
+(1)   51/    93AC :                     ;
+(1)   52/    93AC :                     ;	Error E has occurred.
+(1)   53/    93AC :                     ;
+(1)   54/    93AC :                     __ES_Error:
+(1)   55/    93AC : (MACRO)             	lpi 	p3,Print-1 											; print "!ERR "
+(1)   55/    93AC : C4 90                       ldi     (PRINT-1) / 256
+(1)   55/    93AE : 37                          xpah    P3
+(1)   55/    93AF : C4 3C                       ldi     (PRINT-1) & 255
+(1)   55/    93B1 : 33                          xpal    P3
+(1)   56/    93B2 : (MACRO)             	lpi 	p1,__ES_Msg1
+ AS V1.42 Beta [Bld 102] - source file minol.asm(statement.asm) - page 18 - 12/21/2015 22:25:18
+
+
+(1)   56/    93B2 : C4 93                       ldi     (__ES_MSG1) / 256
+(1)   56/    93B4 : 35                          xpah    P1
+(1)   56/    93B5 : C4 F5                       ldi     (__ES_MSG1) & 255
+(1)   56/    93B7 : 31                          xpal    P1
+(1)   57/    93B8 : C4 00               	ldi 	0
+(1)   58/    93BA : 3F                  	xppc 	p3
+(1)   59/    93BB : 40                  	lde 														; print Error Code
+(1)   60/    93BC : 3F                  	xppc	p3
+(1)   61/    93BD : C4 00               	ldi 	0 													; print " AT "
+(1)   62/    93BF : 3F                  	xppc 	p3
+(1)   63/    93C0 : CE FF               	st 		@-1(p2) 											; push line number on the stack.
+(1)   64/    93C2 : (MACRO)             	lpi 	p3,CurrentLine
+(1)   64/    93C2 : C4 0C                       ldi     (CURRENTLINE) / 256
+(1)   64/    93C4 : 37                          xpah    P3
+(1)   64/    93C5 : C4 AF                       ldi     (CURRENTLINE) & 255
+(1)   64/    93C7 : 33                          xpal    P3
+(1)   65/    93C8 : C3 00               	ld 		(p3)
+(1)   66/    93CA : CE FF               	st 		@-1(p2)
+(1)   67/    93CC : (MACRO)             	lpi 	p3,OSMathLibrary-1 									; convert to ASCII
+(1)   67/    93CC : C4 00                       ldi     (OSMATHLIBRARY-1) / 256
+(1)   67/    93CE : 37                          xpah    P3
+(1)   67/    93CF : C4 02                       ldi     (OSMATHLIBRARY-1) & 255
+(1)   67/    93D1 : 33                          xpal    P3
+(1)   68/    93D2 : (MACRO)             	lpi 	p1,KeyboardBuffer+8
+(1)   68/    93D2 : C4 0C                       ldi     (KEYBOARDBUFFER+8) / 256
+(1)   68/    93D4 : 35                          xpah    P1
+(1)   68/    93D5 : C4 B8                       ldi     (KEYBOARDBUFFER+8) & 255
+(1)   68/    93D7 : 31                          xpal    P1
+(1)   69/    93D8 : C4 24               	ldi 	'$'
+(1)   70/    93DA : 3F                  	xppc 	p3 
+(1)   71/    93DB : (MACRO)             	lpi 	p3,Print-1 											; print it 
+(1)   71/    93DB : C4 90                       ldi     (PRINT-1) / 256
+(1)   71/    93DD : 37                          xpah    P3
+(1)   71/    93DE : C4 3C                       ldi     (PRINT-1) & 255
+(1)   71/    93E0 : 33                          xpal    P3
+(1)   72/    93E1 : C4 00               	ldi 	0
+(1)   73/    93E3 : 3F                  	xppc 	p3
+(1)   74/    93E4 : 90 B3               	jmp 	__ES_GoCommandLine
+(1)   75/    93E6 :                     ;
+(1)   76/    93E6 :                     ;	Come here after executing statement to decide what to do next.
+(1)   77/    93E6 :                     ;	
+(1)   78/    93E6 :                     __ES_CheckResult:
+(1)   79/    93E6 : 06                  	csa 														; get status
+(1)   80/    93E7 : 94 C3               	jp 		__ES_Error 											; if CY/L = 0 then error E occurred
+(1)   81/    93E9 : 90 8A               	jmp 	ExecuteStatement 									
+(1)   82/    93EB :                     ;
+(1)   83/    93EB :                     ;	P1+1 is the current command, figure out what it is and do it.
+(1)   84/    93EB :                     ;
+(1)   85/    93EB :                     __ES_LookUpCommand:
+(1)   86/    93EB : C5 FF               	ld 		@-1(p1) 											; put first character in 'E' register
+(1)   87/    93ED : 01                  	xae 														; speeds look up slightly.
+(1)   88/    93EE :                     
+(1)   89/    93EE : C4 58               	ldi 	'X'
+(1)   90/    93F0 : 01                  	xae
+(1)   91/    93F1 : 90 B9               	jmp 	__ES_Error
+(1)   92/    93F3 :                     
+(1)   93/    93F3 :                     
+(1)   94/    93F3 :                     
+(1)   95/    93F3 :                     
+(1)   96/    93F3 : 90 F1               	jmp 	__ES_CheckResult 									; come back here, check what happened, last in chain.
+ AS V1.42 Beta [Bld 102] - source file minol.asm(statement.asm) - page 19 - 12/21/2015 22:25:18
+
+
+(1)   97/    93F5 :                     ;
+(1)   98/    93F5 :                     ;	include statements. All these end by having CY/L = 0 = error (code E) or CY/L = 1 (ok) and jumping back
+(1)   99/    93F5 :                     ;	to two before their own start.  This automatically chains the jumps back.
+(1)  100/    93F5 :                     ;
+(1)  101/    93F5 :                     
+(1)  102/    93F5 :                     ;
+(1)  103/    93F5 :                     ;	lookup table.
+(1)  104/    93F5 :                     ;
+(1)  105/    93F5 :                     
+(1)  106/    93F5 :                     __ES_Msg1: 														; messages
+(1)  107/    93F5 : 21 45 52 52 20 00   	db 		"!ERR ",0
+(1)  108/    93FB : 20 41 54 20 00      	db 		" AT ",0
+      48/    9400 :                     
+      49/    9400 :                     
+      50/    9400 :                     
+      51/    9400 :                     
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 20 - 12/21/2015 22:25:18
 
 
   symbol table (* = unused):
@@ -969,71 +1159,80 @@
 
 *ARCHITECTURE :  i386-unknown-win32 - | *BIGENDIAN :                      0 - |
 *BRANCHEXT :                      0 - | *CASESENSITIVE :                  0 - |
-*CONSTPI :        3.141592653589793 - | *DATE :                  12/19/2015 - |
+ CODESTART :                   936C C | *CONSTPI :        3.141592653589793 - |
+ CURRENTLINE :                  CAF - | *DATE :                  12/21/2015 - |
  ERROR_DIVIDEZERO :               7 - |  ERROR_TERM :                     4 - |
- EVALUATEEXPRESSION :          917D C |  EVALUATEHL :                  930E C |
-*FALSE :                          0 - | *FULLPMMU :                       1 - |
- GETCHAR :                     90E8 C |  GETSTRING :                   910C C |
-*HAS64 :                          1 - | *HASDSP :                         0 - |
-*HASFPU :                         0 - | *HASPMMU :                        0 - |
-*INEXTMODE :                      0 - | *INLWORDMODE :                    0 - |
-*INMAXMODE :                      0 - | *INSRCMODE :                      0 - |
-*INSUPMODE :                      0 - | *KEYBOARDBUFFER :               CB0 - |
+ EVALUATEEXPRESSION :          9192 C |  EVALUATEHL :                  9323 C |
+ EXECUTESTATEMENT :            9375 C | *FALSE :                          0 - |
+*FULLPMMU :                       1 - |  GETCHAR :                     90FD C |
+ GETSTRING :                   9121 C | *HAS64 :                          1 - |
+*HASDSP :                         0 - | *HASFPU :                         0 - |
+*HASPMMU :                        0 - | *INEXTMODE :                      0 - |
+*INLWORDMODE :                    0 - | *INMAXMODE :                      0 - |
+*INSRCMODE :                      0 - | *INSUPMODE :                      0 - |
+ ISRUNNING :                    CAE - |  KEYBOARDBUFFER :               CB0 - |
 *KEYBOARDBUFFERSIZE :            50 - | *LISTON :                         1 - |
 *MACEXP :                         1 - | *MOMCPU :                         C - |
 *MOMCPUNAME :                 SC/MP - | *NESTMAX :                      100 - |
-*OSMATHLIBRARY :                  3 - | *PACKING :                        0 - |
-*PADDING :                        1 - |  PRINT :                       9028 C |
- RANDOM :                      92D2 C |  RANDOMSEED :                   CAA - |
-*RELAXED :                        0 - |  SCREENCURSOR :                 C80 - |
- SCREENMIRROR :                 C00 - |  STOP :                        9026 C |
- SYSTEMVARIABLES :              C90 - |  TESTEXPR :                    9174 C |
-*TIME :                    22:10:15 - | *TRUE :                           1 - |
- VARIABLES :                    C90 - | *VERSION :                     142F - |
- __EE_CALLANDCHECK :           9207 C |  __EE_CHECKPUNCTERMS :         91D8 C |
- __EE_CONSTANTEND :            91C6 C |  __EE_CONSTANTTERM :           91AB C |
- __EE_DIVIDE_LOOP :            92A0 C |
- __EE_DIVIDE_NUMERATOR_POSITIVE :                                      92B1 C |
- __EE_DIVIDE_TEMP_POSITIVE :   92C4 C |  __EE_DIVIDE_ZERO :            9236 C |
- __EE_ERRORA :                 920E C |  __EE_EXIT :                   9212 C |
- __EE_EXITOKAY :               927C C |  __EE_FOUNDOPERATOR :          9284 C |
- __EE_HAVETERM :               921C C |  __EE_ISVARIABLE :             91C8 C |
- __EE_MEMORYREAD :             91FF C |  __EE_MULTIPLYLOOP :           9246 C |
- __EE_MULTIPLY_B0ISZERO :      9254 C |  __EE_NEXTOPERATION :          9260 C |
- __EE_NEXTTERM :               918B C |  __EE_NOTADD :                 922A C |
- __EE_NOTMULTIPLY :            928F C |  __EE_NOTSUBTRACT :            923A C |
- __EE_RANDOM :                 91F7 C |  __EE_SKIPSPACE :              918B C |
- __EE_TERMERROR :              920C C |  __EHL_BACKFAIL :              9345 C |
- __EHL_EXIT :                  934B C |  __EVALUATEEXPRESSION2 :       91D6 C |
- __GCNOTLOWER [GETCHAR] :      9107 C |  __GCWAITKEY [GETCHAR] :       90ED C |
- __GCWAITRELEASE [GETCHAR] :   90F5 C |  __GSBACKSPACE [GETSTRING] :   9167 C |
- __GSCONTROLKEY [GETSTRING] :  914A C |  __GSLOOP [GETSTRING] :        911A C |
- __PRCLEARFROMMOVETO [PRINT] : 90C8 C |  __PRCLEARLOOP [PRINT] :       90CA C |
- __PRCLEARSCREEN [PRINT] :     90C6 C |  __PRCOPY [PRINT] :            90D4 C |
- __PREXIT [PRINT] :            908B C |  __PREXITNOCHECK [PRINT] :     908F C |
- __PRISCONTROLCHAR [PRINT] :   909D C |  __PRISRETURN [PRINT] :        90BD C |
- __PRNOTASCII [PRINT] :        9065 C |  __PRPRINTCHARACTERA [PRINT] : 9049 C |
- __PRPRINTSTRING [PRINT] :     9037 C |  __PRSCROLLLOOP [PRINT] :      907D C |
- __PRUPDATECURSOR [PRINT] :    906E C |  __RA_EXIT :                   9300 C |
- __RA_NOINITIALISE :           92EC C |
+ OSMATHLIBRARY :                  3 - | *PACKING :                        0 - |
+*PADDING :                        1 - |  PRINT :                       903D C |
+ PROGRAMBASE :                  CAC - |  RANDOM :                      92E7 C |
+ RANDOMSEED :                   CAA - | *RELAXED :                        0 - |
+ SCREENCURSOR :                 C80 - |  SCREENMIRROR :                 C00 - |
+ STOP :                        903B C |  SYSTEMVARIABLES :              C90 - |
+*TESTEXPR :                    9189 C | *TIME :                    22:25:17 - |
+*TRUE :                           1 - |  VARIABLES :                    C90 - |
+*VERSION :                     142F - |  __EE_CALLANDCHECK :           921C C |
+ __EE_CHECKPUNCTERMS :         91ED C |  __EE_CONSTANTEND :            91DB C |
+ __EE_CONSTANTTERM :           91C0 C |  __EE_DIVIDE_LOOP :            92B5 C |
+ __EE_DIVIDE_NUMERATOR_POSITIVE :                                      92C6 C |
+ __EE_DIVIDE_TEMP_POSITIVE :   92D9 C |  __EE_DIVIDE_ZERO :            924B C |
+ __EE_ERRORA :                 9223 C |  __EE_EXIT :                   9227 C |
+ __EE_EXITOKAY :               9291 C |  __EE_FOUNDOPERATOR :          9299 C |
+ __EE_HAVETERM :               9231 C |  __EE_ISVARIABLE :             91DD C |
+ __EE_MEMORYREAD :             9214 C |  __EE_MULTIPLYLOOP :           925B C |
+ __EE_MULTIPLY_B0ISZERO :      9269 C |  __EE_NEXTOPERATION :          9275 C |
+ __EE_NEXTTERM :               91A0 C |  __EE_NOTADD :                 923F C |
+ __EE_NOTMULTIPLY :            92A4 C |  __EE_NOTSUBTRACT :            924F C |
+ __EE_RANDOM :                 920C C |  __EE_SKIPSPACE :              91A0 C |
+ __EE_TERMERROR :              9221 C |  __EHL_BACKFAIL :              935A C |
+ __EHL_EXIT :                  9360 C |  __ES_CHECKRESULT :            93E6 C |
+ __ES_ENDOFLINE :              9383 C |  __ES_ERROR :                  93AC C |
+ __ES_GOCOMMANDLINE :          9399 C |  __ES_LOOKUPCOMMAND :          93EB C |
+ __ES_MSG1 :                   93F5 C |  __EVALUATEEXPRESSION2 :       91EB C |
+ __GCNOTLOWER [GETCHAR] :      911C C |  __GCWAITKEY [GETCHAR] :       9102 C |
+ __GCWAITRELEASE [GETCHAR] :   910A C |  __GSBACKSPACE [GETSTRING] :   917C C |
+ __GSCONTROLKEY [GETSTRING] :  915F C |  __GSLOOP [GETSTRING] :        912F C |
+ __PRCLEARFROMMOVETO [PRINT] : 90DD C |  __PRCLEARLOOP [PRINT] :       90DF C |
+ __PRCLEARSCREEN [PRINT] :     90DB C |  __PRCOPY [PRINT] :            90E9 C |
+ __PREXIT [PRINT] :            90A0 C |  __PREXITNOCHECK [PRINT] :     90A4 C |
+ __PRISCONTROLCHAR [PRINT] :   90B2 C |  __PRISRETURN [PRINT] :        90D2 C |
+ __PRNOTASCII [PRINT] :        907A C |  __PRPRINTCHARACTERA [PRINT] : 905E C |
+ __PRPRINTSTRING [PRINT] :     904C C |  __PRSCROLLLOOP [PRINT] :      9092 C |
+ __PRUPDATECURSOR [PRINT] :    9083 C |  __RA_EXIT :                   9315 C |
+ __RA_NOINITIALISE :           9301 C |
 
-     95 symbols
-     31 unused symbols
+    106 symbols
+     30 unused symbols
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 21 - 12/21/2015 22:25:18
 
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 18 - 12/19/2015 22:10:15
+
+
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 22 - 12/21/2015 22:25:18
 
 
   defined macros:
   ---------------
 
-LPI                                   | PULLA                                
-PULLE                                 | PULLP                                
-PUSHA                                 | PUSHE                                
-PUSHP                                 | SETV                                 
+CODE                                  | LPI                                  
+PULLA                                 | PULLE                                
+PULLP                                 | PUSHA                                
+PUSHE                                 | PUSHP                                
+SETV                                  |
 
-      8 macros
+      9 macros
 
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 19 - 12/19/2015 22:10:15
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 23 - 12/21/2015 22:25:18
 
 
   codepages:
@@ -1044,8 +1243,8 @@ STANDARD (0 changed characters)
 
 0.01 seconds assembly time
 
-    804 lines source file
-    914 lines incl. macro expansions
+    942 lines source file
+   1095 lines incl. macro expansions
       2 passes
       0 errors
       0 warnings
