@@ -7,7 +7,7 @@
 ; ****************************************************************************************************************
 
 codeStart:
-	code 	10,"CLEAR"
+	code 	10,"   CLEAR 42"
 	db 		0 													; 0 length means end of program.	
 
 ; ****************************************************************************************************************
@@ -85,13 +85,39 @@ __ES_CheckResult:
 __ES_LookUpCommand:
 	ld 		@-1(p1) 											; put first character in 'E' register
 	xae 														; speeds look up slightly.
+	lpi 	p3,__ES_Lookup 										; P3 is lookup table.
+__ES_Search:
+	ld 		@5(p3) 												; read first letter and skip forward 5
+	jz 		wait7 												; end of table
+	xre 														; is the first character ?
+	jnz 	__ES_Search 										; no, do next character.
+	ld 		-4(p3) 												; get second character
+	xor 	1(p1) 												; compare against 2nd char of command
+	jnz 	__ES_Search 										; different, try the next one.
+	ld 		@2(p1) 												; skip over first two characters
+	ld 		-3(p3) 												; get the number to skip
+	jz 		__ES_SkipSpace 										; if zero, already done it.
+	st 		-1(p2) 												; characters to skip after first two
+__ES_Skip:
+	ld 		@1(p1) 												; read character
+	jz 		__ES_SkipSpace 										; if \0 reached end of command which is allowed.
+	dld 	-1(p2) 												; skip over requisite number of characters
+	jnz 	__ES_Skip
+__ES_SkipSpace:
+	ld 		@1(p1) 												; skip over spaces
+	xri 	' '
+	jz 		__ES_SkipSpace
+	ld 		@-1(p1)												; undo the fetch.
+	ld 		-2(p3) 												; get low jump address to E
+	xae 
+	ld 		-1(p3) 												; get high jump address to P3.H
+	xpah 	p3
+	lde 														; E -> P3.L
+	xpal 	p3
+	xppc 	p3 													; and go there.
 
-	ldi 	'X'
-	xae
-	jmp 	__ES_Error
-
-
-
+wait7:
+	jmp 	wait7
 
 	jmp 	__ES_CheckResult 									; come back here, check what happened, last in chain.
 
@@ -105,6 +131,15 @@ __ES_LookUpCommand:
 ;
 ;	lookup table.
 ;
+command macro twoChar,length,address
+	db 		twoChar
+	db 		length-2
+	dw 		address-1
+	endm
+
+__ES_Lookup:
+	command 	"CL",5,__ES_LookUpCommand
+	db 			0
 
 __ES_Msg1: 														; messages
 	db 		"!ERR ",0
