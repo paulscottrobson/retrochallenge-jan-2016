@@ -7,10 +7,12 @@
 ; ****************************************************************************************************************
 
 codeStart:
-	code 	1,"GOTO 10"
-	code 	2,"OS"
-	code 	4,"NEW"
-	code 	10,"END:CALL (2,144):CLEAR"
+	code 	1,"LIST"
+	code 	3,"GOTO 10"
+	code 	5,"GOTO 5"
+	code 	14,"OS"
+	code 	24,"NEW"
+	code 	40,"END:CALL (2,144):CLEAR"
 	db 		0 													; 0 length means end of program.	
 
 ; ****************************************************************************************************************
@@ -146,8 +148,9 @@ wait7:
 	include commands\end.asm 									; END and NEW
 	include commands\os.asm 									; OS
 	include commands\rungo.asm 									; RUN and GOTO 
+	include commands\list.asm 									; LIST
 
-; TODO: LIST, LET, IF, PR, IN 
+; TODO: LET, IF, PR, IN 
 
 ; ****************************************************************************************************************
 ;
@@ -167,6 +170,7 @@ __ES_Lookup:
 	command 	"GO",4,CMD_GOTO 								; GOTO command.
 	command 	"CA",4,CMD_CALL 								; CALL command.
 	command 	"CL",5,CMD_CLEAR 								; CLEAR command.
+	command 	"LI",4,CMD_LIST 								; LIST command.
 	command 	"RU",3,CMD_RUN									; RUN command.
 	command 	"EN",3,CMD_END 									; END command.
 	command 	"NE",3,CMD_NEW 									; NEW command

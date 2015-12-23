@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 1 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 1 - 12/23/2015 21:16:06
 
 
        1/       0 :                     ; ****************************************************************************************************************
@@ -61,7 +61,7 @@
 (1)   47/       0 :                     	xpal 	ptr
 (1)   48/       0 :                     	st 		@-1(p2)
 (1)   49/       0 :                     	endm
- AS V1.42 Beta [Bld 102] - source file minol.asm(memorymacros.asm) - page 2 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(memorymacros.asm) - page 2 - 12/23/2015 21:16:06
 
 
 (1)   50/       0 :                     
@@ -124,7 +124,7 @@
       24/    900F : 3F                  	xppc 	p3
       25/    9010 : (MACRO)             	lpi 	p3,Variables
       25/    9010 : C4 0C                       ldi     (VARIABLES) / 256
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 3 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 3 - 12/23/2015 21:16:06
 
 
       25/    9012 : 37                          xpah    P3
@@ -155,7 +155,7 @@
       38/    9034 : (MACRO)             	lpi 	p3,ExecuteStatement-1
       38/    9034 : C4 93                       ldi     (EXECUTESTATEMENT-1) / 256
       38/    9036 : 37                          xpah    P3
-      38/    9037 : C4 A0                       ldi     (EXECUTESTATEMENT-1) & 255
+      38/    9037 : C4 AA                       ldi     (EXECUTESTATEMENT-1) & 255
       38/    9039 : 33                          xpal    P3
       39/    903A : 3F                  	xppc 	p3
       40/    903B :                     
@@ -187,7 +187,7 @@
 (1)   22/    903D :                     ; ****************************************************************************************************************
 (1)   23/    903D :                     ; ****************************************************************************************************************
 (1)   24/    903D :                     
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 4 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 4 - 12/23/2015 21:16:06
 
 
 (1)   25/    903D :                     Print:
@@ -250,7 +250,7 @@
 (1)   75/    9072 : E4 80               	xri 	0x80													
 (1)   76/    9074 : 94 04               	jp 		__PRNotASCII
 (1)   77/    9076 : 40                  	lde 														; if ASCII make 6 bit.
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 5 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 5 - 12/23/2015 21:16:06
 
 
 (1)   78/    9077 : D4 3F               	ani 	0x3F
@@ -313,7 +313,7 @@
 (1)  128/    90B2 : 40                  	lde 														; restore character.
 (1)  129/    90B3 : E4 0D               	xri 	13 													; carriage return ? (13)
 (1)  130/    90B5 : 98 1B               	jz 		__PRIsReturn
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 6 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 6 - 12/23/2015 21:16:06
 
 
 (1)  131/    90B7 : E4 01               	xri 	13!12 												; form feed ? (12)
@@ -376,7 +376,7 @@
 (1)  188/    90F8 : C6 01               	ld 		@1(p2) 												; read cursor position
 (1)  189/    90FA : 31                  	xpal 	p1 													; put in P1.L
 (1)  190/    90FB : 90 86               	jmp 	__PRUpdateCursor
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 7 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 7 - 12/23/2015 21:16:06
 
 
 (1)  191/    90FD :                     
@@ -439,7 +439,7 @@
 (1)  241/    912A : CE FF                       st              @-1(p2)
 (1)  242/    912C : C4 00               	ldi 	0 													; set E (current position) to A.
 (1)  243/    912E : 01                  	xae
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 8 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 8 - 12/23/2015 21:16:06
 
 
 (1)  244/    912F :                     __GSLoop:
@@ -502,7 +502,7 @@
 (1)  283/    9176 : 37                          xpah    P3
 (1)  284/    9177 : (MACRO)             	pulla
 (1)  284/    9177 : C6 01                       ld              @1(p2)
- AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 9 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(screen.asm) - page 9 - 12/23/2015 21:16:06
 
 
 (1)  285/    9179 : 3F                  	xppc 	p3 													; return
@@ -565,7 +565,7 @@
 (1)   22/    91A0 :                     ;													Get a new term 
 (1)   23/    91A0 :                     ; ****************************************************************************************************************
 (1)   24/    91A0 :                     
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 10 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 10 - 12/23/2015 21:16:06
 
 
 (1)   25/    91A0 :                     __EE_NextTerm:
@@ -628,7 +628,7 @@
 (1)   81/    91DE : C4 0C                       ldi     (VARIABLES) / 256
 (1)   81/    91E0 : 37                          xpah    P3
 (1)   81/    91E1 : C4 90                       ldi     (VARIABLES) & 255
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 11 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 11 - 12/23/2015 21:16:06
 
 
 (1)   81/    91E3 : 33                          xpal    P3
@@ -691,7 +691,7 @@
 (1)  130/    9221 :                     
 (1)  131/    9221 :                     ; ****************************************************************************************************************
 (1)  132/    9221 :                     ;												TERM Error here.
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 12 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 12 - 12/23/2015 21:16:06
 
 
 (1)  133/    9221 :                     ; ****************************************************************************************************************
@@ -754,7 +754,7 @@
 (1)  186/    9251 : 9C 51               	jnz 	__EE_NotMultiply
 (1)  187/    9253 :                     
 (1)  188/    9253 :                     ; ****************************************************************************************************************
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 13 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 13 - 12/23/2015 21:16:06
 
 
 (1)  189/    9253 :                     ;													 Multiply
@@ -817,7 +817,7 @@
 (1)  245/    929D : C4 91                       ldi     (__EE_NEXTTERM-1) / 256
 (1)  245/    929F : 37                          xpah    P3
 (1)  245/    92A0 : C4 9F                       ldi     (__EE_NEXTTERM-1) & 255
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 14 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 14 - 12/23/2015 21:16:06
 
 
 (1)  245/    92A2 : 33                          xpal    P3
@@ -880,7 +880,7 @@
 (1)  302/    92E7 :                     ; ****************************************************************************************************************
 (1)  303/    92E7 :                     
 (1)  304/    92E7 :                     Random:
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 15 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 15 - 12/23/2015 21:16:06
 
 
 (1)  305/    92E7 : (MACRO)             	pushp	p3
@@ -943,7 +943,7 @@
 (1)  346/    9329 : CE FF                       st              @-1(p2)
 (1)  347/    932B : C5 01               	ld 		@1(p1) 												; get character
 (1)  348/    932D : E4 28               	xri 	'('													; must be (
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 16 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 16 - 12/23/2015 21:16:06
 
 
 (1)  349/    932F : 9C 29               	jnz 	__EHL_BackFail
@@ -1002,438 +1002,568 @@
 (1)    7/    936C :                     ; ****************************************************************************************************************
 (1)    8/    936C :                     
 (1)    9/    936C :                     codeStart:
-(1)   10/    936C : (MACRO)             	code 	1,"HELLO:GOTO 10"
-(1)   10/    936C : 10                          db              strlen("HELLO:GOTO 10")+3                                                                          ; one byte offset to next
+(1)   10/    936C : (MACRO)             	code 	1,"LIST"
+(1)   10/    936C : 07                          db              strlen("LIST")+3                                                                          ; one byte offset to next
 (1)   10/    936D : 01                          db              1                                                                                          ; one byte line number
-(1)   10/    936E : 48 45 4C 4C 4F 3A           db              "HELLO:GOTO 10",0                                                                                          ; ASCIIZ string
- AS V1.42 Beta [Bld 102] - source file minol.asm(statement.asm) - page 17 - 12/23/2015 16:01:44
+(1)   10/    936E : 4C 49 53 54 00              db              "LIST",0                                                                                          ; ASCIIZ string
+ AS V1.42 Beta [Bld 102] - source file minol.asm(statement.asm) - page 17 - 12/23/2015 21:16:06
 
 
-                    47 4F 54 4F 20 31 
+(1)   11/    9373 : (MACRO)             	code 	3,"GOTO 10"
+(1)   11/    9373 : 0A                          db              strlen("GOTO 10")+3                                                                          ; one byte offset to next
+(1)   11/    9374 : 03                          db              3                                                                                          ; one byte line number
+(1)   11/    9375 : 47 4F 54 4F 20 31           db              "GOTO 10",0                                                                                          ; ASCIIZ string
                     30 00 
-(1)   11/    937C : (MACRO)             	code 	2,"OS"
-(1)   11/    937C : 05                          db              strlen("OS")+3                                                                          ; one byte offset to next
-(1)   11/    937D : 02                          db              2                                                                                          ; one byte line number
-(1)   11/    937E : 4F 53 00                    db              "OS",0                                                                                          ; ASCIIZ string
-(1)   12/    9381 : (MACRO)             	code 	4,"NEW"
-(1)   12/    9381 : 06                          db              strlen("NEW")+3                                                                          ; one byte offset to next
-(1)   12/    9382 : 04                          db              4                                                                                          ; one byte line number
-(1)   12/    9383 : 4E 45 57 00                 db              "NEW",0                                                                                          ; ASCIIZ string
-(1)   13/    9387 : (MACRO)             	code 	10,"END:CALL (2,144):CLEAR"
-(1)   13/    9387 : 19                          db              strlen("END:CALL (2,144):CLEAR")+3                                                                          ; one byte offset to next
-(1)   13/    9388 : 0A                          db              10                                                                                          ; one byte line number
-(1)   13/    9389 : 45 4E 44 3A 43 41           db              "END:CALL (2,144):CLEAR",0                                                                                          ; ASCIIZ string
+(1)   12/    937D : (MACRO)             	code 	5,"GOTO 5"
+(1)   12/    937D : 09                          db              strlen("GOTO 5")+3                                                                          ; one byte offset to next
+(1)   12/    937E : 05                          db              5                                                                                          ; one byte line number
+(1)   12/    937F : 47 4F 54 4F 20 35           db              "GOTO 5",0                                                                                          ; ASCIIZ string
+                    00 
+(1)   13/    9386 : (MACRO)             	code 	14,"OS"
+(1)   13/    9386 : 05                          db              strlen("OS")+3                                                                          ; one byte offset to next
+(1)   13/    9387 : 0E                          db              14                                                                                          ; one byte line number
+(1)   13/    9388 : 4F 53 00                    db              "OS",0                                                                                          ; ASCIIZ string
+(1)   14/    938B : (MACRO)             	code 	24,"NEW"
+(1)   14/    938B : 06                          db              strlen("NEW")+3                                                                          ; one byte offset to next
+(1)   14/    938C : 18                          db              24                                                                                          ; one byte line number
+(1)   14/    938D : 4E 45 57 00                 db              "NEW",0                                                                                          ; ASCIIZ string
+(1)   15/    9391 : (MACRO)             	code 	40,"END:CALL (2,144):CLEAR"
+(1)   15/    9391 : 19                          db              strlen("END:CALL (2,144):CLEAR")+3                                                                          ; one byte offset to next
+(1)   15/    9392 : 28                          db              40                                                                                          ; one byte line number
+(1)   15/    9393 : 45 4E 44 3A 43 41           db              "END:CALL (2,144):CLEAR",0                                                                                          ; ASCIIZ string
                     4C 4C 20 28 32 2C 
                     31 34 34 29 3A 43 
                     4C 45 41 52 00 
-(1)   14/    93A0 : 00                  	db 		0 													; 0 length means end of program.	
-(1)   15/    93A1 :                     
-(1)   16/    93A1 :                     ; ****************************************************************************************************************
-(1)   17/    93A1 :                     ;
-(1)   18/    93A1 :                     ;											Execute statement at P1.
-(1)   19/    93A1 :                     ;
-(1)   20/    93A1 :                     ; ****************************************************************************************************************
-(1)   21/    93A1 :                     
-(1)   22/    93A1 :                     ExecuteStatement:
-(1)   23/    93A1 : C5 01               	ld 		@1(p1) 												; look at character at P1 and bump
-(1)   24/    93A3 : 98 16               	jz 		__ES_EndOfLine 										; end of line.
-(1)   25/    93A5 : E4 3A               	xri 	':'													; skip over ':'
-(1)   26/    93A7 : 98 F8               	jz 		ExecuteStatement
-(1)   27/    93A9 : E4 1A               	xri 	':'!' '												; skip over space.
-(1)   28/    93AB : 98 F4               	jz 		ExecuteStatement
-(1)   29/    93AD : E4 68               	xri 	' '!'H'												; is it a comment ?
-(1)   30/    93AF : 9C 72               	jnz 	__ES_LookUpCommand 									; no, go figure out what to do.
-(1)   31/    93B1 :                     ;
-(1)   32/    93B1 :                     ;	Comment
-(1)   33/    93B1 :                     ;
-(1)   34/    93B1 :                     __ES_Comment:
-(1)   35/    93B1 : C5 01               	ld 		@1(p1) 												; look forward
-(1)   36/    93B3 : 98 06               	jz 		__ES_EndOfLine 										; found NULL, do EOL code.
-(1)   37/    93B5 : E4 3A               	xri 	':' 												; if not ':', keep going.
-(1)   38/    93B7 : 9C F8               	jnz 	__ES_Comment
-(1)   39/    93B9 : 90 E6               	jmp 	ExecuteStatement
-(1)   40/    93BB :                     
-(1)   41/    93BB :                     ;
-(1)   42/    93BB :                     ;	We have reached the end of the line - if running, go to next line, stopping if we have reached the 
-(1)   43/    93BB :                     ; 	end of the code.
-(1)   44/    93BB :                     ;
-(1)   45/    93BB :                     __ES_EndOfLine:
-(1)   46/    93BB : (MACRO)             	lpi 	p3,IsRunning 										; reached end of line
-(1)   46/    93BB : C4 0C                       ldi     (ISRUNNING) / 256
-(1)   46/    93BD : 37                          xpah    P3
-(1)   46/    93BE : C4 AE                       ldi     (ISRUNNING) & 255
-(1)   46/    93C0 : 33                          xpal    P3
-(1)   47/    93C1 : C3 00               	ld 		(p3)												; read the "is running" flag
-(1)   48/    93C3 : 98 0C               	jz 		__ES_GoCommandLine 									; if not running, go to the command line.
-(1)   49/    93C5 : C1 00               	ld 		(p1) 												; look at next byte
-(1)   50/    93C7 : 98 08               	jz 		__ES_GoCommandLine 									; if zero, end of program code, so stop.
-(1)   51/    93C9 : C1 01               	ld 		1(p1) 												; read the line number
-(1)   52/    93CB : CB 01               	st 		CurrentLine-IsRunning(p3) 							; save it in current line variable
- AS V1.42 Beta [Bld 102] - source file minol.asm(statement.asm) - page 18 - 12/23/2015 16:01:44
+(1)   16/    93AA : 00                  	db 		0 													; 0 length means end of program.	
+(1)   17/    93AB :                     
+(1)   18/    93AB :                     ; ****************************************************************************************************************
+(1)   19/    93AB :                     ;
+(1)   20/    93AB :                     ;											Execute statement at P1.
+(1)   21/    93AB :                     ;
+(1)   22/    93AB :                     ; ****************************************************************************************************************
+(1)   23/    93AB :                     
+(1)   24/    93AB :                     ExecuteStatement:
+(1)   25/    93AB : C5 01               	ld 		@1(p1) 												; look at character at P1 and bump
+(1)   26/    93AD : 98 16               	jz 		__ES_EndOfLine 										; end of line.
+(1)   27/    93AF : E4 3A               	xri 	':'													; skip over ':'
+(1)   28/    93B1 : 98 F8               	jz 		ExecuteStatement
+(1)   29/    93B3 : E4 1A               	xri 	':'!' '												; skip over space.
+(1)   30/    93B5 : 98 F4               	jz 		ExecuteStatement
+(1)   31/    93B7 : E4 02               	xri 	' '!'"'												; is it a comment ?
+(1)   32/    93B9 : 9C 72               	jnz 	__ES_LookUpCommand 									; no, go figure out what to do.
+(1)   33/    93BB :                     ;
+(1)   34/    93BB :                     ;	Comment - go to EOL or : 
+(1)   35/    93BB :                     ;
+(1)   36/    93BB :                     __ES_Comment:
+(1)   37/    93BB : C5 01               	ld 		@1(p1) 												; look forward
+(1)   38/    93BD : 98 06               	jz 		__ES_EndOfLine 										; found NULL, do EOL code.
+(1)   39/    93BF : E4 3A               	xri 	':' 												; if not ':', keep going.
+(1)   40/    93C1 : 9C F8               	jnz 	__ES_Comment
+(1)   41/    93C3 : 90 E6               	jmp 	ExecuteStatement
+(1)   42/    93C5 :                     ;
+(1)   43/    93C5 :                     ;	We have reached the end of the line - if running, go to next line, stopping if we have reached the 
+(1)   44/    93C5 :                     ; 	end of the code.
+(1)   45/    93C5 :                     ;
+(1)   46/    93C5 :                     __ES_EndOfLine:
+(1)   47/    93C5 : (MACRO)             	lpi 	p3,IsRunning 										; reached end of line
+(1)   47/    93C5 : C4 0C                       ldi     (ISRUNNING) / 256
+(1)   47/    93C7 : 37                          xpah    P3
+(1)   47/    93C8 : C4 AE                       ldi     (ISRUNNING) & 255
+ AS V1.42 Beta [Bld 102] - source file minol.asm(statement.asm) - page 18 - 12/23/2015 21:16:06
 
 
-(1)   53/    93CD : C5 02               	ld 		@2(p1) 												; skip over length and current line
-(1)   54/    93CF : 90 D0               	jmp 	ExecuteStatement 									; and execute the statement.
-(1)   55/    93D1 :                     ;
-(1)   56/    93D1 :                     ;	Program has stopped, so go to the command line.
-(1)   57/    93D1 :                     ;
-(1)   58/    93D1 :                     __ES_GoCommandLine:
-(1)   59/    93D1 : (MACRO)             	lpi 	p3,IsRunning
-(1)   59/    93D1 : C4 0C                       ldi     (ISRUNNING) / 256
-(1)   59/    93D3 : 37                          xpah    P3
-(1)   59/    93D4 : C4 AE                       ldi     (ISRUNNING) & 255
-(1)   59/    93D6 : 33                          xpal    P3
-(1)   60/    93D7 : C4 00               	ldi 	0 													; clear the "Is Running" flag to zero.
-(1)   61/    93D9 : CB 00               	st 		(p3)
-(1)   62/    93DB : CB 01               	st 		CurrentLine-IsRunning(p3) 							; clear the current line to zero.
-(1)   63/    93DD : (MACRO)             	lpi 	p3,CommandInput-1									; and go to the command line input routine.
-(1)   63/    93DD : C4 90                       ldi     (COMMANDINPUT-1) / 256
-(1)   63/    93DF : 37                          xpah    P3
-(1)   63/    93E0 : C4 3A                       ldi     (COMMANDINPUT-1) & 255
-(1)   63/    93E2 : 33                          xpal    P3
-(1)   64/    93E3 : 3F                  	xppc 	p3
-(1)   65/    93E4 :                     ;
-(1)   66/    93E4 :                     ;	Come here after executing statement to decide what to do next, depending on CY/L value.
-(1)   67/    93E4 :                     ;	
-(1)   68/    93E4 :                     __ES_CheckResult:
-(1)   69/    93E4 : 06                  	csa 														; get status
-(1)   70/    93E5 : 94 02               	jp 		__ES_Error 											; if CY/L = 0 then error E occurred
-(1)   71/    93E7 : 90 B8               	jmp 	ExecuteStatement 									
-(1)   72/    93E9 :                     ;
-(1)   73/    93E9 :                     ;	Error E has occurred.
-(1)   74/    93E9 :                     ;
-(1)   75/    93E9 :                     __ES_Error:
-(1)   76/    93E9 : (MACRO)             	lpi 	p3,Print-1 											; print "!ERR "
-(1)   76/    93E9 : C4 90                       ldi     (PRINT-1) / 256
-(1)   76/    93EB : 37                          xpah    P3
-(1)   76/    93EC : C4 3C                       ldi     (PRINT-1) & 255
-(1)   76/    93EE : 33                          xpal    P3
-(1)   77/    93EF : (MACRO)             	lpi 	p1,__ES_Msg1
-(1)   77/    93EF : C4 95                       ldi     (__ES_MSG1) / 256
-(1)   77/    93F1 : 35                          xpah    P1
-(1)   77/    93F2 : C4 20                       ldi     (__ES_MSG1) & 255
-(1)   77/    93F4 : 31                          xpal    P1
-(1)   78/    93F5 : C4 00               	ldi 	0
-(1)   79/    93F7 : 3F                  	xppc 	p3
-(1)   80/    93F8 : 40                  	lde 														; print Error Code
-(1)   81/    93F9 : 3F                  	xppc	p3
-(1)   82/    93FA : C4 00               	ldi 	0 													; print " AT "
-(1)   83/    93FC : 3F                  	xppc 	p3
-(1)   84/    93FD : CE FF               	st 		@-1(p2) 											; push line number on the stack.
-(1)   85/    93FF : (MACRO)             	lpi 	p3,CurrentLine
-(1)   85/    93FF : C4 0C                       ldi     (CURRENTLINE) / 256
-(1)   85/    9401 : 37                          xpah    P3
-(1)   85/    9402 : C4 AF                       ldi     (CURRENTLINE) & 255
-(1)   85/    9404 : 33                          xpal    P3
-(1)   86/    9405 : C3 00               	ld 		(p3)
-(1)   87/    9407 : CE FF               	st 		@-1(p2)
-(1)   88/    9409 : (MACRO)             	lpi 	p3,OSMathLibrary-1 									; convert to ASCII
-(1)   88/    9409 : C4 00                       ldi     (OSMATHLIBRARY-1) / 256
-(1)   88/    940B : 37                          xpah    P3
-(1)   88/    940C : C4 02                       ldi     (OSMATHLIBRARY-1) & 255
-(1)   88/    940E : 33                          xpal    P3
- AS V1.42 Beta [Bld 102] - source file minol.asm(statement.asm) - page 19 - 12/23/2015 16:01:44
+(1)   47/    93CA : 33                          xpal    P3
+(1)   48/    93CB : C3 00               	ld 		(p3)												; read the "is running" flag
+(1)   49/    93CD : 98 0C               	jz 		__ES_GoCommandLine 									; if not running, go to the command line.
+(1)   50/    93CF : C1 00               	ld 		(p1) 												; look at next byte
+(1)   51/    93D1 : 98 08               	jz 		__ES_GoCommandLine 									; if zero, end of program code, so stop.
+(1)   52/    93D3 : C1 01               	ld 		1(p1) 												; read the line number
+(1)   53/    93D5 : CB 01               	st 		CurrentLine-IsRunning(p3) 							; save it in current line variable
+(1)   54/    93D7 : C5 02               	ld 		@2(p1) 												; skip over length and current line
+(1)   55/    93D9 : 90 D0               	jmp 	ExecuteStatement 									; and execute the statement.
+(1)   56/    93DB :                     ;
+(1)   57/    93DB :                     ;	Program has stopped, so go to the command line.
+(1)   58/    93DB :                     ;
+(1)   59/    93DB :                     __ES_GoCommandLine:
+(1)   60/    93DB : (MACRO)             	lpi 	p3,IsRunning
+(1)   60/    93DB : C4 0C                       ldi     (ISRUNNING) / 256
+(1)   60/    93DD : 37                          xpah    P3
+(1)   60/    93DE : C4 AE                       ldi     (ISRUNNING) & 255
+(1)   60/    93E0 : 33                          xpal    P3
+(1)   61/    93E1 : C4 00               	ldi 	0 													; clear the "Is Running" flag to zero.
+(1)   62/    93E3 : CB 00               	st 		(p3)
+(1)   63/    93E5 : CB 01               	st 		CurrentLine-IsRunning(p3) 							; clear the current line to zero.
+(1)   64/    93E7 : (MACRO)             	lpi 	p3,CommandInput-1									; and go to the command line input routine.
+(1)   64/    93E7 : C4 90                       ldi     (COMMANDINPUT-1) / 256
+(1)   64/    93E9 : 37                          xpah    P3
+(1)   64/    93EA : C4 3A                       ldi     (COMMANDINPUT-1) & 255
+(1)   64/    93EC : 33                          xpal    P3
+(1)   65/    93ED : 3F                  	xppc 	p3
+(1)   66/    93EE :                     ;
+(1)   67/    93EE :                     ;	Come here after executing statement to decide what to do next, depending on CY/L value.
+(1)   68/    93EE :                     ;	
+(1)   69/    93EE :                     __ES_CheckResult:
+(1)   70/    93EE : 06                  	csa 														; get status
+(1)   71/    93EF : 94 02               	jp 		__ES_Error 											; if CY/L = 0 then error E occurred
+(1)   72/    93F1 : 90 B8               	jmp 	ExecuteStatement 									
+(1)   73/    93F3 :                     ;
+(1)   74/    93F3 :                     ;	Error E has occurred.
+(1)   75/    93F3 :                     ;
+(1)   76/    93F3 :                     __ES_Error:
+(1)   77/    93F3 : (MACRO)             	lpi 	p3,Print-1 											; print "!ERR "
+(1)   77/    93F3 : C4 90                       ldi     (PRINT-1) / 256
+(1)   77/    93F5 : 37                          xpah    P3
+(1)   77/    93F6 : C4 3C                       ldi     (PRINT-1) & 255
+(1)   77/    93F8 : 33                          xpal    P3
+(1)   78/    93F9 : (MACRO)             	lpi 	p1,__ES_Msg1
+(1)   78/    93F9 : C4 95                       ldi     (__ES_MSG1) / 256
+(1)   78/    93FB : 35                          xpah    P1
+(1)   78/    93FC : C4 B5                       ldi     (__ES_MSG1) & 255
+(1)   78/    93FE : 31                          xpal    P1
+(1)   79/    93FF : C4 00               	ldi 	0
+(1)   80/    9401 : 3F                  	xppc 	p3
+(1)   81/    9402 : 40                  	lde 														; print Error Code
+(1)   82/    9403 : 3F                  	xppc	p3
+(1)   83/    9404 : C4 00               	ldi 	0 													; print " AT "
+(1)   84/    9406 : 3F                  	xppc 	p3
+(1)   85/    9407 : CE FF               	st 		@-1(p2) 											; push line number on the stack.
+(1)   86/    9409 : (MACRO)             	lpi 	p3,CurrentLine
+(1)   86/    9409 : C4 0C                       ldi     (CURRENTLINE) / 256
+(1)   86/    940B : 37                          xpah    P3
+(1)   86/    940C : C4 AF                       ldi     (CURRENTLINE) & 255
+(1)   86/    940E : 33                          xpal    P3
+ AS V1.42 Beta [Bld 102] - source file minol.asm(statement.asm) - page 19 - 12/23/2015 21:16:06
 
 
-(1)   89/    940F : (MACRO)             	lpi 	p1,KeyboardBuffer+8
-(1)   89/    940F : C4 0C                       ldi     (KEYBOARDBUFFER+8) / 256
-(1)   89/    9411 : 35                          xpah    P1
-(1)   89/    9412 : C4 B8                       ldi     (KEYBOARDBUFFER+8) & 255
-(1)   89/    9414 : 31                          xpal    P1
-(1)   90/    9415 : C4 24               	ldi 	'$'
-(1)   91/    9417 : 3F                  	xppc 	p3 
-(1)   92/    9418 : (MACRO)             	lpi 	p3,Print-1 											; print it 
-(1)   92/    9418 : C4 90                       ldi     (PRINT-1) / 256
-(1)   92/    941A : 37                          xpah    P3
-(1)   92/    941B : C4 3C                       ldi     (PRINT-1) & 255
-(1)   92/    941D : 33                          xpal    P3
-(1)   93/    941E : C4 00               	ldi 	0
-(1)   94/    9420 : 3F                  	xppc 	p3
-(1)   95/    9421 : 90 AE               	jmp 	__ES_GoCommandLine
-(1)   96/    9423 :                     ;
-(1)   97/    9423 :                     ;	P1+1 is the current command, figure out what it is and do it.
-(1)   98/    9423 :                     ;
-(1)   99/    9423 :                     __ES_LookUpCommand:
-(1)  100/    9423 : C5 FF               	ld 		@-1(p1) 											; put first character in 'E' register
-(1)  101/    9425 : 01                  	xae 														; speeds look up slightly.
-(1)  102/    9426 : (MACRO)             	lpi 	p3,__ES_Lookup 										; P3 is lookup table.
-(1)  102/    9426 : C4 94                       ldi     (__ES_LOOKUP) / 256
-(1)  102/    9428 : 37                          xpah    P3
-(1)  102/    9429 : C4 FC                       ldi     (__ES_LOOKUP) & 255
-(1)  102/    942B : 33                          xpal    P3
-(1)  103/    942C :                     __ES_Search:
-(1)  104/    942C : C7 05               	ld 		@5(p3) 												; read first letter and skip forward 5
-(1)  105/    942E : 98 2A               	jz 		wait7 												; end of table
-(1)  106/    9430 : 60                  	xre 														; is the first character ?
-(1)  107/    9431 : 9C F9               	jnz 	__ES_Search 										; no, do next character.
-(1)  108/    9433 : C3 FC               	ld 		-4(p3) 												; get second character
-(1)  109/    9435 : E1 01               	xor 	1(p1) 												; compare against 2nd char of command
-(1)  110/    9437 : 9C F3               	jnz 	__ES_Search 										; different, try the next one.
-(1)  111/    9439 : C5 02               	ld 		@2(p1) 												; skip over first two characters
-(1)  112/    943B : C3 FD               	ld 		-3(p3) 												; get the number to skip
-(1)  113/    943D : 98 0A               	jz 		__ES_SkipSpace 										; if zero, already done it.
-(1)  114/    943F : CA FF               	st 		-1(p2) 												; characters to skip after first two
-(1)  115/    9441 :                     __ES_Skip:
-(1)  116/    9441 : C5 01               	ld 		@1(p1) 												; read character
-(1)  117/    9443 : 98 04               	jz 		__ES_SkipSpace 										; if \0 reached end of command which is allowed.
-(1)  118/    9445 : BA FF               	dld 	-1(p2) 												; skip over requisite number of characters
-(1)  119/    9447 : 9C F8               	jnz 	__ES_Skip
-(1)  120/    9449 :                     __ES_SkipSpace:
-(1)  121/    9449 : C5 01               	ld 		@1(p1) 												; skip over spaces
-(1)  122/    944B : E4 20               	xri 	' '
-(1)  123/    944D : 98 FA               	jz 		__ES_SkipSpace
-(1)  124/    944F : C5 FF               	ld 		@-1(p1)												; undo the fetch.
-(1)  125/    9451 : C3 FE               	ld 		-2(p3) 												; get low jump address to E
-(1)  126/    9453 : 01                  	xae 
-(1)  127/    9454 : C3 FF               	ld 		-1(p3) 												; get high jump address to P3.H
-(1)  128/    9456 : 37                  	xpah 	p3
-(1)  129/    9457 : 40                  	lde 														; E -> P3.L
-(1)  130/    9458 : 33                  	xpal 	p3
-(1)  131/    9459 : 3F                  	xppc 	p3 													; and go there.
-(1)  132/    945A :                     
-(1)  133/    945A :                     wait7:
-(1)  134/    945A : 90 FE               	jmp 	wait7
-(1)  135/    945C :                     
-(1)  136/    945C :                     ; ****************************************************************************************************************
- AS V1.42 Beta [Bld 102] - source file minol.asm(statement.asm) - page 20 - 12/23/2015 16:01:44
+(1)   87/    940F : C3 00               	ld 		(p3)
+(1)   88/    9411 : CE FF               	st 		@-1(p2)
+(1)   89/    9413 : (MACRO)             	lpi 	p3,OSMathLibrary-1 									; convert to ASCII
+(1)   89/    9413 : C4 00                       ldi     (OSMATHLIBRARY-1) / 256
+(1)   89/    9415 : 37                          xpah    P3
+(1)   89/    9416 : C4 02                       ldi     (OSMATHLIBRARY-1) & 255
+(1)   89/    9418 : 33                          xpal    P3
+(1)   90/    9419 : (MACRO)             	lpi 	p1,KeyboardBuffer+8
+(1)   90/    9419 : C4 0C                       ldi     (KEYBOARDBUFFER+8) / 256
+(1)   90/    941B : 35                          xpah    P1
+(1)   90/    941C : C4 B8                       ldi     (KEYBOARDBUFFER+8) & 255
+(1)   90/    941E : 31                          xpal    P1
+(1)   91/    941F : C4 24               	ldi 	'$'
+(1)   92/    9421 : 3F                  	xppc 	p3 
+(1)   93/    9422 : (MACRO)             	lpi 	p3,Print-1 											; print it 
+(1)   93/    9422 : C4 90                       ldi     (PRINT-1) / 256
+(1)   93/    9424 : 37                          xpah    P3
+(1)   93/    9425 : C4 3C                       ldi     (PRINT-1) & 255
+(1)   93/    9427 : 33                          xpal    P3
+(1)   94/    9428 : C4 00               	ldi 	0
+(1)   95/    942A : 3F                  	xppc 	p3
+(1)   96/    942B : 90 AE               	jmp 	__ES_GoCommandLine
+(1)   97/    942D :                     ;
+(1)   98/    942D :                     ;	P1+1 is the current command, figure out what it is and do it.
+(1)   99/    942D :                     ;
+(1)  100/    942D :                     __ES_LookUpCommand:
+(1)  101/    942D : C5 FF               	ld 		@-1(p1) 											; put first character in 'E' register
+(1)  102/    942F : 01                  	xae 														; speeds look up slightly.
+(1)  103/    9430 : (MACRO)             	lpi 	p3,__ES_Lookup 										; P3 is lookup table.
+(1)  103/    9430 : C4 95                       ldi     (__ES_LOOKUP) / 256
+(1)  103/    9432 : 37                          xpah    P3
+(1)  103/    9433 : C4 8C                       ldi     (__ES_LOOKUP) & 255
+(1)  103/    9435 : 33                          xpal    P3
+(1)  104/    9436 :                     __ES_Search:
+(1)  105/    9436 : C7 05               	ld 		@5(p3) 												; read first letter and skip forward 5
+(1)  106/    9438 : 98 2A               	jz 		wait7 												; end of table
+(1)  107/    943A : 60                  	xre 														; is the first character ?
+(1)  108/    943B : 9C F9               	jnz 	__ES_Search 										; no, do next character.
+(1)  109/    943D : C3 FC               	ld 		-4(p3) 												; get second character
+(1)  110/    943F : E1 01               	xor 	1(p1) 												; compare against 2nd char of command
+(1)  111/    9441 : 9C F3               	jnz 	__ES_Search 										; different, try the next one.
+(1)  112/    9443 : C5 02               	ld 		@2(p1) 												; skip over first two characters
+(1)  113/    9445 : C3 FD               	ld 		-3(p3) 												; get the number to skip
+(1)  114/    9447 : 98 0A               	jz 		__ES_SkipSpace 										; if zero, already done it.
+(1)  115/    9449 : CA FF               	st 		-1(p2) 												; characters to skip after first two
+(1)  116/    944B :                     __ES_Skip:
+(1)  117/    944B : C5 01               	ld 		@1(p1) 												; read character
+(1)  118/    944D : 98 04               	jz 		__ES_SkipSpace 										; if \0 reached end of command which is allowed.
+(1)  119/    944F : BA FF               	dld 	-1(p2) 												; skip over requisite number of characters
+(1)  120/    9451 : 9C F8               	jnz 	__ES_Skip
+(1)  121/    9453 :                     __ES_SkipSpace:
+(1)  122/    9453 : C5 01               	ld 		@1(p1) 												; skip over spaces
+(1)  123/    9455 : E4 20               	xri 	' '
+(1)  124/    9457 : 98 FA               	jz 		__ES_SkipSpace
+(1)  125/    9459 : C5 FF               	ld 		@-1(p1)												; undo the fetch.
+(1)  126/    945B : C3 FE               	ld 		-2(p3) 												; get low jump address to E
+(1)  127/    945D : 01                  	xae 
+(1)  128/    945E : C3 FF               	ld 		-1(p3) 												; get high jump address to P3.H
+(1)  129/    9460 : 37                  	xpah 	p3
+(1)  130/    9461 : 40                  	lde 														; E -> P3.L
+ AS V1.42 Beta [Bld 102] - source file minol.asm(statement.asm) - page 20 - 12/23/2015 21:16:06
 
 
-(1)  137/    945C :                     ;
-(1)  138/    945C :                     ;	include statements. All these end by having CY/L = 0 = error (code E) or CY/L = 1 (ok) and jumping back
-(1)  139/    945C :                     ;	to two before their own start.  This automatically chains the jumps back.
-(1)  140/    945C :                     ;
-(1)  141/    945C :                     ; ****************************************************************************************************************
-(1)  142/    945C :                     
-(1)  143/    945C : 90 86               	jmp 	__ES_CheckResult 									; come back here, check what happened, last in chain.
-(1)  144/    945E :                     
-(1)  145/    945E :                     	include commands\clear.asm									; CLEAR
-(2)    1/    945E :                     ; ****************************************************************************************************************
-(2)    2/    945E :                     ; ****************************************************************************************************************
-(2)    3/    945E :                     ;
-(2)    4/    945E :                     ;												CLEAR Command
-(2)    5/    945E :                     ;	
-(2)    6/    945E :                     ; ****************************************************************************************************************
-(2)    7/    945E :                     ; ****************************************************************************************************************
-(2)    8/    945E :                     
-(2)    9/    945E :                     CMD_CLEAR:
-(2)   10/    945E : (MACRO)             	lpi 	p3,Variables 										; clear all variables
-(2)   10/    945E : C4 0C                       ldi     (VARIABLES) / 256
-(2)   10/    9460 : 37                          xpah    P3
-(2)   10/    9461 : C4 90                       ldi     (VARIABLES) & 255
-(2)   10/    9463 : 33                          xpal    P3
-(2)   11/    9464 : C4 1A               	ldi 	26
-(2)   12/    9466 : CA FF               	st 		-1(p2) 												; set counter
-(2)   13/    9468 :                     __CCL_Loop:
-(2)   14/    9468 : C4 00               	ldi 	0x00	 											; clear a variable
-(2)   15/    946A : CF 01               	st 		@1(p3)
-(2)   16/    946C : BA FF               	dld 	-1(p2) 												; decrement counter
-(2)   17/    946E : 9C F8               	jnz 	__CCL_Loop											; do 26 times
-(2)   18/    9470 : 03                  	scl 														; set carry flag as ok.
-(2)   19/    9471 : 90 E9               	jmp 	CMD_CLEAR-2
-(2)   20/    9473 :                     
-(1)  146/    9473 :                     	include commands\call.asm 									; CALL
-(2)    1/    9473 :                     ; ****************************************************************************************************************
-(2)    2/    9473 :                     ; ****************************************************************************************************************
-(2)    3/    9473 :                     ;
-(2)    4/    9473 :                     ;													CALL Command
-(2)    5/    9473 :                     ;	
-(2)    6/    9473 :                     ; ****************************************************************************************************************
-(2)    7/    9473 :                     ; ****************************************************************************************************************
-(2)    8/    9473 :                     
-(2)    9/    9473 :                     CMD_CALL:
-(2)   10/    9473 : (MACRO)             	lpi 	p3,EvaluateHL-1 									; evaluate the H,L address
-(2)   10/    9473 : C4 93                       ldi     (EVALUATEHL-1) / 256
-(2)   10/    9475 : 37                          xpah    P3
-(2)   10/    9476 : C4 22                       ldi     (EVALUATEHL-1) & 255
-(2)   10/    9478 : 33                          xpal    P3
-(2)   11/    9479 : 3F                  	xppc 	p3
-(2)   12/    947A : 94 F5               	jp 		CMD_CALL-2 											; if CY/L = 0 then exit
-(2)   13/    947C : C2 FE               	ld 		-2(p2) 												; copy address into P3
-(2)   14/    947E : 33                  	xpal 	p3
-(2)   15/    947F : C2 FF               	ld 		-1(p2)
-(2)   16/    9481 : 37                  	xpah 	p3
-(2)   17/    9482 : C7 FF               	ld 		@-1(p3) 											; fix up for pre increment
-(2)   18/    9484 : 3F                  	xppc 	p3 													; call it
-(2)   19/    9485 : 03                  	scl 														; set carry link flag as okay
-(2)   20/    9486 : 90 E9               	jmp 	CMD_CALL-2
-(1)  147/    9488 :                     	include commands\end.asm 									; END and NEW
-(2)    1/    9488 :                     ; ****************************************************************************************************************
- AS V1.42 Beta [Bld 102] - source file minol.asm(end.asm) - page 21 - 12/23/2015 16:01:44
+(1)  131/    9462 : 33                  	xpal 	p3
+(1)  132/    9463 : 3F                  	xppc 	p3 													; and go there.
+(1)  133/    9464 :                     
+(1)  134/    9464 :                     wait7:
+(1)  135/    9464 : 90 FE               	jmp 	wait7
+(1)  136/    9466 :                     
+(1)  137/    9466 :                     ; ****************************************************************************************************************
+(1)  138/    9466 :                     ;
+(1)  139/    9466 :                     ;	include statements. All these end by having CY/L = 0 = error (code E) or CY/L = 1 (ok) and jumping back
+(1)  140/    9466 :                     ;	to two before their own start.  This automatically chains the jumps back.
+(1)  141/    9466 :                     ;
+(1)  142/    9466 :                     ; ****************************************************************************************************************
+(1)  143/    9466 :                     
+(1)  144/    9466 : 90 86               	jmp 	__ES_CheckResult 									; come back here, check what happened, last in chain.
+(1)  145/    9468 :                     
+(1)  146/    9468 :                     	include commands\clear.asm									; CLEAR
+(2)    1/    9468 :                     ; ****************************************************************************************************************
+(2)    2/    9468 :                     ; ****************************************************************************************************************
+(2)    3/    9468 :                     ;
+(2)    4/    9468 :                     ;												CLEAR Command
+(2)    5/    9468 :                     ;	
+(2)    6/    9468 :                     ; ****************************************************************************************************************
+(2)    7/    9468 :                     ; ****************************************************************************************************************
+(2)    8/    9468 :                     
+(2)    9/    9468 :                     CMD_CLEAR:
+(2)   10/    9468 : (MACRO)             	lpi 	p3,Variables 										; clear all variables
+(2)   10/    9468 : C4 0C                       ldi     (VARIABLES) / 256
+(2)   10/    946A : 37                          xpah    P3
+(2)   10/    946B : C4 90                       ldi     (VARIABLES) & 255
+(2)   10/    946D : 33                          xpal    P3
+(2)   11/    946E : C4 1A               	ldi 	26
+(2)   12/    9470 : CA FF               	st 		-1(p2) 												; set counter
+(2)   13/    9472 :                     __CCL_Loop:
+(2)   14/    9472 : C4 00               	ldi 	0x00	 											; clear a variable
+(2)   15/    9474 : CF 01               	st 		@1(p3)
+(2)   16/    9476 : BA FF               	dld 	-1(p2) 												; decrement counter
+(2)   17/    9478 : 9C F8               	jnz 	__CCL_Loop											; do 26 times
+(2)   18/    947A : 03                  	scl 														; set carry flag as ok.
+(2)   19/    947B : 90 E9               	jmp 	CMD_CLEAR-2
+(2)   20/    947D :                     
+(1)  147/    947D :                     	include commands\call.asm 									; CALL
+(2)    1/    947D :                     ; ****************************************************************************************************************
+(2)    2/    947D :                     ; ****************************************************************************************************************
+(2)    3/    947D :                     ;
+(2)    4/    947D :                     ;													CALL Command
+(2)    5/    947D :                     ;	
+(2)    6/    947D :                     ; ****************************************************************************************************************
+(2)    7/    947D :                     ; ****************************************************************************************************************
+(2)    8/    947D :                     
+(2)    9/    947D :                     CMD_CALL:
+(2)   10/    947D : (MACRO)             	lpi 	p3,EvaluateHL-1 									; evaluate the H,L address
+(2)   10/    947D : C4 93                       ldi     (EVALUATEHL-1) / 256
+(2)   10/    947F : 37                          xpah    P3
+(2)   10/    9480 : C4 22                       ldi     (EVALUATEHL-1) & 255
+(2)   10/    9482 : 33                          xpal    P3
+(2)   11/    9483 : 3F                  	xppc 	p3
+(2)   12/    9484 : 94 F5               	jp 		CMD_CALL-2 											; if CY/L = 0 then exit
+(2)   13/    9486 : C2 FE               	ld 		-2(p2) 												; copy address into P3
+(2)   14/    9488 : 33                  	xpal 	p3
+(2)   15/    9489 : C2 FF               	ld 		-1(p2)
+ AS V1.42 Beta [Bld 102] - source file minol.asm(call.asm) - page 21 - 12/23/2015 21:16:06
 
 
-(2)    2/    9488 :                     ; ****************************************************************************************************************
-(2)    3/    9488 :                     ;
-(2)    4/    9488 :                     ;													END Command
-(2)    5/    9488 :                     ;	
-(2)    6/    9488 :                     ; ****************************************************************************************************************
-(2)    7/    9488 :                     ; ****************************************************************************************************************
-(2)    8/    9488 :                     
-(2)    9/    9488 :                     CMD_NEW:
-(2)   10/    9488 : (MACRO)             	lpi 	p3,ProgramBase 										; read in program base to P1.
-(2)   10/    9488 : C4 0C                       ldi     (PROGRAMBASE) / 256
-(2)   10/    948A : 37                          xpah    P3
-(2)   10/    948B : C4 AC                       ldi     (PROGRAMBASE) & 255
-(2)   10/    948D : 33                          xpal    P3
-(2)   11/    948E : C3 00               	ld 		0(p3)
-(2)   12/    9490 : 31                  	xpal 	p1
-(2)   13/    9491 : C3 01               	ld 		1(p3)
-(2)   14/    9493 : 35                  	xpah 	p1
-(2)   15/    9494 : C4 00               	ldi 	0 													; set first length byte to $00
-(2)   16/    9496 : C9 00               	st 		(p1)
-(2)   17/    9498 :                     
-(2)   18/    9498 :                     CMD_END:
-(2)   19/    9498 : C5 01               	ld 		@1(p1) 												; look for terminating 0, end of line
-(2)   20/    949A : 9C FC               	jnz 	CMD_END
-(2)   21/    949C : C5 FF               	ld 		@-1(p1) 											; unpick bump so P1 pointing to terminating NULL
-(2)   22/    949E : (MACRO)             	lpi 	p3,Variables 
-(2)   22/    949E : C4 0C                       ldi     (VARIABLES) / 256
-(2)   22/    94A0 : 37                          xpah    P3
-(2)   22/    94A1 : C4 90                       ldi     (VARIABLES) & 255
-(2)   22/    94A3 : 33                          xpal    P3
-(2)   23/    94A4 : C4 00               	ldi 	0
-(2)   24/    94A6 : CB 1E               	st		IsRunning-Variables(p3) 							; zero running flag and current line.
-(2)   25/    94A8 : CB 1F               	st 		CurrentLine-Variables(p3)
-(2)   26/    94AA : 03                  	scl 														; result is okay.
-(2)   27/    94AB : 90 D9               	jmp 	CMD_NEW-2
-(2)   28/    94AD :                     
-(1)  148/    94AD :                     	include commands\os.asm 									; OS
-(2)    1/    94AD :                     ; ****************************************************************************************************************
-(2)    2/    94AD :                     ; ****************************************************************************************************************
-(2)    3/    94AD :                     ;
-(2)    4/    94AD :                     ;													OS Command
-(2)    5/    94AD :                     ;	
-(2)    6/    94AD :                     ; ****************************************************************************************************************
-(2)    7/    94AD :                     ; ****************************************************************************************************************
-(2)    8/    94AD :                     
-(2)    9/    94AD :                     CMD_OS:
-(2)   10/    94AD : (MACRO)             	lpi 	p3,BootOS-1
-(2)   10/    94AD : C4 02                       ldi     (BOOTOS-1) / 256
-(2)   10/    94AF : 37                          xpah    P3
-(2)   10/    94B0 : C4 0F                       ldi     (BOOTOS-1) & 255
-(2)   10/    94B2 : 33                          xpal    P3
-(2)   11/    94B3 : 3F                  	xppc 	p3
-(2)   12/    94B4 : 90 F5               	jmp 	CMD_OS-2
-(1)  149/    94B6 :                     	include commands\rungo.asm 									; RUN and GOTO 
-(2)    1/    94B6 :                     ; ****************************************************************************************************************
-(2)    2/    94B6 :                     ; ****************************************************************************************************************
-(2)    3/    94B6 :                     ;
-(2)    4/    94B6 :                     ;											RUN and GOTO Command
-(2)    5/    94B6 :                     ;	
-(2)    6/    94B6 :                     ; ****************************************************************************************************************
-(2)    7/    94B6 :                     ; ****************************************************************************************************************
- AS V1.42 Beta [Bld 102] - source file minol.asm(rungo.asm) - page 22 - 12/23/2015 16:01:44
+(2)   16/    948B : 37                  	xpah 	p3
+(2)   17/    948C : C7 FF               	ld 		@-1(p3) 											; fix up for pre increment
+(2)   18/    948E : 3F                  	xppc 	p3 													; call it
+(2)   19/    948F : 03                  	scl 														; set carry link flag as okay
+(2)   20/    9490 : 90 E9               	jmp 	CMD_CALL-2
+(1)  148/    9492 :                     	include commands\end.asm 									; END and NEW
+(2)    1/    9492 :                     ; ****************************************************************************************************************
+(2)    2/    9492 :                     ; ****************************************************************************************************************
+(2)    3/    9492 :                     ;
+(2)    4/    9492 :                     ;													END Command
+(2)    5/    9492 :                     ;	
+(2)    6/    9492 :                     ; ****************************************************************************************************************
+(2)    7/    9492 :                     ; ****************************************************************************************************************
+(2)    8/    9492 :                     
+(2)    9/    9492 :                     CMD_NEW:
+(2)   10/    9492 : (MACRO)             	lpi 	p3,ProgramBase 										; read in program base to P1.
+(2)   10/    9492 : C4 0C                       ldi     (PROGRAMBASE) / 256
+(2)   10/    9494 : 37                          xpah    P3
+(2)   10/    9495 : C4 AC                       ldi     (PROGRAMBASE) & 255
+(2)   10/    9497 : 33                          xpal    P3
+(2)   11/    9498 : C3 00               	ld 		0(p3)
+(2)   12/    949A : 31                  	xpal 	p1
+(2)   13/    949B : C3 01               	ld 		1(p3)
+(2)   14/    949D : 35                  	xpah 	p1
+(2)   15/    949E : C4 00               	ldi 	0 													; set first length byte to $00
+(2)   16/    94A0 : C9 00               	st 		(p1)
+(2)   17/    94A2 :                     
+(2)   18/    94A2 :                     CMD_END:
+(2)   19/    94A2 : C5 01               	ld 		@1(p1) 												; look for terminating 0, end of line
+(2)   20/    94A4 : 9C FC               	jnz 	CMD_END
+(2)   21/    94A6 : C5 FF               	ld 		@-1(p1) 											; unpick bump so P1 pointing to terminating NULL
+(2)   22/    94A8 : (MACRO)             	lpi 	p3,Variables 
+(2)   22/    94A8 : C4 0C                       ldi     (VARIABLES) / 256
+(2)   22/    94AA : 37                          xpah    P3
+(2)   22/    94AB : C4 90                       ldi     (VARIABLES) & 255
+(2)   22/    94AD : 33                          xpal    P3
+(2)   23/    94AE : C4 00               	ldi 	0
+(2)   24/    94B0 : CB 1E               	st		IsRunning-Variables(p3) 							; zero running flag and current line.
+(2)   25/    94B2 : CB 1F               	st 		CurrentLine-Variables(p3)
+(2)   26/    94B4 : 03                  	scl 														; result is okay.
+(2)   27/    94B5 : 90 D9               	jmp 	CMD_NEW-2
+(2)   28/    94B7 :                     
+(1)  149/    94B7 :                     	include commands\os.asm 									; OS
+(2)    1/    94B7 :                     ; ****************************************************************************************************************
+(2)    2/    94B7 :                     ; ****************************************************************************************************************
+(2)    3/    94B7 :                     ;
+(2)    4/    94B7 :                     ;													OS Command
+(2)    5/    94B7 :                     ;	
+(2)    6/    94B7 :                     ; ****************************************************************************************************************
+(2)    7/    94B7 :                     ; ****************************************************************************************************************
+(2)    8/    94B7 :                     
+(2)    9/    94B7 :                     CMD_OS:
+(2)   10/    94B7 : (MACRO)             	lpi 	p3,BootOS-1
+(2)   10/    94B7 : C4 02                       ldi     (BOOTOS-1) / 256
+(2)   10/    94B9 : 37                          xpah    P3
+(2)   10/    94BA : C4 0F                       ldi     (BOOTOS-1) & 255
+(2)   10/    94BC : 33                          xpal    P3
+(2)   11/    94BD : 3F                  	xppc 	p3
+(2)   12/    94BE : 90 F5               	jmp 	CMD_OS-2
+(1)  150/    94C0 :                     	include commands\rungo.asm 									; RUN and GOTO 
+ AS V1.42 Beta [Bld 102] - source file minol.asm(rungo.asm) - page 22 - 12/23/2015 21:16:06
 
 
-(2)    8/    94B6 :                     
-(2)    9/    94B6 :                     CMD_GOTO:
-(2)   10/    94B6 : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate where to GOTO.
-(2)   10/    94B6 : C4 91                       ldi     (EVALUATEEXPRESSION-1) / 256
-(2)   10/    94B8 : 37                          xpah    P3
-(2)   10/    94B9 : C4 91                       ldi     (EVALUATEEXPRESSION-1) & 255
-(2)   10/    94BB : 33                          xpal    P3
-(2)   11/    94BC : 3F                  	xppc 	p3
-(2)   12/    94BD : 94 F5               	jp 		CMD_GOTO-2 											; error in evaluating GOTO.
-(2)   13/    94BF : (MACRO)             	lpi 	p3,ProgramBase 										; point P1 to program base.
-(2)   13/    94BF : C4 0C                       ldi     (PROGRAMBASE) / 256
-(2)   13/    94C1 : 37                          xpah    P3
-(2)   13/    94C2 : C4 AC                       ldi     (PROGRAMBASE) & 255
-(2)   13/    94C4 : 33                          xpal    P3
-(2)   14/    94C5 : C3 00               	ld 		(p3)
-(2)   15/    94C7 : 31                  	xpal 	p1
-(2)   16/    94C8 : C3 01               	ld 		1(p3)
-(2)   17/    94CA : 35                  	xpah 	p1
-(2)   18/    94CB : 40                  	lde 														; save line number below stack
-(2)   19/    94CC : CA FF               	st 		-1(p2)	
-(2)   20/    94CE :                     __CGO_Search:
-(2)   21/    94CE : C1 00               	ld 		(p1) 												; get length.
-(2)   22/    94D0 : 98 0B               	jz 		__CGO_Fail 											; if zero,  goto has failed.
-(2)   23/    94D2 : 01                  	xae 														; save in E.
-(2)   24/    94D3 : C1 01               	ld 		1(p1) 												; read line number
-(2)   25/    94D5 : E2 FF               	xor 	-1(p2) 												; does it match.
-(2)   26/    94D7 : 98 16               	jz 		__CRU_GotoP1 										; if so, jump there.
-(2)   27/    94D9 : C5 80               	ld 		@-0x80(p1) 											; go to next line
-(2)   28/    94DB : 90 F1               	jmp 	__CGO_Search
-(2)   29/    94DD :                     
-(2)   30/    94DD :                     __CGO_Fail:
-(2)   31/    94DD : C4 01               	ldi 	ERROR_NoLabel 										; cause a label error
-(2)   32/    94DF : 01                  	xae
-(2)   33/    94E0 : 02                  	ccl 
-(2)   34/    94E1 : 90 D1               	jmp 	CMD_GOTO-2
-(2)   35/    94E3 :                     
-(2)   36/    94E3 :                     CMD_RUN:
-(2)   37/    94E3 : (MACRO)             	lpi 	p3,ProgramBase 										; point P1 to program base and "GOTO" there
-(2)   37/    94E3 : C4 0C                       ldi     (PROGRAMBASE) / 256
-(2)   37/    94E5 : 37                          xpah    P3
-(2)   37/    94E6 : C4 AC                       ldi     (PROGRAMBASE) & 255
-(2)   37/    94E8 : 33                          xpal    P3
-(2)   38/    94E9 : C3 00               	ld 		(p3)
-(2)   39/    94EB : 31                  	xpal 	p1
-(2)   40/    94EC : C3 01               	ld 		1(p3)
-(2)   41/    94EE : 35                  	xpah 	p1
-(2)   42/    94EF :                     ;
-(2)   43/    94EF :                     ;	GOTO address P1. (P3 = ProgramBase at this point)
-(2)   44/    94EF :                     ;
-(2)   45/    94EF :                     __CRU_GotoP1:
-(2)   46/    94EF : C4 FF               	ldi 	0xFF 												; set IsRunning flag as now running.
-(2)   47/    94F1 : CB 02               	st 		IsRunning-ProgramBase(p3)
-(2)   48/    94F3 : C1 01               	ld 		1(p1) 												; get line number and save it.
-(2)   49/    94F5 : CB 03               	st 		CurrentLine-ProgramBase(p3)
-(2)   50/    94F7 : C5 02               	ld 		@2(p1) 												; point to first command.
-(2)   51/    94F9 : 03                  	scl 														; set ok as legal.
-(2)   52/    94FA : 90 B8               	jmp 	CMD_GOTO-2
-(2)   53/    94FC :                     
-(1)  150/    94FC :                     
-(1)  151/    94FC :                     ; TODO: LIST, LET, IF, PR, IN 
- AS V1.42 Beta [Bld 102] - source file minol.asm(statement.asm) - page 23 - 12/23/2015 16:01:44
+(2)    1/    94C0 :                     ; ****************************************************************************************************************
+(2)    2/    94C0 :                     ; ****************************************************************************************************************
+(2)    3/    94C0 :                     ;
+(2)    4/    94C0 :                     ;											RUN and GOTO Command
+(2)    5/    94C0 :                     ;	
+(2)    6/    94C0 :                     ; ****************************************************************************************************************
+(2)    7/    94C0 :                     ; ****************************************************************************************************************
+(2)    8/    94C0 :                     
+(2)    9/    94C0 :                     CMD_GOTO:
+(2)   10/    94C0 : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate where to GOTO.
+(2)   10/    94C0 : C4 91                       ldi     (EVALUATEEXPRESSION-1) / 256
+(2)   10/    94C2 : 37                          xpah    P3
+(2)   10/    94C3 : C4 91                       ldi     (EVALUATEEXPRESSION-1) & 255
+(2)   10/    94C5 : 33                          xpal    P3
+(2)   11/    94C6 : 3F                  	xppc 	p3
+(2)   12/    94C7 : 94 F5               	jp 		CMD_GOTO-2 											; error in evaluating GOTO.
+(2)   13/    94C9 : (MACRO)             	lpi 	p3,ProgramBase 										; point P1 to program base.
+(2)   13/    94C9 : C4 0C                       ldi     (PROGRAMBASE) / 256
+(2)   13/    94CB : 37                          xpah    P3
+(2)   13/    94CC : C4 AC                       ldi     (PROGRAMBASE) & 255
+(2)   13/    94CE : 33                          xpal    P3
+(2)   14/    94CF : C3 00               	ld 		(p3)
+(2)   15/    94D1 : 31                  	xpal 	p1
+(2)   16/    94D2 : C3 01               	ld 		1(p3)
+(2)   17/    94D4 : 35                  	xpah 	p1
+(2)   18/    94D5 : 40                  	lde 														; save line number below stack
+(2)   19/    94D6 : CA FF               	st 		-1(p2)	
+(2)   20/    94D8 :                     __CGO_Search:
+(2)   21/    94D8 : C1 00               	ld 		(p1) 												; get length.
+(2)   22/    94DA : 98 0B               	jz 		__CGO_Fail 											; if zero,  goto has failed.
+(2)   23/    94DC : 01                  	xae 														; save in E.
+(2)   24/    94DD : C1 01               	ld 		1(p1) 												; read line number
+(2)   25/    94DF : E2 FF               	xor 	-1(p2) 												; does it match.
+(2)   26/    94E1 : 98 16               	jz 		__CRU_GotoP1 										; if so, jump there.
+(2)   27/    94E3 : C5 80               	ld 		@-0x80(p1) 											; go to next line
+(2)   28/    94E5 : 90 F1               	jmp 	__CGO_Search
+(2)   29/    94E7 :                     
+(2)   30/    94E7 :                     __CGO_Fail:
+(2)   31/    94E7 : C4 01               	ldi 	ERROR_NoLabel 										; cause a label error
+(2)   32/    94E9 : 01                  	xae
+(2)   33/    94EA : 02                  	ccl 
+(2)   34/    94EB : 90 D1               	jmp 	CMD_GOTO-2
+(2)   35/    94ED :                     
+(2)   36/    94ED :                     CMD_RUN:
+(2)   37/    94ED : (MACRO)             	lpi 	p3,ProgramBase 										; point P1 to program base and "GOTO" there
+(2)   37/    94ED : C4 0C                       ldi     (PROGRAMBASE) / 256
+(2)   37/    94EF : 37                          xpah    P3
+(2)   37/    94F0 : C4 AC                       ldi     (PROGRAMBASE) & 255
+(2)   37/    94F2 : 33                          xpal    P3
+(2)   38/    94F3 : C3 00               	ld 		(p3)
+(2)   39/    94F5 : 31                  	xpal 	p1
+(2)   40/    94F6 : C3 01               	ld 		1(p3)
+(2)   41/    94F8 : 35                  	xpah 	p1
+(2)   42/    94F9 :                     ;
+(2)   43/    94F9 :                     ;	GOTO address P1. (P3 = ProgramBase at this point)
+(2)   44/    94F9 :                     ;
+(2)   45/    94F9 :                     __CRU_GotoP1:
+(2)   46/    94F9 : C4 FF               	ldi 	0xFF 												; set IsRunning flag as now running.
+(2)   47/    94FB : CB 02               	st 		IsRunning-ProgramBase(p3)
+(2)   48/    94FD : C1 01               	ld 		1(p1) 												; get line number and save it.
+ AS V1.42 Beta [Bld 102] - source file minol.asm(rungo.asm) - page 23 - 12/23/2015 21:16:06
 
 
-(1)  152/    94FC :                     
-(1)  153/    94FC :                     ; ****************************************************************************************************************
-(1)  154/    94FC :                     ;
-(1)  155/    94FC :                     ;	lookup table. This is the lookup and dispatch table for commands, which are differentiated by the first two
-(1)  156/    94FC :                     ; 	letters only, though the full entry is expected, e.g. for CLEAR you can have CLxxx where xxx is anything.
-(1)  157/    94FC :                     ;
-(1)  158/    94FC :                     ;	This table should be roughly sorted by use.
-(1)  159/    94FC :                     ;
-(1)  160/    94FC :                     ; ****************************************************************************************************************
-(1)  161/    94FC :                     
-(1)  162/    94FC :                     command macro twoChar,length,address
-(1)  163/    94FC :                     	db 		twoChar,length-2
-(1)  164/    94FC :                     	dw 		address-1
-(1)  165/    94FC :                     	endm
-(1)  166/    94FC :                     
-(1)  167/    94FC :                     __ES_Lookup:
-(1)  168/    94FC : (MACRO)             	command 	"GO",4,CMD_GOTO 								; GOTO command.
-(1)  168/    94FC : 47 4F 02                    db              "GO",4-2
-(1)  168/    94FF : B5 94                       dw              CMD_GOTO-1
-(1)  169/    9501 : (MACRO)             	command 	"CA",4,CMD_CALL 								; CALL command.
-(1)  169/    9501 : 43 41 02                    db              "CA",4-2
-(1)  169/    9504 : 72 94                       dw              CMD_CALL-1
-(1)  170/    9506 : (MACRO)             	command 	"CL",5,CMD_CLEAR 								; CLEAR command.
-(1)  170/    9506 : 43 4C 03                    db              "CL",5-2
-(1)  170/    9509 : 5D 94                       dw              CMD_CLEAR-1
-(1)  171/    950B : (MACRO)             	command 	"RU",3,CMD_RUN									; RUN command.
-(1)  171/    950B : 52 55 01                    db              "RU",3-2
-(1)  171/    950E : E2 94                       dw              CMD_RUN-1
-(1)  172/    9510 : (MACRO)             	command 	"EN",3,CMD_END 									; END command.
-(1)  172/    9510 : 45 4E 01                    db              "EN",3-2
-(1)  172/    9513 : 97 94                       dw              CMD_END-1
-(1)  173/    9515 : (MACRO)             	command 	"NE",3,CMD_NEW 									; NEW command
-(1)  173/    9515 : 4E 45 01                    db              "NE",3-2
-(1)  173/    9518 : 87 94                       dw              CMD_NEW-1
-(1)  174/    951A : (MACRO)             	command 	"OS",2,CMD_OS 									; OS command.
-(1)  174/    951A : 4F 53 00                    db              "OS",2-2
-(1)  174/    951D : AC 94                       dw              CMD_OS-1
-(1)  175/    951F : 00                  	db 			0
-(1)  176/    9520 :                     
-(1)  177/    9520 :                     __ES_Msg1: 														; messages
-(1)  178/    9520 : 21 45 52 52 20 00   	db 		"!ERR ",0
-(1)  179/    9526 : 20 41 54 20 00      	db 		" AT ",0
-      48/    952B :                     
-      49/    952B :                     
-      50/    952B :                     
-      51/    952B :                     
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 24 - 12/23/2015 16:01:44
+(2)   49/    94FF : CB 03               	st 		CurrentLine-ProgramBase(p3)
+(2)   50/    9501 : C5 02               	ld 		@2(p1) 												; point to first command.
+(2)   51/    9503 : 03                  	scl 														; set ok as legal.
+(2)   52/    9504 : 90 B8               	jmp 	CMD_GOTO-2
+(2)   53/    9506 :                     
+(1)  151/    9506 :                     	include commands\list.asm 									; LIST
+(2)    1/    9506 :                     ; ****************************************************************************************************************
+(2)    2/    9506 :                     ; ****************************************************************************************************************
+(2)    3/    9506 :                     ;
+(2)    4/    9506 :                     ;													LIST Command
+(2)    5/    9506 :                     ;	
+(2)    6/    9506 :                     ; ****************************************************************************************************************
+(2)    7/    9506 :                     ; ****************************************************************************************************************
+(2)    8/    9506 :                     
+(2)    9/    9506 :                     CMD_LIST:
+(2)   10/    9506 : C4 00               	ldi 	0 													; zero minimum line and counter for displaying.
+(2)   11/    9508 : CE FF               	st 		@-1(p2)
+(2)   12/    950A : CE FF               	st 		@-1(p2)
+(2)   13/    950C : (MACRO)             	lpi 	p3,EvaluateExpression-1 							; evaluate expression.
+(2)   13/    950C : C4 91                       ldi     (EVALUATEEXPRESSION-1) / 256
+(2)   13/    950E : 37                          xpah    P3
+(2)   13/    950F : C4 91                       ldi     (EVALUATEEXPRESSION-1) & 255
+(2)   13/    9511 : 33                          xpal    P3
+(2)   14/    9512 : 3F                  	xppc 	p3
+(2)   15/    9513 : 94 03               	jp 		__CLI_FromStart
+(2)   16/    9515 : 40                  	lde  														; save start line.
+(2)   17/    9516 : CA 01               	st 		1(p2)
+(2)   18/    9518 :                     __CLI_FromStart:
+(2)   19/    9518 : (MACRO)             	lpi 	p3,ProgramBase 										; point P1 to program base.
+(2)   19/    9518 : C4 0C                       ldi     (PROGRAMBASE) / 256
+(2)   19/    951A : 37                          xpah    P3
+(2)   19/    951B : C4 AC                       ldi     (PROGRAMBASE) & 255
+(2)   19/    951D : 33                          xpal    P3
+(2)   20/    951E : C3 00               	ld 		(p3)
+(2)   21/    9520 : 31                  	xpal 	p1
+(2)   22/    9521 : C3 01               	ld 		1(p3)
+(2)   23/    9523 : 35                  	xpah 	p1
+(2)   24/    9524 :                     __CLI_Loop:
+(2)   25/    9524 : C1 00               	ld 		(p1) 												; end of program
+(2)   26/    9526 : 98 14               	jz 		__CLI_Exit 											; exit.
+(2)   27/    9528 : C1 01               	ld 		1(p1) 												; get Line Number into E
+(2)   28/    952A : 01                  	xae
+(2)   29/    952B : 40                  	lde 														; calculate line# - lowest
+(2)   30/    952C : 03                  	scl
+(2)   31/    952D : FA 01               	cad 	1(p2)
+(2)   32/    952F : 06                  	csa
+(2)   33/    9530 : D4 80               	ani 	0x80
+(2)   34/    9532 : 9C 0D               	jnz 	__CLI_List
+(2)   35/    9534 :                     __CLI_SkipOver:
+(2)   36/    9534 : C5 02               	ld 		@2(p1) 												; skip offset and line#
+(2)   37/    9536 :                     __CLI_FindEnd:
+(2)   38/    9536 : C5 01               	ld 		@1(p1)
+(2)   39/    9538 : 9C FC               	jnz 	__CLI_FindEnd
+(2)   40/    953A : 90 E8               	jmp 	__CLI_Loop
+(2)   41/    953C :                     
+(2)   42/    953C :                     __CLI_Exit:
+(2)   43/    953C : 03                  	scl 														; set carry link as okay.
+(2)   44/    953D : C6 02               	ld 		@2(p2) 												; pop counter,upwards off stack.
+(2)   45/    953F :                     __CLI_ToPrev:
+(2)   46/    953F : 90 C3               	jmp 	CMD_LIST-2 											; back up the chain.
+ AS V1.42 Beta [Bld 102] - source file minol.asm(list.asm) - page 24 - 12/23/2015 21:16:06
+
+
+(2)   47/    9541 :                     
+(2)   48/    9541 :                     __CLI_List:
+(2)   49/    9541 : (MACRO)             	pushp 	p1 													; save P1
+(2)   49/    9541 : 35                          xpah    P1
+(2)   49/    9542 : CE FF                       st              @-1(p2)
+(2)   49/    9544 : 31                          xpal    P1
+(2)   49/    9545 : CE FF                       st              @-1(p2)
+(2)   50/    9547 : C4 00               	ldi 	0 													; push high byte number
+(2)   51/    9549 : CE FF               	st 		@-1(p2)
+(2)   52/    954B : 40                  	lde 														; push low byte line number
+(2)   53/    954C : CE FF               	st 		@-1(p2)
+(2)   54/    954E : (MACRO)             	lpi 	p1,KeyboardBuffer+8 								; convert to ASCII
+(2)   54/    954E : C4 0C                       ldi     (KEYBOARDBUFFER+8) / 256
+(2)   54/    9550 : 35                          xpah    P1
+(2)   54/    9551 : C4 B8                       ldi     (KEYBOARDBUFFER+8) & 255
+(2)   54/    9553 : 31                          xpal    P1
+(2)   55/    9554 : (MACRO)             	lpi 	p3,OSMathLibrary-1
+(2)   55/    9554 : C4 00                       ldi     (OSMATHLIBRARY-1) / 256
+(2)   55/    9556 : 37                          xpah    P3
+(2)   55/    9557 : C4 02                       ldi     (OSMATHLIBRARY-1) & 255
+(2)   55/    9559 : 33                          xpal    P3
+(2)   56/    955A : C4 24               	ldi 	'$'
+(2)   57/    955C : 3F                  	xppc 	p3  
+(2)   58/    955D : (MACRO)             	lpi 	p3,Print-1											; print converted string
+(2)   58/    955D : C4 90                       ldi     (PRINT-1) / 256
+(2)   58/    955F : 37                          xpah    P3
+(2)   58/    9560 : C4 3C                       ldi     (PRINT-1) & 255
+(2)   58/    9562 : 33                          xpal    P3
+(2)   59/    9563 : C4 00               	ldi 	0
+(2)   60/    9565 : 3F                  	xppc 	p3
+(2)   61/    9566 : C4 20               	ldi 	' '													; print space
+(2)   62/    9568 : 3F                  	xppc 	p3
+(2)   63/    9569 : (MACRO)             	pullp 	p1 													; restore P1
+(2)   63/    9569 : C6 01                       ld              @1(p2)
+(2)   63/    956B : 31                          xpal    P1
+(2)   63/    956C : C6 01                       ld              @1(p2)
+(2)   63/    956E : 35                          xpah    P1
+(2)   64/    956F : C5 02               	ld 		@2(p1) 												; skip over offset and line #
+(2)   65/    9571 : C4 00               	ldi 	0 													; print it.
+(2)   66/    9573 : 3F                  	xppc 	p3 	
+(2)   67/    9574 : C4 0D               	ldi 	13 													; print CRLF
+(2)   68/    9576 : 3F                  	xppc 	p3
+(2)   69/    9577 : AA 00               	ild 	(p2) 												; bump counter
+(2)   70/    9579 : D4 03               	ani 	3
+(2)   71/    957B : 9C A7               	jnz 	__CLI_Loop 
+(2)   72/    957D : (MACRO)             	lpi 	p3,GetChar-1 										; read a character
+(2)   72/    957D : C4 90                       ldi     (GETCHAR-1) / 256
+(2)   72/    957F : 37                          xpah    P3
+(2)   72/    9580 : C4 FC                       ldi     (GETCHAR-1) & 255
+(2)   72/    9582 : 33                          xpal    P3
+(2)   73/    9583 : 3F                  	xppc 	p3
+(2)   74/    9584 : E4 20               	xri 	' ' 												; if space, keep going.
+(2)   75/    9586 : 98 9C               	jz 		__CLI_Loop
+(2)   76/    9588 : 90 B2               	jmp 	__CLI_Exit
+(2)   77/    958A :                     
+(2)   78/    958A : 90 B3               	jmp 	__CLI_ToPrev 										; step through to top, can't do it in one here.
+(2)   79/    958C :                     
+(2)   80/    958C :                     
+(1)  152/    958C :                     
+(1)  153/    958C :                     ; TODO: LET, IF, PR, IN 
+ AS V1.42 Beta [Bld 102] - source file minol.asm(statement.asm) - page 25 - 12/23/2015 21:16:06
+
+
+(1)  154/    958C :                     
+(1)  155/    958C :                     ; ****************************************************************************************************************
+(1)  156/    958C :                     ;
+(1)  157/    958C :                     ;	lookup table. This is the lookup and dispatch table for commands, which are differentiated by the first two
+(1)  158/    958C :                     ; 	letters only, though the full entry is expected, e.g. for CLEAR you can have CLxxx where xxx is anything.
+(1)  159/    958C :                     ;
+(1)  160/    958C :                     ;	This table should be roughly sorted by use.
+(1)  161/    958C :                     ;
+(1)  162/    958C :                     ; ****************************************************************************************************************
+(1)  163/    958C :                     
+(1)  164/    958C :                     command macro twoChar,length,address
+(1)  165/    958C :                     	db 		twoChar,length-2
+(1)  166/    958C :                     	dw 		address-1
+(1)  167/    958C :                     	endm
+(1)  168/    958C :                     
+(1)  169/    958C :                     __ES_Lookup:
+(1)  170/    958C : (MACRO)             	command 	"GO",4,CMD_GOTO 								; GOTO command.
+(1)  170/    958C : 47 4F 02                    db              "GO",4-2
+(1)  170/    958F : BF 94                       dw              CMD_GOTO-1
+(1)  171/    9591 : (MACRO)             	command 	"CA",4,CMD_CALL 								; CALL command.
+(1)  171/    9591 : 43 41 02                    db              "CA",4-2
+(1)  171/    9594 : 7C 94                       dw              CMD_CALL-1
+(1)  172/    9596 : (MACRO)             	command 	"CL",5,CMD_CLEAR 								; CLEAR command.
+(1)  172/    9596 : 43 4C 03                    db              "CL",5-2
+(1)  172/    9599 : 67 94                       dw              CMD_CLEAR-1
+(1)  173/    959B : (MACRO)             	command 	"LI",4,CMD_LIST 								; LIST command.
+(1)  173/    959B : 4C 49 02                    db              "LI",4-2
+(1)  173/    959E : 05 95                       dw              CMD_LIST-1
+(1)  174/    95A0 : (MACRO)             	command 	"RU",3,CMD_RUN									; RUN command.
+(1)  174/    95A0 : 52 55 01                    db              "RU",3-2
+(1)  174/    95A3 : EC 94                       dw              CMD_RUN-1
+(1)  175/    95A5 : (MACRO)             	command 	"EN",3,CMD_END 									; END command.
+(1)  175/    95A5 : 45 4E 01                    db              "EN",3-2
+(1)  175/    95A8 : A1 94                       dw              CMD_END-1
+(1)  176/    95AA : (MACRO)             	command 	"NE",3,CMD_NEW 									; NEW command
+(1)  176/    95AA : 4E 45 01                    db              "NE",3-2
+(1)  176/    95AD : 91 94                       dw              CMD_NEW-1
+(1)  177/    95AF : (MACRO)             	command 	"OS",2,CMD_OS 									; OS command.
+(1)  177/    95AF : 4F 53 00                    db              "OS",2-2
+(1)  177/    95B2 : B6 94                       dw              CMD_OS-1
+(1)  178/    95B4 : 00                  	db 			0
+(1)  179/    95B5 :                     
+(1)  180/    95B5 :                     __ES_Msg1: 														; messages
+(1)  181/    95B5 : 21 45 52 52 20 00   	db 		"!ERR ",0
+(1)  182/    95BB : 20 41 54 20 00      	db 		" AT ",0
+(1)  183/    95C0 :                     
+      48/    95C0 :                     
+      49/    95C0 :                     
+      50/    95C0 :                     
+      51/    95C0 :                     
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 26 - 12/23/2015 21:16:06
 
 
   symbol table (* = unused):
@@ -1441,37 +1571,41 @@
 
 *ARCHITECTURE :  i386-unknown-win32 - | *BIGENDIAN :                      0 - |
  BOOTOS :                       210 - | *BRANCHEXT :                      0 - |
-*CASESENSITIVE :                  0 - |  CMD_CALL :                    9473 C |
- CMD_CLEAR :                   945E C |  CMD_END :                     9498 C |
- CMD_GOTO :                    94B6 C |  CMD_NEW :                     9488 C |
- CMD_OS :                      94AD C |  CMD_RUN :                     94E3 C |
- CODESTART :                   936C C |  COMMANDINPUT :                903B C |
-*CONSTPI :        3.141592653589793 - |  CURRENTLINE :                  CAF - |
-*DATE :                  12/23/2015 - |  ERROR_DIVIDEZERO :               7 - |
- ERROR_NOLABEL :                  1 - |  ERROR_TERM :                     4 - |
- EVALUATEEXPRESSION :          9192 C |  EVALUATEHL :                  9323 C |
- EXECUTESTATEMENT :            93A1 C | *FALSE :                          0 - |
-*FULLPMMU :                       1 - |  GETCHAR :                     90FD C |
- GETSTRING :                   9121 C | *HAS64 :                          1 - |
-*HASDSP :                         0 - | *HASFPU :                         0 - |
-*HASPMMU :                        0 - | *INEXTMODE :                      0 - |
-*INLWORDMODE :                    0 - | *INMAXMODE :                      0 - |
-*INSRCMODE :                      0 - | *INSUPMODE :                      0 - |
- ISRUNNING :                    CAE - |  KEYBOARDBUFFER :               CB0 - |
-*KEYBOARDBUFFERSIZE :            50 - | *LISTON :                         1 - |
-*MACEXP :                         1 - | *MOMCPU :                         C - |
-*MOMCPUNAME :                 SC/MP - | *NESTMAX :                      100 - |
- OSMATHLIBRARY :                  3 - | *PACKING :                        0 - |
-*PADDING :                        1 - |  PRINT :                       903D C |
- PROGRAMBASE :                  CAC - |  RANDOM :                      92E7 C |
- RANDOMSEED :                   CAA - | *RELAXED :                        0 - |
- SCREENCURSOR :                 C80 - |  SCREENMIRROR :                 C00 - |
- SYSTEMVARIABLES :              C90 - | *TESTEXPR :                    9189 C |
-*TIME :                    16:01:44 - | *TRUE :                           1 - |
- VARIABLES :                    C90 - | *VERSION :                     142F - |
- WAIT7 :                       945A C |  __CCL_LOOP :                  9468 C |
- __CGO_FAIL :                  94DD C |  __CGO_SEARCH :                94CE C |
- __CRU_GOTOP1 :                94EF C |  __EE_CALLANDCHECK :           921C C |
+*CASESENSITIVE :                  0 - |  CMD_CALL :                    947D C |
+ CMD_CLEAR :                   9468 C |  CMD_END :                     94A2 C |
+ CMD_GOTO :                    94C0 C |  CMD_LIST :                    9506 C |
+ CMD_NEW :                     9492 C |  CMD_OS :                      94B7 C |
+ CMD_RUN :                     94ED C |  CODESTART :                   936C C |
+ COMMANDINPUT :                903B C | *CONSTPI :        3.141592653589793 - |
+ CURRENTLINE :                  CAF - | *DATE :                  12/23/2015 - |
+ ERROR_DIVIDEZERO :               7 - |  ERROR_NOLABEL :                  1 - |
+ ERROR_TERM :                     4 - |  EVALUATEEXPRESSION :          9192 C |
+ EVALUATEHL :                  9323 C |  EXECUTESTATEMENT :            93AB C |
+*FALSE :                          0 - | *FULLPMMU :                       1 - |
+ GETCHAR :                     90FD C |  GETSTRING :                   9121 C |
+*HAS64 :                          1 - | *HASDSP :                         0 - |
+*HASFPU :                         0 - | *HASPMMU :                        0 - |
+*INEXTMODE :                      0 - | *INLWORDMODE :                    0 - |
+*INMAXMODE :                      0 - | *INSRCMODE :                      0 - |
+*INSUPMODE :                      0 - |  ISRUNNING :                    CAE - |
+ KEYBOARDBUFFER :               CB0 - | *KEYBOARDBUFFERSIZE :            50 - |
+*LISTON :                         1 - | *MACEXP :                         1 - |
+*MOMCPU :                         C - | *MOMCPUNAME :                 SC/MP - |
+*NESTMAX :                      100 - |  OSMATHLIBRARY :                  3 - |
+*PACKING :                        0 - | *PADDING :                        1 - |
+ PRINT :                       903D C |  PROGRAMBASE :                  CAC - |
+ RANDOM :                      92E7 C |  RANDOMSEED :                   CAA - |
+*RELAXED :                        0 - |  SCREENCURSOR :                 C80 - |
+ SCREENMIRROR :                 C00 - |  SYSTEMVARIABLES :              C90 - |
+*TESTEXPR :                    9189 C | *TIME :                    21:16:06 - |
+*TRUE :                           1 - |  VARIABLES :                    C90 - |
+*VERSION :                     142F - |  WAIT7 :                       9464 C |
+ __CCL_LOOP :                  9472 C |  __CGO_FAIL :                  94E7 C |
+ __CGO_SEARCH :                94D8 C |  __CLI_EXIT :                  953C C |
+ __CLI_FINDEND :               9536 C |  __CLI_FROMSTART :             9518 C |
+ __CLI_LIST :                  9541 C |  __CLI_LOOP :                  9524 C |
+*__CLI_SKIPOVER :              9534 C |  __CLI_TOPREV :                953F C |
+ __CRU_GOTOP1 :                94F9 C |  __EE_CALLANDCHECK :           921C C |
  __EE_CHECKPUNCTERMS :         91ED C |  __EE_CONSTANTEND :            91DB C |
  __EE_CONSTANTTERM :           91C0 C |  __EE_DIVIDE_LOOP :            92B5 C |
  __EE_DIVIDE_NUMERATOR_POSITIVE :                                      92C6 C |
@@ -1485,20 +1619,20 @@
  __EE_NOTMULTIPLY :            92A4 C |  __EE_NOTSUBTRACT :            924F C |
  __EE_RANDOM :                 920C C |  __EE_SKIPSPACE :              91A0 C |
  __EE_TERMERROR :              9221 C |  __EHL_BACKFAIL :              935A C |
- __EHL_EXIT :                  9360 C |  __ES_CHECKRESULT :            93E4 C |
- __ES_COMMENT :                93B1 C |  __ES_ENDOFLINE :              93BB C |
- __ES_ERROR :                  93E9 C |  __ES_GOCOMMANDLINE :          93D1 C |
- __ES_LOOKUP :                 94FC C |  __ES_LOOKUPCOMMAND :          9423 C |
- __ES_MSG1 :                   9520 C |  __ES_SEARCH :                 942C C |
- __ES_SKIP :                   9441 C |  __ES_SKIPSPACE :              9449 C |
+ __EHL_EXIT :                  9360 C |  __ES_CHECKRESULT :            93EE C |
+ __ES_COMMENT :                93BB C |  __ES_ENDOFLINE :              93C5 C |
+ __ES_ERROR :                  93F3 C |  __ES_GOCOMMANDLINE :          93DB C |
+ __ES_LOOKUP :                 958C C |  __ES_LOOKUPCOMMAND :          942D C |
+ __ES_MSG1 :                   95B5 C |  __ES_SEARCH :                 9436 C |
+ __ES_SKIP :                   944B C |  __ES_SKIPSPACE :              9453 C |
  __EVALUATEEXPRESSION2 :       91EB C |  __GCNOTLOWER [GETCHAR] :      911C C |
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 27 - 12/23/2015 21:16:06
+
+
  __GCWAITKEY [GETCHAR] :       9102 C |  __GCWAITRELEASE [GETCHAR] :   910A C |
  __GSBACKSPACE [GETSTRING] :   917C C |  __GSCONTROLKEY [GETSTRING] :  915F C |
  __GSLOOP [GETSTRING] :        912F C |  __PRCLEARFROMMOVETO [PRINT] : 90DD C |
  __PRCLEARLOOP [PRINT] :       90DF C |  __PRCLEARSCREEN [PRINT] :     90DB C |
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 25 - 12/23/2015 16:01:44
-
-
  __PRCOPY [PRINT] :            90E9 C |  __PREXIT [PRINT] :            90A0 C |
  __PREXITNOCHECK [PRINT] :     90A4 C |  __PRISCONTROLCHAR [PRINT] :   90B2 C |
  __PRISRETURN [PRINT] :        90D2 C |  __PRNOTASCII [PRINT] :        907A C |
@@ -1506,10 +1640,10 @@
  __PRSCROLLLOOP [PRINT] :      9092 C |  __PRUPDATECURSOR [PRINT] :    9083 C |
  __RA_EXIT :                   9315 C |  __RA_NOINITIALISE :           9301 C |
 
-    125 symbols
-     30 unused symbols
+    133 symbols
+     31 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 26 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 28 - 12/23/2015 21:16:06
 
 
   defined macros:
@@ -1523,7 +1657,7 @@ PUSHP                                 | SETV
 
      10 macros
 
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 27 - 12/23/2015 16:01:44
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 29 - 12/23/2015 21:16:06
 
 
   codepages:
@@ -1532,10 +1666,10 @@ PUSHP                                 | SETV
 STANDARD (0 changed characters)
 
 
-0.01 seconds assembly time
+0.02 seconds assembly time
 
-   1148 lines source file
-   1360 lines incl. macro expansions
+   1232 lines source file
+   1484 lines incl. macro expansions
       2 passes
       0 errors
       0 warnings
