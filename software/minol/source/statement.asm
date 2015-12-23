@@ -7,6 +7,9 @@
 ; ****************************************************************************************************************
 
 codeStart:
+	code 	1,"GOTO 10"
+	code 	2,"OS"
+	code 	4,"NEW"
 	code 	10,"END:CALL (2,144):CLEAR"
 	db 		0 													; 0 length means end of program.	
 
@@ -23,7 +26,12 @@ ExecuteStatement:
 	jz 		ExecuteStatement
 	xri 	':'!' '												; skip over space.
 	jz 		ExecuteStatement
-	jmp 	__ES_LookUpCommand 									; and go figure out what to do.
+	xri 	' '!'"'												; is it a comment ?
+	jnz 	__ES_LookUpCommand 									; no, go figure out what to do.
+;
+;	Comment
+;
+__ES_Comment:
 ;
 ;	We have reached the end of the line - if running, go to next line, stopping if we have reached the 
 ; 	end of the code.
@@ -46,7 +54,7 @@ __ES_GoCommandLine:
 	ldi 	0 													; clear the "Is Running" flag to zero.
 	st 		(p3)
 	st 		CurrentLine-IsRunning(p3) 							; clear the current line to zero.
-	lpi 	p3,__ES_GoCommandLine-1								; and go to the command line input routine.
+	lpi 	p3,CommandInput-1									; and go to the command line input routine.
 	xppc 	p3
 ;
 ;	Error E has occurred.
@@ -128,14 +136,20 @@ wait7:
 
 	jmp 	__ES_CheckResult 									; come back here, check what happened, last in chain.
 
-	include commands\clear.asm
-	include commands\call.asm
-	include commands\end.asm 
+	include commands\clear.asm									; CLEAR
+	include commands\call.asm 									; CALL
+	include commands\end.asm 									; END and NEW
+	include commands\os.asm 									; OS
+	include commands\rungo.asm 									; RUN and GOTO 
+
+; TODO: LIST, LET, IF, PR, IN 
 
 ; ****************************************************************************************************************
 ;
 ;	lookup table. This is the lookup and dispatch table for commands, which are differentiated by the first two
 ; 	letters only, though the full entry is expected, e.g. for CLEAR you can have CLxxx where xxx is anything.
+;
+;	This table should be roughly sorted by use.
 ;
 ; ****************************************************************************************************************
 
@@ -145,9 +159,13 @@ command macro twoChar,length,address
 	endm
 
 __ES_Lookup:
-	command 	"CL",5,CMD_CLEAR 								; CLEAR command.
+	command 	"GO",4,CMD_GOTO 								; GOTO command.
 	command 	"CA",4,CMD_CALL 								; CALL command.
+	command 	"CL",5,CMD_CLEAR 								; CLEAR command.
+	command 	"RU",3,CMD_RUN									; RUN command.
 	command 	"EN",3,CMD_END 									; END command.
+	command 	"NE",3,CMD_NEW 									; NEW command
+	command 	"OS",2,CMD_OS 									; OS command.
 	db 			0
 
 __ES_Msg1: 														; messages
