@@ -29,9 +29,14 @@ ExecuteStatement:
 	xri 	' '!'"'												; is it a comment ?
 	jnz 	__ES_LookUpCommand 									; no, go figure out what to do.
 ;
-;	Comment
+;	Comment - go to EOL or : 
 ;
 __ES_Comment:
+	ld 		@1(p1) 												; look forward
+	jz 		__ES_EndOfLine 										; found NULL, do EOL code.
+	xri 	':' 												; if not ':', keep going.
+	jnz 	__ES_Comment
+	jmp 	ExecuteStatement
 ;
 ;	We have reached the end of the line - if running, go to next line, stopping if we have reached the 
 ; 	end of the code.
@@ -57,6 +62,13 @@ __ES_GoCommandLine:
 	lpi 	p3,CommandInput-1									; and go to the command line input routine.
 	xppc 	p3
 ;
+;	Come here after executing statement to decide what to do next, depending on CY/L value.
+;	
+__ES_CheckResult:
+	csa 														; get status
+	jp 		__ES_Error 											; if CY/L = 0 then error E occurred
+	jmp 	ExecuteStatement 									
+;
 ;	Error E has occurred.
 ;
 __ES_Error:
@@ -80,13 +92,6 @@ __ES_Error:
 	ldi 	0
 	xppc 	p3
 	jmp 	__ES_GoCommandLine
-;
-;	Come here after executing statement to decide what to do next, depending on CY/L value.
-;	
-__ES_CheckResult:
-	csa 														; get status
-	jp 		__ES_Error 											; if CY/L = 0 then error E occurred
-	jmp 	ExecuteStatement 									
 ;
 ;	P1+1 is the current command, figure out what it is and do it.
 ;
