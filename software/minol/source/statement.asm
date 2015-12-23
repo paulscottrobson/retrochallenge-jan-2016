@@ -7,7 +7,7 @@
 ; ****************************************************************************************************************
 
 codeStart:
-	code 	10,"   CLEAR 42"
+	code 	10,"END:CALL (2,144):CLEAR"
 	db 		0 													; 0 length means end of program.	
 
 ; ****************************************************************************************************************
@@ -119,8 +119,6 @@ __ES_SkipSpace:
 wait7:
 	jmp 	wait7
 
-	jmp 	__ES_CheckResult 									; come back here, check what happened, last in chain.
-
 ; ****************************************************************************************************************
 ;
 ;	include statements. All these end by having CY/L = 0 = error (code E) or CY/L = 1 (ok) and jumping back
@@ -128,17 +126,28 @@ wait7:
 ;
 ; ****************************************************************************************************************
 
+	jmp 	__ES_CheckResult 									; come back here, check what happened, last in chain.
+
+	include commands\clear.asm
+	include commands\call.asm
+	include commands\end.asm 
+
+; ****************************************************************************************************************
 ;
-;	lookup table.
+;	lookup table. This is the lookup and dispatch table for commands, which are differentiated by the first two
+; 	letters only, though the full entry is expected, e.g. for CLEAR you can have CLxxx where xxx is anything.
 ;
+; ****************************************************************************************************************
+
 command macro twoChar,length,address
-	db 		twoChar
-	db 		length-2
+	db 		twoChar,length-2
 	dw 		address-1
 	endm
 
 __ES_Lookup:
-	command 	"CL",5,__ES_LookUpCommand
+	command 	"CL",5,CMD_CLEAR 								; CLEAR command.
+	command 	"CA",4,CMD_CALL 								; CALL command.
+	command 	"EN",3,CMD_END 									; END command.
 	db 			0
 
 __ES_Msg1: 														; messages

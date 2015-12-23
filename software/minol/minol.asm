@@ -38,12 +38,9 @@
 	lpi 	p3,ExecuteStatement-1
 	xppc 	p3
 
-stop:jmp 	stop
-
 	include source\screen.asm 									; screen I/O stuff.
 	include source\errors.asm 									; errors
 	include source\expression.asm 								; expression evaluator (e.g. RHS)
-
 	include source\statement.asm 								; statement executor.
 
 
