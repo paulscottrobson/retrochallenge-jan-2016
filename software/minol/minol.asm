@@ -27,7 +27,7 @@
 	st 		ProgramBase-Variables(p3)
 	ldi 	codeStart / 256
 	st 		ProgramBase+1-Variables(p3)
-	ldi 	0 													; not running a program
+	ldi 	1 													; not running a program
 	st 		IsRunning-Variables(p3)
 		
 	setv 	'C',10 												; give some variables default values.

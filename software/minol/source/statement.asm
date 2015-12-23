@@ -7,9 +7,8 @@
 ; ****************************************************************************************************************
 
 codeStart:
-	code 	1,"LIST"
-	code 	3,"GOTO 10"
-	code 	5,"GOTO 5"
+	code 	3,"LET X = 42"
+	code 	5,"LET X = X + 1:GOTO5"
 	code 	14,"OS"
 	code 	24,"NEW"
 	code 	40,"END:CALL (2,144):CLEAR"
@@ -103,7 +102,7 @@ __ES_LookUpCommand:
 	lpi 	p3,__ES_Lookup 										; P3 is lookup table.
 __ES_Search:
 	ld 		@5(p3) 												; read first letter and skip forward 5
-	jz 		wait7 												; end of table
+	jz 		CMD_LET 											; end of table, try LET as default.
 	xre 														; is the first character ?
 	jnz 	__ES_Search 										; no, do next character.
 	ld 		-4(p3) 												; get second character
@@ -131,9 +130,6 @@ __ES_SkipSpace:
 	xpal 	p3
 	xppc 	p3 													; and go there.
 
-wait7:
-	jmp 	wait7
-
 ; ****************************************************************************************************************
 ;
 ;	include statements. All these end by having CY/L = 0 = error (code E) or CY/L = 1 (ok) and jumping back
@@ -143,12 +139,13 @@ wait7:
 
 	jmp 	__ES_CheckResult 									; come back here, check what happened, last in chain.
 
-	include commands\clear.asm									; CLEAR
-	include commands\call.asm 									; CALL
-	include commands\end.asm 									; END and NEW
-	include commands\os.asm 									; OS
-	include commands\rungo.asm 									; RUN and GOTO 
-	include commands\list.asm 									; LIST
+	include source\commands\let.asm 							; LET (must come first)
+	include source\commands\rungo.asm 							; RUN and GOTO 
+	include source\commands\clear.asm							; CLEAR
+	include source\commands\call.asm 							; CALL
+	include source\commands\end.asm 							; END and NEW
+	include source\commands\os.asm 								; OS
+	include source\commands\list.asm 							; LIST
 
 ; TODO: LET, IF, PR, IN 
 
@@ -167,6 +164,7 @@ command macro twoChar,length,address
 	endm
 
 __ES_Lookup:
+	command 	"LE",3,CMD_LET 									; LET command.
 	command 	"GO",4,CMD_GOTO 								; GOTO command.
 	command 	"CA",4,CMD_CALL 								; CALL command.
 	command 	"CL",5,CMD_CLEAR 								; CLEAR command.

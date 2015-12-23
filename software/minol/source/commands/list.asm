@@ -7,11 +7,13 @@
 ; ****************************************************************************************************************
 
 CMD_LIST:
+	lpi 	p3,EvaluateExpression-1 							; evaluate expression.
+	xppc 	p3
+	pushp 	p1 													; save P1 post-evaluate.
 	ldi 	0 													; zero minimum line and counter for displaying.
 	st 		@-1(p2)
 	st 		@-1(p2)
-	lpi 	p3,EvaluateExpression-1 							; evaluate expression.
-	xppc 	p3
+	csa 														; get result of expression evaluation.
 	jp 		__CLI_FromStart
 	lde  														; save start line.
 	st 		1(p2)
@@ -42,6 +44,7 @@ __CLI_FindEnd:
 __CLI_Exit:
 	scl 														; set carry link as okay.
 	ld 		@2(p2) 												; pop counter,upwards off stack.
+	pullp 	p1
 __CLI_ToPrev:
 	jmp 	CMD_LIST-2 											; back up the chain.
 
