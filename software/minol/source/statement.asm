@@ -7,8 +7,8 @@
 ; ****************************************************************************************************************
 
 codeStart:
-	code 	3,"LET X = 42"
-	code 	5,"LET X = X + 1:GOTO5"
+	code 	3,"LET C = 42:(0,2) = C"
+	code 	5,"LET X = X + 1:LET (0,0) = X:GOTO5"
 	code 	14,"OS"
 	code 	24,"NEW"
 	code 	40,"END:CALL (2,144):CLEAR"
@@ -78,6 +78,7 @@ __ES_Error:
 	ldi 	0
 	xppc 	p3
 	lde 														; print Error Code
+	ori 	'0'
 	xppc	p3
 	ldi 	0 													; print " AT "
 	xppc 	p3
@@ -147,7 +148,7 @@ __ES_SkipSpace:
 	include source\commands\os.asm 								; OS
 	include source\commands\list.asm 							; LIST
 
-; TODO: LET, IF, PR, IN 
+; TODO: IF, PR, IN 
 
 ; ****************************************************************************************************************
 ;

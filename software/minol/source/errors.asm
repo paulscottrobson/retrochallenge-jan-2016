@@ -7,5 +7,6 @@
 ; ****************************************************************************************************************
 
 ERROR_NoLabel = 1 											; Label unknown (e.g. GOTO failed)
+ERROR_Statement = 3 										; Do not recognise statement.
 ERROR_Term = 4 												; Error in a term.
 ERROR_DivideZero = 7 										; Division by zero
