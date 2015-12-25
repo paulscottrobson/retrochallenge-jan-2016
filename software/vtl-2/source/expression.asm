@@ -145,10 +145,11 @@ __EE_FindNextOperator:
 	jz 		__EE_Exit2 											; if end of line, exit
 	xri 	')' 												; if close parenthesis, exit.
 	jz 		__EE_Exit2
-	xri 	')'!' ' 											; loop back if spaces
-	jz 		__EE_GetNextOperator
+	ld 		@1(p1) 												; refetch and bump
+	xri 	' ' 												; loop back if spaces
+	jz 		__EE_FindNextOperator
 
-	ld 		@1(p1) 												; fetch and bump
+	ld 		-1(p1) 												; reload old character.
 	st 		2(p2) 												; save as pending operation.
 
 	xri 	'+'
@@ -171,11 +172,56 @@ __EE_FindNextOperator:
 	ccl
 	jmp 	__EE_Exit2
 
+; ****************************************************************************************************************
+;	
+;							This library provides functionality for >, = and <.
+;
+; ****************************************************************************************************************
 
 CompareLibrary:
-	jmp 	CompareLibrary
+	scl 														; calculate Stack2 - Stack1
+	ld 		2(p2) 												; lower byte
+	cad 	0(p2)
+	xae 														; save in E
+	ld 		3(p2) 												; upper byte
+	cad 	1(p2)
+	ore 														; or into E, now zero if equal.
+	jz 		__CL_ResultZero 
+	ldi 	1  													
+__CL_ResultZero:												; A = 0 if result same, A = 1 if result different
+	xri 	1 													; A = 1 if result same, A = 1 if result different
+	xae 														; put in E
+	ld 		4(p2) 												; get comparator
+	xri 	'=' 												; if it is '=', exit with E
+	jz 		__CL_ExitE
 
+	csa 														; get not borrow from subtraction
+	ani 	0x80 												; isolate carry
+	jz 		__CL_CarryClear
+	ldi 	1
+__CL_CarryClear:												; now A = 1 : Carry set, A = 0 : Carry Clear
+ 	xae 														; in E
+ 	ld 		4(p2) 												; if it is '>', exit with this value
+ 	xri 	'>'
+ 	jz 		__CL_ExitE
+ 	lde 														; toggle E bit 0, e.g. reversing result.
+ 	xri 	1
+ 	xae
+__CL_ExitE:
+	ld 		@2(p2) 												; pop a value off
+	lde 														; save E as LSB
+	st 		0(p2)
+	ldi 	0 													; MSB is zero, result is 0 or 1.
+	st 		1(p2)
+	ccl 														; clear carry because we must to be okay, matches behaviour
+	xppc 	p3 													; of Maths library.
 
+; ****************************************************************************************************************
+;
+;	This function does special terms for the Right Hand Side. Returns CY/L = 0 Error, S -> A
+;	If No Error is reported, E != 0 if processed, E = 0 if variable. If Error reported E is the Error Number.
+;
+; ****************************************************************************************************************
 
 CheckSpecialTerms:
 	ldi 	0 													; E = 0 not processed
