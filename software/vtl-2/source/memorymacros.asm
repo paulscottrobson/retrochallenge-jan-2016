@@ -15,7 +15,7 @@ OSMathLibrary = 0x0003 											; the Maths library is here.
 ScreenMirror = 0xC00 											; Screen mirror, 128 bytes, 256 byte page boundary.
 ScreenCursor = ScreenMirror+0x80  								; Position on that screen (00..7F)
 
-SystemVariables = 0xC90 										; System variables start here.
+SystemVariables = 0xD00 										; System variables start here.
 
 Variables = SystemVariables 									; 128 16 bit variables start here.
 
