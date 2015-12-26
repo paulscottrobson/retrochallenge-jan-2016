@@ -76,9 +76,13 @@ __EE_NotInteger:
 
 	lpi 	p3,CheckSpecialTerms-1 								; call the special terms routine.
 	xppc 	p3
+	ld 		@2(p2) 												; drop the result
+	csa
 	jp 		__EE_Exit  											; if CY/L = 0 then an error has occurred, return it.
+	ld 		@-2(p2) 											; restore result to TOS.
 	lde  														; if E != 0 then the value has been processed and is on 
 	jnz 	__EE_ProcessOperator 								; the stack, so go process it
+	ld 		@2(p2) 												; drop the TOS as it is not valid.
 ;
 ;	We now know this is a variable.
 ;
@@ -215,18 +219,4 @@ __CL_ExitE:
 	st 		1(p2)
 	ccl 														; clear carry because we must to be okay, matches behaviour
 	xppc 	p3 													; of Maths library.
-
-; ****************************************************************************************************************
-;
-;	This function does special terms for the Right Hand Side. Returns CY/L = 0 Error, S -> A
-;	If No Error is reported, E != 0 if processed, E = 0 if variable. If Error reported E is the Error Number.
-;
-; ****************************************************************************************************************
-
-CheckSpecialTerms:
-	ldi 	0 													; E = 0 not processed
-	xae
-	scl 														; CY/L = 1 no error.
-	csa 														; only leave value if processed and no error.
-	xppc 	p3
 

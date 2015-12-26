@@ -3,7 +3,7 @@
 #
 import random
 
-random.seed(42)
+random.seed(142)
 
 monitor = [ord(x) for x in open("..\..\emulator\monitor.bin","rb").read(-1)]
 
@@ -29,7 +29,7 @@ def getNumber(min,max,depth):
 			v = k[random.randrange(0,len(k))]
 			n["value"] = avars[v]
 			n["expr"] = v
-		if random.randrange(0,4) == -1 and depth < 6:				# test parenthesis.
+		if random.randrange(0,4) == 0 and depth < 6:				# test parenthesis.
 			n = createSum(3,5,depth+1)
 			n["expr"] = "(" + spc() + n["expr"] + spc()+ ")"
 		else:

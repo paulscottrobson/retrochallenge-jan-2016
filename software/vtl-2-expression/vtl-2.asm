@@ -54,7 +54,8 @@ Report:
 ; ****************************************************************************************************************
 
 	include ..\vtl-2\source\expression.asm 								; expression 
-
+	include ..\vtl-2\source\right_special.asm 							; r-expr specials
+	
 testData:
 	include tests.inc
 	db 		0
