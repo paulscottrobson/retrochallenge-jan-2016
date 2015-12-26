@@ -16,8 +16,9 @@ ScreenMirror = 0xC00 											; Screen mirror, 128 bytes, 256 byte page bounda
 ScreenCursor = ScreenMirror+0x80  								; Position on that screen (00..7F)
 
 SystemVariables = 0xD00 										; System variables start here.
-
 Variables = SystemVariables 									; 128 16 bit variables start here.
+KeyboardBuffer = 0xE00 											; Keyboard Buffer
+KeyboardBufferSize = 80 										; Size of keyboard Buffer
 
 ; ****************************************************************************************************************
 ;														Macros

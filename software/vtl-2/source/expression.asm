@@ -21,9 +21,11 @@ EvaluateExpression:
 	ldi 	0 													; push 0 (16 bit) on stack as current term.
 	st 		@-1(p2)
 	st 		@-1(p2)
-;
-;	Get the next term. This is the main loop. We pretend we have already done 0+
-;
+
+; ****************************************************************************************************************
+;					Get the next term. This is the main loop. We pretend we have already done 0+
+; ****************************************************************************************************************
+
 __EE_NextTerm:	
 	ld 		@1(p1) 												; get next character and bump.
 	jz 		__EE_ExitSyntax 									; fail with syntax error if nothing found
@@ -35,9 +37,11 @@ __EE_NextTerm:
 	jp 		__EE_NotInteger
 	adi 	128-10 												; add 128-10 ; if +ve it is greater than '9'
 	jp 		__EE_NotInteger
-;
-;	Found an integer term, use the math library to extract the integer.
-;
+
+; ****************************************************************************************************************
+;					Found an integer term, use the math library to extract the integer.
+; ****************************************************************************************************************
+
 	lpi 	p3,OSMathLibrary-1 									; use math library function '?'
 	ldi 	'?'
 	xppc 	p3 													; convert to an integer (cannot return an error)
@@ -64,11 +68,12 @@ __EE_Exit:
 	csa 														; get CY/L bit into A bit 7
 	xppc 	p3 													; return
 	jmp 	EvaluateExpression 									; re-entrant.
-;
-;
+
+; ****************************************************************************************************************
 ;	We know it is not a numeric constant, so check for special terms. First though we optimise it by 
 ;	checking bit 5 - if zero the code is @A-Z[\]^_ none of which are 'special' terms.
-;
+; ****************************************************************************************************************
+
 __EE_NotInteger:
 	ld 		(p1) 												; look at character bit 5 (32)
 	ani 	32 													; if this is zero it cannot be a special term 
@@ -83,9 +88,11 @@ __EE_NotInteger:
 	lde  														; if E != 0 then the value has been processed and is on 
 	jnz 	__EE_ProcessOperator 								; the stack, so go process it
 	ld 		@2(p2) 												; drop the TOS as it is not valid.
-;
-;	We now know this is a variable.
-;
+
+; ****************************************************************************************************************
+;										We now know this is a variable.
+; ****************************************************************************************************************
+
 __EE_IsVariable:
 	ld 		(p1) 												; calculate twice the character
 	ccl 
@@ -102,9 +109,11 @@ __EE_IsVariable:
 
 __EE_NextTerm2: 												; the jump is too large.
 	jmp 	__EE_NextTerm
-;
-;	We now have two values on the stack and an operator, so apply the operator to the two values.
-;
+
+; ****************************************************************************************************************
+;		We now have two values on the stack and an operator, so apply the operator to the two values.
+; ****************************************************************************************************************
+
 __EE_ProcessOperator:
 	lpi 	p3,OSMathLibrary-1 									; point P3 to the OS Math Library.
 	ld 		4(p2) 												; get operator
@@ -128,9 +137,11 @@ __EE_NotDivide:
 	ccl 														; return error flag.
 __EE_Exit2:
 	jmp 	__EE_Exit 											; return if error.
-;
+
+; ****************************************************************************************************************
 ;	Have successfully performed operation. First check if we have done division, and if so, save the remainder.
-;
+; ****************************************************************************************************************
+
 __EE_GetNextOperator:
 	ld 		2(p2) 												; was it divide ?
 	xri 	'/'
@@ -140,9 +151,11 @@ __EE_GetNextOperator:
 	st 		(p3)
 	ld 		-1(p2)
 	st 		1(p3)
-;
-;	Now find the next operator. NULL or ) ends an expression.
-;
+
+; ****************************************************************************************************************
+;							Now find the next operator. NULL or ) ends an expression.
+; ****************************************************************************************************************
+
 __EE_FindNextOperator:
 	scl 														; prepare for successful exit.
 	ld 		(p1) 												; get next operator
