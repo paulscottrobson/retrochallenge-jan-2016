@@ -24,11 +24,12 @@ CheckSpecialTerms:
 	pushp 	p3 													; save P3.
 
 	ld 		(p1) 												; get character
-	xri 	':'													; is it the array marker
+	xri 	'$'													; is it character in ?
+	xri 	'?'!'$'												; is it expression in ?
+	xri 	':'!'?'												; is it the array marker
 	jz 		__CST_ArrayOrParenthesis
 	xri 	':'!'('												; or the parenthesis (open bracket)
 	jz 		__CST_ArrayOrParenthesis
-
 	ldi 	0 													; E = 0 not processed
 	xae
 __CST_SCLAndExit:
@@ -39,7 +40,7 @@ __CST_Exit:
 	xppc 	p3
 
 ;
-;	:<expr> or (<expr>)
+;	:<expr> or (<expr>) - both evaluate and check the parenthesis value, then array does the array access
 ;
 __CST_ArrayOrParenthesis:
 	ld 		@1(p1) 												; get the type (array or parenthesis) and skip over it
@@ -67,6 +68,31 @@ __CST_ArrayOrParenthesis:
 	lde 														; get E
 	xri 	'(' 												; is it parenthesised expression
 	jz 		__CST_SCLAndExit 									; if so, exit with E != 0 and CY/L = 1
+;
+;	Now we know we had :<expr>) - so calculate & + <expr> * 2 and read what is there.
+;
+	ccl 	
+	ld 		2(p2) 												; double the offset
+	add 	2(p2)
+	st 		2(p2)
+	ld 		3(p2)
+	add 	3(p2)
+	st 		3(p2)
 
-wait4:
-	jmp 	wait4
+	lpi 	p3,Variables+('&' & 0x3F) * 2 						; point P3 to '&'
+	ccl
+	ld 		2(p2) 												; add &.Low to offset.low -> E
+	add 	0(p3)
+	xae
+	ld 		3(p2) 												; add &.High to offset.high -> P3.H
+	add 	1(p3)
+	xpah 	p3
+	lde 														; E->P3.L ; P3 is now & + (offset * 2)
+	xpal 	p3
+	ld 		0(p3) 												; access array, store in return 
+	st 		2(p2)
+	ld 		1(p3)
+	st 		3(p2)
+	ldi 	0xFF 												; set E to non-zero and exit.
+	xae
+	jmp 	__CST_SCLAndExit

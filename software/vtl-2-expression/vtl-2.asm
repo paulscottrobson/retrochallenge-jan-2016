@@ -24,7 +24,7 @@
 	setv 	'E',42
 	setv 	'A',13
 	setv 	'Z',69
-	setv 	'&',0x2F0 											; array starts here, sort of.
+	setv 	'&',0x321 											; array starts here, sort of.
 	
 TestLoop:
 	lpi 	p2,0xFF8											; set up stack default value

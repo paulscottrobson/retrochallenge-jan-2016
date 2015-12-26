@@ -3,7 +3,7 @@
 #
 import random
 
-random.seed(142)
+random.seed(42)
 
 monitor = [ord(x) for x in open("..\..\emulator\monitor.bin","rb").read(-1)]
 
@@ -33,10 +33,12 @@ def getNumber(min,max,depth):
 			n = createSum(3,5,depth+1)
 			n["expr"] = "(" + spc() + n["expr"] + spc()+ ")"
 		else:
-			if random.randrange(0,4) == -1:							# test array access.
+			if random.randrange(0,4) == 0:							# test array access.
 				offset = random.randrange(0,512)
+				if random.randrange(0,3) == 0:
+					offset = int(65535-offset/2)
 				n["expr"] = ":"+spc()+str(offset)+spc()+")"
-				p = offset * 2 + 0x2F0
+				p = (offset * 2 + 0x321) & 0xFFFF
 				n["value"] = monitor[p]+monitor[p+1]*256
 	return n
 #
