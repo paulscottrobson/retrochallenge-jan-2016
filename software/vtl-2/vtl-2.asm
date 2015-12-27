@@ -26,29 +26,24 @@
 	lpi 	p3,Variables 										; set some variables
 	setv 	'C',0x1382
 	setv	'&',0x2F0
+	ldi 	1
+	st 		IsRunning-Variables(p3)	
 	
-	lpi 	p3,EvaluateExpression-1								; evaluate
+	lpi 	p3,ExecuteNextStatement-1							; execute statement
 	lpi 	p1,test
 	xppc 	p3
-	jp 		Wait1
-	lpi 	p1,0xE00 											; print result
-	lpi 	p3,2
-	ldi 	'$'
-	xppc 	p3
-	lpi 	p3,Print-1
-	ldi 	0
-	xppc 	p3
-Wait1:
-	jmp 	Wait1
 
 test:
-	db 		"?+16) THIS IS A COMMENT",0
+	code 	100,"A=22000/7"
+	code 	110,"B=A-400"
+	code 	120,"C='"
+	code 	130,"D='/13*0+%"
+	code 	140,"E=#"
+	db 		0
 
 ; ****************************************************************************************************************
 ;													Source Files
 ; ****************************************************************************************************************
 
 	include source\screen.asm 									; screen I/O stuff.
-	include source\expression.asm 								; expression 
-	include source\right_special.asm 							; r-expr specials (parenthesis,array,key,line)
-
+	include source\statement.asm 								; statement interpreter.

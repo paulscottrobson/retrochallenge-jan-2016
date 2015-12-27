@@ -17,6 +17,8 @@ ScreenCursor = ScreenMirror+0x80  								; Position on that screen (00..7F)
 
 SystemVariables = 0xD00 										; System variables start here.
 Variables = SystemVariables 									; 128 16 bit variables start here.
+IsRunning = SystemVariables-1  									; Non-zero if free running, zero if stopped.
+
 KeyboardBuffer = 0xE00 											; Keyboard Buffer
 KeyboardBufferSize = 80 										; Size of keyboard Buffer
 
