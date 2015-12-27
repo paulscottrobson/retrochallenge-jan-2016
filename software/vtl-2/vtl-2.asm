@@ -34,7 +34,8 @@
 	xppc 	p3
 
 test:
-	code 	100,"A=22000/7"
+	code 	100,"$=42)( A COMMENT"
+	code 	102,"$=33"
 	code 	110,"B=A-400"
 	code 	120,"C='"
 	code 	130,"D='/13*0+%"

@@ -17,11 +17,15 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
+	include source\left_specials\readonly.asm
+	include source\left_specials\machinecode.asm
+	include source\left_specials\charout.asm
 
 ; ****************************************************************************************************************
 ;							Handler end. Test for error and skip rest of line if comment
 ; ****************************************************************************************************************
 
+	csa 														; read Status Register
 	ani 	0x80 												; check if CY/L bit set, if so go to next statement
 	jnz 	SkipEndLineNextStatement
 __ENS_Stop:														; error has occurred in a handler.
@@ -206,14 +210,14 @@ __CEQ_Exit:
 	include source\expression.asm 								; expression 
 	include source\right_special.asm 							; r-expr specials (parenthesis,array,key,line)
 
+; TODO List
 ;	:<expr>)					Array access (relative to '&')
-;	$ 							Write character to screen
 ;	?							Write number and/or literal to screen
 ;	#							Jump to new line
-;	& 							Top of program memory (not writeable)
-;	> 							Call machine language routine (on entry P1 ^ variables)
-;	) 							Comment
-;
 
 SpecialsTable:
+	special '$',__ST_CharacterOut 								; $ is write direct to output.
+	special '>',__ST_MachineCode 								; > is call machine code.
+	special ')',SkipEndLineNextStatement 						; ) is a comment.
+	special '&',__ST_ReadOnlyVariable-1							; & is read only, cannot be changed.
 	db 		0 													; end marker.

@@ -77,3 +77,8 @@ code macro lineNo,code 											; a debugging macro, which fakes up a line of 
 	dw 		lineNo 												; two byte line number (low byte first)
 	db 		code,0 												; ASCIIZ string
 	endm
+
+special macro ch,method
+	db 		ch
+	dw 		(method)-1
+	endm

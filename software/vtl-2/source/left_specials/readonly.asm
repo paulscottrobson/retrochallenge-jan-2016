@@ -1,14 +1,16 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 ;
-;												Errors
-;	
+;												Read-Only Variable
+;
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-ERROR_SyntaxTerm = 'T' 											; Syntax error in term.
-ERROR_DivideZero = 'Z'											; Divide by zero error.
-ERROR_Operator = 'O'											; Operator error.
-ERROR_Bracket = 'B'												; Missing bracket error.
-ERROR_Syntax = 'S' 												; Syntax error in statement.
-ERROR_ReadOnly = 'R' 											; Variable is read only.
+	jmp 	__STROV_End
+
+__ST_ReadOnlyVariable:
+	ldi 	ERROR_ReadOnly										; set error to E
+	xae 
+	ccl 														; return with carry clear indicating error
+
+__STROV_End:
