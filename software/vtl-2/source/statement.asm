@@ -19,6 +19,7 @@
 
 	include source\left_specials\readonly.asm
 	include source\left_specials\machinecode.asm
+	include source\left_specials\print.asm
 	include source\left_specials\charout.asm
 
 ; ****************************************************************************************************************
@@ -212,10 +213,10 @@ __CEQ_Exit:
 
 ; TODO List
 ;	:<expr>)					Array access (relative to '&')
-;	?							Write number and/or literal to screen
 ;	#							Jump to new line
 
 SpecialsTable:
+	special '?',__ST_Print 										; ? is write expression or string literal.
 	special '$',__ST_CharacterOut 								; $ is write direct to output.
 	special '>',__ST_MachineCode 								; > is call machine code.
 	special ')',SkipEndLineNextStatement 						; ) is a comment.

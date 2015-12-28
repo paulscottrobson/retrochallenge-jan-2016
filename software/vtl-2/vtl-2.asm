@@ -35,10 +35,15 @@
 
 test:
 	code 	100,"$=42)( A COMMENT"
-	code 	102,"$=33"
-	code 	110,"B=A-400"
-	code 	120,"C='"
-	code 	130,"D='/13*0+%"
+	code 	102,"?=33"
+	code 	104,"?=\"\""
+	code 	108,"?=\"ABC-\";"
+	code 	110,"?=\"HELLO WORLD\""
+	code 	120,"?='"
+	code 	121,"?=\"\""
+	code 	122,"?='"
+	code 	123,"?=\"\""
+	code 	130,"?=?+?+?"
 	code 	140,"E=#"
 	db 		0
 
