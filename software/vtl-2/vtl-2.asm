@@ -25,7 +25,7 @@
 
 	lpi 	p3,Variables 										; set some variables
 	setv 	'C',0x1382
-	setv	'&',0x2F0
+	setv	'&',0x1304
 	ldi 	1
 	st 		IsRunning-Variables(p3)	
 
@@ -39,11 +39,13 @@
 	xppc 	p3
 
 test:
-	code 	90,"?= \"STARTED\""
-	code 	100,"A = 0"
-	code 	110,"A = A + 1"
-	code 	200,"# = (A < 1000) * 110"
-	code 	90,"?=\"FINISHED\""
+	code 	20,"K = 0"
+	code 	30,"K = K + 1"
+	code 	40,"A = K/2*3+4-5"
+	code 	45,"#=700"
+	code 	50,"# = (K < 100) * 30"
+	code 	60,"?=\"DONE\""
+	code    700,"#=!"
 	db 		0
 
 ; ****************************************************************************************************************

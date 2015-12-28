@@ -21,6 +21,7 @@
 	include source\left_specials\machinecode.asm
 	include source\left_specials\print.asm
 	include source\left_specials\charout.asm
+	include source\left_specials\array.asm
 	include source\left_specials\goto.asm 						; has to be last, both for speed and accesses ExecuteNextStatement
 
 ; ****************************************************************************************************************
@@ -212,11 +213,13 @@ __CEQ_Exit:
 	include source\expression.asm 								; expression 
 	include source\right_special.asm 							; r-expr specials (parenthesis,array,key,line)
 
-; TODO List
-;	:<expr>)					Array access (relative to '&')
+; ****************************************************************************************************************
+;									Table of 'Special' L-Expressions
+; ****************************************************************************************************************
 
 SpecialsTable:
 	special '#',__ST_Goto 										; # is goto
+	special ':',__ST_ArrayWrite 								; : is array write.
 	special '?',__ST_Print 										; ? is write expression or string literal.
 	special '$',__ST_CharacterOut 								; $ is write direct to output.
 	special '>',__ST_MachineCode 								; > is call machine code.
