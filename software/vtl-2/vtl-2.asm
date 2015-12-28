@@ -34,12 +34,16 @@
 	ldi		test&255
 	st 		ProgramBase-Variables(p3)
 
-	lpi 	p3,ExecuteNextStatement-1							; execute statement
-	lpi 	p1,test
+;	lpi 	p3,ExecuteNextStatement-1							; execute statement
+;	lpi 	p1,test
+;	xppc 	p3
+
+	lpi 	p3,ListProgram-1
 	xppc 	p3
+wait0:jmp 	wait0
 
 test:
-;	code 	10,"& = 0"
+	code 	10,"&=0"
 	code 	20,"K = 32"
 	code 	30,"K = K + 1"
 	code 	40,"$=K"
@@ -53,3 +57,4 @@ test:
 
 	include source\screen.asm 									; screen I/O stuff.
 	include source\statement.asm 								; statement interpreter.
+	include source\listing.asm 									; program listing.

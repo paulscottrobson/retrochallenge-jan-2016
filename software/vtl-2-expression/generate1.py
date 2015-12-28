@@ -3,7 +3,7 @@
 #
 import random
 
-random.seed(42)
+random.seed(142)
 
 monitor = [ord(x) for x in open("..\..\emulator\monitor.bin","rb").read(-1)]
 
