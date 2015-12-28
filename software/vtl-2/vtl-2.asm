@@ -28,23 +28,22 @@
 	setv	'&',0x2F0
 	ldi 	1
 	st 		IsRunning-Variables(p3)	
-	
+
+	ldi		test/256											; set program base address.
+	st 		ProgramBase-Variables+1(p3)
+	ldi		test&255
+	st 		ProgramBase-Variables(p3)
+
 	lpi 	p3,ExecuteNextStatement-1							; execute statement
 	lpi 	p1,test
 	xppc 	p3
 
 test:
-	code 	100,"$=42)( A COMMENT"
-	code 	102,"?=33"
-	code 	104,"?=\"\""
-	code 	108,"?=\"ABC-\";"
-	code 	110,"?=\"HELLO WORLD\""
-	code 	120,"?='"
-	code 	121,"?=\"\""
-	code 	122,"?='"
-	code 	123,"?=\"\""
-	code 	130,"?=?+?+?"
-	code 	140,"E=#"
+	code 	90,"?= \"STARTED\""
+	code 	100,"A = 0"
+	code 	110,"A = A + 1"
+	code 	200,"# = (A < 1000) * 110"
+	code 	90,"?=\"FINISHED\""
 	db 		0
 
 ; ****************************************************************************************************************

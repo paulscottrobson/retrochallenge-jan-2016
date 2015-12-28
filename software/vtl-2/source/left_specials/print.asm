@@ -14,9 +14,11 @@ __ST_Print:
 	ld 		(p1) 												; check next character
 	xri 	'"'													; if quote mark
 	jz 		__STPRT_Literal 									; print literal.
-;
-;	Print expression.
-;
+
+; ****************************************************************************************************************
+;												Print expression.
+; ****************************************************************************************************************
+
 	ld 		@-2(p2) 											; make space for P1 save later.
 	xppc 	p3 													; evaluate rhs and push result
 	ld 		@4(p2) 												; unstack the result and saved space
@@ -37,9 +39,11 @@ __ST_Print:
 	pullp 	p1 													; restore P1.
 	scl 														; no error occurred.
 	jmp 	__STPRT_End 										; and exit
-;
-;	Print literal
-;
+
+; ****************************************************************************************************************
+;													Print literal
+; ****************************************************************************************************************
+
 __STPRT_Literal:
 	ld 		@1(p1) 												; skip over first quote.
 	lpi 	p3,Print-1 											; print routine in P3.

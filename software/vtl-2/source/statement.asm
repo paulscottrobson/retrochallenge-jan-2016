@@ -21,6 +21,7 @@
 	include source\left_specials\machinecode.asm
 	include source\left_specials\print.asm
 	include source\left_specials\charout.asm
+	include source\left_specials\goto.asm 						; has to be last, both for speed and accesses ExecuteNextStatement
 
 ; ****************************************************************************************************************
 ;							Handler end. Test for error and skip rest of line if comment
@@ -213,9 +214,9 @@ __CEQ_Exit:
 
 ; TODO List
 ;	:<expr>)					Array access (relative to '&')
-;	#							Jump to new line
 
 SpecialsTable:
+	special '#',__ST_Goto 										; # is goto
 	special '?',__ST_Print 										; ? is write expression or string literal.
 	special '$',__ST_CharacterOut 								; $ is write direct to output.
 	special '>',__ST_MachineCode 								; > is call machine code.
