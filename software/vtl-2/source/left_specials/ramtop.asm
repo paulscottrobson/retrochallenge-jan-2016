@@ -1,30 +1,30 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 ;
-;												Read-Only Variable
+;											* : Set RAMTOP
 ;
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-	jmp 	__STROV_End
+	jmp 	__STTOP_End
 
-__ST_ReadOnlyVariable:
+__ST_RamTop:
 	xppc 	p3 													; check for '='
-	jp 		__STROV_End 										; if error, end.
+	jp 		__STTOP_End 										; if error, end.
 	xppc 	p3 													; evaluate rhs
 	ld 		@2(p2) 												; unstack the result.
 	csa 														; end if there was an error.
-	jp 		__STROV_End
+	jp 		__STTOP_End
 	ld 		-1(p2) 												; if the returned result was non zero
 	or 		-2(p2)
-	jnz 	__STROV_Error 										; report as error
+	jnz 	__STTOP_Error 										; report as error
 
 	lpi 	p3,BootMonitor-1 									; else crash back to monitor
 	xppc 	p3
 
-__STROV_Error:
+__STTOP_Error:
 	ldi 	ERROR_ReadOnly										; set error to E
 	xae 
 	ccl 														; return with carry clear indicating error
 
-__STROV_End:
+__STTOP_End:

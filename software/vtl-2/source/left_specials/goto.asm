@@ -28,6 +28,9 @@ __ST_Goto:
 	adi 	0
 	st 		('!' & 0x3F)*2+1(p3) 
 
+	ldi 	1 													; set IsRunning flag.
+	st 		IsRunning-Variables(p3)
+	
 	ld 		ProgramBase-Variables(p3) 							; put program base address into P1.
 	xpal 	p1
 	ld 		ProgramBase-Variables+1(p3)

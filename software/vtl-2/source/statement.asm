@@ -17,7 +17,7 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-	include source\left_specials\readonly.asm
+	include source\left_specials\ramtop.asm
 	include source\left_specials\machinecode.asm
 	include source\left_specials\print.asm
 	include source\left_specials\charout.asm
@@ -82,6 +82,7 @@ ExecuteNextStatement:
 ;										Update the random number variable '
 ; ****************************************************************************************************************
 
+ExecuteCodeLine:
 	ld 		(RandomVariable*2)(p3) 								; check random seed initialised
 	or 		(RandomVariable*2+1)(p3) 										
 	jnz 	__ENS_RandomInitialised
@@ -224,5 +225,5 @@ SpecialsTable:
 	special '$',__ST_CharacterOut 								; $ is write direct to output.
 	special '>',__ST_MachineCode 								; > is call machine code.
 	special ')',SkipEndLineNextStatement 						; ) is a comment.
-	special '&',__ST_ReadOnlyVariable-1							; & is read only, cannot be changed.
+	special '*',__ST_RamTop										; * is read only, cannot be changed, exit if set zero.
 	db 		0 													; end marker.
