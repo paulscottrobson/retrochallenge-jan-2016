@@ -118,6 +118,7 @@ EEX_Error:
 EEX_Exit:
 	ld 		@2(p2) 												; throw the pending operation and value
 	pullp 	p3 													; restore P3
+	csa 														; put CY/L in A bit 7
 	xppc 	p3 													; and exit
 	jmp 	EvaluateExpression 									; make re-entrant
 

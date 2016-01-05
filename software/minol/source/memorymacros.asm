@@ -64,12 +64,10 @@ pulla macro
 	ld 		@1(p2)
 	endm
 
-;setv macro ch,value 											; sets a variable to a value, assumes P3 = Variables.
-;	ldi 	(value) & 255
-;	st 		((ch) & 0x3F)*2(p3)
-;	ldi 	(value) / 256
-;	st 		((ch) & 0x3F)*2+1(p3)
-;	endm
+setv macro ch,value 											; sets a variable to a value, assumes P3 = Variables.
+	ldi 	(value) & 255
+	st 		((ch) - 'A')(p3)
+	endm
 ;
 ;code macro lineNo,code 											; a debugging macro, which fakes up a line of code.
 ;	db 		strlen(code)+4 										; one byte offset to next (0 = End of code)
