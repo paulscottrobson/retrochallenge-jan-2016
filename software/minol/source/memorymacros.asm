@@ -16,6 +16,11 @@ BootMonitor = 0x210 											; address to boot monitor
 ScreenMirror = 0xC00 											; Screen mirror, 128 bytes, 256 byte page boundary.
 ScreenCursor = ScreenMirror+0x80  								; Position on that screen (00..7F)
 
+System = 0xC90 													; System Memory
+
+RandomSeed = System-2											; Random Seed Value (2 bytes)
+Variables = System 												; Variables (26 bytes)
+
 ; ****************************************************************************************************************
 ;														Macros
 ; ****************************************************************************************************************

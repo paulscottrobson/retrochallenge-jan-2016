@@ -19,20 +19,19 @@
 
 	db 		0x68												; this makes it boot straight into this ROM.
 	lpi 	p2,0xFF8											; set up stack default value
-	lpi 	p3,Print-1 											; clear screen
-	ldi 	12
-	xppc 	p3
-	lpi 	p1,msg
-	ldi 	0
-	xppc 	p3
 
+	lpi 	p3,EvaluateExpression-1
+	lpi 	p1,expr
+	xppc	p3
 wait1:	
 	jmp 	wait1
-msg:
-	db 		"HELLO WORLD !",13,42,0
+expr:
+	db 		"209+",0
+
 
 ; ****************************************************************************************************************
 ;													Source Files
 ; ****************************************************************************************************************
 
 	include source\screen.asm 									; screen I/O stuff.
+	include source\expression.asm 								; expression evaluator.
