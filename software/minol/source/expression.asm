@@ -177,11 +177,147 @@ EEX_Variable:
 
 EEX_HaveTerm:
 	ld 		EEX_PendingOp(p2) 									; get pending operation.
-	jmp 	EEX_HaveTerm
+	xri 	'+'
+	jnz 	EEX_NotAdd
 
+; ****************************************************************************************************************
+;												Add Right Term to Value
+; ****************************************************************************************************************
+	ccl
+	ld 		EEX_Value(p2)										; get value
+	ade 														; add right
+	jmp 	EEX_SaveAndExit 									; save and exit
 
+EEX_NotAdd:
+	xri 	'+'!'-'
+	jnz		EEX_NotSubtract
 
+; ****************************************************************************************************************
+;											 Subtract Right Term from Value
+; ****************************************************************************************************************
+	scl
+	ld 		EEX_Value(p2)										; get value
+	cae 														; subtract right
+EEX_SaveAndExit:
+	st 		EEX_Value(p2) 										; save value back
+	jmp 	EEX_CheckNextOperation 								; and exit, look for next operator.
 
+EEX_Divide_Zero:												; handle divide by zero error.
+	ldi 	ERRC_DivZero
+	jmp 	EEX_Error
+
+EEX_EndExpression:
+	ld 		EEX_Value(p2) 										; get current value
+	xae 														; put in E
+	scl 														; set CY/L indicating expression okay.
+	jmp 	EEX_Exit 											; and exit.
+
+EEX_NotSubtract:
+	xri 	'-'!'*'
+	jnz 	EEX_Divide
+
+; ****************************************************************************************************************
+;											 Multiply Right Term into Value
+; ****************************************************************************************************************
+
+	ld 		EEX_Value(p2) 										; a = left value
+	st 		1(p2)
+	ldi 	0													; res = 0(p2)
+	st 		0(p2) 												; clear it.
+EEX_MultiplyLoop:
+	lde  														; if B == 0 then we are done.
+	jz 		EEX_CheckNextOperation
+	ani 	1 													; if B LSB is non zero.
+	jz 		EEX_Multiply_B0IsZero
+	ld 		0(p2) 												; add A to Result
+	ccl
+	add 	1(p2)
+	st 		0(p2)
+EEX_Multiply_B0IsZero:
+	lde 														; shift B right
+	sr
+	xae
+	ld 		1(p2) 												; shift A left
+	ccl
+	add 	1(p2)
+	st 		1(p2)
+	jmp 	EEX_MultiplyLoop
+
+; ****************************************************************************************************************
+;											Check next operation
+; ****************************************************************************************************************
+
+EEX_CheckNextOperation:
+	ld 		@1(p1)												; skip over spaces
+	xri 	' '
+	jz 		EEX_CheckNextOperation
+	ld 		@-1(p1)												; get operator
+	xri 	'+'													; check if + - * /
+	jz 		EEX_FoundOperator
+	xri 	'+'!'-'
+	jz 		EEX_FoundOperator
+	xri 	'-'!'*'
+	jz 		EEX_FoundOperator
+	xri 	'*'!'/'
+	jnz 	EEX_EndExpression
+
+EEX_FoundOperator:
+	ld  	@1(p1) 												; get and skip operator
+	st 		EEX_PendingOp(p2)									; save then pending operator
+	lpi 	p3,EEX_Term-1
+	xppc 	p3
+
+; ****************************************************************************************************************
+;											 Divide Right Term into Value
+; ****************************************************************************************************************
+
+EEX_Divide:
+	lde 														; if denominator zero, error 2.
+	jz 		EEX_Divide_Zero
+	ld 		0(p2) 												; numerator into 1(p2)
+	st 		1(p2) 												; denominator is in E
+	ldi 	0
+	st 		0(p2)												; quotient in 0(p2)
+	st 		-1(p2) 												; remainder in -1(p2)
+	ldi 	0x80 									
+	st 		-2(p2) 												; bit in -2(p2)
+
+EEX_Divide_Loop:
+	ld 		-2(p2) 												; exit if bit = 0,we've finished.
+	jz 		EEX_CheckNextOperation
+
+	ccl 	 													; shift remainder left.
+	ld 		-1(p2)
+	add 	-1(p2)
+	st 		-1(p2)
+
+	ld 		1(p2)												; get numerator.
+	jp 		EEX_Divide_Numerator_Positive
+	ild 	-1(p2)  											; if numerator -ve, increment remainder.
+EEX_Divide_Numerator_Positive:
+
+	ld 		-1(p2) 												; calculate remainder - denominator
+	scl
+	cae 
+	st 		-3(p2) 												; save in temp -3(p2)
+	csa 														; if temp >= 0, CY/L is set
+	jp 		EEX_Divide_Temp_Positive
+
+	ld 		-3(p2) 												; copy temp to remainder
+	st 		-1(p2)
+	ld 		-2(p2) 												; or bit into quotient
+	or 		0(p2)
+	st 		0(p2)
+EEX_Divide_Temp_Positive:
+	ld 		-2(p2) 												; shift bit right
+	sr
+	st 		-2(p2)
+
+	ld 		1(p2)												; shift numerator positive
+	ccl
+	add 	1(p2)
+	st 		1(p2)
+	jmp 	EEX_Divide_Loop
 
 EvaluateAddressPair:
 	ldi 	0xFF
