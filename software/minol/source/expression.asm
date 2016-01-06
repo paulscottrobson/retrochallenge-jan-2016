@@ -6,7 +6,6 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
-
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 ;
@@ -320,8 +319,55 @@ EEX_Divide_Temp_Positive:
 	st 		1(p2)
 	jmp 	EEX_Divide_Loop
 
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+;
+;	Evaluate an address pair at P1 e.g. (<expr>,<expr>).  Returns as for expression, but stack-2, stack-1 are
+;	the address (the data at that address is in E if no error occurs). Used for reading and writing.
+;
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+
 EvaluateAddressPair:
-	ldi 	0xFF
+	ld 		@-2(p2)												; make space to store HL
+	pushp 	p3 													; save return address.
+	ld 		(p1) 												; check first is '(', exit with term error if not
+	xri 	'('
+	jnz 	EAP_Error
+	ld 		@1(p1)												; skip over it.
+	lpi 	p3,EvaluateExpression-1 							; evaluate H
+	xppc 	p3
+	jp 		EAP_Exit 											; exit if failed
+	lde 														; store H at 3(P2)
+	st 		3(p2)
+	ld 		(p1) 												; check for ','
+	xri 	','
+	jnz 	EAP_Error											; fail if not present
+	ld 		@1(p1)												; skip over comma
+	xppc 	p3 													; evaluate L
+	jp 		EAP_Exit 											; exit on error
+	lde 														; store L at 2(P2)
+	st 		2(p2)
+	xpal 	p3 													; and put in P3.L for later
+	ld 		(p1) 												; check for ')'
+	xri 	')'
+	jnz 	EAP_Error
+	ld 		@1(p1) 												; skip over close bracket
+	ld 		3(p2) 												; put 3(P2) in P3.H
+	xpah 	p3
+	ld 		(p3) 												; read address
+	xae 														; put in E
+	scl 														; set carry to indicate okay
+	jmp 	EAP_Exit 											; and exit.
+;
+EAP_Error:
+	ldi 	ERRC_TERM 											; set error up
 	xae
 	ccl
+;
+EAP_Exit:														; exit
+	pullp 	p3 													; restore P3
+	ld 		@2(p2) 												; drop the H L address store
+	csa 														; A bit 7 = CY/L
 	xppc 	p3
+

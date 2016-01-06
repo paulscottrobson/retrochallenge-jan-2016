@@ -1,4 +1,5 @@
 @echo off
+del tests.inc
 python generate.py >tests.inc
 \mingw\bin\asw -L minolmath.asm 
 if errorlevel 1 goto exit

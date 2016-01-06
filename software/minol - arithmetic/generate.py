@@ -3,7 +3,7 @@
 #
 import random
 
-random.seed(42)
+random.seed(412)
 
 monitor = [ord(x) for x in open("..\monitor_rom\monitor.bin","rb").read(-1)]
 
@@ -24,7 +24,7 @@ def rnd(maxval):
 			term = "'"+chr(n)+"'"
 			if n==34 or n == 0x27 or n == ord("\\"):
 				n = maxval+1
-		if random.randrange(0,5) == -1:
+		if random.randrange(0,5) == 0:
 			h = random.randrange(0,8)
 			h = [h,str(h)]
 			if random.randrange(0,8) == 0:
