@@ -16,10 +16,11 @@ BootMonitor = 0x210 											; address to boot monitor
 ScreenMirror = 0xC00 											; Screen mirror, 128 bytes, 256 byte page boundary.
 ScreenCursor = ScreenMirror+0x80  								; Position on that screen (00..7F)
 
-System = 0xC90 													; System Memory
+SystemMemory = 0xC90 											; System Memory
 
-RandomSeed = System-2											; Random Seed Value (2 bytes)
-Variables = System 												; Variables (26 bytes)
+RandomSeed = SystemMemory-2										; Random Seed Value (2 bytes)
+CurrentLine = SystemMemory-3 									; Current Line Number (1 byte)
+Variables = SystemMemory 										; Variables (26 bytes)
 
 ; ****************************************************************************************************************
 ;														Macros
@@ -79,3 +80,9 @@ setv macro ch,value 											; sets a variable to a value, assumes P3 = Variab
 ;	db 		ch
 ;	dw 		(method)-1
 ;	endm
+
+cmd macro 	c1,c2,length,code
+	db 		c1,c2 												; first and second characters
+	db 		(length)-1											; length -1 (first char already skipped)
+	dw 		(code)-1 											; execution point for prefetch.
+	endm
