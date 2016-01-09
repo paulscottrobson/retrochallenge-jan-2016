@@ -35,17 +35,17 @@ wait1:
 
 
 ProgramBase:
-	code 	1,"\"START\":GOTO 120"
+	code 	1,"\"START\":CLEAR:GOTO 30"
 	code 	10,"HELLO WORLD"
 	code 	20,"GOTO 20"
-	code 	30,"END"
-
-	db 		"GOTO 132",0,255
+	code 	30,"LET B = 69:LET A = 42:C = A + B:END"
+	code 	120,"CALL   (2,144)"
+	db 		255
 
 
 ; ****************************************************************************************************************
 ;													Source Files
-; *********************************12*******************************************************************************
+; ****************************************************************************************************************
 
 	include source\screen.asm 									; screen I/O stuff.
 	include source\execute.asm 									; statement exec main loop

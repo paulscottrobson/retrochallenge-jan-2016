@@ -10,7 +10,12 @@
 ;							Source codes for execution, with skip-over go here
 ; ****************************************************************************************************************
 
-	include source\commands\goto_run.asm						; GOTO and RUN
+	include source\commands\os.asm 								; OS
+	include source\commands\new_end.asm 						; NEW and END
+	include source\commands\clear.asm							; CLEAR
+	include source\commands\call.asm 							; CALL
+	include source\commands\let.asm 							; LET (optional, but slower if not present)
+	include source\commands\goto_run.asm						; GOTO and RUN (has to be last, probably !)
 
 ; ****************************************************************************************************************
 ;								Command execution complete, check for error
@@ -41,6 +46,8 @@ CheckLastCommandThenExecute:
 ; 	e.g. when it reaches the end of that command it thinks it's dropped off the top of the program
 ;
 	scl 														; there is no error.
+	ldi 	ERRC_End 											; set the error code to "End"
+	xae
 GotoCommandLine: 												; return to Command Line with CY/L = error and E = code
 	jmp 	GotoCommandLine										; if CY/L = 1 (no error) E not used.
 ;
@@ -126,7 +133,8 @@ EAFD_SkipSpaces:
 ;
 EAFD_LETCode:
 	ld 		@-1(p1) 											; point P1 to first character of command.
-wait5:jmp 	wait5 												; GO TO LET CODE whereever that is. do later.
+	lpi 	p3,CMD_Let-1 										; go execute LET with evaluate re-entrancy
+	xppc 	p3
 	jmp 	EvaluateExpression
 
 	include source\expression.asm 								; expression evaluator.
@@ -136,9 +144,15 @@ wait5:jmp 	wait5 												; GO TO LET CODE whereever that is. do later.
 ; ****************************************************************************************************************
 
 CommandList:
+	cmd 	'L','E',3,CMD_Let 									; LET var|(h,l) = <expr>
 	cmd 	'G','O',4,CMD_Goto									; GOTO [line number]
+	cmd 	'C','A',4,CMD_Call									; CALL (high,low)
+	cmd 	'C','L',5,CMD_Clear									; CLEAR
+	cmd 	'E','N',3,CMD_End 									; END
+	cmd 	'N','E',3,CMD_New 									; NEW
 	cmd 	'R','U',3,CMD_Run									; RUN
+	cmd 	'O','S',2,CMD_OS 									; OS
 	db 		0
 
-; Done:	GOTO RUN
-; Not Done: LET, (optional LET),PR,IF,IN,CALL,END,NEW,CLEAR,RUN,LIST,OS
+; Done:	GOTO, RUN, CLEAR, NEW, END, OS, CALL
+; Not Done: LET, (optional LET),PR,IF,IN,LIST
