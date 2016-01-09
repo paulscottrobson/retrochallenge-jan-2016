@@ -10,8 +10,11 @@
 ;							Source codes for execution, with skip-over go here
 ; ****************************************************************************************************************
 
-GOTOTest:
-	xppc 	p3 													; call execute
+	include source\commands\goto_run.asm						; GOTO and RUN
+
+; ****************************************************************************************************************
+;								Command execution complete, check for error
+; ****************************************************************************************************************
 
 EndOfCommandExecution:
 	csa 														; check CY/L error flag
@@ -128,6 +131,14 @@ wait5:jmp 	wait5 												; GO TO LET CODE whereever that is. do later.
 
 	include source\expression.asm 								; expression evaluator.
 
+; ****************************************************************************************************************
+;		Command look up table - should be ordered by degree of usage, and OS things (e.g. LIST) at the end
+; ****************************************************************************************************************
+
 CommandList:
-	cmd 	'G','O',4,GOTOTest
+	cmd 	'G','O',4,CMD_Goto									; GOTO [line number]
+	cmd 	'R','U',3,CMD_Run									; RUN
 	db 		0
+
+; Done:	GOTO RUN
+; Not Done: LET, (optional LET),PR,IF,IN,CALL,END,NEW,CLEAR,RUN,LIST,OS

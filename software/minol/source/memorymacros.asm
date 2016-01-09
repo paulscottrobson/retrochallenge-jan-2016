@@ -69,17 +69,12 @@ setv macro ch,value 											; sets a variable to a value, assumes P3 = Variab
 	ldi 	(value) & 255
 	st 		((ch) - 'A')(p3)
 	endm
-;
-;code macro lineNo,code 											; a debugging macro, which fakes up a line of code.
-;	db 		strlen(code)+4 										; one byte offset to next (0 = End of code)
-;	dw 		lineNo 												; two byte line number (low byte first)
-;	db 		code,0 												; ASCIIZ string
-;	endm
-;
-;special macro ch,method
-;	db 		ch
-;	dw 		(method)-1
-;	endm
+
+code macro lineNo,code 											; a debugging macro, which fakes up a line of code.
+	db 		strlen(code)+3 										; one byte offset to next (255 = End of code)
+	db 		lineNo 												; one byte line number 
+	db 		code,0 												; ASCIIZ string
+	endm
 
 cmd macro 	c1,c2,length,code
 	db 		c1,c2 												; first and second characters

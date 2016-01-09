@@ -28,12 +28,18 @@
 	lpi 	p2,0xFF8											; set up stack default value
 	lpi 	p3,SystemMemory
 
-	lpi 	p3,ExecuteFromAddressDirect-1
-	lpi 	p1,expr
+	lpi 	p3,CMD_Run-1
 	xppc	p3
 wait1:	
 	jmp 	wait1
-expr:
+
+
+ProgramBase:
+	code 	1,"\"START\":GOTO 120"
+	code 	10,"HELLO WORLD"
+	code 	20,"GOTO 20"
+	code 	30,"END"
+
 	db 		"GOTO 132",0,255
 
 
