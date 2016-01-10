@@ -30,6 +30,7 @@
 
 	lpi 	p3,CMD_Run-1
 	xppc	p3
+
 wait1:	
 	jmp 	wait1
 
@@ -52,5 +53,6 @@ ProgramBase:
 ;													Source Files
 ; ****************************************************************************************************************
 
+	include source\itoa.asm 									; print integer routine.
 	include source\screen.asm 									; screen I/O stuff.
 	include source\execute.asm 									; statement exec main loop
