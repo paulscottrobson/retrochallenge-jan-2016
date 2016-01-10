@@ -11,6 +11,7 @@
 ; ****************************************************************************************************************
 
 	include source\commands\os.asm 								; OS
+	include source\commands\list.asm 							; LIST
 	include source\commands\new_end.asm 						; NEW and END
 	include source\commands\clear.asm							; CLEAR
 	include source\commands\call.asm 							; CALL
@@ -153,8 +154,9 @@ CommandList:
 	cmd 	'E','N',3,CMD_End 									; END
 	cmd 	'N','E',3,CMD_New 									; NEW
 	cmd 	'R','U',3,CMD_Run									; RUN
+	cmd 	'L','I',4,CMD_List 									; LIST
 	cmd 	'O','S',2,CMD_OS 									; OS
 	db 		0
 
-; Done:	GOTO, RUN, CLEAR, NEW, END, OS, CALL, LET (and optional version),IF
-; Not Done: PR,IN,LIST
+; Done:	GOTO, RUN, CLEAR, NEW, END, OS, CALL, LET (and optional version),IF, LIST
+; Not Done: PR,IN
