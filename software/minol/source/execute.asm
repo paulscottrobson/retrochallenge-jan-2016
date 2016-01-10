@@ -15,6 +15,7 @@
 	include source\commands\clear.asm							; CLEAR
 	include source\commands\call.asm 							; CALL
 	include source\commands\let.asm 							; LET (optional, but slower if not present)
+	include source\commands\if.asm								; IF
 	include source\commands\goto_run.asm						; GOTO and RUN (has to be last, probably !)
 
 ; ****************************************************************************************************************
@@ -145,6 +146,7 @@ EAFD_LETCode:
 
 CommandList:
 	cmd 	'L','E',3,CMD_Let 									; LET var|(h,l) = <expr>
+	cmd 	'I','F',2,CMD_If 									; If [expr][=|#|<][expr]; [statement]
 	cmd 	'G','O',4,CMD_Goto									; GOTO [line number]
 	cmd 	'C','A',4,CMD_Call									; CALL (high,low)
 	cmd 	'C','L',5,CMD_Clear									; CLEAR
@@ -154,5 +156,5 @@ CommandList:
 	cmd 	'O','S',2,CMD_OS 									; OS
 	db 		0
 
-; Done:	GOTO, RUN, CLEAR, NEW, END, OS, CALL
-; Not Done: LET, (optional LET),PR,IF,IN,LIST
+; Done:	GOTO, RUN, CLEAR, NEW, END, OS, CALL, LET (and optional version),IF
+; Not Done: PR,IN,LIST
