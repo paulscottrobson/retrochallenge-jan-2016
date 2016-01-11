@@ -152,12 +152,11 @@ EEX_ConstantLoop:
 	ade 														; A = n * 4
 	ade 														; A = n * 5
 	xae 														; E = n * 5
-	lde 														; A = n * 5
-	ade 														; A = n * 10
-	xae
 	ld 		@1(p1) 												; read character convert to number
 	ani 	0x0F
-	ade
+	ccl
+	ade 														; Add n*5 twice
+	ade 
 	xae
 	jmp 	EEX_ConstantLoop
 

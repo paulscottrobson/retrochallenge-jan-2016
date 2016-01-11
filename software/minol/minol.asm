@@ -39,7 +39,7 @@ wait1:
 
 
 ProgramBase:
-	code 	1,"\"START\":CLEAR:GOTO 240"
+	code 	1,"\"START\":CLEAR:INA:PR A,A,A,A:GOTO240"
 	code 	10,"HELLO WORLD"
 	code 	20,"GOTO 20"
 	code 	30,"LETB=69:LETA=42:C=A+B:END"
@@ -49,7 +49,7 @@ ProgramBase:
 	code 	150,"IF255#255;C=C+1:D=D+1"
 	code 	200,"LETA=0"
 	code 	210,"LETA=A+1:IFA#250;GOTO210"
-	code 	240,"PR42,69"
+	code 	240,"PR42,69,Y"
 	code 	241,"PR \"A:\",A,\"STAR TREK\""
 	code 	242,"PR \"(\",$(144,33),\")\""
 	db 		255
@@ -59,5 +59,6 @@ ProgramBase:
 ; ****************************************************************************************************************
 
 	include source\itoa.asm 									; print integer routine.
+	include source\atoi.asm 									; decode integer routine.
 	include source\screen.asm 									; screen I/O stuff.
 	include source\execute.asm 									; statement exec main loop
