@@ -14,6 +14,7 @@
 	include source\commands\list.asm 							; LIST
 	include source\commands\new_end.asm 						; NEW and END
 	include source\commands\clear.asm							; CLEAR
+	include source\commands\print.asm 							; PR
 	include source\commands\call.asm 							; CALL
 	include source\commands\let.asm 							; LET (optional, but slower if not present)
 	include source\commands\if.asm								; IF
@@ -150,6 +151,7 @@ CommandList:
 	cmd 	'I','F',2,CMD_If 									; If [expr][=|#|<][expr]; [statement]
 	cmd 	'G','O',4,CMD_Goto									; GOTO [line number]
 	cmd 	'C','A',4,CMD_Call									; CALL (high,low)
+	cmd 	'P','R',2,CMD_Print 								; PRINT ["<text>"|<expr>|$(h,l)][,....][;]
 	cmd 	'C','L',5,CMD_Clear									; CLEAR
 	cmd 	'E','N',3,CMD_End 									; END
 	cmd 	'N','E',3,CMD_New 									; NEW
@@ -158,5 +160,5 @@ CommandList:
 	cmd 	'O','S',2,CMD_OS 									; OS
 	db 		0
 
-; Done:	GOTO, RUN, CLEAR, NEW, END, OS, CALL, LET (and optional version),IF, LIST
-; Not Done: PR,IN
+; Done:	GOTO, RUN, CLEAR, NEW, END, OS, CALL, LET (and optional version),IF, LIST., PR
+; Not Done: IN

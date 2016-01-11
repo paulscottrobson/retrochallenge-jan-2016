@@ -10,7 +10,7 @@
 
 CMD_List:
 	lpi 	p1,ProgramBase 										; point P1 to first line.
-	ldi 	0 													; clear counter.
+	ldi 	0 													; clear counter. used for Speccy style list.
 	st 		@-1(p2)
 CLI_Loop:
 	ld 		@1(p1) 												; check if finished
