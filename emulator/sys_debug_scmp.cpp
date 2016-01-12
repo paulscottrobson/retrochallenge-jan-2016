@@ -116,7 +116,7 @@ void DBGXRender(int *address,int showDisplay) {
 	GFXRectangle(&rc2,0xFFF);
 	rc2.x += 2;rc2.y += 2;rc2.w -= 4;rc2.h -= 4;
 	SDL_Rect rcPixel;rcPixel.w = xSize;rcPixel.h = ySize;
-	GFXRectangle(&rc2,0x13F);
+	GFXRectangle(&rc2,0x13F & 0x000);
 	for (int x = 0;x < 16;x++) {
 		for (int y = 0;y < 8;y++) {
 			BYTE8 ch = HWIGetVideoMemory()[x + y * 16];

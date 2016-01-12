@@ -22,8 +22,10 @@ RandomSeed = SystemMemory-2										; Random Seed Value (2 bytes)
 CurrentLine = SystemMemory-3 									; Current Line Number (1 byte)
 Variables = SystemMemory 										; Variables (26 bytes)
 
-KeyboardBuffer = SystemMemory+26 								; Keyboard input buffer
+KeyboardBuffer = SystemMemory+32 								; Keyboard input buffer
 KeyboardBufferSize = 72 										; Number of characters allowed to be typed in.
+
+ProgramBase = 0x1000 											; Program memory here.
 
 ; ****************************************************************************************************************
 ;														Macros
