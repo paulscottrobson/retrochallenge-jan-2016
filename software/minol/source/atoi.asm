@@ -11,7 +11,10 @@ GetConstant:
 	st 		@-1(p2)
 	xae 														; reset initial value.
 GCO_Loop:
-	ld 		(p1) 												; get character.
+	ld 		@1(p1) 												; get and bump
+	xri 	' '													; skipping over spaces
+	jz 		GCO_Loop
+	ld 		@-1(p1) 											; get character undoing bump.
 	ccl
 	adi 	255-'9'												; check range 0-9.
 	jp 		GCO_Exit

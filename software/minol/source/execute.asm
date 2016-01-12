@@ -53,7 +53,8 @@ CheckLastCommandThenExecute:
 	ldi 	ERRC_End 											; set the error code to "End"
 	xae
 GotoCommandLine: 												; return to Command Line with CY/L = error and E = code
-	jmp 	GotoCommandLine										; if CY/L = 1 (no error) E not used.
+	lpi 	p3,ConsoleStart-1
+	xppc 	p3
 ;
 ;	Syntax error comes here.
 ;

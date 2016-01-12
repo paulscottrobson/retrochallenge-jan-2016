@@ -38,33 +38,35 @@ Copy1:
 	xri 	0xFF
 	jnz 	Copy1
 
-	ldi 	30 													; delete line 30
-	xae
-	lpi 	p3,DeleteLine-1
+;	ldi 	30 													; delete line 30
+;	xae
+;	lpi 	p3,DeleteLine-1
+;	xppc 	p3
+
+;	ldi 	35													; insert at 30
+;	xae 
+;;	lpi 	p3,InsertLine-1
+;	lpi 	p1,__InsertLineExample
+;	xppc 	p3
+
+	lpi 	p3,Print-1											; Print Boot Message
+	lpi 	p1,BootMessage
+	ldi 	0
 	xppc 	p3
 
-	ldi 	35													; insert at 30
-	xae 
-;	lpi 	p3,InsertLine-1
-	lpi 	p1,__InsertLineExample
-	xppc 	p3
-
-	lpi 	p3,SystemMemory
-	lpi 	p3,CMD_Run-1
+	lpi 	p3,ConsoleStart-1 									; run the console
+	scl 														; non-error (so it prints ok)
 	xppc	p3
 
-wait1:	
-	jmp 	wait1
-
-__InsertLineExample:
-	db 		8,35,"PR 55",0
+BootMessage:
+	db 		"MINOL V1.0",13,13,0
 
 ProgramCode:
 	code 	10,"\"TEST PROGRAM\""
-	code 	20,"PR 4"
+	code 	20,"PR 4/2"
 	code 	30,"PR 5"
 	code 	40,"PR 6"
-	code 	50,"PR 7"
+	code 	50,"PR 7:END"
 	db 		255
 
 ; ****************************************************************************************************************
@@ -76,3 +78,4 @@ ProgramCode:
 	include source\screen.asm 									; screen I/O stuff.
 	include source\execute.asm 									; statement exec main loop
 	include source\manager.asm 									; manage program lines.
+	include source\console.asm 									; console type in etc.
