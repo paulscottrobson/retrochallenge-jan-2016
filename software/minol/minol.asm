@@ -11,12 +11,10 @@
 	include source\memorymacros.asm 							; Memory allocation and Macro definition.	
 	include source\errors.asm 									; Error codes
 
-; ****************************************************************************************************************
-; ****************************************************************************************************************
-; 	NOTE: When executing line follow the line with $FF so it thinks it has reached the program end.
-; ****************************************************************************************************************
-; ****************************************************************************************************************
-
+; TODO: Find real TOS
+; TODO: Memory check ? 
+; TODO: Break option ?
+; TODO: New if not preloaded ....
 
 ; ****************************************************************************************************************
 ;													Main Program
@@ -38,17 +36,6 @@ Copy1:
 	xri 	0xFF
 	jnz 	Copy1
 
-;	ldi 	30 													; delete line 30
-;	xae
-;	lpi 	p3,DeleteLine-1
-;	xppc 	p3
-
-;	ldi 	35													; insert at 30
-;	xae 
-;;	lpi 	p3,InsertLine-1
-;	lpi 	p1,__InsertLineExample
-;	xppc 	p3
-
 	lpi 	p3,Print-1											; Print Boot Message
 	lpi 	p1,BootMessage
 	ldi 	0
@@ -59,7 +46,7 @@ Copy1:
 	xppc	p3
 
 BootMessage:
-	db 		"MINOL V1.0",13,13,0
+	db 		"** MINOL **",13,"V0.91 PSR 2016",13,0
 
 ProgramCode:
 	code 	10,"\"TEST PROGRAM\""

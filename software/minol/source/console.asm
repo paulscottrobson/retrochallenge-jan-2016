@@ -6,14 +6,22 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
+; ****************************************************************************************************************
+;
+;							Come here when a program stops running, or at the start.
+;
+; ****************************************************************************************************************
+
 ConsoleStart:
 	lpi 	p3,Print-1 
 	csa 														; see if CY/L is set
 	ani	 	0x80								
 	jz 		CONError 											; if so, there is an error.
-;
-;	Print OK
-;
+
+; ****************************************************************************************************************
+;													Print OK
+; ****************************************************************************************************************
+
 CONOk:
 	lpi 	p1,CONMsgOk 										; print OK.
 	ldi 	0
@@ -25,9 +33,11 @@ CONMsgOk:														; OK prompt.
 CONMsgErr1:														; Error Message
 	db 		"!ERR ",0 
 	db 		" AT ",0
-;
-;	Print Error Message
-;
+
+; ****************************************************************************************************************
+;											   Print Error Message
+; ****************************************************************************************************************
+
 CONError:
 	lde 														; check if faux error
 	xri 	ERRC_End
@@ -47,9 +57,11 @@ CONError:
 	xppc 	p3
 	ldi 	13 													; print new line
 	xppc 	p3
-;
-;	Get next command.
-;
+
+; ****************************************************************************************************************
+;												Get next command.
+; ****************************************************************************************************************
+
 CONEnter:
 	lpi 	p3,GetString-1 										; get input from keyboard.
 	lpi 	p1,KeyboardBuffer
@@ -60,9 +72,14 @@ CONEnter:
 	xppc 	p3
 	ani 	0x80
 	jnz 	CONHasLineNumber 									; if okay, has line number.
-;
-;	Execute a command from the keyboard.
-;
+
+	ld 		(p1)												; if no text, enter again.
+	jz 		CONEnter
+
+; ****************************************************************************************************************
+;									Execute a command from the keyboard.
+; ****************************************************************************************************************
+
 CONEndOfLine:
 	ld 		@1(p1) 												; find end of line
 	jnz 	CONEndOfLine
@@ -71,9 +88,36 @@ CONEndOfLine:
 	lpi 	p1,KeyboardBuffer 	
 	lpi 	p3,ExecuteFromAddressDirect-1
 	xppc 	p3
-;
-;	Line Number - text is at P1, line number in E.
-;
+
+; ****************************************************************************************************************
+;						Command has a Line Number - text is at P1, line number in E.
+; ****************************************************************************************************************
+
 CONHasLineNumber:
-wait8:
-	jmp 	wait8
+	lpi 	p3,DeleteLine-1 									; delete the line whose number is in E
+	xppc 	p3
+
+	ld 		(p1) 												; any text in this line ?
+	jz 		CONEnter											; if not, then just do the delete (possible)
+
+	ldi 	0													; temporarily set the line number to zero.
+	st 		-1(p1)
+	ldi 	2
+	st 		-1(p2) 												; and reset the counter to 2 to get size right.
+CONGetLength:
+	ild 	-1(p2) 												; bump count
+	ld 		@1(p1) 												; keep going forward till 0 read.
+	jnz 	CONGetLength
+	ld 		@-1(p1) 											; undo the last bump over zero
+
+CONBackToStart:
+	ld 		@-1(p1) 											; keep going back until zero.
+	jnz 	CONBackToStart										; this is the line number we set to zero
+
+	lde 														; copy line number
+	st 		(p1)
+	ld 		-1(p2) 												; get measured length
+	st 		@-1(p1) 											; and store in the length slot.
+
+	xppc 	p3 													; put line in using fall through insert routine.
+	jmp 	CONEnter 											; and get another line.
