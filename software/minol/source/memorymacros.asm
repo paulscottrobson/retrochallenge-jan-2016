@@ -25,7 +25,12 @@ Variables = SystemMemory 										; Variables (26 bytes)
 KeyboardBuffer = SystemMemory+32 								; Keyboard input buffer
 KeyboardBufferSize = 72 										; Number of characters allowed to be typed in.
 
-ProgramBase = 0x1000 											; Program memory here.
+ProgramBase = 0x1004 											; Program memory here.
+
+Marker1 = 	0xFD 												; Markers indicating "Code here"
+Marker2 = 	0xB5
+Marker3 = 	0xAE
+Marker4 = 	0x76
 
 ; ****************************************************************************************************************
 ;														Macros

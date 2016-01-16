@@ -33,20 +33,30 @@ CONMsgOk:														; OK prompt.
 CONMsgErr1:														; Error Message
 	db 		"!ERR ",0 
 	db 		" AT ",0
+CONMsgErr2:														; Error Message
+	db 		"BREAK",0 
+	db 		"AT ",0
+
 
 ; ****************************************************************************************************************
 ;											   Print Error Message
 ; ****************************************************************************************************************
 
 CONError:
+	lpi 	p1,CONMsgErr1
 	lde 														; check if faux error
 	xri 	ERRC_End
 	jz 		CONOk
-	lpi 	p1,CONMsgErr1										; print !ERR_ 
+	lde
+	xri 	ERRC_Break			 								; check if BREAK
+	jnz 	CONError2
+	lpi 	p1,CONMsgErr2
+	ldi 	' '													; makes it print space rather than code.
+	xae
+CONError2:
 	ldi 	0
 	xppc 	p3
 	lde 														; get error code
-	ori 	'0'													; make ASCII
 	xppc 	p3
 	ldi 	0 													; print _AT_
 	xppc 	p3
@@ -65,7 +75,9 @@ CONError:
 CONEnter:
 	lpi 	p3,GetString-1 										; get input from keyboard.
 	lpi 	p1,KeyboardBuffer
-	ldi 	KeyboardBufferSize
+	ldi 	0 													; clear current line # using value.
+	st 		CurrentLine-KeyboardBuffer(p1)
+	ldi 	KeyboardBufferSize									; input length
 	xppc 	p3
 
 	lpi 	p3,GetConstant-1 									; extract a constant if there is one.

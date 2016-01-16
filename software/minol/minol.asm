@@ -11,11 +11,6 @@
 	include source\memorymacros.asm 							; Memory allocation and Macro definition.	
 	include source\errors.asm 									; Error codes
 
-; TODO: Find real TOS
-; TODO: Memory check ? 
-; TODO: Break option ?
-; TODO: New if not preloaded ....
-
 ; ****************************************************************************************************************
 ;													Main Program
 ; ****************************************************************************************************************
@@ -23,13 +18,18 @@
 	org 	0x9000 												; the ROM starts here
 
 	db 		0x68												; this makes it boot straight into this ROM.
-	lpi 	p2,0xFF8											; set up stack default value
-	lpi 	p3,Print-1
-	ldi 	12
-	xppc	p3
+	lpi 	p2,0xFFF											; set up top stack value
+FindTOS:
+	ldi 	0x75												; can we write there, if so, found TOS.
+	st 		(p2)
+	xor 	(p2)
+	jz 		StackFound
+	ld 		-64(p2) 											; wind backwards 64 bytes
+	jmp 	FindTOS	
+StackFound:
 
 	lpi 	p3,ProgramCode 										; copy program default code to memory.
-	lpi 	p1,ProgramBase
+	lpi 	p1,ProgramBase-4
 Copy1:
 	ld 		@1(p3)
 	st 		@1(p1)
@@ -41,19 +41,41 @@ Copy1:
 	ldi 	0
 	xppc 	p3
 
-	lpi 	p3,ConsoleStart-1 									; run the console
+	lpi 	p3,ProgramBase 										; check to see if MINOL code resident.
+	ld 		-4(p3) 												; which requires the 4 byte markers to be loaded.
+	xri 	Marker1
+	jnz 	RunNew
+	ld 		-3(p3) 			
+	xri 	Marker2
+	jnz 	RunNew
+	ld 		-2(p3) 			
+	xri 	Marker3
+	jnz 	RunNew
+	ld 		-1(p3) 			
+	xri 	Marker4
+	jnz 	RunNew
+
+	lpi 	p3,ConsoleStart-1 									; run the console if code present
 	scl 														; non-error (so it prints ok)
 	xppc	p3
 
+RunNew:															; otherwise execute NEW.
+	lpi 	p3,CMD_New-1
+	xppc 	p3
+
+
+
 BootMessage:
-	db 		"** MINOL **",13,"V0.91 PSR 2016",13,0
+	db 		12,"** MINOL **",13,"V0.91 PSR 2016",13,0
 
 ProgramCode:
+	db 		Marker1,Marker2,Marker3,Marker4
 	code 	10,"\"TEST PROGRAM\""
-	code 	20,"PR 4/2"
-	code 	30,"PR 5"
-	code 	40,"PR 6"
-	code 	50,"PR 7:END"
+	code 	15,"PR A;:GOTO 15"
+	code 	20,"IN A"
+	code 	30,"PR A*2"
+	code 	40,"PR A*A"
+	code 	50,"END"
 	db 		255
 
 ; ****************************************************************************************************************

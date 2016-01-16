@@ -16,6 +16,14 @@ CMD_New:
 	lpi 	p3,ProgramBase 										; write $FF at program base
 	ldi 	0xFF
 	st 		0(p3) 												; this erases the program
+	ldi 	Marker1 											; write the program-code-marker out.
+	st 		-4(p3)
+	ldi 	Marker2
+	st 		-3(p3)
+	ldi 	Marker3
+	st 		-2(p3)
+	ldi 	Marker4
+	st 		-1(p3)
 
 ; ****************************************************************************************************************
 ;													END program

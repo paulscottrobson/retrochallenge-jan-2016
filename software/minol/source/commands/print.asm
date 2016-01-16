@@ -13,6 +13,12 @@
 ; ****************************************************************************************************************
 
 CMD_Print:
+	ldi 	0x8 												; read keyboard
+	xpah 	p3
+	ld 		(p3) 
+	xri 	0x80+3
+	jz		CPR_Break
+
 	lpi 	p3,Print-1 											; set up P3 for printing.
 	ld 		(p1)												; reached end of command, print RETURN and exit.
 	jz 		CPR_EndReturn
@@ -44,7 +50,19 @@ CMD_Print:
 	xppc 	p3
 	ldi 	' '													; trailing space
 	xppc 	p3
+CMD_Print2:
 	jmp 	CMD_Print
+
+; ****************************************************************************************************************
+;													Break 
+; ****************************************************************************************************************
+
+CPR_Break:
+	ldi 	ERRC_BREAK
+	xae
+	ccl
+CPR_Over2:
+	jmp 	CPR_Over
 
 ; ****************************************************************************************************************
 ;												"<quoted string>"
@@ -85,7 +103,7 @@ CPR_StringExit:
 	xpal 	p1
 	ld 		@1(p2)
 	xpah 	p1
-	jmp 	CMD_Print 											; and print the next thing.
+	jmp 	CMD_Print2 											; and print the next thing.
 ;
 CPR_StringPrint:
 	ld 		-1(p1) 												; retrieve, print and loop
@@ -100,7 +118,6 @@ CPR_Syntax:
 	ldi 	ERRC_Syntax 										; set up for syntax error and exit
 	xae
 	ccl
-CPR_Over2:
 	jmp 	CPR_Over
 
 ; ****************************************************************************************************************
