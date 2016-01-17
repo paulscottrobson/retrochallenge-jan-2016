@@ -28,14 +28,9 @@ FindTOS:
 	jmp 	FindTOS	
 StackFound:
 
-	lpi 	p3,ProgramCode 										; copy program default code to memory.
-	lpi 	p1,ProgramBase-4
-Copy1:
-	ld 		@1(p3)
-	st 		@1(p1)
-	xri 	0xFF
-	jnz 	Copy1
+	;include democode.asm
 
+StartUp:
 	lpi 	p3,Print-1											; Print Boot Message
 	lpi 	p1,BootMessage
 	ldi 	0
@@ -67,16 +62,6 @@ RunNew:															; otherwise execute NEW.
 
 BootMessage:
 	db 		12,"** MINOL **",13,"V0.91 PSR 2016",13,0
-
-ProgramCode:
-	db 		Marker1,Marker2,Marker3,Marker4
-	code 	10,"\"TEST PROGRAM\""
-	code 	15,"PR A;:GOTO 15"
-	code 	20,"IN A"
-	code 	30,"PR A*2"
-	code 	40,"PR A*A"
-	code 	50,"END"
-	db 		255
 
 ; ****************************************************************************************************************
 ;													Source Files
