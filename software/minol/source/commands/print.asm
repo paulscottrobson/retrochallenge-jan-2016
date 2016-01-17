@@ -48,6 +48,7 @@ CMD_Print:
 	jp 		CPR_Over 											; exit on error.
 	lpi 	p3,PrintInteger-1 									; and print it
 	xppc 	p3
+	lpi 	p3,Print-1
 	ldi 	' '													; trailing space
 	xppc 	p3
 CMD_Print2:

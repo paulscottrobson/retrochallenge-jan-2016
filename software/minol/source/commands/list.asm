@@ -20,6 +20,7 @@ CLI_Loop:
 	xae 
 	lpi 	p3,PrintInteger-1 									; and print it.
 	xppc 	p3
+	lpi 	p3,Print-1
 	ldi 	' '													; print space
 	xppc 	p3
 ;

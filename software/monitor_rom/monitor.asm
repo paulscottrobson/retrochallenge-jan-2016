@@ -29,7 +29,14 @@ tapeDelay 	= 4 												; DLY parameter for 1 tape bit width.
 		org 	0x0000
 		nop 													; mandatory pre-increment NOP
 
-		include maths.asm 										; import the maths routines, accessed via $0003
+; ******************************************************************************************************************
+;
+;								Screen Handler (scrolling type) now in ROM Monitor
+;
+; ******************************************************************************************************************
+	
+		include macros.asm
+		include screen.asm 
 
 ; ******************************************************************************************************************
 ;
@@ -120,7 +127,7 @@ MessageLoop:
 
 Message:
 		db 		"** SC/MP OS **",13 							; short boot message
-		db 		"V0.92 PSR 2016",13
+		db 		"V0.94 PSR 2016",13
 		db 		0
 
 InitialBeep:

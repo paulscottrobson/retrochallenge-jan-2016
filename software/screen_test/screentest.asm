@@ -12,19 +12,7 @@
 
 	cpu 	sc/mp
 	
-ScreenMirror = 0xC00 											; Screen mirror, 128 bytes, 256 byte page boundary.
-ScreenCursor = ScreenMirror+0x80  								; Position on that screen (00..7F)
-
-; ****************************************************************************************************************
-;														Macros
-; ****************************************************************************************************************
-
-lpi	macro	ptr,addr
-	ldi 	(addr) / 256
-	xpah 	ptr
-	ldi 	(addr) & 255
-	xpal 	ptr
-	endm
+	include ..\monitor_rom\macros.asm 							; macros required.
 
 ; ****************************************************************************************************************
 ;													Main Program
@@ -53,4 +41,4 @@ loop:
 	xppc 	p3
 	jmp 	loop
 
-	include ..\vtl-2\source\screen.asm 							; screen I/O stuff.
+	include ..\monitor_rom\screen.asm 							; screen I/O stuff.

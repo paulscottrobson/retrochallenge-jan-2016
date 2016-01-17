@@ -9,6 +9,130 @@
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
+ScreenMirror = 0xC00 										; Screen Mirror ($C00-$C7F)
+ScreenCursor = 0xC80 										; Current Cursor position ($C80)
+
+	jmp 	__Screen_Over1 									; avoid the vector table
+	jmp 	__Print2 										; 0003 Print (Character or String)
+	jmp 	GetChar 										; 0005 Get Character
+	jmp 	GetString										; 0007 Get String
+
+__Screen_Over1:
+	lpi 	p3,Screen__End-1 								; jump over all the screen code.
+	xppc 	p3
+
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+;
+;		Input a single character into A. Case is converted to Upper. All registers preserved except A
+;
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+
+GetChar:
+	section 	GetChar
+	ldi 	0x8 												; set P1 to $8xx, and save P1.H
+	xpah 	p1
+	st 		@-1(p2)
+__GCWaitKey: 													; wait for key press
+	ld 		0(p1)
+	jp 		__GCWaitKey
+	ani	 	0x7F 												; throw away the upper bit.
+	st 		-1(p2) 												; save it below stack
+__GCWaitRelease:
+	ld 		0(p1) 												; wait for release
+	ani 	0x80
+	jnz 	__GCWaitRelease
+	ld 		@1(p2) 												; restore P1.H
+	xpah 	p1
+	ld 		-2(p2) 												; restore saved value
+	ccl
+	adi 	0x20												; will make lower case -ve
+	jp 		__GCNotLower
+	cai 	0x20 												; capitalise
+__GCNotLower:
+	adi 	0xE0 												; fix up.
+	xppc 	p3 													; return
+	jmp 	GetChar 											; make re-entrant
+	endsection 	GetChar
+
+__Print2:
+	jmp 	Print
+
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+;
+;			Read an ASCIIZ string from keyboard into P1 of length A maximum (excludes NULL terminator)
+;
+; ****************************************************************************************************************
+; ****************************************************************************************************************
+
+GetString:
+	section GetString
+	pusha 														; save A,P3,E
+	pushp 	p3
+	pushe 
+	ldi 	0 													; set E (current position) to A.
+	xae
+__GSLoop:
+	lpi 	p3,Print-1 											; print the prompt (half coloured square)
+	ldi 	155
+	xppc 	p3
+	lpi 	p3,GetChar-1 										; get a character
+	xppc 	p3
+	st 		-0x80(p1) 											; save it in the current position.
+	lpi 	p3,Print-1 											; erase the prompt with backspace.
+	ldi 	8
+	xppc 	p3
+	ld 		-0x80(p1) 											; re-read character
+	ani 	0xE0 												; check if control key.
+	jz 		__GSControlKey 
+	lde 														; get current position.
+	xor 	3(p2) 												; reached maximum length of buffer ?
+	jz 		__GSLoop 											; if so, ignore the key and go round again.
+	ld 		-0x80(p1) 											; get character and print it
+	xppc 	p3
+	ldi 	1 													; increment E
+	ccl
+	ade
+	xae
+	jmp 	__GSLoop 											; and go round again.
+;
+;	Handle control keys (0x00-0x1F)
+;
+__GSControlKey:
+	ld 		-0x80(p1) 											; get typed in key
+	xri 	8 													; check for backspace.
+	jz 		__GSBackspace 			
+	xri 	8!13 												; check for CR
+	jnz 	__GSLoop 											; if not, ignore the key.
+;
+;	Carriage Return, ending input.
+;
+	st 		-0x80(p1) 											; replace the CR written with NULL terminator.
+	ldi 	13 													; print CR
+	xppc 	p3
+	pulle 														; restore E,P3,A
+	pullp	p3
+	pulla
+	xppc 	p3 													; return
+	jmp 	GetString 											; make re-entrant (probably unneccessary !!)
+;
+;	Backspace entered
+;
+__GSBackspace
+	lde 														; if E = 0 we can't backspace any further.
+	jz 		__GSLoop
+	ldi 	8 													; backspace on screen
+	xppc 	p3
+	ldi 	0xFF 												; decrement E
+	ccl
+	ade
+	xae
+	jmp 	__GSLoop 											; and go round again.
+
+	endsection GetString
+
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 ;
@@ -191,111 +315,4 @@ __PRCopy:
 
 	endsection 	Print
 
-; ****************************************************************************************************************
-; ****************************************************************************************************************
-;
-;		Input a single character into A. Case is converted to Upper. All registers preserved except A
-;
-; ****************************************************************************************************************
-; ****************************************************************************************************************
-
-GetChar:
-	section 	GetChar
-	ldi 	0x8 												; set P1 to $8xx, and save P1.H
-	xpah 	p1
-	st 		@-1(p2)
-__GCWaitKey: 													; wait for key press
-	ld 		0(p1)
-	jp 		__GCWaitKey
-	ani	 	0x7F 												; throw away the upper bit.
-	st 		-1(p2) 												; save it below stack
-__GCWaitRelease:
-	ld 		0(p1) 												; wait for release
-	ani 	0x80
-	jnz 	__GCWaitRelease
-	ld 		@1(p2) 												; restore P1.H
-	xpah 	p1
-	ld 		-2(p2) 												; restore saved value
-	ccl
-	adi 	0x20												; will make lower case -ve
-	jp 		__GCNotLower
-	cai 	0x20 												; capitalise
-__GCNotLower:
-	adi 	0xE0 												; fix up.
-	xppc 	p3 													; return
-	jmp 	GetChar 											; make re-entrant
-	endsection 	GetChar
-
-; ****************************************************************************************************************
-; ****************************************************************************************************************
-;
-;			Read an ASCIIZ string from keyboard into P1 of length A maximum (excludes NULL terminator)
-;
-; ****************************************************************************************************************
-; ****************************************************************************************************************
-
-GetString:
-	section GetString
-	pusha 														; save A,P3,E
-	pushp 	p3
-	pushe 
-	ldi 	0 													; set E (current position) to A.
-	xae
-__GSLoop:
-	lpi 	p3,Print-1 											; print the prompt (half coloured square)
-	ldi 	155
-	xppc 	p3
-	lpi 	p3,GetChar-1 										; get a character
-	xppc 	p3
-	st 		-0x80(p1) 											; save it in the current position.
-	lpi 	p3,Print-1 											; erase the prompt with backspace.
-	ldi 	8
-	xppc 	p3
-	ld 		-0x80(p1) 											; re-read character
-	ani 	0xE0 												; check if control key.
-	jz 		__GSControlKey 
-	lde 														; get current position.
-	xor 	3(p2) 												; reached maximum length of buffer ?
-	jz 		__GSLoop 											; if so, ignore the key and go round again.
-	ld 		-0x80(p1) 											; get character and print it
-	xppc 	p3
-	ldi 	1 													; increment E
-	ccl
-	ade
-	xae
-	jmp 	__GSLoop 											; and go round again.
-;
-;	Handle control keys (0x00-0x1F)
-;
-__GSControlKey:
-	ld 		-0x80(p1) 											; get typed in key
-	xri 	8 													; check for backspace.
-	jz 		__GSBackspace 			
-	xri 	8!13 												; check for CR
-	jnz 	__GSLoop 											; if not, ignore the key.
-;
-;	Carriage Return, ending input.
-;
-	st 		-0x80(p1) 											; replace the CR written with NULL terminator.
-	ldi 	13 													; print CR
-	xppc 	p3
-	pulle 														; restore E,P3,A
-	pullp	p3
-	pulla
-	xppc 	p3 													; return
-	jmp 	GetString 											; make re-entrant (probably unneccessary !!)
-;
-;	Backspace entered
-;
-__GSBackspace
-	lde 														; if E = 0 we can't backspace any further.
-	jz 		__GSLoop
-	ldi 	8 													; backspace on screen
-	xppc 	p3
-	ldi 	0xFF 												; decrement E
-	ccl
-	ade
-	xae
-	jmp 	__GSLoop 											; and go round again.
-
-	endsection GetString
+Screen__End:

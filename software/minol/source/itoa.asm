@@ -7,8 +7,6 @@
 ;	Print Integer in E as String to output routine. Uses stack space as temporary storage. Changes A/E but not
 ;	P1 or P2. Unsigned.
 ;	
-;	On exit P3 is set up to Print routine.
-;
 ; ****************************************************************************************************************
 ; ****************************************************************************************************************
 
@@ -69,5 +67,6 @@ __PIPrint:
 __PIExit:
 	pullp 	p3 													; restore P3
 	xppc 	p3 													; and exit
-	jmp 	Print 												; and set up to execute print afterwards.
-
+	
+__PIFail:														; because we dropped this setting up P3 afterwards...
+	jmp 	__PIFail

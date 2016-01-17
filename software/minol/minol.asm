@@ -28,7 +28,7 @@ FindTOS:
 	jmp 	FindTOS	
 StackFound:
 
-	;include democode.asm
+	; include democode.asm
 
 StartUp:
 	lpi 	p3,Print-1											; Print Boot Message
@@ -61,7 +61,7 @@ RunNew:															; otherwise execute NEW.
 
 
 BootMessage:
-	db 		12,"** MINOL **",13,"V0.91 PSR 2016",13,0
+	db 		12,"** MINOL **",13,"V0.94 PSR 2016",13,0
 
 ; ****************************************************************************************************************
 ;													Source Files
@@ -69,7 +69,6 @@ BootMessage:
 
 	include source\itoa.asm 									; print integer routine.
 	include source\atoi.asm 									; decode integer routine.
-	include source\screen.asm 									; screen I/O stuff.
 	include source\execute.asm 									; statement exec main loop
 	include source\manager.asm 									; manage program lines.
 	include source\console.asm 									; console type in etc.

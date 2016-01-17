@@ -7,7 +7,11 @@
 ; ****************************************************************************************************************
 
 OSMathLibrary = 0x0003 											; the Maths library is here.
-BootMonitor = 0x210 											; address to boot monitor
+BootMonitor = 0x168 											; address to boot monitor
+
+Print = 0x0003
+GetChar = 0x0005
+GetString = 0x0007
 
 ; ****************************************************************************************************************
 ;												 Memory Allocation

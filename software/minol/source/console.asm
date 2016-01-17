@@ -65,6 +65,7 @@ CONError2:
 	xae
 	lpi 	p3,PrintInteger-1 									; print it.
 	xppc 	p3
+	lpi 	p3,Print-1
 	ldi 	13 													; print new line
 	xppc 	p3
 
