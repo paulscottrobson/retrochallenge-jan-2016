@@ -22,6 +22,11 @@ def reverse(n):
 			r = r | (0x01 << i)
 	return r
 
+def setdef(ch,pattern):
+	pattern.append(0)
+	for i in range(0,8):
+		wp1[ch*8+i] = pattern[i]
+
 sbr = open("chargen.rom","rb").read(-1)									# read in SB2 ROM
 sbr = [reverse(ord(x)) for x in sbr]									# convert to numbers
 mz = open("mz80k.rom","rb").read(-1)									# read in MZ80K ROM
@@ -105,8 +110,17 @@ for i in range(240,256):												# 240..255 grid
 		wp1[i*8+3] |= 0x0F;
 
 
+setdef(224,[0x11,0x25,0x43,0x8F,0x43,0x25,0x11])						# enterprise <*>
+setdef(225,[0x10,0x48,0x84,0xE2,0x84,0x48,0x10])	
+setdef(226,[0x00,0x31,0x31,0x7B,0x7B,0x31,0x31])						# klingon +++
+setdef(227,[0x00,0x8C,0x8C,0xDE,0xDE,0x8C,0x8C])
+setdef(228,[0x09,0x05,0x03,0x0F,0x03,0x05,0x09])						# star *
+setdef(229,[0x20,0x40,0x80,0xE0,0x80,0x40,0x20])
+setdef(230,[0x41,0x23,0x13,0x0B,0x11,0x20,0x41])						# starbase >!<
+setdef(231,[0x04,0x88,0x90,0xA0,0x10,0x08,0x04])
+
 size = 4																# pixel size
-spacing = 8																# character spacing
+spacing = 0																# character spacing
 iSize = 16 * (size * 8 + spacing)										# render height + width
 render = Image.new("RGBA",(iSize,iSize),0xFF0000)
 iDraw = ImageDraw.Draw(render)
