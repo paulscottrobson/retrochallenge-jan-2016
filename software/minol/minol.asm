@@ -28,7 +28,7 @@ FindTOS:
 	jmp 	FindTOS	
 StackFound:
 
-	; include democode.asm
+ 	; 		include democode.asm
 
 StartUp:
 	lpi 	p3,Print-1											; Print Boot Message

@@ -14,14 +14,12 @@ Copy1:
 	xri 	0xFF
 	jnz 	Copy1
 	jmp 	StartUp
+
 ProgramCode:
 	db 		Marker1,Marker2,Marker3,Marker4
-	code 	10,"\"TEST PROGRAM\""
-	code 	15,"PR A;:GOTO 15"
-	code 	20,"IN A"
-	code 	30,"PR A*2"
-	code 	40,"PR A*A"
-	code 	50,"END"
+	code 	10,"PR\"NAME\";:IN$(14,1)"
+	code 	20,"IF(14,1)='J';IF(14,2)='I';IF(14,3)='M';PR \"ITS JIM\""
+	code 	30,"IF(14,1)#'J';PR\"ITS NOT JIM.\":GOTO10"
 	db 		255
 
 

@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 1 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 1 - 1/18/2016 18:16:22
 
 
        1/       0 :                     ; ****************************************************************************************************************
@@ -61,7 +61,7 @@
 (1)   47/       0 :                     	xpal 	ptr
 (1)   48/       0 :                     	endm
 (1)   49/       0 :                     
- AS V1.42 Beta [Bld 102] - source file minol.asm(memorymacros.asm) - page 2 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(memorymacros.asm) - page 2 - 1/18/2016 18:16:22
 
 
 (1)   50/       0 :                     pushp macro ptr 												; push pointer register on stack
@@ -124,7 +124,7 @@
 (1)    9/       0 : =0xFF               ERRC_END = 0xFF													; psuedo error, program stopped. Does "OK" as for no error.
 (1)   10/       0 : =0x31               ERRC_LABEL = '1' 												; Label does not exist (e.g. GOTO)
 (1)   11/       0 : =0x32               ERRC_UNKNOWN = '2'												; Unknown instruction
- AS V1.42 Beta [Bld 102] - source file minol.asm(errors.asm) - page 3 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(errors.asm) - page 3 - 1/18/2016 18:16:22
 
 
 (1)   12/       0 : =0x34               ERRC_TERM = '4' 												; Illegal term/expression
@@ -154,7 +154,7 @@
       28/    9011 : 90 F4               	jmp 	FindTOS	
       29/    9013 :                     StackFound:
       30/    9013 :                     
-      31/    9013 :                     	; include democode.asm
+      31/    9013 :                      	; 		include democode.asm
       32/    9013 :                     
       33/    9013 :                     StartUp:
       34/    9013 : (MACRO)             	lpi 	p3,Print-1											; Print Boot Message
@@ -187,7 +187,7 @@
       49/    903A : C3 FF               	ld 		-1(p3) 			
       50/    903C : E4 76               	xri 	Marker4
       51/    903E : 9C 08               	jnz 	RunNew
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 4 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 4 - 1/18/2016 18:16:22
 
 
       52/    9040 :                     
@@ -250,7 +250,7 @@
 (1)   23/    9080 :                     __PIDivideLoop:
 (1)   24/    9080 : AA 00               	ild 	0(p2) 												; bump the counter.
 (1)   25/    9082 : 40                  	lde 														; get value
- AS V1.42 Beta [Bld 102] - source file minol.asm(itoa.asm) - page 5 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(itoa.asm) - page 5 - 1/18/2016 18:16:22
 
 
 (1)   26/    9083 : 03                  	scl 														; subtract divider
@@ -313,7 +313,7 @@
 (1)    2/    90C8 :                     ; ****************************************************************************************************************
 (1)    3/    90C8 :                     ;
 (1)    4/    90C8 :                     ;								Try to extract integer into E. CY/L = 0 Error, P1 data
- AS V1.42 Beta [Bld 102] - source file minol.asm(atoi.asm) - page 6 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(atoi.asm) - page 6 - 1/18/2016 18:16:22
 
 
 (1)    5/    90C8 :                     ;	
@@ -376,7 +376,7 @@
 (2)    2/    90F8 :                     ; ****************************************************************************************************************
 (2)    3/    90F8 :                     ;
 (2)    4/    90F8 :                     ;												OS command
- AS V1.42 Beta [Bld 102] - source file minol.asm(os.asm) - page 7 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(os.asm) - page 7 - 1/18/2016 18:16:22
 
 
 (2)    5/    90F8 :                     ;	
@@ -439,7 +439,7 @@
 (2)   30/    912A : 3F                  	xppc 	p3 													; print it
 (2)   31/    912B : 90 F9               	jmp 	CLI_Line
 (2)   32/    912D :                     ;
- AS V1.42 Beta [Bld 102] - source file minol.asm(list.asm) - page 8 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(list.asm) - page 8 - 1/18/2016 18:16:22
 
 
 (2)   33/    912D :                     CLI_EndLine:
@@ -502,7 +502,7 @@
 (2)   29/    9163 :                     ;													END program
 (2)   30/    9163 :                     ; ****************************************************************************************************************
 (2)   31/    9163 :                     
- AS V1.42 Beta [Bld 102] - source file minol.asm(new_end.asm) - page 9 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(new_end.asm) - page 9 - 1/18/2016 18:16:22
 
 
 (2)   32/    9163 :                     CMD_End:
@@ -565,7 +565,7 @@
 (2)   47/    9199 :                     CIN_Over2:
 (2)   48/    9199 : 90 6C               	jmp 	CIN_Over
 (2)   49/    919B :                     
- AS V1.42 Beta [Bld 102] - source file minol.asm(input.asm) - page 10 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(input.asm) - page 10 - 1/18/2016 18:16:22
 
 
 (2)   50/    919B :                     ; ****************************************************************************************************************
@@ -628,7 +628,7 @@
 (2)   91/    91D2 : (MACRO)             	pullp 	p1 													; restore P1
 (2)   91/    91D2 : C6 01                       ld              @1(p2)
 (2)   91/    91D4 : 31                          xpal    P1
- AS V1.42 Beta [Bld 102] - source file minol.asm(input.asm) - page 11 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(input.asm) - page 11 - 1/18/2016 18:16:22
 
 
 (2)   91/    91D5 : C6 01                       ld              @1(p2)
@@ -691,7 +691,7 @@
 (2)   10/    9209 :                     
 (2)   11/    9209 :                     ; ****************************************************************************************************************
 (2)   12/    9209 :                     ;												CLEAR command
- AS V1.42 Beta [Bld 102] - source file minol.asm(clear.asm) - page 12 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(clear.asm) - page 12 - 1/18/2016 18:16:22
 
 
 (2)   13/    9209 :                     ; ****************************************************************************************************************
@@ -754,7 +754,7 @@
 (2)   35/    9245 : 98 2A               	jz 		CPR_QuotedString
 (2)   36/    9247 : E4 06               	xri 	'$'!'"'												; if $ print string at address.
 (2)   37/    9249 : 98 33               	jz 		CPR_StringAtAddress
- AS V1.42 Beta [Bld 102] - source file minol.asm(print.asm) - page 13 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(print.asm) - page 13 - 1/18/2016 18:16:22
 
 
 (2)   38/    924B :                     
@@ -817,7 +817,7 @@
 (2)   83/    927E :                     ; ****************************************************************************************************************
 (2)   84/    927E :                     
 (2)   85/    927E :                     CPR_StringAtAddress:
- AS V1.42 Beta [Bld 102] - source file minol.asm(print.asm) - page 14 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(print.asm) - page 14 - 1/18/2016 18:16:22
 
 
 (2)   86/    927E : (MACRO)             	lpi 	p3,EvaluateAddressPair-1 							; evaluate (H,L)
@@ -880,7 +880,7 @@
 (2)  135/    92B4 :                     	
 (1)   19/    92B4 :                     	include source\commands\call.asm 							; CALL
 (2)    1/    92B4 :                     ; ****************************************************************************************************************
- AS V1.42 Beta [Bld 102] - source file minol.asm(call.asm) - page 15 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(call.asm) - page 15 - 1/18/2016 18:16:22
 
 
 (2)    2/    92B4 :                     ; ****************************************************************************************************************
@@ -943,7 +943,7 @@
 (2)   14/    92E3 : 98 20               	jz 		CLE_IsHL 											; if so, go to the (H,L) code
 (2)   15/    92E5 : C1 00               	ld 		(p1) 												; re-read it.
 (2)   16/    92E7 : 02                  	ccl
- AS V1.42 Beta [Bld 102] - source file minol.asm(let.asm) - page 16 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(let.asm) - page 16 - 1/18/2016 18:16:22
 
 
 (2)   17/    92E8 : F4 A5               	adi 	255-'Z' 											; will be +ve on error
@@ -1006,7 +1006,7 @@
 (2)   66/    9328 : 33                  	xpal 	p3
 (2)   67/    9329 : C2 FF               	ld 		-1(p2)
 (2)   68/    932B : 37                  	xpah 	p3
- AS V1.42 Beta [Bld 102] - source file minol.asm(let.asm) - page 17 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(let.asm) - page 17 - 1/18/2016 18:16:22
 
 
 (2)   69/    932C : 40                  	lde 														; get value
@@ -1069,7 +1069,7 @@
 (2)   52/    9360 : 06                  	csa 														; get CY/L flag
 (2)   53/    9361 : D4 80               	ani 	0x80 												; now it is AC = 0 if < true.
 (2)   54/    9363 : 90 0D               	jmp 	CIF_TestIfZero
- AS V1.42 Beta [Bld 102] - source file minol.asm(if.asm) - page 18 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(if.asm) - page 18 - 1/18/2016 18:16:22
 
 
 (2)   55/    9365 :                     
@@ -1132,7 +1132,7 @@
 (2)   20/    938C : 31                          xpal    P1
 (2)   21/    938D :                     CRG_Find:
 (2)   22/    938D : C1 00               	ld 		0(p1) 												; look at offset
- AS V1.42 Beta [Bld 102] - source file minol.asm(goto_run.asm) - page 19 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(goto_run.asm) - page 19 - 1/18/2016 18:16:22
 
 
 (2)   23/    938F : 94 06               	jp 		CRG_NotEnd											; if -ve then end of program.
@@ -1195,7 +1195,7 @@
 (1)   51/    93BB :                     ;
 (1)   52/    93BB : 03                  	scl 														; there is no error.
 (1)   53/    93BC : C4 FF               	ldi 	ERRC_End 											; set the error code to "End"
- AS V1.42 Beta [Bld 102] - source file minol.asm(execute.asm) - page 20 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(execute.asm) - page 20 - 1/18/2016 18:16:22
 
 
 (1)   54/    93BE : 01                  	xae
@@ -1258,7 +1258,7 @@
 (1)   99/    93F5 : 60                  	xre 														; same as first character ?
 (1)  100/    93F6 : 9C F9               	jnz		EAFD_Search 										; no, keep looking.
 (1)  101/    93F8 :                     
- AS V1.42 Beta [Bld 102] - source file minol.asm(execute.asm) - page 21 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(execute.asm) - page 21 - 1/18/2016 18:16:22
 
 
 (1)  102/    93F8 : C3 FC               	ld 		-4(p3) 												; read 2nd character
@@ -1321,7 +1321,7 @@
 (2)   10/    942C :                     ; ****************************************************************************************************************
 (2)   11/    942C :                     ;
 (2)   12/    942C :                     ;		Evaluate expression at P1. Return 	CY/L = 0 : Error 	E = Error Code
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 22 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 22 - 1/18/2016 18:16:22
 
 
 (2)   13/    942C :                     ;											CY/L = 1 : Okay 	E = Result
@@ -1384,7 +1384,7 @@
 (2)   62/    945B : 1F                  	rrl
 (2)   63/    945C : CB FE               	st 		RandomSeed-Variables(p3)
 (2)   64/    945E : 60                  	xre 														; XOR E into LSB
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 23 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 23 - 1/18/2016 18:16:22
 
 
 (2)   65/    945F : 01                  	xae
@@ -1447,7 +1447,7 @@
 (2)  119/    949C : C6 01                       ld              @1(p2)
 (2)  119/    949E : 37                          xpah    P3
 (2)  120/    949F : 06                  	csa 														; put CY/L in A bit 7
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 24 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 24 - 1/18/2016 18:16:22
 
 
 (2)  121/    94A0 : 3F                  	xppc 	p3 													; and exit
@@ -1510,7 +1510,7 @@
 (2)  174/    94D1 :                     ;										Have the right term in E, process it
 (2)  175/    94D1 :                     ; ****************************************************************************************************************
 (2)  176/    94D1 :                     
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 25 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 25 - 1/18/2016 18:16:22
 
 
 (2)  177/    94D1 :                     EEX_HaveTerm:
@@ -1573,7 +1573,7 @@
 (2)  234/    950B : CA 00               	st 		0(p2)
 (2)  235/    950D :                     EEX_Multiply_B0IsZero:
 (2)  236/    950D : 40                  	lde 														; shift B right
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 26 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 26 - 1/18/2016 18:16:22
 
 
 (2)  237/    950E : 1C                  	sr
@@ -1636,7 +1636,7 @@
 (2)  290/    9554 : F2 FF               	add 	-1(p2)
 (2)  291/    9556 : CA FF               	st 		-1(p2)
 (2)  292/    9558 :                     
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 27 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 27 - 1/18/2016 18:16:22
 
 
 (2)  293/    9558 : C2 01               	ld 		1(p2)												; get numerator.
@@ -1699,7 +1699,7 @@
 (2)  342/    959B : C1 00               	ld 		(p1) 												; check for ','
 (2)  343/    959D : E4 2C               	xri 	','
 (2)  344/    959F : 9C 1A               	jnz 	EAP_Error											; fail if not present
- AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 28 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(expression.asm) - page 28 - 1/18/2016 18:16:22
 
 
 (2)  345/    95A1 : C5 01               	ld 		@1(p1)												; skip over comma
@@ -1762,7 +1762,7 @@
 (1)  156/    95DF : 01                          db              (2)-1                                                                                      ; 2 -1 (first char already skipped)
 (1)  156/    95E0 : 1D 92                       dw              (CMD_PRINT)-1                                                                                        ; execution point for prefetch.
 (1)  157/    95E2 : (MACRO)             	cmd 	'C','L',5,CMD_Clear									; CLEAR
- AS V1.42 Beta [Bld 102] - source file minol.asm(execute.asm) - page 29 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(execute.asm) - page 29 - 1/18/2016 18:16:22
 
 
 (1)  157/    95E2 : 43 4C                       db              'C','L'                                                                                           ; first and second characters
@@ -1825,7 +1825,7 @@
 (1)   22/    960F :                     ;
 (1)   23/    960F :                     ;	First find the line in question.
 (1)   24/    960F :                     ;
- AS V1.42 Beta [Bld 102] - source file minol.asm(manager.asm) - page 30 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(manager.asm) - page 30 - 1/18/2016 18:16:22
 
 
 (1)   25/    960F : (MACRO)             	lpi 	p3,ProgramBase 										; first, look for the line.
@@ -1888,7 +1888,7 @@
 (1)   68/    9648 : CE FF               	st 		@-1(p2)
 (1)   69/    964A : 31                  	xpal 	p1
 (1)   70/    964B : C4 00               	ldi 	0 													; this is the length of the string
- AS V1.42 Beta [Bld 102] - source file minol.asm(manager.asm) - page 31 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(manager.asm) - page 31 - 1/18/2016 18:16:22
 
 
 (1)   71/    964D : CE FF               	st 		@-1(p2) 											; including the terminating zero.
@@ -1951,7 +1951,7 @@
 (1)  124/    969B :                     ILI_GotSpace:
 (1)  125/    969B : C7 01               	ld 		@1(p3) 												; this is where the new data goes
 (1)  126/    969D : C2 01               	ld 		1(p2)												; restore the original P1.
- AS V1.42 Beta [Bld 102] - source file minol.asm(manager.asm) - page 32 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(manager.asm) - page 32 - 1/18/2016 18:16:22
 
 
 (1)  127/    969F : 31                  	xpal 	p1
@@ -2014,7 +2014,7 @@
 (1)   26/    96C8 : 35                          xpah    P1
 (1)   26/    96C9 : C4 D1                       ldi     (CONMSGOK) & 255
 (1)   26/    96CB : 31                          xpal    P1
- AS V1.42 Beta [Bld 102] - source file minol.asm(console.asm) - page 33 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(console.asm) - page 33 - 1/18/2016 18:16:22
 
 
 (1)   27/    96CC : C4 00               	ldi 	0
@@ -2077,7 +2077,7 @@
 (1)   68/    971B : (MACRO)             	lpi 	p3,Print-1
 (1)   68/    971B : C4 00                       ldi     (PRINT-1) / 256
 (1)   68/    971D : 37                          xpah    P3
- AS V1.42 Beta [Bld 102] - source file minol.asm(console.asm) - page 34 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(console.asm) - page 34 - 1/18/2016 18:16:22
 
 
 (1)   68/    971E : C4 02                       ldi     (PRINT-1) & 255
@@ -2140,7 +2140,7 @@
 (1)  104/    975B :                     
 (1)  105/    975B :                     ; ****************************************************************************************************************
 (1)  106/    975B :                     ;						Command has a Line Number - text is at P1, line number in E.
- AS V1.42 Beta [Bld 102] - source file minol.asm(console.asm) - page 35 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm(console.asm) - page 35 - 1/18/2016 18:16:22
 
 
 (1)  107/    975B :                     ; ****************************************************************************************************************
@@ -2179,7 +2179,7 @@
 (1)  136/    9782 : 90 A0               	jmp 	CONEnter 											; and get another line.
 (1)  137/    9784 :                     
       75/    9784 :                     
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 36 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 36 - 1/18/2016 18:16:22
 
 
   symbol table (* = unused):
@@ -2225,7 +2225,7 @@
  CPR_STRINGPRINT :             92A5 C |  CPR_SYNTAX :                  92AA C |
  CRG_EXECUTEFROMP1 :           93A8 C |  CRG_FIND :                    938D C |
  CRG_NOTEND :                  9397 C |  CRG_OVER :                    93AA C |
- CURRENTLINE :                  C8D - | *DATE :                   1/17/2016 - |
+ CURRENTLINE :                  C8D - | *DATE :                   1/18/2016 - |
  DELETELINE :                  9606 C |  DLN_DELETE :                  9628 C |
  DLN_EXIT :                    9630 C |  DLN_SEARCH :                  9615 C |
  EAFD_LETCODE :                9421 C |  EAFD_SEARCH :                 93F1 C |
@@ -2242,7 +2242,7 @@
  EEX_MULTIPLYLOOP :            94FF C |  EEX_MULTIPLY_B0ISZERO :       950D C |
  EEX_NEXTCHAR :                9440 C |  EEX_NOTADD :                  94DD C |
  EEX_NOTAP :                   946B C |  EEX_NOTQUOTE :                9480 C |
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 37 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 37 - 1/18/2016 18:16:22
 
 
  EEX_NOTRANDOM :               946D C |  EEX_NOTSUBTRACT :             94F3 C |
@@ -2284,7 +2284,7 @@
 *SCREENCURSOR :                 C80 - |  SCREENMIRROR :                 C00 - |
  STACKFOUND :                  9013 C | *STARTUP :                     9013 C |
  SYNTAXERROR :                 93C6 C |  SYSTEMMEMORY :                 C90 - |
-*TIME :                    16:16:56 - | *TRUE :                           1 - |
+*TIME :                    18:16:22 - | *TRUE :                           1 - |
  VARIABLES :                    C90 - | *VERSION :                     142F - |
  __PIDIVIDEEND :               909D C |  __PIDIVIDELOOP :              9080 C |
  __PIDIVIDEOUTER :             907A C |  __PIEXIT :                    90BF C |
@@ -2293,7 +2293,7 @@
     200 symbols
      36 unused symbols
 
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 38 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 38 - 1/18/2016 18:16:22
 
 
   defined macros:
@@ -2307,7 +2307,7 @@ PUSHP                                 | SETV
 
      10 macros
 
- AS V1.42 Beta [Bld 102] - source file minol.asm - page 39 - 1/17/2016 16:16:56
+ AS V1.42 Beta [Bld 102] - source file minol.asm - page 39 - 1/18/2016 18:16:22
 
 
   codepages:
@@ -2316,7 +2316,7 @@ PUSHP                                 | SETV
 STANDARD (0 changed characters)
 
 
-0.02 seconds assembly time
+0.03 seconds assembly time
 
    1756 lines source file
    2072 lines incl. macro expansions

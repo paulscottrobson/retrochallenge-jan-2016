@@ -296,6 +296,10 @@ void CPULoadBinary(const char *file) {
 		file++;
 		target = extRomMemory;
 	}
+	if (*file == '%') {																// %xxxxx loads into RAM at $1000
+		file++; 																	// Skip the @
+		target = ramMemory+1024;													// New target
+	}
 	//printf("Reading file %s\n",file);
 	FILE *f = fopen(file,"rb");														// And load in.
 	while (!feof(f)) {
