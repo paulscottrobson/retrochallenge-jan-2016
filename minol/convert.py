@@ -3,7 +3,7 @@
 #
 import re
 
-source = open("hilo.bas").readlines()
+source = open("speed.bas").readlines()
 source = [x if x.find("//") < 0 else x[:x.find("//")] for x in source]					# Remove // comments
 source = [x.replace("\t"," ").rstrip() for x in source]									# Right strip all lines.
 source = [x for x in source if x != ""]													# Remove blank lines.

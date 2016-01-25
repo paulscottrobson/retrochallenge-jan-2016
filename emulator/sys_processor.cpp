@@ -17,8 +17,8 @@
 // *******************************************************************************************************************************
 
 #define CRYSTAL_CLOCK 	(1000000)													// Clock cycles (1Mhz)
-#define CYCLE_RATE 		(CRYSTAL_CLOCK/2)											// Cycles per second (500khz)
 #define FRAME_RATE		(50)														// Frames per second (50)
+#define CYCLE_RATE 		(CRYSTAL_CLOCK/2)											// Cycles per second (500khz)
 #define CYCLES_PER_FRAME (CYCLE_RATE / FRAME_RATE)									// Cycles per frame
 
 // *******************************************************************************************************************************
@@ -57,6 +57,8 @@ static BYTE8  carryFlag,overflowFlag;												// More SR components.
 
 static BYTE8 MB,opcode,operand,temp8;												// Working storage
 static WORD16 MA,temp16,offset;
+static BYTE8 frameScalarCount; 														// Number of frames per synx (high speed)
+static BYTE8 frameScalarMask = 0; 													// Mask for counter.
 
 // *******************************************************************************************************************************
 //													Memory read and write macros.
@@ -218,7 +220,8 @@ BYTE8 CPUExecuteInstruction(void) {
 	cycles = cycles - CYCLES_PER_FRAME;												// Adjust this frame rate.
 	HWIEndFrame();																	// Call the end of frame code.
 	if (HWIIsKeyPressed(HWIBUTTON_RESET)) CPUReset();								// Reset Button.
-	return FRAME_RATE;																// Return frame rate.
+	frameScalarCount = (frameScalarCount + 1) & frameScalarMask;					// Bump scalar count
+	return (frameScalarCount == 0) ? FRAME_RATE : 0;								// Return frame rate.
 }
 
 #ifdef INCLUDE_DEBUGGING_SUPPORT
@@ -299,6 +302,7 @@ void CPULoadBinary(const char *file) {
 	if (*file == '%') {																// %xxxxx loads into RAM at $1000
 		file++; 																	// Skip the @
 		target = ramMemory+1024;													// New target
+		frameScalarMask = 0xFF;														// And go fast !
 	}
 	//printf("Reading file %s\n",file);
 	FILE *f = fopen(file,"rb");														// And load in.
