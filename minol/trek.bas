@@ -100,5 +100,26 @@
 	pr "e:";
 	Cursor = i+5
 	pr ">";																// Input the command.
-	in n 
-	pr n
+	in i 
+*	if i<33;goto 30:if i='S';goto 30 									// Space, Return, S : Short Range Scan
+*	goto 20 															// Unknown command.
+
+// *************************************************************************************************************
+//
+//												Short range scan
+//
+// *************************************************************************************************************
+
+30	(Block,254)=12:pr $Vdu 												// Clear the screen
+	i = 0
+31 	n = (Block,i+64)													// Read short range scanner
+	if n = 0; goto 34 													// If empty, goto next
+	if n<9; n = 9 														// Will be 9,10,11,12 for 4 characters
+	n = n-9*2+224 														// Make it displayable
+	(0,i*2) = n 														// Draw it on the display
+	(0,i*2+1) = n+1
+34 	i = i+1																// Next cell
+	if i#64; goto 31													// Until done whole screen
+	call (0,5)															// Get key strok
+	pr $Vdu 															// Clear Screen
+	goto 20 															// Get next command.										
