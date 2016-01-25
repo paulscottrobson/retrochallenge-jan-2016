@@ -3,7 +3,7 @@
 #
 import re
 
-source = open("speed.bas").readlines()
+source = open("trek.bas").readlines()
 source = [x if x.find("//") < 0 else x[:x.find("//")] for x in source]					# Remove // comments
 source = [x.replace("\t"," ").rstrip() for x in source]									# Right strip all lines.
 source = [x for x in source if x != ""]													# Remove blank lines.
@@ -57,7 +57,9 @@ for n in sourceCode.keys():																# macro substitutions.
 for n in sourceCode.keys():																# check no capitals in code
 	if sourceCode[n] != sourceCode[n].lower():											# (caps are substitutions)
 		print("Capitals in line ",n,sourceCode[n])
-	sourceCode[n] = sourceCode[n].upper()
+	sourceCode[n] = sourceCode[n].upper().replace(" ","").replace("_"," ")
+	if len(sourceCode[n]) > 119:
+		print("Length : line ",len(sourceCode[n]),n,sourceCode[n])
 
 lineNumber = sourceCode.keys()															# get sorted line numbers
 lineNumber.sort()

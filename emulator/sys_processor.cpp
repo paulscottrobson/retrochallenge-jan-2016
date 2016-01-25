@@ -220,7 +220,9 @@ BYTE8 CPUExecuteInstruction(void) {
 	cycles = cycles - CYCLES_PER_FRAME;												// Adjust this frame rate.
 	HWIEndFrame();																	// Call the end of frame code.
 	if (HWIIsKeyPressed(HWIBUTTON_RESET)) CPUReset();								// Reset Button.
+	#ifdef WINDOWS
 	frameScalarCount = (frameScalarCount + 1) & frameScalarMask;					// Bump scalar count
+	#endif
 	return (frameScalarCount == 0) ? FRAME_RATE : 0;								// Return frame rate.
 }
 
