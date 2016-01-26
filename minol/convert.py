@@ -33,7 +33,7 @@ for l in source.split("\n"):															# for each line.
 		l = str(lastLineNumber+1)+l[1:]
 		lastLineNumber = lastLineNumber + 1
 		isAuto = True
-	print(l)
+	#print(l)
 	m = re.match("^([0-9]+)\\s*(.*)$",l)												# split it up.
 	assert m is not None
 	lineNumber = int(m.group(1))
@@ -52,7 +52,7 @@ for n in sourceCode.keys():																# macro substitutions.
 			if sourceCode[n].find(m) >= 0:
 				count = count + 1
 				sourceCode[n] = sourceCode[n].replace(m,macros[m])
-				print(m,macros[m])
+				#print(m,macros[m])
 
 for n in sourceCode.keys():																# check no capitals in code
 	if sourceCode[n] != sourceCode[n].lower():											# (caps are substitutions)
