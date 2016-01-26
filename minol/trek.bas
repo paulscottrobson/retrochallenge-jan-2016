@@ -19,13 +19,15 @@
 :KlingonsNear o 														// Klingons in this sector
 :Sector s 																// Position in sector
 
+:WarpRequired 		88 													// Energy per warp
+
 // *************************************************************************************************************
 //
 //												 Initialise a new game.
 // 
 // *************************************************************************************************************
 
-2	(Block,254) = 12 													// Set up $Vdu to print control characters
+2	Vdu = 12 															// Set up $Vdu to print control characters
 	(Block,255) = 0
 	pr $Vdu,"setup ...."
 	(Block,240) = 0 													// Set up offset table.
@@ -58,8 +60,8 @@
 
 10 	i = 64 																// Clearing the quadrant
 	pr "in_quadrant_";													// Display quadrant message
-	n = Quadrant/8*8:(Block,254) = Quadrant-n+48:pr $Vdu,",";
-	(Block,254) = Quadrant/8+48:pr $Vdu
+	n = Quadrant/8*8:Vdu = Quadrant-n+48:pr $Vdu,",";
+	Vdu = Quadrant/8+48:pr $Vdu
 
 11	(Block,i) = 0														// Clear quadrant memory
 	i = i + 1
@@ -101,8 +103,10 @@
 	Cursor = i+5
 	pr ">";																// Input the command.
 	in i 
+
 *	if i<33;goto 30:if i='s';goto 30 									// Space, Return, S : Short Range Scan
-* 	if i='l';goto 40 													// L : Long Range Scan
+ 	if i='l';goto 40 													// L : Long Range Scan
+	if i='w';goto 50 													// W : Warp to another quadrant.
 
 	end
 *	goto 20 															// Unknown command.
@@ -113,7 +117,7 @@
 //
 // *************************************************************************************************************
 
-30	(Block,254)=12:pr $Vdu 												// Clear the screen
+30	Vdu=12:pr $Vdu 														// Clear the screen
 	i = 0
 31 	n = (Block,i+64)													// Read short range scanner
 	if n = 0; goto 34 													// If empty, goto next
@@ -147,7 +151,7 @@
 	n = n - m 															// Remove starbase if any.
 	pr n;																// Print the lower 2 digits.
 	Cursor = Cursor - 4 												// Cursor back to print starbase
-*	(Block,254) = m/100+'0'												// Print starbase.
+*	Vdu = m/100+'0'														// Print starbase.
 	pr $Vdu;
 	Cursor = Cursor + 2 												// Skip over 2 digits
 	if j#2;pr "!";														// Print vertical bar
@@ -159,3 +163,19 @@
 	if i < 7; pr "__---+---+---"										// Seperator
 	if i < 7; goto 41 													// Go back if not finished
 	goto 20																// Get next command.
+
+// *************************************************************************************************************
+//
+//											Warp to another quadrant
+//
+// *************************************************************************************************************
+
+50 	if Energy<WarpRequired;goto 53 										// Enough energy ?
+	pr "dir : ";														// ask direction
+	in i 																// read direction
+	if 9<i; goto 20														// check in range 0-9
+	Quadrant = Quadrant + (Block,240+i) 								// New quadrant
+	Energy = Energy - WarpRequired 										// Lose Energy
+51 	if Quadrant < 64;goto 52:Quadrant = Quadrant-64:goto 51 			// Force into range
+52	goto 10 															// Enter a new quadrant.
+53  pr "energy !":goto 20												// Not enough energy
