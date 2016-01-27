@@ -73,6 +73,11 @@
 	n = (Block,Quadrant) 												// This is the H,T,U value
 	j = 1 																// Initially writing Klingons
 	KlingonsNear = 0													// Number of klingons in sector
+	(Block,j+151) = 255													// Clear all Klingon positions to $FF (not present)
+	(Block,j+152) = 255
+	(Block,j+153) = 255
+	(Block,j+154) = 255
+
 12 	if n/10*10=n; goto 14 												// Is the mod 10 value zero, if so done this lot.
 
 13 	i = !/4+64															// Random slot in the quadrant
@@ -80,7 +85,7 @@
 	(Block,i) = j 														// Put into the quadrant
 	n = n - 1 															// Reduce value so mod 10 becomes zero
 	if 9<j; goto 12 													// If starbase or star, do another one.
-	(Block,j+150) = i 													// Save Klingon position
+	(Block,j+150) = i-64 												// Save Klingon position
 	(Block,j+160) = !/20+25 											// Set Klingon energy
 	j = j + 1 															// Bump the klingon reference number.
 	KlingonsNear = KlingonsNear+1 										// One more klingon in this sector
@@ -108,6 +113,8 @@
 	Cursor = i+5
 	Vdu = Torpedoes+'0';
 	pr "_t:",$Vdu,">";
+
+	//pr:goto 80
 	in i 																// Input the command.
 
 *	if i<33;goto 30:if i='s';goto 30 									// Space, Return, S : Short Range Scan
@@ -115,6 +122,7 @@
 	if i='w';goto 50 													// W : Warp to another quadrant.
 	if i='m';goto 60 													// M : Move to another quadrant
 	if i='q';goto 70 													// Q : Quit Starfleet.
+	if i='t';goto 80 													// T : Fire Torpedoes.
 
 *	goto 20 															// Unknown command.
 
@@ -193,11 +201,12 @@
 //	
 // *************************************************************************************************************
 
-60 	pr "dir : ";														// get direction
+60 	pr "dir_:_";														// get direction
 	in i
 	if 9 < i; goto 20 													// bad direction.
 	i = (Block,240+i)													// convert direction to offset
-	pr "warp: ";														// input warp, e.g. number of moves
+	if i = 0; goto 20 													// bad direction.
+	pr "warp:_";														// input warp, e.g. number of moves
 	in j
 	if 8 < j; goto 20 													// too far.
 	(Block,Sector+64) = 0												// erase enterprise.
@@ -218,6 +227,7 @@
 	pr "starbase_dock"													// Have docked at starbase.
 	Energy = MaxEnergy													// Reset energy and torpedoes
 	Torpedoes = MaxTorpedo
+	(Block,Quadrant)=(Block,Quadrant)-100 								// Remove starbase from quadrant map
 																		// Drop through to put enterprise back and attack
 65 	(Block,Sector+64) = 12:goto 200										// Put enterprise back, and do klingon attack
 
@@ -232,13 +242,72 @@
 	if 	i = 'y'; goto 242												// if you do, resign
 	goto 20																// else do nothing.
 
+// *************************************************************************************************************
+//
+//												Fire torpedoes
+//
+// *************************************************************************************************************
 
+80	if Torpedoes=0; goto 20 											// No torpedoes left
+	pr "dir_:_";														// Prompt
+	in i 																// Input direction								
+	if 9 < i; goto 20													// Bad direction
+	i = (Block,240+i)													// Convert to offset
+	if i = 0; goto 20													// Not a valid direction
+	j = 7 																// Distance to check
+	n = Sector 															// Sector checking
+	Torpedoes=Torpedoes-1												// Reduce number of torpedoes.
+
+81 	if j = 0; goto 200 													// Finished checking, go to Klingon battle.
+	j = j - 1															// Decrement distance counter
+	n = n + i 															// Move to next position
+82 	if n < 64; goto 83: n = n - 64:goto 82 								// Handle wrap around
+
+83 	m = (Block,64+n)													// Read whatever is there.
+	if m = 0; goto 81 													// if zero, try next sector along
+	if m = 10; goto 200 												// Hit star, no effect, goto Klingons
+	if m = 11; goto 243 												// Hit starbase, you are fired !
+	if m = 12; end 														// Should not happen !
+	i = m 																// The number of the Klingon to destroy
+	goto 120															// Go and destroy it.
+
+// *************************************************************************************************************
+//
+//											Handle destroyed Klingon 'i'
+//
+// *************************************************************************************************************
+
+120 pr "klingon_down_!"
+	j = (Block,i+150)													// Read position
+	if j=255;end 														// Some sort of error
+	n = (Block,j+64)													// Check the Klingon is there on the screen.
+	if n#i; end									
+	KlingonCount = KlingonCount-1 										// One fewer Klingon in total
+	pr KlingonCount,"left"
+*	KlingonsNear = KlingonsNear-1 										// One fewer in this Sector
+	(Block,j+64) = 0													// Remove Klingon fron Quadrant
+	(Block,i+150) = 255 												// Remove Klingon from Record.
+	(Block,Quadrant) = (Block,Quadrant)-1								// Remove Klingon from Galactic Map
+	if KlingonCount=0; goto 245 										// Check for win.
+	goto 200
+
+// *************************************************************************************************************
+//		
+//												Klingons counter-attack
+//
+// *************************************************************************************************************
 
 200 pr "klingons_!":goto 20												// Klingon attack stuff.
+
+// *************************************************************************************************************
+//
+//														End Game
+//
+// *************************************************************************************************************
 
 240 pr "collide_klingon":end
 241 pr "collide_star":end
 242 pr "resign":end
-//243 pr "shot_starbase":end
+243 pr "shot_starbase":end
 //244 pr "klingon_destroyed_you":end
 245 pr "won !":end
