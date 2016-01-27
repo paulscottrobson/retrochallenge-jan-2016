@@ -19,7 +19,11 @@
 :KlingonsNear o 														// Klingons in this sector
 :Sector s 																// Position in sector
 
-:WarpRequired 		88 													// Energy per warp
+:WarpRequired 		8 													// Energy per warp
+:MoveRequired 		2													// Energy per move.
+
+:MaxEnergy 			250 												// Energy maximum value
+:MaxTorpedo			4 													// Torpedo max value
 
 // *************************************************************************************************************
 //
@@ -48,7 +52,7 @@
 	if !<16; n = n + 100 												// Maybe add starbase
 	(Block,i) = !/50+1*10+n 											// Store in galactic map with some stars
 	i = i + 1:if i<64; goto 5
-	Energy = 255:Torpedoes = 4 											// Reset energy and torpedoes.
+	Energy = MaxEnergy:Torpedoes = MaxTorpedo 							// Reset energy and torpedoes.
 	Quadrant = !/4 														// Initialise quadrant.
 	(Block,Quadrant) = 123 												// Easily identified !
 
@@ -96,19 +100,22 @@
 //
 // *************************************************************************************************************
 
-20 	i = Cursor															// Display energy then prompt
+20 	if KlingonCount = 0; goto 245 										// Won if destroyed all the Klingons.
+	i = Cursor															// Display energy then prompt
 	pr "_",Energy;
 	Cursor = i
 	pr "e:";
 	Cursor = i+5
-	pr ">";																// Input the command.
-	in i 
+	Vdu = Torpedoes+'0';
+	pr "_t:",$Vdu,">";
+	in i 																// Input the command.
 
 *	if i<33;goto 30:if i='s';goto 30 									// Space, Return, S : Short Range Scan
  	if i='l';goto 40 													// L : Long Range Scan
 	if i='w';goto 50 													// W : Warp to another quadrant.
+	if i='m';goto 60 													// M : Move to another quadrant
+	if i='q';goto 70 													// Q : Quit Starfleet.
 
-	end
 *	goto 20 															// Unknown command.
 
 // *************************************************************************************************************
@@ -170,7 +177,7 @@
 //
 // *************************************************************************************************************
 
-50 	if Energy<WarpRequired;goto 53 										// Enough energy ?
+50 	if Energy-1<WarpRequired;goto 53 									// Enough energy ?
 	pr "dir : ";														// ask direction
 	in i 																// read direction
 	if 9<i; goto 20														// check in range 0-9
@@ -179,3 +186,59 @@
 51 	if Quadrant < 64;goto 52:Quadrant = Quadrant-64:goto 51 			// Force into range
 52	goto 10 															// Enter a new quadrant.
 53  pr "energy !":goto 20												// Not enough energy
+
+// *************************************************************************************************************
+//
+//												Move within quadrant
+//	
+// *************************************************************************************************************
+
+60 	pr "dir : ";														// get direction
+	in i
+	if 9 < i; goto 20 													// bad direction.
+	i = (Block,240+i)													// convert direction to offset
+	pr "warp: ";														// input warp, e.g. number of moves
+	in j
+	if 8 < j; goto 20 													// too far.
+	(Block,Sector+64) = 0												// erase enterprise.
+
+61 	if j = 0;goto 65													// if done enough, Klingons attack
+	if Energy-1 < MoveRequired;goto 65 									// Not enough energy, Klingons attack
+	j = j - 1															// decrement move count
+	Energy = Energy - MoveRequired										// take away movement energy
+	Sector = Sector + i 												// move in appropriate direction.
+
+62 	if Sector < 64;goto 63:Sector = Sector - 64:goto 62 				// Wrap sector around.
+
+63 	n = (Block,Sector+64)												// Read what's there.
+	if n = 0 ; goto 61 													// Okay if empty
+	if n < 10; goto 240 												// Hit a klingon - both blow up !
+	if n = 10; goto 241 												// Hit a star
+
+	pr "starbase_dock"													// Have docked at starbase.
+	Energy = MaxEnergy													// Reset energy and torpedoes
+	Torpedoes = MaxTorpedo
+																		// Drop through to put enterprise back and attack
+65 	(Block,Sector+64) = 12:goto 200										// Put enterprise back, and do klingon attack
+
+// *************************************************************************************************************
+//
+//												Quit Starfleet
+//
+// *************************************************************************************************************
+
+70 	pr "sure_? ";														// check you do
+	in  i
+	if 	i = 'y'; goto 242												// if you do, resign
+	goto 20																// else do nothing.
+
+
+
+200 pr "klingons_!":goto 20												// Klingon attack stuff.
+
+240 pr "collide_klingon":end
+241 pr "collide_star":end
+242 pr "resign":end
+//243 pr "shot_starbase":end
+//244 pr "klingon_destroyed_you":end
+245 pr "won !":end

@@ -19,6 +19,7 @@ for d in definitions:																	# work through definitions
 	assert m is not None
 	macros[m.group(1)] = m.group(2).strip()												# store in dictionary
 macroKeys = macros.keys()																# get list of keys.
+macroKeys.sort(lambda x,y: -cmp(len(x),len(y)))											# sort by length, longest first
 
 sourceCode = {}																			# dictionary line# => text
 lastLineNumber = 0 																		# last line number.
