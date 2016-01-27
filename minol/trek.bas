@@ -7,7 +7,7 @@
 // *************************************************************************************************************
 
 :Cursor (12,128)														// Writing here sets the Cursor
-:Block  31 																// Memory Block is $1Fxx
+:Block  14 																// Memory Block is $1Fxx
 :Vdu (Block,254)														// Print arbitrary character string.
 
 // i,j,m,n reserved for general use.
@@ -18,6 +18,7 @@
 :Quadrant q 															// Current Quadrant
 :KlingonsNear o 														// Klingons in this sector
 :Sector s 																// Position in sector
+:Difficulty d 															// Difficulty level 0-9 (9 = hardest)
 
 :WarpRequired 		8 													// Energy per warp
 :MoveRequired 		2													// Energy per move.
@@ -33,7 +34,7 @@
 
 2	Vdu = 12 															// Set up $Vdu to print control characters
 	(Block,255) = 0
-	pr $Vdu,"setup ...."
+	pr $Vdu,"star_trek_v1.0":pr "(c)_psr_2016":pr
 	(Block,240) = 0 													// Set up offset table.
 	(Block,241) = 7
 	(Block,242) = 8
@@ -44,17 +45,19 @@
 	(Block,247) = 0-9
 	(Block,248) = 0-8
 	(Block,249) = 0-7
+* 	Difficulty = 5 														// Set difficulty level
 	KlingonCount = 0													// Clear count of Klingons.
 	i = 0 																// Offset into table
 5	n = 0 																// Start with empty
-	if !<36; n = n + !/80 + 1											// Maybe add Klingons ?
+	if !<2*Difficulty+35; n = n + !/80 + 1								// Maybe add Klingons ?
 	KlingonCount = KlingonCount + n 									// add to the Klingon count
 	if !<16; n = n + 100 												// Maybe add starbase
 	(Block,i) = !/50+1*10+n 											// Store in galactic map with some stars
 	i = i + 1:if i<64; goto 5
-	Energy = MaxEnergy:Torpedoes = MaxTorpedo 							// Reset energy and torpedoes.
+*	Energy = MaxEnergy:Torpedoes = MaxTorpedo 							// Reset energy and torpedoes.
 	Quadrant = !/4 														// Initialise quadrant.
 	(Block,Quadrant) = 123 												// Easily identified !
+	pr KlingonCount,"klingons"
 
 // *************************************************************************************************************
 //
@@ -86,7 +89,7 @@
 	n = n - 1 															// Reduce value so mod 10 becomes zero
 	if 9<j; goto 12 													// If starbase or star, do another one.
 	(Block,j+150) = i-64 												// Save Klingon position
-	(Block,j+160) = !/20+25 											// Set Klingon energy
+	(Block,j+160) = !/10+12 											// Set Klingon energy, 12-36 roughly.
 	j = j + 1 															// Bump the klingon reference number.
 	KlingonsNear = KlingonsNear+1 										// One more klingon in this sector
 	goto 12 															// Keep trying
@@ -123,8 +126,10 @@
 	if i='m';goto 60 													// M : Move to another quadrant
 	if i='q';goto 70 													// Q : Quit Starfleet.
 	if i='t';goto 80 													// T : Fire Torpedoes.
+	if i='p';goto 90 													// P : Fire Phasers.
 
-*	goto 20 															// Unknown command.
+*	pr "cmd:_slwmptq"
+	goto 20 															// Unknown command.
 
 // *************************************************************************************************************
 //
@@ -273,6 +278,33 @@
 
 // *************************************************************************************************************
 //
+//												  Fire Phasers
+//	
+// *************************************************************************************************************
+
+90 	if KlingonsNear=0 ; goto 20 										// Cannot fire phasers as no klingons
+	pr "lvl_:_";
+	in i 																// Get the amount to fire
+	if i=0; goto 20 													// Entered 0
+	if Energy-1<i; goto 20												// Entered too much.
+	Energy = Energy - i 												// Deduct used energy.
+	n = i / KlingonsNear + 3 											// Damage done approx per klingon.
+	n = n - d + 5 														// Adjust for difficulty
+	if 200<n;n = 0 														// If went -ve, set to zero.
+	i = 1 																// Klingon being currently checked.
+
+91 	if (Block,150+i)=255;goto 94 										// Klingon already destroyed.
+
+	j = (Block,160+i)-n													// Get new energy value
+	(Block,160+i) = j 													// Write it back
+	if 200 < j;goto 120 												// Klingon dead ???
+
+94 	i = i + 1															// Do next Klingon
+	if i # 5; goto 91													// Done all Klingons ?
+	goto 200 															// Klingons can fire back.
+
+// *************************************************************************************************************
+//
 //											Handle destroyed Klingon 'i'
 //
 // *************************************************************************************************************
@@ -305,9 +337,10 @@
 //
 // *************************************************************************************************************
 
-240 pr "collide_klingon":end
-241 pr "collide_star":end
-242 pr "resign":end
-243 pr "shot_starbase":end
-//244 pr "klingon_destroyed_you":end
-245 pr "won !":end
+240 pr "you_have_collided_with_a_klingon.":end
+241 pr "you_have_burned_up_in_a_star.":end
+242 pr "you_have_resigned_from_starfleet.":end
+243 pr "you_have_destroyed_a_starbase_and_been_arrested.":end
+244 pr "a_klingon_ship_destroyed_you":end
+245 pr "congrats_-_you_won_!":end
+
