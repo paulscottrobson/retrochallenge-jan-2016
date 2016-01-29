@@ -45,7 +45,9 @@
 	(Block,247) = 0-9
 	(Block,248) = 0-8
 	(Block,249) = 0-7
-* 	Difficulty = 5 														// Set difficulty level
+* 	pr "skill_1-9_?";
+	in Difficulty 														// Set difficulty level
+	if Difficulty=0; Difficulty=5										// Default to 5.
 	KlingonCount = 0													// Clear count of Klingons.
 	i = 0 																// Offset into table
 5	n = 0 																// Start with empty
@@ -56,7 +58,7 @@
 	i = i + 1:if i<64; goto 5
 *	Energy = MaxEnergy:Torpedoes = MaxTorpedo 							// Reset energy and torpedoes.
 	Quadrant = !/4 														// Initialise quadrant.
-	(Block,Quadrant) = 123 												// Easily identified !
+	(Block,Quadrant) = 163 												// Easily identified !
 	pr KlingonCount,"klingons"
 
 // *************************************************************************************************************
@@ -117,8 +119,10 @@
 	Vdu = Torpedoes+'0';
 	pr "_t:",$Vdu,">";
 
-	//pr:goto 80
 	in i 																// Input the command.
+
+*	if i='a';goto 200 													// Debug A: Klingons attack ....
+	
 
 *	if i<33;goto 30:if i='s';goto 30 									// Space, Return, S : Short Range Scan
  	if i='l';goto 40 													// L : Long Range Scan
@@ -329,7 +333,55 @@
 //
 // *************************************************************************************************************
 
-200 pr "klingons_!":goto 20												// Klingon attack stuff.
+200 if KlingonsNear=0; goto 20 											// No Klingons Nearby.
+	i = 0 																// Klingon counter
+	pr "klingons_attack"												// Klingon attack stuff.
+
+201	i = i + 1:if i = 5;goto 20 											// Klingon attack loop.
+	if (Block,i+150) = 255; goto 201 									// Klingon not present
+	goto 220
+
+// *************************************************************************************************************
+//	
+//													Klingon Move
+//
+// *************************************************************************************************************
+
+210 n = !/32+1 															// Direction 1-8
+	if n=6;n = 9 														// Direction 1-9, not 5.
+	n = (Block,n+240) 													// Now an offset											
+	j = (Block,i+150)+n 												// New position of Klingon, maybe
+	if (Block,(Block,i+150)+64)#i;end 									// Consistency check.
+211	if j<64;goto 212:j = j - 64: goto 211 								// Make new position wrap around.
+
+212	if (Block,j+64)#0;goto 201 											// Give up if can't move there.	
+	(Block,(Block,i+150)+64) = 0 										// Erase old position on screen
+	(Block,i+150) = j 													// Update record with new position
+	(Block,j+64) = i 													// Update screen appropriately.
+	goto 201 															// Do next Klingon.
+
+// *************************************************************************************************************
+//
+//												  Klingons Attack
+//
+// *************************************************************************************************************
+
+220 n = (Block,i+160)													// Energy klingon has
+	n = n + d - 5														// Adjust for difficulty level.
+	m = !/64+1															// Random scalar
+	n = n * m / 4 														// Scale klingon energy
+	if n = 0;goto 201 													// Zero damage due to low energy etc.
+	if Energy<n;n = Energy 												// No more than total enterprise energy.
+
+*	Energy = Energy - n 												// Take that energy away.	
+	pr n,"damage"														// Print damage
+	if Energy = 0;goto 244 												// Game over.
+
+*	m = (Block,i+160)													// Klingon damage
+	n = n / 3 															// Energy to take from it.
+	if m-1<n; n = m-1 													// Not enough energy to destroy it.
+	(Block,i+160) = m - n 												// Take away firing energy..
+	goto 201 															// And do the next Klingon.
 
 // *************************************************************************************************************
 //
@@ -343,4 +395,3 @@
 243 pr "you_have_destroyed_a_starbase_and_been_arrested.":end
 244 pr "a_klingon_ship_destroyed_you":end
 245 pr "congrats_-_you_won_!":end
-
