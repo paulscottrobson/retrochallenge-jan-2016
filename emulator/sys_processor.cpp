@@ -46,6 +46,10 @@ ROMTYPE      extRomMemory[] = {														// 0x9000-0x9FFF ROM Memory
 	#include "binaries/__rom_9000.h"
 };
 
+ROMTYPE		starTrekCode[] = {
+	#include "binaries/__startrek.h"
+};
+
 // *******************************************************************************************************************************
 //														CPU / Memory
 // *******************************************************************************************************************************
@@ -169,6 +173,9 @@ void CPUReset(void) {
 	cycles = 0;																		// Reset cycle count.
 	doubleCyclesToWaste = 0;														// Reset cycle waste counter.
 	HWIReset();																		// Reset hardware
+	for (WORD16 i = 0;i < sizeof(starTrekCode);i++) {
+		ramMemory[i+0x400] = ROM(starTrekCode,i);
+	}
 }
 
 // *******************************************************************************************************************************

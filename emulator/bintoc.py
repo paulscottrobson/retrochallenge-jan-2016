@@ -15,3 +15,4 @@ def convert(srcFile,hFile,m = 1):
 
 convert("monitor.bin","__monitor_rom.h")
 convert("rom9000.bin","__rom_9000.h",1)
+convert("..\\minol\\program.bin","__startrek.h")
